@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gas Service</title>
+<title>Adawe Gas Service</title>
 
 <style>
 body{
@@ -43,6 +43,7 @@ input{
 .admin{
   background:#e9f7ef;
   border:2px dashed #1e7f43;
+  padding:15px;
 }
 </style>
 </head>
@@ -50,18 +51,18 @@ input{
 <body>
 
 <header>
-  <h1>Gas Supply Service</h1>
+  <h1>Adawe Gas Supply Service</h1>
   <p>Fast • Reliable • Affordable</p>
 </header>
 
 <!-- CUSTOMER VIEW -->
 <div class="card">
   <h2>💰 Gas Price</h2>
-  <p><strong>Current Price:</strong> KES <span id="gasPrice">---</span></p>
+  <p><strong>Current Price:</strong> KES <span id="gasPrice">2470</span></p>
 
   <h2>📌 Paybill Details</h2>
-  <p><strong>Paybill:</strong> <span id="paybill">---</span></p>
-  <p><strong>Account Number:</strong> <span id="account">---</span></p>
+  <p><strong>Paybill:</strong> 247247</p>
+  <p><strong>Account Number:</strong> 0727015434</p>
 
   <h2>📞 Contact</h2>
   <p>Phone: 0727015434</p>
@@ -72,33 +73,36 @@ input{
   </a>
 </div>
 
-<!-- ADMIN PANEL -->
+<!-- ADMIN PANEL (Optional) -->
 <div class="card admin">
-  <h2>🔐 Admin Panel (Your Control)</h2>
+  <h2>🔐 Admin Panel</h2>
 
   <label>Gas Price (KES)</label>
-  <input type="number" id="adminGasPrice">
+  <input type="number" id="adminGasPrice" value="2470">
 
   <label>Paybill Number</label>
-  <input type="text" id="adminPaybill">
+  <input type="text" id="adminPaybill" value="247247">
 
   <label>Account Number</label>
-  <input type="text" id="adminAccount">
+  <input type="text" id="adminAccount" value="0727015434">
 
   <br><br>
   <button onclick="saveData()">Save Changes</button>
 </div>
 
 <script>
-// Load saved data
+// Load saved data from localStorage
 document.getElementById("gasPrice").innerText =
-  localStorage.getItem("gasPrice") || "Not Set";
+  localStorage.getItem("gasPrice") || document.getElementById("adminGasPrice").value;
 
-document.getElementById("paybill").innerText =
-  localStorage.getItem("paybill") || "Not Set";
+document.getElementById("adminGasPrice").value =
+  localStorage.getItem("gasPrice") || document.getElementById("adminGasPrice").value;
 
-document.getElementById("account").innerText =
-  localStorage.getItem("account") || "Not Set";
+document.getElementById("adminPaybill").value =
+  localStorage.getItem("paybill") || document.getElementById("adminPaybill").value;
+
+document.getElementById("adminAccount").value =
+  localStorage.getItem("account") || document.getElementById("adminAccount").value;
 
 // Save admin data
 function saveData(){
@@ -110,7 +114,8 @@ function saveData(){
   localStorage.setItem("paybill", paybill);
   localStorage.setItem("account", account);
 
-  location.reload();
+  document.getElementById("gasPrice").innerText = gas;
+  alert("Changes saved successfully!");
 }
 </script>
 
