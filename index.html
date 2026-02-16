@@ -1,122 +1,107 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<title>Adawe Gas Service</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adawe Gas Supply Service</title>
 
 <style>
-body{
-  font-family:Arial, sans-serif;
-  background:#f4fdf7;
-  margin:0;
-  padding:0;
-}
-header{
-  background:#1e7f43;
-  color:#fff;
-  padding:20px;
-  text-align:center;
-}
-.card{
-  background:#fff;
-  margin:20px;
-  padding:20px;
-  border-radius:8px;
-  box-shadow:0 2px 5px rgba(0,0,0,.1);
-}
-button{
-  background:#1e7f43;
-  color:#fff;
-  border:none;
-  padding:10px 15px;
-  border-radius:5px;
-  cursor:pointer;
-}
-button:hover{
-  background:#166534;
-}
-input{
-  width:100%;
-  padding:10px;
-  margin-top:8px;
-}
-.admin{
-  background:#e9f7ef;
-  border:2px dashed #1e7f43;
-  padding:15px;
-}
+body{font-family:Arial;margin:0;background:#f2f2f2}
+header{background:#1e7d3c;color:white;padding:20px;text-align:center}
+.card{background:white;margin:20px;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
+button{background:#1e7d3c;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer}
+.admin{display:none;border:2px dashed #1e7d3c}
+input{padding:8px;width:100%;margin:5px 0}
 </style>
 </head>
 
 <body>
 
 <header>
-  <h1>Adawe Gas Supply Service</h1>
-  <p>Fast • Reliable • Affordable</p>
+<h2>Adawe Gas Supply Service</h2>
+<p>Fast • Reliable • Affordable</p>
 </header>
 
-<!-- CUSTOMER VIEW -->
 <div class="card">
-  <h2>💰 Gas Price</h2>
-  <p><strong>Current Price:</strong> KES <span id="gasPrice">2470</span></p>
+<h3>💰 Gas Price</h3>
+<p>Current Price: KES <span id="price"></span></p>
 
-  <h2>📌 Paybill Details</h2>
-  <p><strong>Paybill:</strong> 247247</p>
-  <p><strong>Account Number:</strong> 0727015434</p>
+<h3>📌 Paybill Details</h3>
+<p>Paybill: <span id="paybill"></span></p>
+<p>Account Number: <span id="account"></span></p>
 
-  <h2>📞 Contact</h2>
-  <p>Phone: 0727015434</p>
-  <p>WhatsApp: 254727015434</p>
+<h3>📞 Contact</h3>
+<p>Phone: <span id="phone"></span></p>
+<p>WhatsApp: <span id="whatsapp"></span></p>
 
-  <a href="https://wa.me/254727015434" target="_blank">
-    <button>Order via WhatsApp</button>
-  </a>
+<a id="waLink" target="_blank">
+<button>Order via WhatsApp</button>
+</a>
 </div>
 
-<!-- ADMIN PANEL (Optional) -->
-<div class="card admin">
-  <h2>🔐 Admin Panel</h2>
+<div style="text-align:center;">
+<button onclick="login()">Admin Login</button>
+</div>
 
-  <label>Gas Price (KES)</label>
-  <input type="number" id="adminGasPrice" value="2470">
+<div class="card admin" id="adminPanel">
+<h3>🔐 Admin Panel</h3>
 
-  <label>Paybill Number</label>
-  <input type="text" id="adminPaybill" value="247247">
+<label>Gas Price (KES)</label>
+<input type="number" id="newPrice">
 
-  <label>Account Number</label>
-  <input type="text" id="adminAccount" value="0727015434">
+<label>Paybill Number</label>
+<input type="text" id="newPaybill">
 
-  <br><br>
-  <button onclick="saveData()">Save Changes</button>
+<label>Account Number</label>
+<input type="text" id="newAccount">
+
+<label>Phone Number</label>
+<input type="text" id="newPhone">
+
+<button onclick="saveData()">Save Changes</button>
 </div>
 
 <script>
-// Load saved data from localStorage
-document.getElementById("gasPrice").innerText =
-  localStorage.getItem("gasPrice") || document.getElementById("adminGasPrice").value;
 
-document.getElementById("adminGasPrice").value =
-  localStorage.getItem("gasPrice") || document.getElementById("adminGasPrice").value;
-
-document.getElementById("adminPaybill").value =
-  localStorage.getItem("paybill") || document.getElementById("adminPaybill").value;
-
-document.getElementById("adminAccount").value =
-  localStorage.getItem("account") || document.getElementById("adminAccount").value;
-
-// Save admin data
-function saveData(){
-  let gas = document.getElementById("adminGasPrice").value;
-  let paybill = document.getElementById("adminPaybill").value;
-  let account = document.getElementById("adminAccount").value;
-
-  localStorage.setItem("gasPrice", gas);
-  localStorage.setItem("paybill", paybill);
-  localStorage.setItem("account", account);
-
-  document.getElementById("gasPrice").innerText = gas;
-  alert("Changes saved successfully!");
+// DEFAULT DATA
+if(!localStorage.getItem("price")){
+localStorage.setItem("price","2470");
+localStorage.setItem("paybill","247247");
+localStorage.setItem("account","0727015434");
+localStorage.setItem("phone","0727015434");
 }
+
+// LOAD DATA
+function loadData(){
+document.getElementById("price").innerText = localStorage.getItem("price");
+document.getElementById("paybill").innerText = localStorage.getItem("paybill");
+document.getElementById("account").innerText = localStorage.getItem("account");
+document.getElementById("phone").innerText = localStorage.getItem("phone");
+document.getElementById("whatsapp").innerText = "254" + localStorage.getItem("phone").substring(1);
+document.getElementById("waLink").href =
+"https://wa.me/254" + localStorage.getItem("phone").substring(1);
+}
+loadData();
+
+// LOGIN
+function login(){
+let pass = prompt("Enter Admin Password");
+if(pass === "adawe2026"){
+document.getElementById("adminPanel").style.display="block";
+}else{
+alert("Wrong Password");
+}
+}
+
+// SAVE DATA
+function saveData(){
+localStorage.setItem("price",document.getElementById("newPrice").value);
+localStorage.setItem("paybill",document.getElementById("newPaybill").value);
+localStorage.setItem("account",document.getElementById("newAccount").value);
+localStorage.setItem("phone",document.getElementById("newPhone").value);
+alert("Saved Successfully!");
+loadData();
+}
+
 </script>
 
 </body>
