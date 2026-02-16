@@ -2,78 +2,47 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas LPG</title>
+<title>Gas Service</title>
 
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #f4f6f9;
+body{
+  font-family:Arial, sans-serif;
+  background:#f4fdf7;
+  margin:0;
+  padding:0;
 }
-
-header {
-    background: linear-gradient(135deg,#0a3d62,#1e90ff);
-    color: white;
-    text-align: center;
-    padding: 40px 20px;
+header{
+  background:#1e7f43;
+  color:#fff;
+  padding:20px;
+  text-align:center;
 }
-
-header h1 {
-    margin: 0;
-    font-size: 32px;
+.card{
+  background:#fff;
+  margin:20px;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
 }
-
-.container {
-    padding: 40px 20px;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 20px;
+button{
+  background:#1e7f43;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  border-radius:5px;
+  cursor:pointer;
 }
-
-.card {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    text-align: center;
+button:hover{
+  background:#166534;
 }
-
-.price {
-    color: #27ae60;
-    font-size: 20px;
-    font-weight: bold;
+input{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
 }
-
-.button {
-    display: inline-block;
-    padding: 10px 20px;
-    background: #27ae60;
-    color: white;
-    text-decoration: none;
-    border-radius: 6px;
-    margin-top: 10px;
-}
-
-.section {
-    padding: 40px 20px;
-    text-align: center;
-    background: white;
-    margin: 20px;
-    border-radius: 10px;
-}
-
-form input, form select {
-    padding: 10px;
-    width: 80%;
-    margin: 10px 0;
-}
-
-footer {
-    background: #222;
-    color: white;
-    text-align: center;
-    padding: 20px;
+.admin{
+  background:#e9f7ef;
+  border:2px dashed #1e7f43;
 }
 </style>
 </head>
@@ -81,86 +50,69 @@ footer {
 <body>
 
 <header>
-<h1>Adawe Gas LPG</h1>
-<p>Safe • Reliable • Fast Gas Delivery Across Kenya</p>
+  <h1>Gas Supply Service</h1>
+  <p>Fast • Reliable • Affordable</p>
 </header>
 
-<!-- PRODUCTS -->
+<!-- CUSTOMER VIEW -->
+<div class="card">
+  <h2>💰 Gas Price</h2>
+  <p><strong>Current Price:</strong> KES <span id="gasPrice">---</span></p>
 
-<div class="container">
+  <h2>📌 Paybill Details</h2>
+  <p><strong>Paybill:</strong> <span id="paybill">---</span></p>
+  <p><strong>Account Number:</strong> <span id="account">---</span></p>
+
+  <h2>📞 Contact</h2>
+  <p>Phone: 0727015434</p>
+  <p>WhatsApp: 254727015434</p>
+
+  <a href="https://wa.me/254727015434" target="_blank">
+    <button>Order via WhatsApp</button>
+  </a>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="card admin">
+  <h2>🔐 Admin Panel (Your Control)</h2>
+
+  <label>Gas Price (KES)</label>
+  <input type="number" id="adminGasPrice">
+
+  <label>Paybill Number</label>
+  <input type="text" id="adminPaybill">
+
+  <label>Account Number</label>
+  <input type="text" id="adminAccount">
+
+  <br><br>
+  <button onclick="saveData()">Save Changes</button>
+</div>
 
 <script>
-const sizes = ["3KG","6KG","13KG","22.5KG","25KG","35KG","40KG","45KG","50KG"];
-const prices = ["900","1500","3200","5500","6000","8200","9500","10800","12000"];
+// Load saved data
+document.getElementById("gasPrice").innerText =
+  localStorage.getItem("gasPrice") || "Not Set";
 
-for (let i=0;i<sizes.length;i++){
-document.write(`
-<div class="card">
-<h2>${sizes[i]}</h2>
-<p class="price">Ksh ${prices[i]}</p>
-<a href="https://wa.me/254727015434?text=I%20want%20${sizes[i]}%20Gas" class="button">Order via WhatsApp</a>
-</div>
-`);
+document.getElementById("paybill").innerText =
+  localStorage.getItem("paybill") || "Not Set";
+
+document.getElementById("account").innerText =
+  localStorage.getItem("account") || "Not Set";
+
+// Save admin data
+function saveData(){
+  let gas = document.getElementById("adminGasPrice").value;
+  let paybill = document.getElementById("adminPaybill").value;
+  let account = document.getElementById("adminAccount").value;
+
+  localStorage.setItem("gasPrice", gas);
+  localStorage.setItem("paybill", paybill);
+  localStorage.setItem("account", account);
+
+  location.reload();
 }
 </script>
-
-</div>
-
-<!-- MPESA -->
-
-<div class="section">
-<h2>M-Pesa Payment</h2>
-<p><strong>Paybill:</strong> 247247</p>
-<p><strong>Account:</strong> 0727015434</p>
-<p>After payment, confirm on WhatsApp.</p>
-</div>
-
-<!-- ORDER FORM -->
-
-<div class="section">
-<h2>Quick Order Form</h2>
-<form>
-<input type="text" placeholder="Your Name" required><br>
-<input type="tel" placeholder="Phone Number" required><br>
-<select>
-<option>Select Gas Size</option>
-<option>3KG</option>
-<option>6KG</option>
-<option>13KG</option>
-<option>22.5KG</option>
-<option>25KG</option>
-<option>35KG</option>
-<option>40KG</option>
-<option>45KG</option>
-<option>50KG</option>
-</select><br>
-<input type="text" placeholder="Delivery Location"><br>
-<button class="button">Submit Order</button>
-</form>
-</div>
-
-<!-- CONTACT -->
-
-<div class="section">
-<h2>Contact Us</h2>
-<p>📞 254727015434</p>
-<p>📍 Nairobi, Kenya</p>
-<p>✉ adaweadawe56@gmail.com</p>
-</div>
-
-<!-- GOOGLE MAP -->
-
-<div class="section">
-<h2>Our Location</h2>
-<iframe 
-src="https://www.google.com/maps?q=Nairobi,Kenya&output=embed"
-width="100%" height="300" style="border:0;">
-</iframe>
-</div>
-
-<footer>
-<p>© 2026 Adawe Gas LPG | All Rights Reserved</p>
-</footer>
 
 </body>
 </html>
