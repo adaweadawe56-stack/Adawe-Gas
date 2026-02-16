@@ -1,14 +1,15 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Gas Service Admin</title>
+<title>Gas Service</title>
 
 <style>
 body{
-  font-family:Arial;
+  font-family:Arial, sans-serif;
   background:#f4fdf7;
   margin:0;
+  padding:0;
 }
 header{
   background:#1e7f43;
@@ -16,4 +17,102 @@ header{
   padding:20px;
   text-align:center;
 }
-.car
+.card{
+  background:#fff;
+  margin:20px;
+  padding:20px;
+  border-radius:8px;
+  box-shadow:0 2px 5px rgba(0,0,0,.1);
+}
+button{
+  background:#1e7f43;
+  color:#fff;
+  border:none;
+  padding:10px 15px;
+  border-radius:5px;
+  cursor:pointer;
+}
+button:hover{
+  background:#166534;
+}
+input{
+  width:100%;
+  padding:10px;
+  margin-top:8px;
+}
+.admin{
+  background:#e9f7ef;
+  border:2px dashed #1e7f43;
+}
+</style>
+</head>
+
+<body>
+
+<header>
+  <h1>Gas Supply Service</h1>
+  <p>Fast • Reliable • Affordable</p>
+</header>
+
+<!-- CUSTOMER VIEW -->
+<div class="card">
+  <h2>💰 Gas Price</h2>
+  <p><strong>Current Price:</strong> KES <span id="gasPrice">---</span></p>
+
+  <h2>📌 Paybill Details</h2>
+  <p><strong>Paybill:</strong> <span id="paybill">---</span></p>
+  <p><strong>Account Number:</strong> <span id="account">---</span></p>
+
+  <h2>📞 Contact</h2>
+  <p>Phone: 0727015434</p>
+  <p>WhatsApp: 254727015434</p>
+
+  <a href="https://wa.me/254727015434" target="_blank">
+    <button>Order via WhatsApp</button>
+  </a>
+</div>
+
+<!-- ADMIN PANEL -->
+<div class="card admin">
+  <h2>🔐 Admin Panel (Your Control)</h2>
+
+  <label>Gas Price (KES)</label>
+  <input type="number" id="adminGasPrice">
+
+  <label>Paybill Number</label>
+  <input type="text" id="adminPaybill">
+
+  <label>Account Number</label>
+  <input type="text" id="adminAccount">
+
+  <br><br>
+  <button onclick="saveData()">Save Changes</button>
+</div>
+
+<script>
+// Load saved data
+document.getElementById("gasPrice").innerText =
+  localStorage.getItem("gasPrice") || "Not Set";
+
+document.getElementById("paybill").innerText =
+  localStorage.getItem("paybill") || "Not Set";
+
+document.getElementById("account").innerText =
+  localStorage.getItem("account") || "Not Set";
+
+// Save admin data
+function saveData(){
+  let gas = document.getElementById("adminGasPrice").value;
+  let paybill = document.getElementById("adminPaybill").value;
+  let account = document.getElementById("adminAccount").value;
+
+  localStorage.setItem("gasPrice", gas);
+  localStorage.setItem("paybill", paybill);
+  localStorage.setItem("account", account);
+
+  location.reload();
+}
+</script>
+
+</body>
+</html>
