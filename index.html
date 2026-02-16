@@ -1,15 +1,14 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Gas Service</title>
+<title>Gas Service Admin</title>
 
 <style>
 body{
-  font-family:Arial, sans-serif;
+  font-family:Arial;
   background:#f4fdf7;
   margin:0;
-  padding:0;
 }
 header{
   background:#1e7f43;
@@ -32,15 +31,13 @@ button{
   border-radius:5px;
   cursor:pointer;
 }
-button:hover{
-  background:#166534;
-}
 input{
   width:100%;
   padding:10px;
   margin-top:8px;
 }
-.admin{
+#adminSection{
+  display:none;
   background:#e9f7ef;
   border:2px dashed #1e7f43;
 }
@@ -50,68 +47,74 @@ input{
 <body>
 
 <header>
-  <h1>Gas Supply Service</h1>
-  <p>Fast • Reliable • Affordable</p>
+<h1>Gas Supply Service</h1>
 </header>
 
-<!-- CUSTOMER VIEW -->
 <div class="card">
-  <h2>💰 Gas Price</h2>
-  <p><strong>Current Price:</strong> KES <span id="gasPrice">---</span></p>
-
-  <h2>📌 Paybill Details</h2>
-  <p><strong>Paybill:</strong> <span id="paybill">---</span></p>
-  <p><strong>Account Number:</strong> <span id="account">---</span></p>
-
-  <h2>📞 Contact</h2>
-  <p>Phone: 0727015434</p>
-  <p>WhatsApp: 254727015434</p>
-
-  <a href="https://wa.me/254727015434" target="_blank">
-    <button>Order via WhatsApp</button>
-  </a>
+<h2>💰 Gas Price: KES <span id="gasPrice">Not Set</span></h2>
+<p><strong>Paybill:</strong> <span id="paybill">Not Set</span></p>
+<p><strong>Account:</strong> <span id="account">Not Set</span></p>
 </div>
 
-<!-- ADMIN PANEL -->
-<div class="card admin">
-  <h2>🔐 Admin Panel (Your Control)</h2>
+<div class="card">
+<h2>🔐 Admin Login</h2>
+<input type="password" id="password" placeholder="Enter Admin Password">
+<br><br>
+<button onclick="login()">Login</button>
+</div>
 
-  <label>Gas Price (KES)</label>
-  <input type="number" id="adminGasPrice">
+<div class="card" id="adminSection">
+<h2>Admin Panel</h2>
 
-  <label>Paybill Number</label>
-  <input type="text" id="adminPaybill">
+<label>Gas Price</label>
+<input type="number" id="adminGas">
 
-  <label>Account Number</label>
-  <input type="text" id="adminAccount">
+<label>Paybill</label>
+<input type="text" id="adminPaybill">
 
-  <br><br>
-  <button onclick="saveData()">Save Changes</button>
+<label>Account</label>
+<input type="text" id="adminAccount">
+
+<br><br>
+<button onclick="save()">Save Changes</button>
 </div>
 
 <script>
-// Load saved data
+
+// Load saved values
 document.getElementById("gasPrice").innerText =
-  localStorage.getItem("gasPrice") || "Not Set";
+localStorage.getItem("gasPrice") || "Not Set";
 
 document.getElementById("paybill").innerText =
-  localStorage.getItem("paybill") || "Not Set";
+localStorage.getItem("paybill") || "Not Set";
 
 document.getElementById("account").innerText =
-  localStorage.getItem("account") || "Not Set";
+localStorage.getItem("account") || "Not Set";
 
-// Save admin data
-function saveData(){
-  let gas = document.getElementById("adminGasPrice").value;
-  let paybill = document.getElementById("adminPaybill").value;
-  let account = document.getElementById("adminAccount").value;
-
-  localStorage.setItem("gasPrice", gas);
-  localStorage.setItem("paybill", paybill);
-  localStorage.setItem("account", account);
-
-  location.reload();
+// LOGIN
+function login(){
+let pass = document.getElementById("password").value;
+if(pass === "admin123"){
+document.getElementById("adminSection").style.display="block";
+alert("Login Successful");
+}else{
+alert("Wrong Password");
 }
+}
+
+// SAVE DATA
+function save(){
+let gas = document.getElementById("adminGas").value;
+let pay = document.getElementById("adminPaybill").value;
+let acc = document.getElementById("adminAccount").value;
+
+localStorage.setItem("gasPrice", gas);
+localStorage.setItem("paybill", pay);
+localStorage.setItem("account", acc);
+
+location.reload();
+}
+
 </script>
 
 </body>
