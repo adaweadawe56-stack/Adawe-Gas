@@ -13,10 +13,15 @@ body {
 }
 
 header {
-    background: #0a3d62;
+    background: linear-gradient(135deg,#0a3d62,#1e90ff);
     color: white;
     text-align: center;
-    padding: 30px 20px;
+    padding: 40px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-size: 32px;
 }
 
 .container {
@@ -53,14 +58,22 @@ header {
 .section {
     padding: 40px 20px;
     text-align: center;
+    background: white;
+    margin: 20px;
+    border-radius: 10px;
+}
+
+form input, form select {
+    padding: 10px;
+    width: 80%;
+    margin: 10px 0;
 }
 
 footer {
     background: #222;
     color: white;
     text-align: center;
-    padding: 15px;
-    margin-top: 40px;
+    padding: 20px;
 }
 </style>
 </head>
@@ -69,58 +82,80 @@ footer {
 
 <header>
 <h1>Adawe Gas LPG</h1>
-<p>Safe & Reliable Gas Delivery Across Kenya</p>
+<p>Safe • Reliable • Fast Gas Delivery Across Kenya</p>
 </header>
-
-<div class="container">
 
 <!-- PRODUCTS -->
 
-<div class="card"><h2>3KG</h2><p class="price">Ksh 900</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%203KG%20Gas" class="button">Order</a></div>
+<div class="container">
 
-<div class="card"><h2>6KG</h2><p class="price">Ksh 1,500</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%206KG%20Gas" class="button">Order</a></div>
+<script>
+const sizes = ["3KG","6KG","13KG","22.5KG","25KG","35KG","40KG","45KG","50KG"];
+const prices = ["900","1500","3200","5500","6000","8200","9500","10800","12000"];
 
-<div class="card"><h2>13KG</h2><p class="price">Ksh 3,200</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2013KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>22.5KG</h2><p class="price">Ksh 5,500</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2022.5KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>25KG</h2><p class="price">Ksh 6,000</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2025KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>35KG</h2><p class="price">Ksh 8,200</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2035KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>40KG</h2><p class="price">Ksh 9,500</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2040KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>45KG</h2><p class="price">Ksh 10,800</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2045KG%20Gas" class="button">Order</a></div>
-
-<div class="card"><h2>50KG</h2><p class="price">Ksh 12,000</p>
-<a href="https://wa.me/2547XXXXXXXX?text=I%20want%2050KG%20Gas" class="button">Order</a></div>
+for (let i=0;i<sizes.length;i++){
+document.write(`
+<div class="card">
+<h2>${sizes[i]}</h2>
+<p class="price">Ksh ${prices[i]}</p>
+<a href="https://wa.me/254727015434?text=I%20want%20${sizes[i]}%20Gas" class="button">Order via WhatsApp</a>
+</div>
+`);
+}
+</script>
 
 </div>
 
-<!-- MPESA SECTION -->
+<!-- MPESA -->
 
 <div class="section">
 <h2>M-Pesa Payment</h2>
-<p><strong>Paybill:</strong> 123456</p>
-<p><strong>Account Name:</strong> Adawe Gas</p>
-<p>Please send payment then confirm via WhatsApp.</p>
+<p><strong>Paybill:</strong> 247247</p>
+<p><strong>Account:</strong> 0727015434</p>
+<p>After payment, confirm on WhatsApp.</p>
 </div>
 
-<!-- CONTACT SECTION -->
+<!-- ORDER FORM -->
+
+<div class="section">
+<h2>Quick Order Form</h2>
+<form>
+<input type="text" placeholder="Your Name" required><br>
+<input type="tel" placeholder="Phone Number" required><br>
+<select>
+<option>Select Gas Size</option>
+<option>3KG</option>
+<option>6KG</option>
+<option>13KG</option>
+<option>22.5KG</option>
+<option>25KG</option>
+<option>35KG</option>
+<option>40KG</option>
+<option>45KG</option>
+<option>50KG</option>
+</select><br>
+<input type="text" placeholder="Delivery Location"><br>
+<button class="button">Submit Order</button>
+</form>
+</div>
+
+<!-- CONTACT -->
 
 <div class="section">
 <h2>Contact Us</h2>
-<p>📞 Phone: 07XXXXXXXX</p>
-<p>📍 Location: Nairobi, Kenya</p>
-<p>✉ Email: info@adawegas.com</p>
+<p>📞 0727015434</p>
+<p>📍 Nairobi, Kenya</p>
+<p>✉ adaweadawe56@gmail.com</p>
+</div>
+
+<!-- GOOGLE MAP -->
+
+<div class="section">
+<h2>Our Location</h2>
+<iframe 
+src="https://www.google.com/maps?q=Nairobi,Kenya&output=embed"
+width="100%" height="300" style="border:0;">
+</iframe>
 </div>
 
 <footer>
