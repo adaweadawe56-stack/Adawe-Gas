@@ -1,108 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas Supply Service</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Adawe Gas Company</title>
 
-<style>
-body{font-family:Arial;margin:0;background:#f2f2f2}
-header{background:#1e7d3c;color:white;padding:20px;text-align:center}
-.card{background:white;margin:20px;padding:20px;border-radius:8px;box-shadow:0 2px 8px rgba(0,0,0,0.1)}
-button{background:#1e7d3c;color:white;border:none;padding:10px 15px;border-radius:5px;cursor:pointer}
-.admin{display:none;border:2px dashed #1e7d3c}
-input{padding:8px;width:100%;margin:5px 0}
-</style>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #f4f4f4;
+        }
+
+        header {
+            background: #1e7d3c;
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        nav {
+            background: #145a2a;
+            text-align: center;
+            padding: 10px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            margin: 15px;
+            font-weight: bold;
+        }
+
+        nav a:hover {
+            text-decoration: underline;
+        }
+
+        .hero {
+            padding: 60px 20px;
+            text-align: center;
+            background: white;
+        }
+
+        .hero h1 {
+            color: #1e7d3c;
+            font-size: 32px;
+        }
+
+        .hero p {
+            font-size: 18px;
+        }
+
+        .btn {
+            background: #1e7d3c;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .btn:hover {
+            background: #145a2a;
+        }
+
+        footer {
+            background: #1e7d3c;
+            color: white;
+            text-align: center;
+            padding: 15px;
+            margin-top: 40px;
+        }
+    </style>
 </head>
 
 <body>
 
-<header>
-<h2>Adawe Gas Supply Service</h2>
-<p>Fast • Reliable • Affordable</p>
-</header>
-
-<div class="card">
-<h3>💰 Gas Price</h3>
-<p>Current Price: KES <span id="price"></span></p>
-
-<h3>📌 Paybill Details</h3>
-<p>Paybill: <span id="paybill"></span></p>
-<p>Account Number: <span id="account"></span></p>
-
-<h3>📞 Contact</h3>
-<p>Phone: <span id="phone"></span></p>
-<p>WhatsApp: <span id="whatsapp"></span></p>
-
-<a id="waLink" target="_blank">
-<button>Order via WhatsApp</button>
-</a>
-</div>
-
-<div style="text-align:center;">
-<button onclick="login()">Admin Login</button>
-</div>
-
-<div class="card admin" id="adminPanel">
-<h3>🔐 Admin Panel</h3>
-
-<label>Gas Price (KES)</label>
-<input type="number" id="newPrice">
-
-<label>Paybill Number</label>
-<input type="text" id="newPaybill">
-
-<label>Account Number</label>
-<input type="text" id="newAccount">
-
-<label>Phone Number</label>
-<input type="text" id="newPhone">
-
-<button onclick="saveData()">Save Changes</button>
-</div>
-
-<script>
-
-// DEFAULT DATA
-if(!localStorage.getItem("price")){
-localStorage.setItem("price","2470");
-localStorage.setItem("paybill","247247");
-localStorage.setItem("account","0727015434");
-localStorage.setItem("phone","0727015434");
-}
-
-// LOAD DATA
-function loadData(){
-document.getElementById("price").innerText = localStorage.getItem("price");
-document.getElementById("paybill").innerText = localStorage.getItem("paybill");
-document.getElementById("account").innerText = localStorage.getItem("account");
-document.getElementById("phone").innerText = localStorage.getItem("phone");
-document.getElementById("whatsapp").innerText = "254" + localStorage.getItem("phone").substring(1);
-document.getElementById("waLink").href =
-"https://wa.me/254" + localStorage.getItem("phone").substring(1);
-}
-loadData();
-
-// LOGIN
-function login(){
-let pass = prompt("Enter Admin Password");
-if(pass === "adawe2026"){
-document.getElementById("adminPanel").style.display="block";
-}else{
-alert("Wrong Password");
-}
-}
-
-// SAVE DATA
-function saveData(){
-localStorage.setItem("price",document.getElementById("newPrice").value);
-localStorage.setItem("paybill",document.getElementById("newPaybill").value);
-localStorage.setItem("account",document.getElementById("newAccount").value);
-localStorage.setItem("phone",document.getElementById("newPhone").value);
-alert("Saved Successfully!");
-loadData();
-}
-
-</script>
-
-</body>
-</html>
+    <header>
+        <h1>Adawe Gas Company</h1>
+        <p>Reliable & High-Quality LPG Gas Supply 🔥</p>
