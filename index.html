@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Adawe Gas Company</title>
+    <meta name="google-site-verification" content="kTAfUxGToG2ahduo8MMNPeD_mT0uu2gb_Q4VBsCOA_I" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <style>
         body {
             margin: 0;
             font-family: Arial, sans-serif;
-            background: #f4f4f4;
         }
 
-        header {
-            background: #1e7d3c;
-            color: white;
+        /* LOGO */
+        .logo {
             text-align: center;
             padding: 20px;
         }
 
+        /* NAVIGATION */
         nav {
-            background: #145a2a;
+            background: #0a7f2e;
+            padding: 15px;
             text-align: center;
-            padding: 10px;
         }
 
         nav a {
             color: white;
+            margin: 0 15px;
             text-decoration: none;
-            margin: 15px;
             font-weight: bold;
         }
 
@@ -36,15 +35,16 @@
             text-decoration: underline;
         }
 
+        /* HERO SECTION */
         .hero {
+            background: #f4f4f4;
             padding: 60px 20px;
             text-align: center;
-            background: white;
         }
 
         .hero h1 {
-            color: #1e7d3c;
-            font-size: 32px;
+            color: #0a7f2e;
+            font-size: 40px;
         }
 
         .hero p {
@@ -52,30 +52,59 @@
         }
 
         .btn {
-            background: #1e7d3c;
+            display: inline-block;
+            margin-top: 20px;
+            padding: 12px 25px;
+            background: #0a7f2e;
             color: white;
-            padding: 10px 20px;
-            border: none;
+            text-decoration: none;
             border-radius: 5px;
-            cursor: pointer;
         }
 
         .btn:hover {
-            background: #145a2a;
+            background: #066822;
         }
 
-        footer {
-            background: #1e7d3c;
-            color: white;
+        /* ABOUT */
+        .about {
+            padding: 40px;
             text-align: center;
-            padding: 15px;
-            margin-top: 40px;
         }
     </style>
 </head>
 
 <body>
 
-    <header>
+    <!-- LOGO -->
+    <div class="logo">
+        <img src="./logo.jpg" alt="Adawe Gas Logo" width="150">
+    </div>
+
+    <!-- NAVIGATION -->
+    <nav>
+        <a href="#">Home</a>
+        <a href="#">About</a>
+        <a href="#">Products</a>
+        <a href="#">Contact</a>
+    </nav>
+
+    <!-- HERO -->
+    <div class="hero">
         <h1>Adawe Gas Company</h1>
         <p>Reliable & High-Quality LPG Gas Supply 🔥</p>
+        <a class="btn" href="https://wa.me/254727015434" target="_blank">
+            Order via WhatsApp
+        </a>
+    </div>
+
+    <!-- ABOUT -->
+    <div class="about">
+        <h2>About Us</h2>
+        <p>
+            Adawe Gas Company provides safe, affordable and reliable LPG gas 
+            solutions for homes, restaurants and businesses.
+        </p>
+    </div>
+
+</body>
+</html>
