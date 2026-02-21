@@ -107,7 +107,7 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
     var name = document.getElementById("name").value;
     var location = document.getElementById("location").value;
     var quantity = document.getElementById("quantity").value;
-    var message = `Hello Adawe Gas, I would like to order ${quantity} cylinder(s). Name: ${name}, Location: ${location}`;
+    var message = Hello Adawe Gas, I would like to order ${quantity} cylinder(s). Name: ${name}, Location: ${location};
     var waLink = "https://wa.me/254727015434?text=" + encodeURIComponent(message);
     window.open(waLink, "_blank");
 });
@@ -141,7 +141,7 @@ const API_KEY = 'YOUR_API_KEY_HERE';
 const RANGE = 'Orders!A:C';
 
 async function fetchSheetData() {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
+    const url = https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY};
     try {
         const response = await fetch(url);
         const data = await response.json();
@@ -166,7 +166,7 @@ function updateTopPartnersTable(data) {
     tbody.innerHTML = '';
     topPartners.forEach(([name, orders], index) => {
         const tr = document.createElement('tr');
-        tr.innerHTML = `<td>${index+1}</td><td>${name}</td><td>${orders}</td>`;
+        tr.innerHTML = <td>${index+1}</td><td>${name}</td><td>${orders}</td>;
         tbody.appendChild(tr);
     });
 
