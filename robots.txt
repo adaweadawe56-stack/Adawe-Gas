@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://adaweadawe56-stack.github.io/Adawe-Gas/sitemap.xml
