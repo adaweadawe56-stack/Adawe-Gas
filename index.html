@@ -3,12 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LPG Gas Delivery in Kenya | Adawe Gas</title>
+<title>Adawe Gas - LPG Delivery & Dashboard</title>
 <meta name="description" content="Adawe Gas connects customers across Kenya with trusted LPG gas delivery partners. Fast, safe and reliable gas delivery nationwide.">
 <meta name="keywords" content="Gas Kenya, LPG Delivery Kenya, Gas Delivery Nairobi, Gas Mombasa, Gas Kisumu, Adawe Gas">
-<meta name="robots" content="index, follow">
-<link rel="canonical" href="https://adaweadawe56-stack.github.io/Adawe-Gas/">
-
 <style>
 body { margin:0; font-family: Arial; scroll-behavior: smooth; }
 header { background:#0f7b3f; padding:15px 40px; color:white; display:flex; justify-content:space-between; align-items:center; }
@@ -30,7 +27,6 @@ th, td { padding:10px; border:1px solid #ccc; }
 th { background:#0f7b3f; color:white; }
 </style>
 </head>
-
 <body>
 
 <header>
@@ -117,10 +113,9 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
 });
 </script>
 
-<!-- Dashboard Section -->
 <section class="section" id="dashboard">
     <h2>Top 5 Partners</h2>
-    <p>Performance of our top gas delivery partners (demo data)</p>
+    <p>Performance of our top gas delivery partners</p>
     <table id="topPartners">
         <thead>
             <tr>
@@ -130,11 +125,7 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
             </tr>
         </thead>
         <tbody>
-            <tr><td>1</td><td>Partner A</td><td>12</td></tr>
-            <tr><td>2</td><td>Partner B</td><td>9</td></tr>
-            <tr><td>3</td><td>Partner C</td><td>7</td></tr>
-            <tr><td>4</td><td>Partner D</td><td>5</td></tr>
-            <tr><td>5</td><td>Partner E</td><td>4</td></tr>
+            <!-- Dynamic rows will populate here -->
         </tbody>
     </table>
 
@@ -144,37 +135,13 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-// Growth Tracking Chart Demo
-const ctx = document.getElementById('growthChart').getContext('2d');
-const growthChart = new Chart(ctx, {
-    type: 'line',
-    data: {
-        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
-        datasets: [{
-            label: 'Orders Delivered',
-            data: [5, 8, 12, 15, 18, 22],
-            backgroundColor: 'rgba(15,123,63,0.2)',
-            borderColor: 'rgba(15,123,63,1)',
-            borderWidth: 2,
-            tension: 0.3,
-            fill: true
-        }]
-    },
-    options: {
-        responsive: true,
-        plugins: { legend: { display: true, position: 'top' } },
-        scales: { y: { beginAtZero: true } }
-    }
-});
-</script>
-
-<!-- Live Google Sheets Integration -->
-<script>
+// Live Google Sheets Integration
 const SHEET_ID = 'YOUR_GOOGLE_SHEET_ID_HERE';
-const RANGE = 'Orders!A:C'; // Partner Name | Orders Delivered | Date
+const API_KEY = 'YOUR_API_KEY_HERE';
+const RANGE = 'Orders!A:C';
 
 async function fetchSheetData() {
-    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=YOUR_API_KEY`;
+    const url = `https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`;
     try {
         const response = await fetch(url);
         const data = await response.json();
