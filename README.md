@@ -1,2 +1,1 @@
-# Adawe-Gas
-Waxaan iibinaa Gas
+G
