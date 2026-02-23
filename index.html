@@ -3,214 +3,222 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas | Reliable LPG Delivery</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
-
+<title>Adawe Gas - Premium LPG Delivery</title>
+<meta name="description" content="Adawe Gas - Fast, Safe, Reliable LPG Delivery Across Kenya">
+<meta name="keywords" content="Adawe Gas, LPG Kenya, Gas Delivery Kenya, Gas Cylinder Delivery, Gas Partners">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/css/bootstrap.min.css" rel="stylesheet">
 <style>
-body{
-    margin:0;
-    font-family:'Poppins',sans-serif;
-    background:#f4f6f5;
-    color:#222;
-}
-
-header{
-    background:linear-gradient(135deg,#0f5132,#198754);
-    color:white;
-    padding:20px 10%;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-header h1{margin:0;font-size:24px;}
-
-nav a{
-    color:white;
-    text-decoration:none;
-    margin-left:20px;
-    font-weight:500;
-}
-
-.hero{
-    background:linear-gradient(rgba(0,0,0,0.6),rgba(0,0,0,0.6)),
-    url('https://images.unsplash.com/photo-1581090700227-4c4b3b2a1c76');
-    background-size:cover;
-    background-position:center;
-    color:white;
-    text-align:center;
-    padding:100px 20px;
-}
-
-.hero h2{font-size:40px;margin-bottom:10px;}
-
-.btn{
-    background:#198754;
-    color:white;
-    padding:12px 25px;
-    border:none;
-    border-radius:30px;
-    cursor:pointer;
-    font-weight:600;
-    text-decoration:none;
-}
-
-.section{
-    padding:60px 10%;
-    text-align:center;
-}
-
-.services{
-    display:flex;
-    justify-content:space-around;
-    flex-wrap:wrap;
-}
-
-.service-box{
-    background:white;
-    width:300px;
-    padding:30px;
-    margin:15px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-
-.service-box img{
-    width:80px;
-    margin-bottom:15px;
-}
-
-.carousel{
-    position:relative;
-    max-width:600px;
-    margin:auto;
-    overflow:hidden;
-}
-
-.review{
-    display:none;
-    font-style:italic;
-}
-
-.review.active{
-    display:block;
-    animation:fade 1s ease-in-out;
-}
-
-@keyframes fade{
-    from{opacity:0;}
-    to{opacity:1;}
-}
-
-.dashboard{
-    background:white;
-    padding:30px;
-    border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.05);
-}
-
-footer{
-    background:#0f5132;
-    color:white;
-    text-align:center;
-    padding:20px;
-}
+body { font-family: Arial, sans-serif; scroll-behavior: smooth; }
+.navbar { background: #0f7b3f; }
+.navbar a { color: white !important; font-weight: bold; }
+.hero { background: linear-gradient(135deg,#0f5132,#198754); color: white; text-align:center; padding:100px 20px; }
+.hero h1 { font-size: 3rem; margin-bottom: 20px; }
+.hero p { font-size: 1.2rem; margin-bottom: 30px; }
+.section { padding:60px 20px; }
+.section h2 { color:#0f7b3f; margin-bottom:30px; }
+.btn-primary, .btn-success, .btn-outline-light { border-radius:6px; font-weight:bold; }
+.footer { background:#0f7b3f; color:white; padding:20px; text-align:center; }
+.table th { background:#0f7b3f; color:white; }
+.review-card { background:#f4f4f4; padding:20px; margin:10px 0; border-radius:8px; }
+iframe { width:100%; height:300px; border:0; border-radius:8px; }
+img.brand-visual { max-width:200px; margin:10px auto; display:block; }
 </style>
 </head>
-
 <body>
 
-<header>
-<h1>Adawe Gas</h1>
-<nav>
-<a href="#">Home</a>
-<a href="#">Services</a>
-<a href="#">About</a>
-<a href="#">Dashboard</a>
-<a href="#">Contact</a>
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg sticky-top">
+  <div class="container">
+    <a class="navbar-brand text-white" href="#home">Adawe Gas</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon" style="color:white;"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#how-it-works">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#partners">Become a Partner</a></li>
+        <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
+        <li class="nav-item"><a class="nav-link" href="#order">Order Now</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item"><a class="nav-link" href="#location">Location</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
-</header>
 
-<section class="hero">
-<h2>Reliable LPG Gas Delivery Across Kenya</h2>
-<p>Fast. Safe. Affordable Gas Delivery.</p>
-<a href="https://wa.me/254727015434" class="btn">Order via WhatsApp</a>
+<!-- Hero -->
+<section class="hero" id="home">
+  <h1>Kenya’s Fastest Growing LPG Delivery Network</h1>
+  <p>Fast. Safe. Reliable Gas Delivery Across Kenya.</p>
+  <a href="#order" class="btn btn-outline-light me-2">Order Now</a>
+  <a href="#partners" class="btn btn-outline-light me-2">Become a Partner</a>
+  <a href="https://wa.me/254727015434" target="_blank" class="btn btn-success">WhatsApp Us</a>
+  <!-- Brand visual example -->
+  <img src="file_000000000fdc71f7a6789f6c55b471c4" alt="Brand Visual" class="brand-visual">
 </section>
 
-<section class="section">
-<h2>Our Services</h2>
-<div class="services">
-
-<div class="service-box">
-<img src="https://cdn-icons-png.flaticon.com/512/1046/1046857.png">
-<h3>LPG Cylinder Delivery</h3>
-<p>Fast and secure cylinder delivery to your home.</p>
-</div>
-
-<div class="service-box">
-<img src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png">
-<h3>Partner Network</h3>
-<p>Licensed LPG partners across Kenya.</p>
-</div>
-
-<div class="service-box">
-<img src="https://cdn-icons-png.flaticon.com/512/1048/1048315.png">
-<h3>Same Day Delivery</h3>
-<p>Quick dispatch and real-time tracking.</p>
-</div>
-
-</div>
+<!-- Services -->
+<section class="section" id="services">
+  <div class="container text-center">
+    <h2>Our Services</h2>
+    <p>• LPG Gas Cylinder Delivery</p>
+    <p>• Partner Distribution Network</p>
+    <p>• Same-Day Delivery in Selected Areas</p>
+  </div>
 </section>
 
-<section class="section">
-<h2>Customer Reviews</h2>
-
-<div class="carousel">
-<div class="review active">"Fast and reliable delivery." – James K, Nairobi</div>
-<div class="review">"Excellent service same day delivery!" – Mary A, Mombasa</div>
-<div class="review">"Professional and trustworthy partners." – David O, Kisumu</div>
-</div>
-
+<!-- About -->
+<section class="section bg-light" id="about">
+  <div class="container text-center">
+    <h2>About Adawe Gas</h2>
+    <p>Adawe Gas provides reliable LPG gas delivery services across Kenya. Our mission is to make gas delivery fast, safe, and accessible.</p>
+  </div>
 </section>
 
-<section class="section">
-<h2>Delivery Team</h2>
-<img src="https://images.unsplash.com/photo-1604014237800-1c9102c219da" width="80%" style="border-radius:15px;">
+<!-- How It Works -->
+<section class="section" id="how-it-works">
+  <div class="container text-center">
+    <h2>How It Works</h2>
+    <p>1. Customer places order online or via WhatsApp.</p>
+    <p>2. We connect you to the nearest licensed gas partner.</p>
+    <p>3. Fast and safe LPG delivery to your location.</p>
+  </div>
 </section>
 
-<section class="section">
-<h2>Live Dashboard</h2>
-<div class="dashboard">
-<h3>Total Orders</h3>
-<p id="orders">Loading...</p>
-</div>
+<!-- Become Partner -->
+<section class="section bg-light" id="partners">
+  <div class="container text-center">
+    <h2>Become a Gas Partner</h2>
+    <p>Are you a licensed LPG supplier anywhere in Kenya? Join Adawe Gas and get more customers in your area.</p>
+    <a href="https://wa.me/254727015434" class="btn btn-success">Join as Partner</a>
+  </div>
 </section>
 
-<footer>
-© 2026 Adawe Gas. All Rights Reserved.
-</footer>
+<!-- Reviews -->
+<section class="section" id="reviews">
+  <div class="container text-center">
+    <h2>Customer Reviews</h2>
+    <div class="review-card">James K. - Nairobi: Fast and reliable delivery. Highly recommend Adawe Gas!</div>
+    <div class="review-card">Mary A. - Mombasa: The gas arrived the same day. Excellent service.</div>
+    <div class="review-card">David O. - Kisumu: Very professional and trustworthy partners.</div>
+  </div>
+</section>
 
+<!-- Order Form -->
+<section class="section bg-light" id="order">
+  <div class="container text-center">
+    <h2>Place Your Order</h2>
+    <form id="orderForm">
+      <input type="text" id="name" placeholder="Your Name" required class="form-control mb-2">
+      <input type="text" id="location" placeholder="Delivery Location" required class="form-control mb-2">
+      <input type="number" id="quantity" placeholder="Quantity" required class="form-control mb-2">
+      <select id="unit" class="form-select mb-2">
+        <option value="Cylinder">Cylinder(s)</option>
+        <option value="Kgs">Kgs</option>
+      </select>
+      <button type="submit" class="btn btn-success">Place Order</button>
+    </form>
+  </div>
+</section>
+
+<script>
+document.getElementById('orderForm').addEventListener('submit', function(e){
+  e.preventDefault();
+  var name=document.getElementById('name').value;
+  var location=document.getElementById('location').value;
+  var quantity=document.getElementById('quantity').value;
+  var unit=document.getElementById('unit').value;
+  var message=Hello Adawe Gas, I would like to order ${quantity} ${unit}. Name: ${name}, Location: ${location};
+  window.open('https://wa.me/254727015434?text='+encodeURIComponent(message), '_blank');
+});
+</script>
+
+<!-- Dashboard -->
+<section class="section" id="dashboard">
+  <div class="container text-center">
+    <h2>Top 5 Partners</h2>
+    <table class="table table-striped">
+      <thead><tr><th>Rank</th><th>Partner Name</th><th>Orders Delivered</th></tr></thead>
+      <tbody id="topPartners"></tbody>
+    </table>
+    <h2>Growth Tracking</h2>
+    <canvas id="growthChart" width="600" height="300"></canvas>
+  </div>
+</section>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
 const SHEET_ID='1ULLQtsovhUizcbSL0b0X1R-xuh5DDLTHpDT83-eV4ms';
 const API_KEY='AIzaSyBjGJ9yJSe7k3uVZ8JEoyIBotNEpyfZ9cc';
+const RANGE='Orders!A:C';
 
-async function loadSheetData(){
-const url=`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/Sheet1!A2:A?key=${API_KEY}`;
-const res=await fetch(url);
-const data=await res.json();
-document.getElementById('orders').innerText=data.values?data.values.length:0;
+async function fetchSheetData(){
+  try{
+    let res=await fetch(https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY});
+    let data=await res.json();
+    return data.values;
+  }catch(err){console.error(err);return[];}
 }
-loadSheetData();
 
-let index=0;
-const reviews=document.querySelectorAll('.review');
-setInterval(()=>{
-reviews[index].classList.remove('active');
-index=(index+1)%reviews.length;
-reviews[index].classList.add('active');
-},3000);
+function updateTopPartners(data){
+  let map={};
+  data.slice(1).forEach(r=>{let n=r[0];let o=parseInt(r[1])||0; map[n]=(map[n]||0)+o;});
+  let top=Object.entries(map).sort((a,b)=>b[1]-a[1]).slice(0,5);
+  let tbody=document.getElementById('topPartners'); tbody.innerHTML='';
+  top.forEach(([name,orders],i)=>{let tr=document.createElement('tr'); tr.innerHTML=<td>${i+1}</td><td>${name}</td><td>${orders}</td>; tbody.appendChild(tr);});
+  return top.map(p=>p[1]);
+}
+
+async function updateDashboard(){
+  let data=await fetchSheetData();
+  let orders=updateTopPartners(data);
+  let ctx=document.getElementById('growthChart').getContext('2d');
+  let chartData={labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Orders Delivered',data:orders.length?orders:[5,8,12,15,18,22],backgroundColor:'rgba(15,123,63,0.2)',borderColor:'rgba(15,123,63,1)',borderWidth:2,tension:0.3,fill:true}]};
+  if(window.growthChartInstance){window.growthChartInstance.data=chartData; window.growthChartInstance.update();}
+  else{window.growthChartInstance=new Chart(ctx,{type:'line',data:chartData,options:{responsive:true,plugins:{legend:{display:true,position:'top'}},scales:{y:{beginAtZero:true}}}});}
+}
+
+updateDashboard(); setInterval(updateDashboard,5*60*1000);
 </script>
 
+<!-- Payment Options -->
+<section class="section bg-light" id="payments">
+  <div class="container text-center">
+    <h2>Payment Methods</h2>
+    <p>M-Pesa Paybill, Till Number, Cash on Delivery, Bank Transfer</p>
+  </div>
+</section>
+
+<!-- Contact -->
+<section class="section" id="contact">
+  <div class="container text-center">
+    <h2>Contact Us</h2>
+    <p>Phone / WhatsApp: 0727 015 434</p>
+    <p>Email: adaweadawe56@gmail.com</p>
+    <p>Service Area: Kenya</p>
+    <a href="https://wa.me/254727015434" class="btn btn-success">Chat on WhatsApp</a>
+  </div>
+</section>
+
+<!-- Location -->
+<section class="section bg-light" id="location">
+  <div class="container text-center">
+    <h2>Our Location</h2>
+    <iframe src="https://www.google.com/maps/embed?..." allowfullscreen loading="lazy"></iframe>
+  </div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>Adawe Gas | 📍 Kenya | 📱 0727 015 434 | 📧 adaweadawe56@gmail.com</p>
+  <p>🌐 <a href="https://adaweadawe56-stack.github.io/Adawe-Gas/" target="_blank" style="color:white; text-decoration:underline;">Website</a></p>
+  <p>© 2026 Adawe Gas. All Rights Reserved.</p>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.1/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
