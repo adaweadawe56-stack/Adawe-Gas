@@ -21,6 +21,7 @@ body { font-family: Arial, sans-serif; scroll-behavior: smooth; }
 .table th { background:#0f7b3f; color:white; }
 .review-card { background:#f4f4f4; padding:20px; margin:10px 0; border-radius:8px; }
 iframe { width:100%; height:300px; border:0; border-radius:8px; }
+img.brand-visual { max-width:200px; margin:10px auto; display:block; }
 </style>
 </head>
 <body>
@@ -56,6 +57,8 @@ iframe { width:100%; height:300px; border:0; border-radius:8px; }
   <a href="#order" class="btn btn-outline-light me-2">Order Now</a>
   <a href="#partners" class="btn btn-outline-light me-2">Become a Partner</a>
   <a href="https://wa.me/254727015434" target="_blank" class="btn btn-success">WhatsApp Us</a>
+  <!-- Brand visual example -->
+  <img src="file_000000000fdc71f7a6789f6c55b471c4" alt="Brand Visual" class="brand-visual">
 </section>
 
 <!-- Services -->
@@ -149,9 +152,10 @@ document.getElementById('orderForm').addEventListener('submit', function(e){
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-const SHEET_ID='YOUR_GOOGLE_SHEET_ID';
-const API_KEY='YOUR_API_KEY';
+const SHEET_ID='1ULLQtsovhUizcbSL0b0X1R-xuh5DDLTHpDT83-eV4ms';
+const API_KEY='AIzaSyBjGJ9yJSe7k3uVZ8JEoyIBotNEpyfZ9cc';
 const RANGE='Orders!A:C';
+
 async function fetchSheetData(){
   try{
     let res=await fetch(`https://sheets.googleapis.com/v4/spreadsheets/${SHEET_ID}/values/${RANGE}?key=${API_KEY}`);
@@ -159,6 +163,7 @@ async function fetchSheetData(){
     return data.values;
   }catch(err){console.error(err);return[];}
 }
+
 function updateTopPartners(data){
   let map={};
   data.slice(1).forEach(r=>{let n=r[0];let o=parseInt(r[1])||0; map[n]=(map[n]||0)+o;});
@@ -167,13 +172,16 @@ function updateTopPartners(data){
   top.forEach(([name,orders],i)=>{let tr=document.createElement('tr'); tr.innerHTML=`<td>${i+1}</td><td>${name}</td><td>${orders}</td>`; tbody.appendChild(tr);});
   return top.map(p=>p[1]);
 }
+
 async function updateDashboard(){
   let data=await fetchSheetData();
   let orders=updateTopPartners(data);
   let ctx=document.getElementById('growthChart').getContext('2d');
   let chartData={labels:['Jan','Feb','Mar','Apr','May','Jun'],datasets:[{label:'Orders Delivered',data:orders.length?orders:[5,8,12,15,18,22],backgroundColor:'rgba(15,123,63,0.2)',borderColor:'rgba(15,123,63,1)',borderWidth:2,tension:0.3,fill:true}]};
-  if(window.growthChartInstance){window.growthChartInstance.data=chartData; window.growthChartInstance.update();}else{window.growthChartInstance=new Chart(ctx,{type:'line',data:chartData,options:{responsive:true,plugins:{legend:{display:true,position:'top'}},scales:{y:{beginAtZero:true}}}});}
+  if(window.growthChartInstance){window.growthChartInstance.data=chartData; window.growthChartInstance.update();}
+  else{window.growthChartInstance=new Chart(ctx,{type:'line',data:chartData,options:{responsive:true,plugins:{legend:{display:true,position:'top'}},scales:{y:{beginAtZero:true}}}});}
 }
+
 updateDashboard(); setInterval(updateDashboard,5*60*1000);
 </script>
 
