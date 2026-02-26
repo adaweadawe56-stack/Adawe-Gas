@@ -133,54 +133,25 @@ iframe {
     <p>3️⃣ Gas delivered safely to your location</p>
   </div>
 </section>
+<script>
+document.getElementById("orderForm").addEventListener("submit", function(e){
+  e.preventDefault();
 
-<section class="section bg-light" id="partners">
-  <div class="container text-center">
-    <h2>Become a Partner</h2>
-    <p>Are you a licensed LPG supplier? Join Adawe Gas and grow your business.</p>
-    <a href="https://wa.me/254727015434" class="btn btn-success">Join as Partner</a>
-  </div>
-</section>
+  const name = document.getElementById("name").value;
+  const loc = document.getElementById("location").value;
+  const qty = document.getElementById("quantity").value;
+  const unit = document.getElementById("unit").value;
+  const brand = document.getElementById("brand").value;
 
-<section class="section" id="reviews">
-  <div class="container">
-    <h2 class="text-center">Customer Reviews</h2>
-    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ James – Nairobi: Fast & reliable service.</div>
-    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ Mary – Mombasa: Same day delivery!</div>
-    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ David – Kisumu: Very professional.</div>
-  </div>
-</section>
+  const msg = `Hello Adawe Gas,%0A
+Name: ${name}%0A
+Location: ${loc}%0A
+Brand: ${brand}%0A
+Order: ${qty} ${unit}`;
 
-<section class="section bg-light" id="order">
-  <div class="container">
-    <h2 class="text-center">Place Order</h2>
-
-    <form id="orderForm" class="col-md-6 mx-auto">
-      <input class="form-control mb-2" id="name" placeholder="Name" required>
-      <input class="form-control mb-2" id="location" placeholder="Location" required>
-      <input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-      <select class="form-select mb-3" id="unit">
-        <option>Cylinder(s)</option>
-        <option>Kgs</option><select class="form-select mb-2" id="brand" required>
-  <option value="">Select Gas Brand</option>
-  <option>K-Gas</option>
-  <option>AfriGas</option>
-  <option>Pro Gas</option>
-  <option>TotalEnergies</option>
-  <option>Hashi Gas</option>
-  <option>Lake Gas</option>
-  <option>Oil Libya (OLA Gas)</option>
-  <option>Rubis Gas</option>
-  <option>Taifa Gas</option>
-  <option>Marangi</option>
-  <option>National Oil Gas</option>
-</select>
-        </select>
-      <button class="btn btn-success w-100">Send via WhatsApp</button>
-    </form>
-  </div>
-</section>
-
+  window.open("https://wa.me/254727015434?text=" + msg, "_blank");
+});
+</script>
 <section class="section bg-light" id="contact">
   <div class="container text-center">
     <h2>Contact</h2>
