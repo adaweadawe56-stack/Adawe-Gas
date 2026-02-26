@@ -3,17 +3,33 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas Admin Dashboard</title>
+<title>Adawe Gas Admin</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
 body { background:#f4f4f4; font-family:Arial; }
 .header { background:#0f7b3f; color:white; padding:20px; text-align:center; }
 .card { border-radius:12px; }
+#dashboard { display:none; }
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN SECTION -->
+<div class="container mt-5" id="loginSection">
+<div class="card col-md-4 mx-auto p-4 shadow">
+<h4 class="text-center">🔐 Admin Login</h4>
+
+<input type="password" id="password" class="form-control mb-3" placeholder="Enter Admin Password">
+<button class="btn btn-success w-100" onclick="login()">Login</button>
+
+<p class="text-danger mt-2 text-center" id="error"></p>
+</div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard">
 
 <div class="header">
 <h2>Adawe Gas – Admin Dashboard</h2>
@@ -66,7 +82,25 @@ body { background:#f4f4f4; font-family:Arial; }
 </table>
 
 </div>
+</div>
 
+<script>
+function login() {
+const pass = document.getElementById("password").value;
+
+// Halkan ku beddel password-kaaga
+if(pass === "Adawe2026!") {
+
+document.getElementById("loginSection").style.display="none";
+document.getElementById("dashboard").style.display="block";
+
+} else {
+document.getElementById("error").innerText="Wrong Password!";
+}
+}
+</script>
+
+<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -84,45 +118,43 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ORDERS
 const ordersTable = document.getElementById("ordersTable");
 const orderCount = document.getElementById("orderCount");
 
 onSnapshot(collection(db, "orders"), (snapshot) => {
-ordersTable.innerHTML = "";
-orderCount.innerText = snapshot.size;
+ordersTable.innerHTML="";
+orderCount.innerText=snapshot.size;
 
-snapshot.forEach(doc => {
-const data = doc.data();
-ordersTable.innerHTML += `
+snapshot.forEach(doc=>{
+const d=doc.data();
+ordersTable.innerHTML+=`
 <tr>
-<td>${data.name}</td>
-<td>${data.location}</td>
-<td>${data.brand}</td>
-<td>${data.quantity} ${data.unit}</td>
-<td>${new Date(data.createdAt.seconds*1000).toLocaleString()}</td>
+<td>${d.name}</td>
+<td>${d.location}</td>
+<td>${d.brand}</td>
+<td>${d.quantity} ${d.unit}</td>
+<td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
 </tr>
 `;
 });
 });
 
-// PARTNERS
-const partnersTable = document.getElementById("partnersTable");
-const partnerCount = document.getElementById("partnerCount");
+const partnersTable=document.getElementById("partnersTable");
+const partnerCount=document.getElementById("partnerCount");
 
-onSnapshot(collection(db, "partners"), (snapshot) => {
-partnersTable.innerHTML = "";
-partnerCount.innerText = snapshot.size;
+onSnapshot(collection(db,"partners"),(snapshot)=>{
+partnersTable.innerHTML="";
+partnerCount.innerText=snapshot.size;
 
-snapshot.forEach(doc => {
-const data = doc.data();
-partnersTable.innerHTML += `
+snapshot.forEach(doc=>{
+const d=doc.data();
+partnersTable.innerHTML+=`
 <tr>
-<td>${data.name}</td>
-<td>${data.location}</td>
-<td>${data.phone}</td>
-<td>${data.brand}</td>
-<td>${new Date(data.createdAt.seconds*1000).toLocaleString()}</td>
+<td>${d.name}</td>
+<td>${d.location}</td>
+<td>${d.phone}</td>
+<td>${d.brand}</td>
+<td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
 </tr>
 `;
 });
