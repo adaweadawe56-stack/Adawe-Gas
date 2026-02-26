@@ -16,14 +16,12 @@ body { background:#f4f4f4; font-family:Arial; }
 
 <body>
 
-<!-- LOGIN SECTION -->
+<!-- LOGIN -->
 <div class="container mt-5" id="loginSection">
 <div class="card col-md-4 mx-auto p-4 shadow">
 <h4 class="text-center">🔐 Admin Login</h4>
-
 <input type="password" id="password" class="form-control mb-3" placeholder="Enter Admin Password">
 <button class="btn btn-success w-100" onclick="login()">Login</button>
-
 <p class="text-danger mt-2 text-center" id="error"></p>
 </div>
 </div>
@@ -62,6 +60,7 @@ body { background:#f4f4f4; font-family:Arial; }
 <th>Brand</th>
 <th>Quantity</th>
 <th>Date</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody id="ordersTable"></tbody>
@@ -76,6 +75,7 @@ body { background:#f4f4f4; font-family:Arial; }
 <th>Phone</th>
 <th>Brand</th>
 <th>Date</th>
+<th>Action</th>
 </tr>
 </thead>
 <tbody id="partnersTable"></tbody>
@@ -88,12 +88,10 @@ body { background:#f4f4f4; font-family:Arial; }
 function login() {
 const pass = document.getElementById("password").value;
 
-// Halkan ku beddel password-kaaga
+// BADDEL PASSWORD-KA HADDII AAD RABTO
 if(pass === "Adawe2026!") {
-
 document.getElementById("loginSection").style.display="none";
 document.getElementById("dashboard").style.display="block";
-
 } else {
 document.getElementById("error").innerText="Wrong Password!";
 }
@@ -104,7 +102,7 @@ document.getElementById("error").innerText="Wrong Password!";
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
@@ -118,6 +116,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// DELETE FUNCTION
+async function deleteItem(collectionName, id) {
+if(confirm("Are you sure you want to delete?")) {
+await deleteDoc(doc(db, collectionName, id));
+}
+}
+window.deleteItem = deleteItem;
+
+// ORDERS
 const ordersTable = document.getElementById("ordersTable");
 const orderCount = document.getElementById("orderCount");
 
@@ -125,8 +132,8 @@ onSnapshot(collection(db, "orders"), (snapshot) => {
 ordersTable.innerHTML="";
 orderCount.innerText=snapshot.size;
 
-snapshot.forEach(doc=>{
-const d=doc.data();
+snapshot.forEach(docSnap=>{
+const d=docSnap.data();
 ordersTable.innerHTML+=`
 <tr>
 <td>${d.name}</td>
@@ -134,11 +141,16 @@ ordersTable.innerHTML+=`
 <td>${d.brand}</td>
 <td>${d.quantity} ${d.unit}</td>
 <td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
+<td>
+<button class="btn btn-danger btn-sm"
+onclick="deleteItem('orders','${docSnap.id}')">Delete</button>
+</td>
 </tr>
 `;
 });
 });
 
+// PARTNERS
 const partnersTable=document.getElementById("partnersTable");
 const partnerCount=document.getElementById("partnerCount");
 
@@ -146,8 +158,8 @@ onSnapshot(collection(db,"partners"),(snapshot)=>{
 partnersTable.innerHTML="";
 partnerCount.innerText=snapshot.size;
 
-snapshot.forEach(doc=>{
-const d=doc.data();
+snapshot.forEach(docSnap=>{
+const d=docSnap.data();
 partnersTable.innerHTML+=`
 <tr>
 <td>${d.name}</td>
@@ -155,6 +167,10 @@ partnersTable.innerHTML+=`
 <td>${d.phone}</td>
 <td>${d.brand}</td>
 <td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
+<td>
+<button class="btn btn-danger btn-sm"
+onclick="deleteItem('partners','${docSnap.id}')">Delete</button>
+</td>
 </tr>
 `;
 });
