@@ -12,22 +12,49 @@
 
 <style>
 body { font-family: Arial, sans-serif; scroll-behavior:smooth; }
+
 .navbar { background:#0f7b3f; }
 .navbar a { color:#fff !important; font-weight:600; }
+
 .hero {
   background: linear-gradient(135deg,#0f5132,#198754);
   color:white;
   padding:110px 20px;
   text-align:center;
 }
+
 .hero h1 { font-size:3rem; }
 .hero p { font-size:1.2rem; }
+
 .section { padding:70px 20px; }
 .section h2 { color:#0f7b3f; margin-bottom:30px; }
-.service-box { background:#f8f9fa; padding:25px; border-radius:10px; }
-.review-card { background:#f4f4f4; padding:20px; border-radius:8px; margin-bottom:15px; }
-.footer { background:#0f7b3f; color:white; text-align:center; padding:20px; }
-iframe { width:100%; height:300px; border:0; border-radius:10px; }
+
+.service-box {
+  background:#f8f9fa;
+  padding:25px;
+  border-radius:10px;
+}
+
+.review-card {
+  background:#f4f4f4;
+  padding:20px;
+  border-radius:8px;
+  margin-bottom:15px;
+}
+
+.footer {
+  background:#0f7b3f;
+  color:white;
+  text-align:center;
+  padding:20px;
+}
+
+iframe {
+  width:100%;
+  height:300px;
+  border:0;
+  border-radius:10px;
+}
 </style>
 </head>
 
@@ -49,6 +76,7 @@ iframe { width:100%; height:300px; border:0; border-radius:10px; }
         <li class="nav-item"><a class="nav-link" href="#partners">Partners</a></li>
         <li class="nav-item"><a class="nav-link" href="#reviews">Reviews</a></li>
         <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
         <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
       </ul>
     </div>
@@ -58,9 +86,69 @@ iframe { width:100%; height:300px; border:0; border-radius:10px; }
 <section class="hero" id="home">
   <h1>Kenya’s Fastest Growing LPG Delivery Network</h1>
   <p>Fast • Safe • Reliable Gas Delivery Across Kenya</p>
+
   <a href="#order" class="btn btn-light me-2">Order Now</a>
   <a href="#partners" class="btn btn-outline-light me-2">Become a Partner</a>
   <a href="https://wa.me/254727015434" class="btn btn-success">WhatsApp</a>
+</section>
+
+<section class="section" id="services">
+  <div class="container">
+    <h2 class="text-center">Our Services</h2>
+    <div class="row g-4">
+      <div class="col-md-4">
+        <div class="service-box text-center">
+          <h5>LPG Cylinder Delivery</h5>
+          <p>Fast delivery to homes & businesses.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-box text-center">
+          <h5>Partner Network</h5>
+          <p>Licensed gas suppliers across Kenya.</p>
+        </div>
+      </div>
+      <div class="col-md-4">
+        <div class="service-box text-center">
+          <h5>Same-Day Delivery</h5>
+          <p>Available in selected locations.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section bg-light" id="about">
+  <div class="container text-center">
+    <h2>About Adawe Gas</h2>
+    <p>Adawe Gas connects customers to trusted LPG suppliers for fast and safe gas delivery across Kenya.</p>
+  </div>
+</section>
+
+<section class="section" id="how">
+  <div class="container text-center">
+    <h2>How It Works</h2>
+    <p>1️⃣ Place your order online or WhatsApp</p>
+    <p>2️⃣ We assign nearest licensed partner</p>
+    <p>3️⃣ Gas delivered safely to your location</p>
+  </div>
+</section>
+
+<section class="section bg-light" id="partners">
+  <div class="container text-center">
+    <h2>Become a Partner</h2>
+    <p>Are you a licensed LPG supplier? Join Adawe Gas and grow your business.</p>
+    <a href="https://wa.me/254727015434" class="btn btn-success">Join as Partner</a>
+  </div>
+</section>
+
+<section class="section" id="reviews">
+  <div class="container">
+    <h2 class="text-center">Customer Reviews</h2>
+    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ James – Nairobi: Fast & reliable service.</div>
+    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ Mary – Mombasa: Same day delivery!</div>
+    <div class="review-card">⭐️⭐️⭐️⭐️⭐️ David – Kisumu: Very professional.</div>
+  </div>
 </section>
 
 <section class="section bg-light" id="order">
@@ -70,30 +158,11 @@ iframe { width:100%; height:300px; border:0; border-radius:10px; }
     <form id="orderForm" class="col-md-6 mx-auto">
       <input class="form-control mb-2" id="name" placeholder="Name" required>
       <input class="form-control mb-2" id="location" placeholder="Location" required>
-
-      <!-- BRAND DROPDOWN -->
-      <select class="form-select mb-2" id="brand" required>
-        <option value="">Select Gas Brand</option>
-        <option>K-Gas</option>
-        <option>AfriGas</option>
-        <option>Pro Gas</option>
-        <option>TotalEnergies</option>
-        <option>Hashi Gas</option>
-        <option>Lake Gas</option>
-        <option>Oil Libya (OLA Gas)</option>
-        <option>Rubis Gas</option>
-        <option>Taifa Gas</option>
-        <option>Marangi</option>
-        <option>National Oil Gas</option>
-      </select>
-
       <input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-
       <select class="form-select mb-3" id="unit">
-        <option>Kgs</option>
         <option>Cylinder(s)</option>
+        <option>Kgs</option>
       </select>
-
       <button class="btn btn-success w-100">Send via WhatsApp</button>
     </form>
   </div>
@@ -119,11 +188,10 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
   e.preventDefault();
   const name = document.getElementById("name").value;
   const loc = document.getElementById("location").value;
-  const brand = document.getElementById("brand").value;
   const qty = document.getElementById("quantity").value;
   const unit = document.getElementById("unit").value;
 
-  const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${loc}%0ABrand: ${brand}%0AOrder: ${qty} ${unit}`;
+  const msg = Hello Adawe Gas,%0AName: ${name}%0ALocation: ${loc}%0AOrder: ${qty} ${unit};
   window.open("https://wa.me/254727015434?text=" + msg, "_blank");
 });
 </script>
