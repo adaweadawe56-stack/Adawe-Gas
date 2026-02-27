@@ -90,18 +90,10 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <input class="form-control mb-2" id="pphone" placeholder="Phone" required>
 
 <select class="form-select mb-3" id="pbrand" required>
-<option value="">Select Brand</option>
-<option>K-Gas</option>
-<option>AfriGas</option>
-<option>Pro Gas</option>
-<option>TotalEnergies</option>
-<option>Hashi Gas</option>
-<option>Lake Gas</option>
-<option>Oil Libya (OLA Gas)</option>
-<option>Rubis Gas</option>
-<option>Taifa Gas</option>
-<option>Marangi</option>
-<option>National Oil Gas</option>
+<option value="">Select Business Type</option>
+<option value="Wholesale">Wholesale</option>
+<option value="Retail">Retail</option>
+<option value="Wholesale & Retail">Wholesale & Retail</option>
 </select>
 
 <button class="btn btn-primary w-100">Register Partner</button>
@@ -123,14 +115,13 @@ body { font-family: Arial; scroll-behavior:smooth; }
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- FIREBASE -->
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+  apiKey: "YOUR_API_KEY",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
   storageBucket: "adawe-gas-system-82187.firebasestorage.app",
@@ -169,10 +160,10 @@ e.preventDefault();
 const name = document.getElementById("pname").value;
 const location = document.getElementById("plocation").value;
 const phone = document.getElementById("pphone").value;
-const brand = document.getElementById("pbrand").value;
+const businessType = document.getElementById("pbrand").value;
 
 await addDoc(collection(db, "partners"), {
-name, location, phone, brand,
+name, location, phone, businessType,
 createdAt: new Date()
 });
 
