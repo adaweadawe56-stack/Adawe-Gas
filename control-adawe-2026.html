@@ -1,202 +1,218 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas – Admin Dashboard</title>
+  <meta charset="UTF-8" />
+  <title>Adawe Gas Admin Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<style>
-body { background:#f8f9fa; font-family:Arial; }
-.header { background:white; padding:20px; border-radius:10px; margin-bottom:20px; box-shadow:0 2px 10px rgba(0,0,0,0.05);}
-.card-stat { padding:25px; border-radius:12px; color:white; box-shadow:0 4px 15px rgba(0,0,0,0.1);}
-.gradient1 { background:linear-gradient(45deg,#198754,#20c997);}
-.gradient2 { background:linear-gradient(45deg,#0d6efd,#3d8bfd);}
-.gradient3 { background:linear-gradient(45deg,#ffc107,#ffca2c);}
-.gradient4 { background:linear-gradient(45deg,#6610f2,#8540f5);}
-table { background:white; }
-.login-box { max-width:400px; margin:100px auto; background:white; padding:30px; border-radius:12px; box-shadow:0 4px 20px rgba(0,0,0,0.1);}
-</style>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background: #f4f6f8;
+    }
+    header {
+      background: #0b6623;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+    .container {
+      padding: 20px;
+      max-width: 1100px;
+      margin: auto;
+    }
+    .hidden {
+      display: none;
+    }
+    .card {
+      background: white;
+      padding: 15px;
+      margin-bottom: 20px;
+      border-radius: 6px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px 0;
+      width: 100%;
+    }
+    button {
+      background: #0b6623;
+      color: white;
+      border: none;
+      cursor: pointer;
+    }
+    button:hover {
+      opacity: 0.9;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    table th, table td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    table th {
+      background: #e8f5e9;
+    }
+    .logout {
+      background: darkred;
+      margin-top: 10px;
+    }
+  </style>
 </head>
-
 <body>
 
-<div class="container mt-4">
+<header>
+  <h1>Adawe Gas – Admin Dashboard</h1>
+</header>
 
-<div id="loginSection" class="login-box">
-<h4 class="text-center mb-3">Admin Login</h4>
-<input type="email" id="email" class="form-control mb-2" placeholder="Email">
-<input type="password" id="password" class="form-control mb-3" placeholder="Password">
-<button class="btn btn-success w-100" id="loginBtn">Login</button>
+<div class="container">
+
+  <!-- LOGIN -->
+  <div id="loginCard" class="card">
+    <h2>Admin Login</h2>
+    <input type="email" id="email" placeholder="Admin Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Login</button>
+    <p id="loginError" style="color:red;"></p>
+  </div>
+
+  <!-- DASHBOARD -->
+  <div id="dashboard" class="hidden">
+
+    <div class="card">
+      <h2>Welcome, Admin</h2>
+      <button class="logout" onclick="logout()">Logout</button>
+    </div>
+
+    <!-- ORDERS -->
+    <div class="card">
+      <h3>Orders</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Quantity</th>
+            <th>Unit</th>
+            <th>Location</th>
+            <th>Date</th>
+          </tr>
+        </thead>
+        <tbody id="ordersTable"></tbody>
+      </table>
+    </div>
+
+    <!-- PARTNERS -->
+    <div class="card">
+      <h3>Partners</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Location</th>
+            <th>Joined</th>
+          </tr>
+        </thead>
+        <tbody id="partnersTable"></tbody>
+      </table>
+    </div>
+
+  </div>
 </div>
 
-<div id="dashboardSection" style="display:none;">
+<script>
+  // 🔥 FIREBASE CONFIG (ISLA KAN AAD HORE U ISTICMAALAY)
+  const firebaseConfig = {
+    apiKey: "PASTE_API_KEY_HERE",
+    authDomain: "PASTE_AUTH_DOMAIN",
+    projectId: "PASTE_PROJECT_ID",
+    storageBucket: "PASTE_STORAGE_BUCKET",
+    messagingSenderId: "PASTE_SENDER_ID",
+    appId: "PASTE_APP_ID"
+  };
 
-<div class="header d-flex justify-content-between align-items-center">
-<h4>Adawe Gas Admin Dashboard</h4>
-<button class="btn btn-danger" id="logoutBtn">Logout</button>
-</div>
+  firebase.initializeApp(firebaseConfig);
 
-<div class="row g-3 mb-4">
-<div class="col-md-3">
-<div class="card-stat gradient1">
-<h6>Total Orders</h6>
-<h3 id="totalOrders">0</h3>
-</div>
-</div>
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-<div class="col-md-3">
-<div class="card-stat gradient2">
-<h6>Total Partners</h6>
-<h3 id="totalPartners">0</h3>
-</div>
-</div>
+  // LOGIN
+  function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-<div class="col-md-3">
-<div class="card-stat gradient3">
-<h6>Wholesale</h6>
-<h3 id="wholesaleCount">0</h3>
-</div>
-</div>
+    auth.signInWithEmailAndPassword(email, password)
+      .catch(err => {
+        document.getElementById("loginError").innerText = err.message;
+      });
+  }
 
-<div class="col-md-3">
-<div class="card-stat gradient4">
-<h6>Retail</h6>
-<h3 id="retailCount">0</h3>
-</div>
-</div>
-</div>
+  // LOGOUT
+  function logout() {
+    auth.signOut();
+  }
 
-<h5>Orders</h5>
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>Name</th>
-<th>Location</th>
-<th>Brand</th>
-<th>Quantity</th>
-<th>Date</th>
-</tr>
-</thead>
-<tbody id="ordersTable"></tbody>
-</table>
+  // AUTH STATE
+  auth.onAuthStateChanged(user => {
+    if (user) {
+      document.getElementById("loginCard").classList.add("hidden");
+      document.getElementById("dashboard").classList.remove("hidden");
+      loadOrders();
+      loadPartners();
+    } else {
+      document.getElementById("dashboard").classList.add("hidden");
+      document.getElementById("loginCard").classList.remove("hidden");
+    }
+  });
 
-<h5>Partners</h5>
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>Company</th>
-<th>Location</th>
-<th>Phone</th>
-<th>Business Type</th>
-<th>Date</th>
-</tr>
-</thead>
-<tbody id="partnersTable"></tbody>
-</table>
+  // LOAD ORDERS
+  function loadOrders() {
+    db.collection("orders").orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        const table = document.getElementById("ordersTable");
+        table.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          table.innerHTML += `
+            <tr>
+              <td>${d.name || ""}</td>
+              <td>${d.brand || ""}</td>
+              <td>${d.quantity || ""}</td>
+              <td>${d.unit || ""}</td>
+              <td>${d.location || ""}</td>
+              <td>${d.createdAt?.toDate().toLocaleString() || ""}</td>
+            </tr>`;
+        });
+      });
+  }
 
-</div>
-</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-};
-
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
-
-const loginSection = document.getElementById("loginSection");
-const dashboardSection = document.getElementById("dashboardSection");
-
-document.getElementById("loginBtn").onclick = async () => {
-const email = document.getElementById("email").value.trim();
-const password = document.getElementById("password").value.trim();
-
-try {
-await signInWithEmailAndPassword(auth, email, password);
-} catch (error) {
-alert(error.message);
-}
-};
-
-document.getElementById("logoutBtn").onclick = async () => {
-await signOut(auth);
-};
-
-onAuthStateChanged(auth, (user) => {
-if (user) {
-loginSection.style.display = "none";
-dashboardSection.style.display = "block";
-loadData();
-} else {
-loginSection.style.display = "block";
-dashboardSection.style.display = "none";
-}
-});
-
-function loadData() {
-
-onSnapshot(collection(db, "orders"), snapshot => {
-document.getElementById("ordersTable").innerHTML = "";
-document.getElementById("totalOrders").innerText = snapshot.size;
-
-snapshot.forEach(doc => {
-const data = doc.data();
-document.getElementById("ordersTable").innerHTML += `
-<tr>
-<td>${data.name || ""}</td>
-<td>${data.location || ""}</td>
-<td>${data.brand || ""}</td>
-<td>${data.quantity || ""} ${data.unit || ""}</td>
-<td>${data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleDateString() : ""}</td>
-</tr>`;
-});
-});
-
-onSnapshot(collection(db, "partners"), snapshot => {
-document.getElementById("partnersTable").innerHTML = "";
-document.getElementById("totalPartners").innerText = snapshot.size;
-
-let wholesale=0;
-let retail=0;
-
-snapshot.forEach(doc => {
-const data = doc.data();
-
-if(data.businessType==="wholesale") wholesale++;
-if(data.businessType==="retail") retail++;
-if(data.businessType==="wholesale&retail"){ wholesale++; retail++; }
-
-document.getElementById("partnersTable").innerHTML += `
-<tr>
-<td>${data.name || ""}</td>
-<td>${data.location || ""}</td>
-<td>${data.phone || ""}</td>
-<td>${data.businessType || ""}</td>
-<td>${data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleDateString() : ""}</td>
-</tr>`;
-});
-
-document.getElementById("wholesaleCount").innerText = wholesale;
-document.getElementById("retailCount").innerText = retail;
-
-});
-
-}
-
+  // LOAD PARTNERS
+  function loadPartners() {
+    db.collection("partners").orderBy("createdAt", "desc")
+      .onSnapshot(snapshot => {
+        const table = document.getElementById("partnersTable");
+        table.innerHTML = "";
+        snapshot.forEach(doc => {
+          const d = doc.data();
+          table.innerHTML += `
+            <tr>
+              <td>${d.name || ""}</td>
+              <td>${d.location || ""}</td>
+              <td>${d.createdAt?.toDate().toLocaleString() || ""}</td>
+            </tr>`;
+        });
+      });
+  }
 </script>
 
 </body>
