@@ -106,12 +106,12 @@ import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut } from
 import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG50aVk1nr8c3hz-_liTgiUIsw",
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
   storageBucket: "adawe-gas-system-82187.firebasestorage.app",
-  messagingSenderId: "644303665326",
-  appId: "1:644303665326:web:bacf9e5db0d7787f705f67"
+  messagingSenderId: "644303663526",
+  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -122,13 +122,13 @@ const loginSection = document.getElementById("loginSection");
 const dashboardSection = document.getElementById("dashboardSection");
 
 document.getElementById("loginBtn").onclick = async () => {
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
+const email = document.getElementById("email").value.trim();
+const password = document.getElementById("password").value.trim();
 
 try {
 await signInWithEmailAndPassword(auth, email, password);
-} catch {
-alert("Login Failed");
+} catch (error) {
+alert(error.message);
 }
 };
 
@@ -157,10 +157,10 @@ snapshot.forEach(doc => {
 const data = doc.data();
 document.getElementById("ordersTable").innerHTML += `
 <tr>
-<td>${data.name}</td>
-<td>${data.location}</td>
-<td>${data.brand}</td>
-<td>${data.quantity} ${data.unit}</td>
+<td>${data.name || ""}</td>
+<td>${data.location || ""}</td>
+<td>${data.brand || ""}</td>
+<td>${data.quantity || ""} ${data.unit || ""}</td>
 <td>${data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleDateString() : ""}</td>
 </tr>`;
 });
@@ -178,17 +178,14 @@ const data = doc.data();
 
 if(data.businessType==="wholesale") wholesale++;
 if(data.businessType==="retail") retail++;
-if(data.businessType==="wholesale&retail"){
-wholesale++;
-retail++;
-}
+if(data.businessType==="wholesale&retail"){ wholesale++; retail++; }
 
 document.getElementById("partnersTable").innerHTML += `
 <tr>
-<td>${data.name}</td>
-<td>${data.location}</td>
-<td>${data.phone}</td>
-<td>${data.businessType}</td>
+<td>${data.name || ""}</td>
+<td>${data.location || ""}</td>
+<td>${data.phone || ""}</td>
+<td>${data.businessType || ""}</td>
 <td>${data.createdAt ? new Date(data.createdAt.seconds*1000).toLocaleDateString() : ""}</td>
 </tr>`;
 });
