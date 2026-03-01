@@ -4,9 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adawe Gas – LPG Delivery Kenya</title>
-
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
 <style>
 body { font-family: Arial; scroll-behavior:smooth; }
 .navbar { background:#0f7b3f; }
@@ -14,21 +12,23 @@ body { font-family: Arial; scroll-behavior:smooth; }
 .section { padding:80px 20px; }
 .hero { background:linear-gradient(135deg,#0f5132,#198754); color:white; padding:120px 20px; text-align:center; }
 .footer { background:#0f7b3f; color:white; text-align:center; padding:20px; }
+table { margin-top:20px; }
+.status-pending { color: green; font-weight: bold; }
+.status-delivered { color: blue; font-weight: bold; }
 </style>
 </head>
-
 <body>
 
 <nav class="navbar navbar-expand-lg fixed-top">
 <div class="container">
 <a class="navbar-brand text-white" href="#home">Adawe Gas</a>
 <button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#menu">☰</button>
-
 <div class="collapse navbar-collapse" id="menu">
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
 <li class="nav-item"><a class="nav-link" href="#partner">Partner</a></li>
+<li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
 </ul>
 </div>
@@ -41,23 +41,18 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <a href="#order" class="btn btn-light mt-3">Order Now</a>
 </section>
 
-<!-- ORDER SECTION -->
 <section class="section bg-light" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
-
 <form id="orderForm" class="col-md-6 mx-auto">
-
 <input class="form-control mb-2" id="name" placeholder="Name" required>
 <input class="form-control mb-2" id="location" placeholder="Location" required>
 <input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-
 <select class="form-select mb-2" id="unit" required>
 <option value="">Select Unit</option>
 <option>Kgs</option>
 <option>Cylinder(s)</option>
 </select>
-
 <select class="form-select mb-3" id="brand" required>
 <option value="">Select Gas Brand</option>
 <option>K-Gas</option>
@@ -72,32 +67,64 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <option>Marangi</option>
 <option>National Oil Gas</option>
 </select>
-
 <button class="btn btn-success w-100">Send Order</button>
 </form>
 </div>
 </section>
 
-<!-- PARTNER SECTION -->
 <section class="section" id="partner">
 <div class="container">
 <h2 class="text-center">Register as Partner</h2>
-
 <form id="partnerForm" class="col-md-6 mx-auto">
-
 <input class="form-control mb-2" id="pname" placeholder="Company Name" required>
 <input class="form-control mb-2" id="plocation" placeholder="Location" required>
 <input class="form-control mb-2" id="pphone" placeholder="Phone" required>
-
 <select class="form-select mb-3" id="pbrand" required>
 <option value="">Select Business Type</option>
 <option value="Wholesale">Wholesale</option>
 <option value="Retail">Retail</option>
 <option value="Wholesale & Retail">Wholesale & Retail</option>
 </select>
-
 <button class="btn btn-primary w-100">Register Partner</button>
 </form>
+</div>
+</section>
+
+<section class="section bg-light" id="dashboard">
+<div class="container">
+<h2 class="text-center">Live Dashboard</h2>
+
+<!-- Adawe Gas filter button -->
+<button id="adaweFilterBtn" class="btn btn-warning mb-3">Show Adawe Gas Only</button>
+<button id="showAllBtn" class="btn btn-secondary mb-3 ms-2">Show All</button>
+
+<h4>Orders</h4>
+<table class="table table-bordered" id="ordersTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Location</th>
+<th>Brand</th>
+<th>Quantity</th>
+<th>Status</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
+<h4>Partners</h4>
+<table class="table table-bordered" id="partnersTable">
+<thead>
+<tr>
+<th>Name</th>
+<th>Location</th>
+<th>Phone</th>
+<th>Business Type</th>
+</tr>
+</thead>
+<tbody></tbody>
+</table>
+
 </div>
 </section>
 
@@ -116,15 +143,14 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
   apiKey: "YOUR_API_KEY",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+  storageBucket: "adawe-gas-system-82187.appspot.com",
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
@@ -135,42 +161,78 @@ const db = getFirestore(app);
 // ORDER SAVE
 document.getElementById("orderForm").addEventListener("submit", async (e) => {
 e.preventDefault();
-
 const name = document.getElementById("name").value;
 const location = document.getElementById("location").value;
 const quantity = document.getElementById("quantity").value;
 const unit = document.getElementById("unit").value;
 const brand = document.getElementById("brand").value;
 
-await addDoc(collection(db, "orders"), {
-name, location, quantity, unit, brand,
-createdAt: new Date()
-});
+await addDoc(collection(db, "orders"), { name, location, quantity, unit, brand, status:'Pending', createdAt: new Date() });
 
 const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit}`;
 window.open("https://wa.me/254727015434?text=" + msg, "_blank");
 
 alert("Order saved successfully!");
+renderOrders();
 });
 
 // PARTNER SAVE
 document.getElementById("partnerForm").addEventListener("submit", async (e) => {
 e.preventDefault();
-
 const name = document.getElementById("pname").value;
 const location = document.getElementById("plocation").value;
 const phone = document.getElementById("pphone").value;
 const businessType = document.getElementById("pbrand").value;
 
-await addDoc(collection(db, "partners"), {
-name, location, phone, businessType,
-createdAt: new Date()
-});
+await addDoc(collection(db, "partners"), { name, location, phone, businessType, createdAt: new Date() });
 
 alert("Partner registered successfully!");
+renderPartners();
 });
 
-</script>
+// RENDER LIVE DASHBOARD
+async function renderOrders(filterAdawe=false){
+const ordersSnapshot = await getDocs(collection(db, "orders"));
+const tbody = document.querySelector("#ordersTable tbody");
+tbody.innerHTML = '';
+ordersSnapshot.forEach(doc=>{
+const data = doc.data();
+if(!filterAdawe || (data.brand && data.brand.toLowerCase().includes('adawe'))) {
+const tr = document.createElement('tr');
+tr.innerHTML = `<td>${data.name}</td><td>${data.location}</td><td>${data.brand}</td><td>${data.quantity} ${data.unit}</td><td class="status-pending">${data.status}</td>`;
+tbody.appendChild(tr);
+}
+});
+}
 
+async function renderPartners(filterAdawe=false){
+const partnersSnapshot = await getDocs(collection(db, "partners"));
+const tbody = document.querySelector("#partnersTable tbody");
+tbody.innerHTML = '';
+partnersSnapshot.forEach(doc=>{
+const data = doc.data();
+if(!filterAdawe || (data.name && data.name.toLowerCase().includes('adawe'))) {
+const tr = document.createElement('tr');
+tr.innerHTML = `<td>${data.name}</td><td>${data.location}</td><td>${data.phone}</td><td>${data.businessType}</td>`;
+tbody.appendChild(tr);
+}
+});
+}
+
+// Button filter events
+document.getElementById('adaweFilterBtn').addEventListener('click', ()=>{
+renderOrders(true);
+renderPartners(true);
+});
+document.getElementById('showAllBtn').addEventListener('click', ()=>{
+renderOrders();
+renderPartners();
+});
+
+// Initial render
+renderOrders();
+renderPartners();
+
+</script>
 </body>
 </html>
