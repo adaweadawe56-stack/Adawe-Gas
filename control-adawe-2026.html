@@ -5,70 +5,27 @@
   <title>Adawe Gas Admin Dashboard</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!-- Firebase SDKs -->
+  <!-- Firebase SDKs (COMPAT – STABLE) -->
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0;
-      background: #f4f6f8;
-    }
-    header {
-      background: #0b6623;
-      color: white;
-      padding: 15px;
-      text-align: center;
-    }
-    .container {
-      padding: 20px;
-      max-width: 1100px;
-      margin: auto;
-    }
-    .hidden {
-      display: none;
-    }
-    .card {
-      background: white;
-      padding: 15px;
-      margin-bottom: 20px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-    }
-    input, button {
-      padding: 10px;
-      margin: 5px 0;
-      width: 100%;
-    }
-    button {
-      background: #0b6623;
-      color: white;
-      border: none;
-      cursor: pointer;
-    }
-    button:hover {
-      opacity: 0.9;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-    }
-    table th, table td {
-      border: 1px solid #ddd;
-      padding: 8px;
-      text-align: left;
-    }
-    table th {
-      background: #e8f5e9;
-    }
-    .logout {
-      background: darkred;
-      margin-top: 10px;
-    }
+    body { font-family: Arial, sans-serif; margin: 0; background: #f4f6f8; }
+    header { background: #0b6623; color: white; padding: 15px; text-align: center; }
+    .container { padding: 20px; max-width: 1100px; margin: auto; }
+    .hidden { display: none; }
+    .card { background: white; padding: 15px; margin-bottom: 20px; border-radius: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    input, button { padding: 10px; margin: 5px 0; width: 100%; }
+    button { background: #0b6623; color: white; border: none; cursor: pointer; }
+    button:hover { opacity: 0.9; }
+    table { width: 100%; border-collapse: collapse; }
+    table th, table td { border: 1px solid #ddd; padding: 8px; }
+    table th { background: #e8f5e9; }
+    .logout { background: darkred; margin-top: 10px; }
   </style>
 </head>
+
 <body>
 
 <header>
@@ -131,14 +88,14 @@
 </div>
 
 <script>
-  // 🔥 FIREBASE CONFIG (ISLA KAN AAD HORE U ISTICMAALAY)
+  // ✅ FIREBASE CONFIG (SAX AH – HA BADALIN)
   const firebaseConfig = {
-    apiKey: "PASTE_API_KEY_HERE",
-    authDomain: "PASTE_AUTH_DOMAIN",
-    projectId: "PASTE_PROJECT_ID",
-    storageBucket: "PASTE_STORAGE_BUCKET",
-    messagingSenderId: "PASTE_SENDER_ID",
-    appId: "PASTE_APP_ID"
+    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+    authDomain: "adawe-gas-system-82187.firebaseapp.com",
+    projectId: "adawe-gas-system-82187",
+    storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+    messagingSenderId: "644303663526",
+    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
   };
 
   firebase.initializeApp(firebaseConfig);
@@ -146,44 +103,38 @@
   const auth = firebase.auth();
   const db = firebase.firestore();
 
-  // LOGIN
   function login() {
-    const email = document.getElementById("email").value;
-    const password = document.getElementById("password").value;
-
-    auth.signInWithEmailAndPassword(email, password)
-      .catch(err => {
-        document.getElementById("loginError").innerText = err.message;
-      });
+    auth.signInWithEmailAndPassword(
+      document.getElementById("email").value,
+      document.getElementById("password").value
+    ).catch(err => {
+      document.getElementById("loginError").innerText = err.message;
+    });
   }
 
-  // LOGOUT
   function logout() {
     auth.signOut();
   }
 
-  // AUTH STATE
   auth.onAuthStateChanged(user => {
     if (user) {
-      document.getElementById("loginCard").classList.add("hidden");
-      document.getElementById("dashboard").classList.remove("hidden");
+      loginCard.classList.add("hidden");
+      dashboard.classList.remove("hidden");
       loadOrders();
       loadPartners();
     } else {
-      document.getElementById("dashboard").classList.add("hidden");
-      document.getElementById("loginCard").classList.remove("hidden");
+      dashboard.classList.add("hidden");
+      loginCard.classList.remove("hidden");
     }
   });
 
-  // LOAD ORDERS
   function loadOrders() {
     db.collection("orders").orderBy("createdAt", "desc")
       .onSnapshot(snapshot => {
-        const table = document.getElementById("ordersTable");
-        table.innerHTML = "";
+        ordersTable.innerHTML = "";
         snapshot.forEach(doc => {
           const d = doc.data();
-          table.innerHTML += `
+          ordersTable.innerHTML += `
             <tr>
               <td>${d.name || ""}</td>
               <td>${d.brand || ""}</td>
@@ -196,15 +147,13 @@
       });
   }
 
-  // LOAD PARTNERS
   function loadPartners() {
     db.collection("partners").orderBy("createdAt", "desc")
       .onSnapshot(snapshot => {
-        const table = document.getElementById("partnersTable");
-        table.innerHTML = "";
+        partnersTable.innerHTML = "";
         snapshot.forEach(doc => {
           const d = doc.data();
-          table.innerHTML += `
+          partnersTable.innerHTML += `
             <tr>
               <td>${d.name || ""}</td>
               <td>${d.location || ""}</td>
