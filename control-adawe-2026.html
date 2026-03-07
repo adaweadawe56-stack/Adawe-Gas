@@ -67,7 +67,7 @@
 <h2>Live Dashboard</h2>
 
 <h3>Orders</h3>
-<table>
+<table id="orders-table">
   <tr>
     <th>Name</th>
     <th>Location</th>
@@ -75,39 +75,95 @@
     <th>Quantity</th>
     <th>Status</th>
   </tr>
-  <!-- Sample row -->
-  <tr>
-    <td>Ali Mohamed</td>
-    <td>Nairobi</td>
-    <td>Gas Brand A</td>
-    <td>5</td>
-    <td>Pending</td>
-  </tr>
 </table>
 
 <h3>Partners</h3>
-<table>
+<table id="partners-table">
   <tr>
     <th>Name</th>
     <th>Location</th>
     <th>Phone</th>
     <th>Business Type</th>
   </tr>
-  <!-- Sample row -->
-  <tr>
-    <td>Kenya Gas Ltd</td>
-    <td>Nairobi</td>
-    <td>0727 111 222</td>
-    <td>Retail</td>
-  </tr>
 </table>
 
-<h3>System Statistics (Optional)</h3>
-<div class="stats">
-  <p>Total Orders Today: 25</p>
-  <p>Active Partners: 10</p>
-  <p>Pending Orders: 5</p>
+<h3>System Statistics</h3>
+<div class="stats" id="system-stats">
+  <p>Total Orders Today: 0</p>
+  <p>Active Partners: 0</p>
+  <p>Pending Orders: 0</p>
 </div>
+
+<script>
+  // Sample dynamic data (later can fetch from server)
+  let orders = [
+    { name: "Ali Mohamed", location: "Nairobi", brand: "Gas Brand A", quantity: 5, status: "Pending" },
+    { name: "Fatuma Hassan", location: "Mombasa", brand: "Gas Brand B", quantity: 3, status: "Delivered" },
+    { name: "John Otieno", location: "Kisumu", brand: "Gas Brand C", quantity: 10, status: "Pending" }
+  ];
+
+  let partners = [
+    { name: "Kenya Gas Ltd", location: "Nairobi", phone: "0727 111 222", businessType: "Retail" },
+    { name: "Mombasa Gas Co", location: "Mombasa", phone: "0733 333 444", businessType: "Wholesale" },
+    { name: "Kisumu Gas Supplies", location: "Kisumu", phone: "0712 555 666", businessType: "Retail" }
+  ];
+
+  function populateTable(tableId, data) {
+    const table = document.getElementById(tableId);
+    // Remove old rows except header
+    table.querySelectorAll("tr:not(:first-child)").forEach(row => row.remove());
+    // Add new rows
+    data.forEach(item => {
+      const row = document.createElement("tr");
+      Object.values(item).forEach(val => {
+        const cell = document.createElement("td");
+        cell.textContent = val;
+        row.appendChild(cell);
+      });
+      table.appendChild(row);
+    });
+  }
+
+  function updateStats() {
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter(o => o.status.toLowerCase() === "pending").length;
+    const activePartners = partners.length;
+
+    const statsDiv = document.getElementById("system-stats");
+    statsDiv.innerHTML = `
+      <p>Total Orders Today: ${totalOrders}</p>
+      <p>Active Partners: ${activePartners}</p>
+      <p>Pending Orders: ${pendingOrders}</p>
+    `;
+  }
+
+  function autoRefreshDashboard() {
+    // Example: simulate adding a new order each interval
+    const randomNames = ["Amina Ali", "Peter Mwangi", "Grace Njeri"];
+    const randomLocations = ["Nairobi", "Mombasa", "Kisumu"];
+    const randomBrands = ["Gas Brand A", "Gas Brand B", "Gas Brand C"];
+    const newOrder = {
+      name: randomNames[Math.floor(Math.random() * randomNames.length)],
+      location: randomLocations[Math.floor(Math.random() * randomLocations.length)],
+      brand: randomBrands[Math.floor(Math.random() * randomBrands.length)],
+      quantity: Math.floor(Math.random() * 10) + 1,
+      status: Math.random() > 0.5 ? "Pending" : "Delivered"
+    };
+    orders.push(newOrder);
+
+    populateTable("orders-table", orders);
+    populateTable("partners-table", partners); // partners unchanged
+    updateStats();
+  }
+
+  // Initial populate
+  populateTable("orders-table", orders);
+  populateTable("partners-table", partners);
+  updateStats();
+
+  // Auto refresh every 5 seconds (5000ms)
+  setInterval(autoRefreshDashboard, 5000);
+</script>
 
 </body>
 </html>
