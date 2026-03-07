@@ -1,260 +1,113 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-
-<title>Adawe Gas Control</title>
-
-<style>
-
-body{
-font-family:Arial;
-margin:0;
-background:#f2f2f2;
-}
-
-header{
-background:#0a7f2e;
-color:white;
-padding:15px;
-font-size:22px;
-}
-
-nav{
-background:#111;
-padding:10px;
-}
-
-nav a{
-color:white;
-margin-right:15px;
-text-decoration:none;
-}
-
-section{
-padding:20px;
-}
-
-input,select{
-padding:8px;
-margin:5px 0;
-width:100%;
-}
-
-button{
-background:#0a7f2e;
-color:white;
-border:none;
-padding:10px;
-cursor:pointer;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-background:white;
-margin-top:10px;
-}
-
-table th,table td{
-border:1px solid #ddd;
-padding:8px;
-}
-
-table th{
-background:#0a7f2e;
-color:white;
-}
-
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Adawe Gas Control Dashboard</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+    }
+    header {
+      background-color: #003366;
+      color: #fff;
+      padding: 20px;
+      text-align: center;
+      font-size: 1.8em;
+    }
+    h2 {
+      text-align: center;
+      margin-top: 20px;
+      color: #003366;
+    }
+    h3 {
+      margin: 20px 10px 10px;
+      color: #003366;
+    }
+    table {
+      width: 90%;
+      margin: 0 auto 30px;
+      border-collapse: collapse;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    th, td {
+      padding: 12px;
+      border: 1px solid #ddd;
+      text-align: left;
+    }
+    th {
+      background-color: #003366;
+      color: #fff;
+    }
+    tr:nth-child(even) {
+      background-color: #f2f2f2;
+    }
+    .stats {
+      width: 90%;
+      margin: 0 auto 30px;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+    }
+    .stats h3 {
+      margin-top: 0;
+    }
+  </style>
 </head>
-
 <body>
 
 <header>
-Adawe Gas Control
+  Adawe Gas Control
 </header>
-
-<nav>
-<a href="#">Home</a>
-<a href="#">Order</a>
-<a href="#">Partner</a>
-<a href="#">Dashboard</a>
-<a href="#">Contact</a>
-</nav>
-
-<section>
-
-<h2>Place Order</h2>
-
-<input id="name" placeholder="Name">
-<input id="location" placeholder="Location">
-<input id="quantity" placeholder="Quantity">
-
-<select id="unit">
-<option value="">Select Unit</option>
-<option value="Cylinder(s)">Cylinder(s)</option>
-<option value="Kgs">Kgs</option>
-</select>
-
-<select id="brand">
-<option value="">Select Gas Brand</option>
-<option>Rubis Gas</option>
-<option>TotalEnergies</option>
-<option>Shell</option>
-<option>Oryx</option>
-</select>
-
-<button onclick="placeOrder()">Submit Order</button>
-
-</section>
-
-<section>
-
-<h2>Register as Partner</h2>
-
-<input id="pname" placeholder="Company Name">
-<input id="plocation" placeholder="Location">
-<input id="phone" placeholder="Phone">
-
-<select id="type">
-<option value="">Select Business Type</option>
-<option value="Retail">Retail</option>
-<option value="Wholesale">Wholesale</option>
-</select>
-
-<button onclick="addPartner()">Register</button>
-
-</section>
-
-<section>
-
-<h2>Partner Login</h2>
-
-<input id="loginName" placeholder="Partner Name">
-<input id="loginPhone" placeholder="Phone">
-
-<button onclick="partnerLogin()">Login</button>
-
-<p id="loginMessage"></p>
-
-</section>
-
-<section>
 
 <h2>Live Dashboard</h2>
 
 <h3>Orders</h3>
-
-<table id="ordersTable">
-
-<tr>
-<th>Name</th>
-<th>Location</th>
-<th>Brand</th>
-<th>Quantity</th>
-<th>Status</th>
-</tr>
-
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Location</th>
+    <th>Brand</th>
+    <th>Quantity</th>
+    <th>Status</th>
+  </tr>
+  <!-- Sample row -->
+  <tr>
+    <td>Ali Mohamed</td>
+    <td>Nairobi</td>
+    <td>Gas Brand A</td>
+    <td>5</td>
+    <td>Pending</td>
+  </tr>
 </table>
 
 <h3>Partners</h3>
-
-<table id="partnersTable">
-
-<tr>
-<th>Name</th>
-<th>Location</th>
-<th>Phone</th>
-<th>Business Type</th>
-</tr>
-
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Location</th>
+    <th>Phone</th>
+    <th>Business Type</th>
+  </tr>
+  <!-- Sample row -->
+  <tr>
+    <td>Kenya Gas Ltd</td>
+    <td>Nairobi</td>
+    <td>0727 111 222</td>
+    <td>Retail</td>
+  </tr>
 </table>
 
-</section>
-
-<section>
-
-<h3>Contact</h3>
-
-<p>📞 0727 015 434</p>
-<p>📍 Nairobi, Kenya</p>
-<p>© 2026 Adawe Gas</p>
-
-</section>
-
-<script>
-
-function placeOrder(){
-
-let name=document.getElementById("name").value
-let location=document.getElementById("location").value
-let quantity=document.getElementById("quantity").value
-let unit=document.getElementById("unit").value
-let brand=document.getElementById("brand").value
-
-let table=document.getElementById("ordersTable")
-
-let row=table.insertRow()
-
-row.insertCell(0).innerHTML=name
-row.insertCell(1).innerHTML=location
-row.insertCell(2).innerHTML=brand
-row.insertCell(3).innerHTML=quantity+" "+unit
-row.insertCell(4).innerHTML="Pending"
-
-}
-
-function addPartner(){
-
-let name=document.getElementById("pname").value
-let location=document.getElementById("plocation").value
-let phone=document.getElementById("phone").value
-let type=document.getElementById("type").value || "N/A"
-
-let table=document.getElementById("partnersTable")
-
-let row=table.insertRow()
-
-row.insertCell(0).innerHTML=name
-row.insertCell(1).innerHTML=location
-row.insertCell(2).innerHTML=phone
-row.insertCell(3).innerHTML=type
-
-}
-
-function partnerLogin(){
-
-let name=document.getElementById("loginName").value
-let phone=document.getElementById("loginPhone").value
-
-let table=document.getElementById("partnersTable")
-
-let found=false
-
-for(let i=1;i<table.rows.length;i++){
-
-let pname=table.rows[i].cells[0].innerHTML
-let pphone=table.rows[i].cells[2].innerHTML
-
-if(name==pname && phone==pphone){
-
-found=true
-document.getElementById("loginMessage").innerHTML="Login Successful"
-
-break
-}
-
-}
-
-if(!found){
-
-document.getElementById("loginMessage").innerHTML="Partner Not Found"
-
-}
-
-}
-
-</script>
+<h3>System Statistics (Optional)</h3>
+<div class="stats">
+  <p>Total Orders Today: 25</p>
+  <p>Active Partners: 10</p>
+  <p>Pending Orders: 5</p>
+</div>
 
 </body>
 </html>
