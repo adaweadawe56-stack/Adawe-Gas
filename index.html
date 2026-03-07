@@ -23,7 +23,6 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <div class="container">
 <a class="navbar-brand text-white" href="#home">Adawe Gas</a>
 <button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#menu">☰</button>
-
 <div class="collapse navbar-collapse" id="menu">
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
@@ -41,23 +40,18 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <a href="#order" class="btn btn-light mt-3">Order Now</a>
 </section>
 
-<!-- ORDER SECTION -->
 <section class="section bg-light" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
-
 <form id="orderForm" class="col-md-6 mx-auto">
-
 <input class="form-control mb-2" id="name" placeholder="Name" required>
 <input class="form-control mb-2" id="location" placeholder="Location" required>
 <input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-
 <select class="form-select mb-2" id="unit" required>
 <option value="">Select Unit</option>
 <option>Kgs</option>
 <option>Cylinder(s)</option>
 </select>
-
 <select class="form-select mb-3" id="brand" required>
 <option value="">Select Gas Brand</option>
 <option>K-Gas</option>
@@ -72,31 +66,25 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <option>Marangi</option>
 <option>National Oil Gas</option>
 </select>
-
-<button class="btn btn-success w-100">Send Order</button>
+<button type="submit" class="btn btn-success w-100">Send Order</button>
 </form>
 </div>
 </section>
 
-<!-- PARTNER SECTION -->
 <section class="section" id="partner">
 <div class="container">
 <h2 class="text-center">Register as Partner</h2>
-
 <form id="partnerForm" class="col-md-6 mx-auto">
-
 <input class="form-control mb-2" id="pname" placeholder="Company Name" required>
 <input class="form-control mb-2" id="plocation" placeholder="Location" required>
 <input class="form-control mb-2" id="pphone" placeholder="Phone" required>
-
 <select class="form-select mb-3" id="pbrand" required>
 <option value="">Select Business Type</option>
 <option value="Wholesale">Wholesale</option>
 <option value="Retail">Retail</option>
 <option value="Wholesale & Retail">Wholesale & Retail</option>
 </select>
-
-<button class="btn btn-primary w-100">Register Partner</button>
+<button type="submit" class="btn btn-primary w-100">Register Partner</button>
 </form>
 </div>
 </section>
@@ -116,15 +104,15 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// ======= Firebase Config =======
 const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+  storageBucket: "adawe-gas-system-82187.appspot.com",
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
@@ -132,7 +120,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ORDER SAVE
+// ====== ORDER SUBMIT ======
 document.getElementById("orderForm").addEventListener("submit", async (e) => {
 e.preventDefault();
 
@@ -142,18 +130,24 @@ const quantity = document.getElementById("quantity").value;
 const unit = document.getElementById("unit").value;
 const brand = document.getElementById("brand").value;
 
+try {
 await addDoc(collection(db, "orders"), {
-name, location, quantity, unit, brand,
-createdAt: new Date()
+  name, location, quantity, unit, brand,
+  createdAt: new Date()
 });
 
-const msg = Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit};
+const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit}`;
 window.open("https://wa.me/254727015434?text=" + msg, "_blank");
 
 alert("Order saved successfully!");
+document.getElementById("orderForm").reset();
+} catch(err) {
+alert("Error saving order. Check Firebase config and rules.");
+console.error(err);
+}
 });
 
-// PARTNER SAVE
+// ====== PARTNER SUBMIT ======
 document.getElementById("partnerForm").addEventListener("submit", async (e) => {
 e.preventDefault();
 
@@ -162,14 +156,19 @@ const location = document.getElementById("plocation").value;
 const phone = document.getElementById("pphone").value;
 const businessType = document.getElementById("pbrand").value;
 
+try {
 await addDoc(collection(db, "partners"), {
-name, location, phone, businessType,
-createdAt: new Date()
+  name, location, phone, businessType,
+  createdAt: new Date()
 });
 
 alert("Partner registered successfully!");
+document.getElementById("partnerForm").reset();
+} catch(err) {
+alert("Error saving partner. Check Firebase config and rules.");
+console.error(err);
+}
 });
-
 </script>
 
 </body>
