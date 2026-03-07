@@ -1,106 +1,139 @@
 <!DOCTYPE html>
 <html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas – LPG Delivery Kenya</title>
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<title>Adawe Gas Control</title>
+
 <style>
-body { font-family: Arial; scroll-behavior:smooth; }
-.navbar { background:#0f7b3f; }
-.navbar a { color:white !important; font-weight:bold; }
-.section { padding:80px 20px; }
-.hero { background:linear-gradient(135deg,#0f5132,#198754); color:white; padding:120px 20px; text-align:center; }
-.footer { background:#0f7b3f; color:white; text-align:center; padding:20px; }
-table { margin-top:20px; }
-.status-pending { color: green; font-weight: bold; }
-.status-delivered { color: blue; font-weight: bold; }
+
+body{
+font-family:Arial;
+margin:0;
+background:#f2f2f2;
+}
+
+header{
+background:#0a7f2e;
+color:white;
+padding:15px;
+font-size:22px;
+}
+
+nav{
+background:#111;
+padding:10px;
+}
+
+nav a{
+color:white;
+margin-right:15px;
+text-decoration:none;
+}
+
+section{
+padding:20px;
+}
+
+input,select{
+padding:8px;
+margin:5px 0;
+width:100%;
+}
+
+button{
+background:#0a7f2e;
+color:white;
+border:none;
+padding:10px;
+cursor:pointer;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+background:white;
+margin-top:10px;
+}
+
+table th,table td{
+border:1px solid #ddd;
+padding:8px;
+}
+
+table th{
+background:#0a7f2e;
+color:white;
+}
+
 </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg fixed-top">
-<div class="container">
-<a class="navbar-brand text-white" href="#home">Adawe Gas</a>
-<button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#menu">☰</button>
-<div class="collapse navbar-collapse" id="menu">
-<ul class="navbar-nav ms-auto">
-<li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#partner">Partner</a></li>
-<li class="nav-item"><a class="nav-link" href="#dashboard">Dashboard</a></li>
-<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-</ul>
-</div>
-</div>
+<header>
+Adawe Gas Control
+</header>
+
+<nav>
+<a href="#">Home</a>
+<a href="#">Order</a>
+<a href="#">Partner</a>
+<a href="#">Dashboard</a>
+<a href="#">Contact</a>
 </nav>
 
-<section class="hero" id="home">
-<h1>Kenya’s Fast Growing LPG Delivery Network</h1>
-<p>Fast • Safe • Reliable</p>
-<a href="#order" class="btn btn-light mt-3">Order Now</a>
-</section>
+<section>
 
-<section class="section bg-light" id="order">
-<div class="container">
-<h2 class="text-center">Place Order</h2>
-<form id="orderForm" class="col-md-6 mx-auto">
-<input class="form-control mb-2" id="name" placeholder="Name" required>
-<input class="form-control mb-2" id="location" placeholder="Location" required>
-<input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-<select class="form-select mb-2" id="unit" required>
+<h2>Place Order</h2>
+
+<input id="name" placeholder="Name">
+<input id="location" placeholder="Location">
+<input id="quantity" placeholder="Quantity">
+
+<select id="unit">
 <option value="">Select Unit</option>
-<option>Kgs</option>
-<option>Cylinder(s)</option>
+<option value="Cylinder(s)">Cylinder(s)</option>
+<option value="Kgs">Kgs</option>
 </select>
-<select class="form-select mb-3" id="brand" required>
+
+<select id="brand">
 <option value="">Select Gas Brand</option>
-<option>K-Gas</option>
-<option>AfriGas</option>
-<option>Pro Gas</option>
-<option>TotalEnergies</option>
-<option>Hashi Gas</option>
-<option>Lake Gas</option>
-<option>Oil Libya (OLA Gas)</option>
 <option>Rubis Gas</option>
-<option>Taifa Gas</option>
-<option>Marangi</option>
-<option>National Oil Gas</option>
-<option>Adawe Gas</option>
+<option>TotalEnergies</option>
+<option>Shell</option>
+<option>Oryx</option>
 </select>
-<button class="btn btn-success w-100">Send Order</button>
-</form>
-</div>
+
+<button onclick="placeOrder()">Submit Order</button>
+
 </section>
 
-<section class="section" id="partner">
-<div class="container">
-<h2 class="text-center">Register as Partner</h2>
-<form id="partnerForm" class="col-md-6 mx-auto">
-<input class="form-control mb-2" id="pname" placeholder="Company Name" required>
-<input class="form-control mb-2" id="plocation" placeholder="Location" required>
-<input class="form-control mb-2" id="pphone" placeholder="Phone" required>
-<select class="form-select mb-3" id="pbrand">
+<section>
+
+<h2>Register as Partner</h2>
+
+<input id="pname" placeholder="Company Name">
+<input id="plocation" placeholder="Location">
+<input id="phone" placeholder="Phone">
+
+<select id="type">
 <option value="">Select Business Type</option>
-<option value="Wholesale">Wholesale</option>
 <option value="Retail">Retail</option>
-<option value="Wholesale & Retail">Wholesale & Retail</option>
+<option value="Wholesale">Wholesale</option>
 </select>
-<button class="btn btn-primary w-100">Register Partner</button>
-</form>
-</div>
+
+<button onclick="addPartner()">Register</button>
+
 </section>
 
-<section class="section bg-light" id="dashboard">
-<div class="container">
-<h2 class="text-center">Live Dashboard</h2>
+<section>
 
-<button id="adaweFilterBtn" class="btn btn-warning mb-3">Show Adawe Gas Only</button>
-<button id="showAllBtn" class="btn btn-secondary mb-3 ms-2">Show All</button>
+<h2>Live Dashboard</h2>
 
-<h4>Orders</h4>
-<table class="table table-bordered" id="ordersTable">
-<thead>
+<h3>Orders</h3>
+
+<table id="ordersTable">
+
 <tr>
 <th>Name</th>
 <th>Location</th>
@@ -108,144 +141,75 @@ table { margin-top:20px; }
 <th>Quantity</th>
 <th>Status</th>
 </tr>
-</thead>
-<tbody></tbody>
+
 </table>
 
-<h4>Partners</h4>
-<table class="table table-bordered" id="partnersTable">
-<thead>
+<h3>Partners</h3>
+
+<table id="partnersTable">
+
 <tr>
 <th>Name</th>
 <th>Location</th>
 <th>Phone</th>
 <th>Business Type</th>
 </tr>
-</thead>
-<tbody></tbody>
+
 </table>
 
-</div>
 </section>
 
-<section class="section bg-light" id="contact">
-<div class="container text-center">
-<h2>Contact</h2>
+<section>
+
+<h3>Contact</h3>
+
 <p>📞 0727 015 434</p>
 <p>📍 Nairobi, Kenya</p>
-</div>
+<p>© 2026 Adawe Gas</p>
+
 </section>
 
-<footer class="footer">
-© 2026 Adawe Gas – All Rights Reserved
-</footer>
+<script>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+function placeOrder(){
 
-const firebaseConfig = {
-  apiKey: "YOUR_API_KEY",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-};
+let name=document.getElementById("name").value
+let location=document.getElementById("location").value
+let quantity=document.getElementById("quantity").value
+let unit=document.getElementById("unit").value
+let brand=document.getElementById("brand").value
 
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+let table=document.getElementById("ordersTable")
 
-// ORDER SAVE
-document.getElementById("orderForm").addEventListener("submit", async (e) => {
-e.preventDefault();
-const name = document.getElementById("name").value;
-const location = document.getElementById("location").value;
-const quantity = document.getElementById("quantity").value;
-const unit = document.getElementById("unit").value;
-const brand = document.getElementById("brand").value;
+let row=table.insertRow()
 
-await addDoc(collection(db, "orders"), {
-  name,
-  location,
-  quantity,
-  unit,
-  brand,
-  status: "Pending",
-  createdAt: new Date()
-});
+row.insertCell(0).innerHTML=name
+row.insertCell(1).innerHTML=location
+row.insertCell(2).innerHTML=brand
+row.insertCell(3).innerHTML=quantity+" "+unit
+row.insertCell(4).innerHTML="Pending"
 
-const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit}`;
-window.open("https://wa.me/254727015434?text=" + msg, "_blank");
-
-alert("Order saved successfully!");
-renderOrders();
-});
-
-// PARTNER SAVE
-document.getElementById("partnerForm").addEventListener("submit", async (e) => {
-e.preventDefault();
-const name = document.getElementById("pname").value;
-const location = document.getElementById("plocation").value;
-const phone = document.getElementById("pphone").value;
-const businessType = document.getElementById("pbrand").value || "N/A";
-
-await addDoc(collection(db, "partners"), {
-  name,
-  location,
-  phone,
-  businessType,
-  createdAt: new Date()
-});
-
-alert("Partner registered successfully!");
-renderPartners();
-});
-
-// RENDER LIVE DASHBOARD
-async function renderOrders(filterAdawe=false){
-const ordersSnapshot = await getDocs(collection(db, "orders"));
-const tbody = document.querySelector("#ordersTable tbody");
-tbody.innerHTML = '';
-ordersSnapshot.forEach(doc=>{
-const data = doc.data();
-if(!filterAdawe || (data.brand && data.brand.toLowerCase().includes('adawe'))) {
-const tr = document.createElement('tr');
-tr.innerHTML = `<td>${data.name}</td><td>${data.location}</td><td>${data.brand}</td><td>${data.quantity} ${data.unit}</td><td class="status-pending">${data.status}</td>`;
-tbody.appendChild(tr);
-}
-});
 }
 
-async function renderPartners(filterAdawe=false){
-const partnersSnapshot = await getDocs(collection(db, "partners"));
-const tbody = document.querySelector("#partnersTable tbody");
-tbody.innerHTML = '';
-partnersSnapshot.forEach(doc=>{
-const data = doc.data();
-if(!filterAdawe || (data.name && data.name.toLowerCase().includes('adawe'))) {
-const tr = document.createElement('tr');
-tr.innerHTML = `<td>${data.name}</td><td>${data.location}</td><td>${data.phone}</td><td>${data.businessType}</td>`;
-tbody.appendChild(tr);
-}
-});
-}
+function addPartner(){
 
-// Button filter events
-document.getElementById('adaweFilterBtn').addEventListener('click', ()=>{
-renderOrders(true);
-renderPartners(true);
-});
-document.getElementById('showAllBtn').addEventListener('click', ()=>{
-renderOrders();
-renderPartners();
-});
+let name=document.getElementById("pname").value
+let location=document.getElementById("plocation").value
+let phone=document.getElementById("phone").value
+let type=document.getElementById("type").value || "N/A"
 
-// Initial render
-renderOrders();
-renderPartners();
+let table=document.getElementById("partnersTable")
+
+let row=table.insertRow()
+
+row.insertCell(0).innerHTML=name
+row.insertCell(1).innerHTML=location
+row.insertCell(2).innerHTML=phone
+row.insertCell(3).innerHTML=type
+
+}
 
 </script>
+
 </body>
 </html>
