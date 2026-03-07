@@ -24,6 +24,7 @@ th { background:#198754; color:white; }
 .btn-delivered { background:#28a745; color:white; }
 .btn-danger { background:#dc3545; color:white; }
 .btn-download { margin-bottom:15px; }
+.search-input { margin-bottom:10px; }
 </style>
 </head>
 
@@ -54,6 +55,10 @@ th { background:#198754; color:white; }
   <button id="downloadOrders" class="btn btn-primary btn-download">Download Orders CSV</button>
   <button id="downloadPartners" class="btn btn-secondary btn-download">Download Partners CSV</button>
 </div>
+
+<!-- Search Bars -->
+<input type="text" id="searchOrders" class="form-control search-input" placeholder="Search Orders by Name, Location, Brand">
+<input type="text" id="searchPartners" class="form-control search-input" placeholder="Search Partners by Name, Location, Phone, Type">
 
 <h3>Orders</h3>
 <table id="ordersTable">
@@ -115,7 +120,6 @@ async function fetchDashboard() {
     const statusClass = status === "Pending" ? "status-pending" : "status-delivered";
     tr.className = statusClass;
 
-    // Color-coded Delivered/Pending button
     const actionBtn = status==="Pending" 
       ? `<button class="btn btn-sm btn-delivered mark-delivered">Delivered</button>` 
       : `<span class="btn btn-sm btn-pending">Delivered</span>`;
@@ -129,7 +133,6 @@ async function fetchDashboard() {
                     <td>${actionBtn} <button class="btn btn-sm btn-danger delete-order">Delete</button></td>`;
     ordersTable.appendChild(tr);
 
-    // Mark as Delivered
     if(status==="Pending") {
       tr.querySelector(".mark-delivered").addEventListener("click", async () => {
         await updateDoc(doc(db, "orders", docSnap.id), { status: "Delivered" });
@@ -137,7 +140,6 @@ async function fetchDashboard() {
       });
     }
 
-    // Delete order
     tr.querySelector(".delete-order").addEventListener("click", async () => {
       if(confirm("Are you sure you want to delete this order?")) {
         await deleteDoc(doc(db, "orders", docSnap.id));
@@ -166,7 +168,6 @@ async function fetchDashboard() {
                    <td><button class="btn btn-sm btn-danger delete-partner">Delete</button></td>`;
     partnersTable.appendChild(tr);
 
-    // Delete partner
     tr.querySelector(".delete-partner").addEventListener("click", async () => {
       if(confirm("Are you sure you want to delete this partner?")) {
         await deleteDoc(doc(db, "partners", docSnap.id));
@@ -212,6 +213,23 @@ document.getElementById("downloadPartners").addEventListener("click", async () =
   a.download = "partners.csv";
   a.click();
   URL.revokeObjectURL(url);
+});
+
+// ===== Search / Filter =====
+document.getElementById("searchOrders").addEventListener("input", () => {
+  const filter = document.getElementById("searchOrders").value.toLowerCase();
+  const rows = document.querySelectorAll("#ordersTable tr:not(:first-child)");
+  rows.forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+  });
+});
+
+document.getElementById("searchPartners").addEventListener("input", () => {
+  const filter = document.getElementById("searchPartners").value.toLowerCase();
+  const rows = document.querySelectorAll("#partnersTable tr:not(:first-child)");
+  rows.forEach(row => {
+    row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
+  });
 });
 
 // Initial fetch
