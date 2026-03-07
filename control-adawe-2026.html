@@ -128,6 +128,19 @@ Adawe Gas Control
 
 <section>
 
+<h2>Partner Login</h2>
+
+<input id="loginName" placeholder="Partner Name">
+<input id="loginPhone" placeholder="Phone">
+
+<button onclick="partnerLogin()">Login</button>
+
+<p id="loginMessage"></p>
+
+</section>
+
+<section>
+
 <h2>Live Dashboard</h2>
 
 <h3>Orders</h3>
@@ -206,6 +219,38 @@ row.insertCell(0).innerHTML=name
 row.insertCell(1).innerHTML=location
 row.insertCell(2).innerHTML=phone
 row.insertCell(3).innerHTML=type
+
+}
+
+function partnerLogin(){
+
+let name=document.getElementById("loginName").value
+let phone=document.getElementById("loginPhone").value
+
+let table=document.getElementById("partnersTable")
+
+let found=false
+
+for(let i=1;i<table.rows.length;i++){
+
+let pname=table.rows[i].cells[0].innerHTML
+let pphone=table.rows[i].cells[2].innerHTML
+
+if(name==pname && phone==pphone){
+
+found=true
+document.getElementById("loginMessage").innerHTML="Login Successful"
+
+break
+}
+
+}
+
+if(!found){
+
+document.getElementById("loginMessage").innerHTML="Partner Not Found"
+
+}
 
 }
 
