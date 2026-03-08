@@ -18,9 +18,9 @@ th { background:#198754; color:white; }
 .stats { display:flex; gap:20px; margin-top:20px; }
 .stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; }
 .btn-sm { font-size:.75rem; padding:.25rem .5rem; }
-.status-pending { background:#fff3cd; }   /* yellow */
-.status-delivered { background:#d4edda; } /* green */
-.btn-pending { background:#ffc107; color:black; pointer-events:none; }  /* Disabled Pending button */
+.status-pending { background:#fff3cd; }
+.status-delivered { background:#d4edda; }
+.btn-pending { background:#ffc107; color:black; pointer-events:none; }
 .btn-delivered { background:#28a745; color:white; }
 .btn-danger { background:#dc3545; color:white; }
 .btn-download { margin-bottom:15px; }
@@ -53,36 +53,29 @@ th { background:#198754; color:white; }
 <!-- Download Buttons -->
 <div class="mb-3">
   <button id="downloadOrders" class="btn btn-primary btn-download">Download Orders CSV</button>
-  <button id="downloadSellers" class="btn btn-secondary btn-download">Download Sellers CSV</button>
+  <button id="downloadSellers" class="btn btn-info btn-download">Download Sellers CSV</button>
 </div>
 
 <!-- Search Bars -->
 <input type="text" id="searchOrders" class="form-control search-input" placeholder="Search Orders by Name, Location, Brand">
 <input type="text" id="searchSellers" class="form-control search-input" placeholder="Search Sellers by Company, Location, Phone, Type">
 
+<!-- Orders Table -->
 <h3>Orders</h3>
 <table id="ordersTable">
 <tr>
-<th>Name</th>
-<th>Location</th>
-<th>Brand</th>
-<th>Quantity</th>
-<th>Unit</th>
-<th>Status</th>
-<th>Actions</th>
+<th>Name</th><th>Location</th><th>Brand</th><th>Quantity</th><th>Unit</th><th>Status</th><th>Actions</th>
 </tr>
 </table>
 
+<!-- Sellers Table -->
 <h3>Sellers</h3>
 <table id="sellersTable">
 <tr>
-<th>Company Name</th>
-<th>Location</th>
-<th>Phone</th>
-<th>Business Type</th>
-<th>Actions</th>
+<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
 </tr>
 </table>
+
 </section>
 
 <script type="module">
@@ -117,8 +110,7 @@ async function fetchDashboard() {
     const tr = document.createElement("tr");
 
     const status = o.status || "Pending";
-    const statusClass = status === "Pending" ? "status-pending" : "status-delivered";
-    tr.className = statusClass;
+    tr.className = status === "Pending" ? "status-pending" : "status-delivered";
 
     const actionBtn = status==="Pending" 
       ? `<button class="btn btn-sm btn-delivered mark-delivered">Delivered</button>` 
@@ -158,9 +150,8 @@ async function fetchDashboard() {
   const sellersSnap = await getDocs(collection(db, "sellers"));
   const sellersTable = document.getElementById("sellersTable");
   sellersTable.innerHTML = `<tr>
-<th>Company Name</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
+<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
 </tr>`;
-
   sellersSnap.forEach(docSnap => {
     const s = docSnap.data();
     const tr = document.createElement("tr");
@@ -175,7 +166,6 @@ async function fetchDashboard() {
       }
     });
   });
-
   document.getElementById("totalSellers").textContent = sellersSnap.size;
 }
 
@@ -200,7 +190,7 @@ document.getElementById("downloadOrders").addEventListener("click", async () => 
 // ===== Download Sellers =====
 document.getElementById("downloadSellers").addEventListener("click", async () => {
   const sellersSnap = await getDocs(collection(db, "sellers"));
-  let csv = "Company Name,Location,Phone,BusinessType,CreatedAt\n";
+  let csv = "Company,Location,Phone,BusinessType,CreatedAt\n";
   sellersSnap.forEach(docSnap => {
     const s = docSnap.data();
     const createdAt = s.createdAt?.toDate?.() || s.createdAt || "";
@@ -234,7 +224,6 @@ document.getElementById("searchSellers").addEventListener("input", () => {
 
 // Initial fetch
 fetchDashboard();
-// Auto-refresh every 10s
 setInterval(fetchDashboard, 10000);
 
 </script>
