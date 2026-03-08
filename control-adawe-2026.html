@@ -45,20 +45,20 @@ th { background:#198754; color:white; }
 <p id="pendingOrders">0</p>
 </div>
 <div class="stat-box">
-<h4>Active Partners</h4>
-<p id="activePartners">0</p>
+<h4>Total Sellers</h4>
+<p id="totalSellers">0</p>
 </div>
 </div>
 
 <!-- Download Buttons -->
 <div class="mb-3">
   <button id="downloadOrders" class="btn btn-primary btn-download">Download Orders CSV</button>
-  <button id="downloadPartners" class="btn btn-secondary btn-download">Download Partners CSV</button>
+  <button id="downloadSellers" class="btn btn-secondary btn-download">Download Sellers CSV</button>
 </div>
 
 <!-- Search Bars -->
 <input type="text" id="searchOrders" class="form-control search-input" placeholder="Search Orders by Name, Location, Brand">
-<input type="text" id="searchPartners" class="form-control search-input" placeholder="Search Partners by Name, Location, Phone, Type">
+<input type="text" id="searchSellers" class="form-control search-input" placeholder="Search Sellers by Company, Location, Phone, Type">
 
 <h3>Orders</h3>
 <table id="ordersTable">
@@ -73,10 +73,10 @@ th { background:#198754; color:white; }
 </tr>
 </table>
 
-<h3>Partners</h3>
-<table id="partnersTable">
+<h3>Sellers</h3>
+<table id="sellersTable">
 <tr>
-<th>Name</th>
+<th>Company Name</th>
 <th>Location</th>
 <th>Phone</th>
 <th>Business Type</th>
@@ -154,29 +154,29 @@ async function fetchDashboard() {
   document.getElementById("totalOrders").textContent = totalOrders;
   document.getElementById("pendingOrders").textContent = pendingOrders;
 
-  // ===== Partners =====
-  const partnersSnap = await getDocs(collection(db, "partners"));
-  const partnersTable = document.getElementById("partnersTable");
-  partnersTable.innerHTML = `<tr>
-<th>Name</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
+  // ===== Sellers =====
+  const sellersSnap = await getDocs(collection(db, "sellers"));
+  const sellersTable = document.getElementById("sellersTable");
+  sellersTable.innerHTML = `<tr>
+<th>Company Name</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
 </tr>`;
 
-  partnersSnap.forEach(docSnap => {
-    const p = docSnap.data();
+  sellersSnap.forEach(docSnap => {
+    const s = docSnap.data();
     const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${p.name}</td><td>${p.location}</td><td>${p.phone}</td><td>${p.businessType}</td>
-                   <td><button class="btn btn-sm btn-danger delete-partner">Delete</button></td>`;
-    partnersTable.appendChild(tr);
+    tr.innerHTML = `<td>${s.name}</td><td>${s.location}</td><td>${s.phone}</td><td>${s.businessType}</td>
+                   <td><button class="btn btn-sm btn-danger delete-seller">Delete</button></td>`;
+    sellersTable.appendChild(tr);
 
-    tr.querySelector(".delete-partner").addEventListener("click", async () => {
-      if(confirm("Are you sure you want to delete this partner?")) {
-        await deleteDoc(doc(db, "partners", docSnap.id));
+    tr.querySelector(".delete-seller").addEventListener("click", async () => {
+      if(confirm("Are you sure you want to delete this seller?")) {
+        await deleteDoc(doc(db, "sellers", docSnap.id));
         fetchDashboard();
       }
     });
   });
 
-  document.getElementById("activePartners").textContent = partnersSnap.size;
+  document.getElementById("totalSellers").textContent = sellersSnap.size;
 }
 
 // ===== Download Orders =====
@@ -197,20 +197,20 @@ document.getElementById("downloadOrders").addEventListener("click", async () => 
   URL.revokeObjectURL(url);
 });
 
-// ===== Download Partners =====
-document.getElementById("downloadPartners").addEventListener("click", async () => {
-  const partnersSnap = await getDocs(collection(db, "partners"));
-  let csv = "Name,Location,Phone,BusinessType,CreatedAt\n";
-  partnersSnap.forEach(docSnap => {
-    const p = docSnap.data();
-    const createdAt = p.createdAt?.toDate?.() || p.createdAt || "";
-    csv += `"${p.name}","${p.location}","${p.phone}","${p.businessType}","${createdAt}"\n`;
+// ===== Download Sellers =====
+document.getElementById("downloadSellers").addEventListener("click", async () => {
+  const sellersSnap = await getDocs(collection(db, "sellers"));
+  let csv = "Company Name,Location,Phone,BusinessType,CreatedAt\n";
+  sellersSnap.forEach(docSnap => {
+    const s = docSnap.data();
+    const createdAt = s.createdAt?.toDate?.() || s.createdAt || "";
+    csv += `"${s.name}","${s.location}","${s.phone}","${s.businessType}","${createdAt}"\n`;
   });
   const blob = new Blob([csv], { type: "text/csv" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
   a.href = url;
-  a.download = "partners.csv";
+  a.download = "sellers.csv";
   a.click();
   URL.revokeObjectURL(url);
 });
@@ -224,9 +224,9 @@ document.getElementById("searchOrders").addEventListener("input", () => {
   });
 });
 
-document.getElementById("searchPartners").addEventListener("input", () => {
-  const filter = document.getElementById("searchPartners").value.toLowerCase();
-  const rows = document.querySelectorAll("#partnersTable tr:not(:first-child)");
+document.getElementById("searchSellers").addEventListener("input", () => {
+  const filter = document.getElementById("searchSellers").value.toLowerCase();
+  const rows = document.querySelectorAll("#sellersTable tr:not(:first-child)");
   rows.forEach(row => {
     row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
   });
