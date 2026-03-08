@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="so">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -19,6 +19,7 @@ body { font-family: Arial; scroll-behavior:smooth; }
 
 <body>
 
+<!-- ===== NAVIGATION ===== -->
 <nav class="navbar navbar-expand-lg fixed-top">
 <div class="container">
 <a class="navbar-brand text-white" href="#home">Adawe Gas</a>
@@ -27,19 +28,22 @@ body { font-family: Arial; scroll-behavior:smooth; }
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#partner">Partner</a></li>
+<li class="nav-item"><a class="nav-link" href="#gas-search">Gas Search</a></li>
+<li class="nav-item"><a class="nav-link" href="#seller">Seller</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
 </ul>
 </div>
 </div>
 </nav>
 
+<!-- ===== HERO ===== -->
 <section class="hero" id="home">
 <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
 <p>Fast • Safe • Reliable</p>
 <a href="#order" class="btn btn-light mt-3">Order Now</a>
 </section>
 
+<!-- ===== ORDER FORM ===== -->
 <section class="section bg-light" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
@@ -71,24 +75,106 @@ body { font-family: Arial; scroll-behavior:smooth; }
 </div>
 </section>
 
-<section class="section" id="partner">
+<!-- ===== GAS SEARCH + MAP + PRICE TABLE ===== -->
+<section class="section" id="gas-search">
 <div class="container">
-<h2 class="text-center">Register as Partner</h2>
-<form id="partnerForm" class="col-md-6 mx-auto">
-<input class="form-control mb-2" id="pname" placeholder="Company Name" required>
-<input class="form-control mb-2" id="plocation" placeholder="Location" required>
-<input class="form-control mb-2" id="pphone" placeholder="Phone" required>
-<select class="form-select mb-3" id="pbrand" required>
+<h2 class="text-center mb-4">Search Gas Sellers</h2>
+<div class="row g-2 justify-content-center">
+  <div class="col-md-3">
+    <select id="gasSearch" class="form-select">
+      <option>Gas Type</option>
+      <option>1kg</option>
+      <option>3kg</option>
+      <option>6kg</option>
+      <option>13kg</option>
+      <option>25kg</option>
+      <option>35kg</option>
+      <option>40kg</option>
+      <option>45kg</option>
+      <option>50kg</option>
+      <option>1-50kg</option>
+    </select>
+  </div>
+  <div class="col-md-2">
+    <button class="btn btn-success w-100" onclick="searchSellers()">Search</button>
+  </div>
+</div>
+
+<div id="sellerResults" class="mt-4 text-center"></div>
+
+<h2 class="text-center mt-5">Nearest Gas Sellers</h2>
+<iframe
+  width="100%"
+  height="400"
+  style="border:0"
+  loading="lazy"
+  allowfullscreen
+  src="https://www.google.com/maps?q=Nairobi&output=embed">
+</iframe>
+
+<h2 class="text-center mt-5">Compare Gas Prices</h2>
+<table class="table table-bordered text-center mt-3">
+<thead>
+<tr>
+<th>Brand</th>
+<th>6kg</th>
+<th>13kg</th>
+<th>50kg</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>K-Gas</td>
+<td>KES 1,500</td>
+<td>KES 3,200</td>
+<td>KES 12,000</td>
+</tr>
+<tr>
+<td>Pro Gas</td>
+<td>KES 1,450</td>
+<td>KES 3,100</td>
+<td>KES 11,800</td>
+</tr>
+<tr>
+<td>TotalEnergies</td>
+<td>KES 1,550</td>
+<td>KES 3,300</td>
+<td>KES 12,200</td>
+</tr>
+</tbody>
+</table>
+</div>
+</section>
+
+<script>
+function searchSellers() {
+  const gasType = document.getElementById('gasSearch').value;
+  const resultsDiv = document.getElementById('sellerResults');
+  resultsDiv.innerHTML = `<p>Showing sellers for: <strong>${gasType}</strong></p>`;
+  // Add logic to fetch sellers from database if needed
+}
+</script>
+
+<!-- ===== SELLER REGISTRATION ===== -->
+<section class="section" id="seller">
+<div class="container">
+<h2 class="text-center">Register as Gas Seller</h2>
+<form id="sellerForm" class="col-md-6 mx-auto">
+<input class="form-control mb-2" id="sname" placeholder="Company Name" required>
+<input class="form-control mb-2" id="slocation" placeholder="Location" required>
+<input class="form-control mb-2" id="sphone" placeholder="Phone" required>
+<select class="form-select mb-3" id="stype" required>
 <option value="">Select Business Type</option>
 <option value="Wholesale">Wholesale</option>
 <option value="Retail">Retail</option>
 <option value="Wholesale & Retail">Wholesale & Retail</option>
 </select>
-<button type="submit" class="btn btn-primary w-100">Register Partner</button>
+<button type="submit" class="btn btn-primary w-100">Register Seller</button>
 </form>
 </div>
 </section>
 
+<!-- ===== CONTACT ===== -->
 <section class="section bg-light" id="contact">
 <div class="container text-center">
 <h2>Contact</h2>
@@ -97,33 +183,33 @@ body { font-family: Arial; scroll-behavior:smooth; }
 </div>
 </section>
 
+<!-- ===== FOOTER ===== -->
 <footer class="footer">
 © 2026 Adawe Gas – All Rights Reserved
 </footer>
 
+<!-- ===== SCRIPTS ===== -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// ======= Firebase Config =======
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+authDomain: "adawe-gas-system-82187.firebaseapp.com",
+projectId: "adawe-gas-system-82187",
+storageBucket: "adawe-gas-system-82187.appspot.com",
+messagingSenderId: "644303663526",
+appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ====== ORDER SUBMIT ======
+// ===== ORDER SUBMIT ======
 document.getElementById("orderForm").addEventListener("submit", async (e) => {
 e.preventDefault();
-
 const name = document.getElementById("name").value;
 const location = document.getElementById("location").value;
 const quantity = document.getElementById("quantity").value;
@@ -131,14 +217,9 @@ const unit = document.getElementById("unit").value;
 const brand = document.getElementById("brand").value;
 
 try {
-await addDoc(collection(db, "orders"), {
-  name, location, quantity, unit, brand,
-  createdAt: new Date()
-});
-
+await addDoc(collection(db, "orders"), { name, location, quantity, unit, brand, createdAt: new Date() });
 const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit}`;
 window.open("https://wa.me/254727015434?text=" + msg, "_blank");
-
 alert("Order saved successfully!");
 document.getElementById("orderForm").reset();
 } catch(err) {
@@ -147,25 +228,38 @@ console.error(err);
 }
 });
 
-// ====== PARTNER SUBMIT ======
-document.getElementById("partnerForm").addEventListener("submit", async (e) => {
+// ===== PARTNER SUBMIT ======
+document.getElementById("partnerForm")?.addEventListener("submit", async (e) => {
 e.preventDefault();
-
 const name = document.getElementById("pname").value;
 const location = document.getElementById("plocation").value;
 const phone = document.getElementById("pphone").value;
 const businessType = document.getElementById("pbrand").value;
 
 try {
-await addDoc(collection(db, "partners"), {
-  name, location, phone, businessType,
-  createdAt: new Date()
-});
-
+await addDoc(collection(db, "partners"), { name, location, phone, businessType, createdAt: new Date() });
 alert("Partner registered successfully!");
 document.getElementById("partnerForm").reset();
 } catch(err) {
 alert("Error saving partner. Check Firebase config and rules.");
+console.error(err);
+}
+});
+
+// ===== SELLER SUBMIT ======
+document.getElementById("sellerForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const name = document.getElementById("sname").value;
+const location = document.getElementById("slocation").value;
+const phone = document.getElementById("sphone").value;
+const businessType = document.getElementById("stype").value;
+
+try {
+await addDoc(collection(db, "sellers"), { name, location, phone, businessType, createdAt: new Date() });
+alert("Seller registered successfully!");
+document.getElementById("sellerForm").reset();
+} catch(err) {
+alert("Error saving seller. Check Firebase config and rules.");
 console.error(err);
 }
 });
