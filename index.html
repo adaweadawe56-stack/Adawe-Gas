@@ -1,67 +1,198 @@
+<!DOCTYPE html>
+<html lang="so">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Adawe Gas – LPG Delivery Kenya</title>
+
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+
+<style>
+body { font-family: Arial; scroll-behavior: smooth; background: #f8f9fa; }
+.navbar { background:#0f7b3f; }
+.navbar a { color:white !important; font-weight:bold; }
+.section { padding:80px 20px; }
+.hero { background:linear-gradient(135deg,#0f5132,#198754); color:white; padding:120px 20px; text-align:center; }
+.hero h1 { font-size:2.8rem; margin-bottom:15px; }
+.hero p { font-size:1.3rem; margin-bottom:20px; }
+.hero .btn { font-size:1.2rem; padding:10px 25px; }
+.footer { background:#0f7b3f; color:white; text-align:center; padding:20px; margin-top:40px; }
+
+.form-control, .form-select { border-radius:5px; }
+.btn-success, .btn-primary { border-radius:5px; font-weight:bold; }
+.btn-success:hover, .btn-primary:hover { opacity:0.9; }
+
+h2.text-center { margin-bottom:40px; }
+
+@media (max-width:768px){
+  .hero h1 { font-size:2rem; }
+  .hero p { font-size:1rem; }
+}
+</style>
+</head>
+
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+<div class="container">
+<a class="navbar-brand text-white" href="#home">Adawe Gas</a>
+<button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#menu">☰</button>
+<div class="collapse navbar-collapse" id="menu">
+<ul class="navbar-nav ms-auto">
+<li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+<li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+<li class="nav-item"><a class="nav-link" href="#seller">Seller</a></li>
+<li class="nav-item"><a class="nav-link" href="#nearest-sellers">Map</a></li>
+<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+</ul>
+</div>
+</div>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="home">
+<h1>Kenya’s Fast Growing LPG Delivery Network</h1>
+<p>Fast • Safe • Reliable</p>
+<a href="#order" class="btn btn-light mt-3">Order Now</a>
+</section>
+
 <!-- ===== ORDER FORM ===== -->
-<section class="section bg-light" id="order">
-  <div class="container">
-    <h2 class="text-center">Place Order</h2>
-    <form id="orderForm" class="col-md-6 mx-auto">
-      <input class="form-control mb-2" id="name" placeholder="Name" required>
-      <input class="form-control mb-2" id="location" placeholder="Location" required>
-      <input class="form-control mb-2" id="quantity" type="number" placeholder="Quantity" required>
-      <select class="form-select mb-2" id="unit" required>
-        <option value="">Select Unit</option>
-        <option>Kgs</option>
-        <option>Cylinder(s)</option>
-      </select>
-      <select class="form-select mb-3" id="brand" required>
-        <option value="">Select Gas Brand</option>
-        <option>K-Gas</option>
-        <option>AfriGas</option>
-        <option>Pro Gas</option>
-        <option>TotalEnergies</option>
-      </select>
-      <button type="submit" class="btn btn-success w-100">Send Order</button>
-    </form>
-  </div>
+<section class="section bg-white" id="order">
+<div class="container">
+<h2 class="text-center">Place Order</h2>
+<form id="orderForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
+<input class="form-control mb-3" id="name" placeholder="Name" required>
+<input class="form-control mb-3" id="location" placeholder="Location" required>
+<input class="form-control mb-3" id="quantity" type="number" placeholder="Quantity" required>
+<select class="form-select mb-3" id="unit" required>
+<option value="">Select Unit</option>
+<option>Kgs</option>
+<option>Cylinder(s)</option>
+</select>
+<select class="form-select mb-3" id="brand" required>
+<option value="">Select Gas Brand</option>
+<option>K-Gas</option>
+<option>AfriGas</option>
+<option>Pro Gas</option>
+<option>TotalEnergies</option>
+<option>Hashi Gas</option>
+<option>Lake Gas</option>
+<option>Oil Libya (OLA Gas)</option>
+<option>Rubis Gas</option>
+<option>Taifa Gas</option>
+<option>Marangi</option>
+<option>National Oil Gas</option>
+</select>
+<button type="submit" class="btn btn-success w-100">Send Order</button>
+</form>
+</div>
 </section>
 
 <!-- ===== SELLER REGISTRATION ===== -->
-<section class="section" id="seller">
-  <div class="container">
-    <h2 class="text-center">Register as Gas Seller</h2>
-    <form id="sellerForm" class="col-md-6 mx-auto">
-      <input class="form-control mb-2" id="sname" placeholder="Company Name" required>
-      <input class="form-control mb-2" id="slocation" placeholder="Location" required>
-      <input class="form-control mb-2" id="sphone" placeholder="Phone" required>
-      <select class="form-select mb-3" id="stype" required>
-        <option value="">Select Business Type</option>
-        <option value="Wholesale">Wholesale</option>
-        <option value="Retail">Retail</option>
-        <option value="Wholesale & Retail">Wholesale & Retail</option>
-      </select>
-      <button type="submit" class="btn btn-primary w-100">Register Seller</button>
-    </form>
-  </div>
+<section class="section bg-white" id="seller">
+<div class="container">
+<h2 class="text-center">Register as Gas Seller</h2>
+<form id="sellerForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
+<input class="form-control mb-3" id="sname" placeholder="Company Name" required>
+<input class="form-control mb-3" id="slocation" placeholder="Location" required>
+<input class="form-control mb-3" id="sphone" placeholder="Phone" required>
+<select class="form-select mb-3" id="stype" required>
+<option value="">Select Business Type</option>
+<option value="Wholesale">Wholesale</option>
+<option value="Retail">Retail</option>
+<option value="Wholesale & Retail">Wholesale & Retail</option>
+</select>
+<button type="submit" class="btn btn-primary w-100">Register Seller</button>
+</form>
+</div>
 </section>
 
 <!-- ===== NEAREST GAS SELLERS (MAP) ===== -->
-<section class="section" id="nearest-sellers">
-  <div class="container">
-    <h2 class="text-center">Nearest Gas Sellers</h2>
-    <iframe
-      width="100%"
-      height="400"
-      style="border:0"
-      loading="lazy"
-      allowfullscreen
-      src="https://www.google.com/maps?q=Nairobi&output=embed">
-    </iframe>
-  </div>
+<section class="section bg-light" id="nearest-sellers">
+<div class="container">
+<h2 class="text-center">Nearest Gas Sellers</h2>
+<iframe
+width="100%"
+height="400"
+style="border:0"
+loading="lazy"
+allowfullscreen
+src="https://www.google.com/maps?q=Nairobi&output=embed">
+</iframe>
+</div>
 </section>
 
 <!-- ===== CONTACT ===== -->
-<section class="section bg-light" id="contact">
-  <div class="container text-center">
-    <h2>Contact</h2>
-    <p>📞 0727 015 434</p>
-    <p>📍 Nairobi, Kenya</p>
-  </div>
+<section class="section bg-white" id="contact">
+<div class="container text-center">
+<h2>Contact</h2>
+<p>📞 0727 015 434</p>
+<p>📍 Nairobi, Kenya</p>
+</div>
 </section>
+
+<footer class="footer">
+© 2026 Adawe Gas – All Rights Reserved
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+  authDomain: "adawe-gas-system-82187.firebaseapp.com",
+  projectId: "adawe-gas-system-82187",
+  storageBucket: "adawe-gas-system-82187.appspot.com",
+  messagingSenderId: "644303663526",
+  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ====== ORDER SUBMIT ======
+document.getElementById("orderForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const name = document.getElementById("name").value;
+const location = document.getElementById("location").value;
+const quantity = document.getElementById("quantity").value;
+const unit = document.getElementById("unit").value;
+const brand = document.getElementById("brand").value;
+
+try {
+await addDoc(collection(db, "orders"), { name, location, quantity, unit, brand, createdAt: new Date() });
+const msg = `Hello Adawe Gas,%0AName: ${name}%0ALocation: ${location}%0ABrand: ${brand}%0AOrder: ${quantity} ${unit}`;
+window.open("https://wa.me/254727015434?text=" + msg, "_blank");
+alert("Order saved successfully!");
+document.getElementById("orderForm").reset();
+} catch(err) {
+alert("Error saving order. Check Firebase config and rules.");
+console.error(err);
+}
+});
+
+// ====== SELLER SUBMIT ======
+document.getElementById("sellerForm").addEventListener("submit", async (e) => {
+e.preventDefault();
+const name = document.getElementById("sname").value;
+const location = document.getElementById("slocation").value;
+const phone = document.getElementById("sphone").value;
+const businessType = document.getElementById("stype").value;
+
+try {
+await addDoc(collection(db, "sellers"), { name, location, phone, businessType, createdAt: new Date() });
+alert("Seller registered successfully!");
+document.getElementById("sellerForm").reset();
+} catch(err) {
+alert("Error saving seller. Check Firebase config and rules.");
+console.error(err);
+}
+});
+</script>
+
+</body>
+</html>
