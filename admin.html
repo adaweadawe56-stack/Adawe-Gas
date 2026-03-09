@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adawe Gas Admin</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
@@ -20,9 +21,13 @@ body { background:#f4f4f4; font-family:Arial; }
 <div class="container mt-5" id="loginSection">
 <div class="card col-md-4 mx-auto p-4 shadow">
 <h4 class="text-center">🔐 Admin Login</h4>
+
 <input type="password" id="password" class="form-control mb-3" placeholder="Enter Admin Password">
+
 <button class="btn btn-success w-100" onclick="login()">Login</button>
+
 <p class="text-danger mt-2 text-center" id="error"></p>
+
 </div>
 </div>
 
@@ -36,6 +41,7 @@ body { background:#f4f4f4; font-family:Arial; }
 <div class="container mt-4">
 
 <div class="row text-center mb-4">
+
 <div class="col-md-6">
 <div class="card p-3 shadow">
 <h4>Total Orders</h4>
@@ -45,14 +51,17 @@ body { background:#f4f4f4; font-family:Arial; }
 
 <div class="col-md-6">
 <div class="card p-3 shadow">
-<h4>Total Partners</h4>
-<h2 id="partnerCount">0</h2>
-</div>
+<h4>Total Sellers</h4>
+<h2 id="sellerCount">0</h2>
 </div>
 </div>
 
+</div>
+
 <h4>Orders List</h4>
+
 <table class="table table-bordered bg-white">
+
 <thead>
 <tr>
 <th>Name</th>
@@ -63,117 +72,198 @@ body { background:#f4f4f4; font-family:Arial; }
 <th>Action</th>
 </tr>
 </thead>
+
 <tbody id="ordersTable"></tbody>
+
 </table>
 
-<h4 class="mt-5">Partners List</h4>
+<h4 class="mt-5">Sellers List</h4>
+
 <table class="table table-bordered bg-white">
+
 <thead>
 <tr>
-<th>Name</th>
+<th>Company</th>
 <th>Location</th>
 <th>Phone</th>
-<th>Brand</th>
+<th>Business Type</th>
 <th>Date</th>
 <th>Action</th>
 </tr>
 </thead>
-<tbody id="partnersTable"></tbody>
+
+<tbody id="sellersTable"></tbody>
+
 </table>
 
 </div>
 </div>
 
 <script>
+
 function login() {
+
 const pass = document.getElementById("password").value;
 
-// BADDEL PASSWORD-KA HADDII AAD RABTO
 if(pass === "Adawe2026!") {
+
 document.getElementById("loginSection").style.display="none";
 document.getElementById("dashboard").style.display="block";
+
 } else {
+
 document.getElementById("error").innerText="Wrong Password!";
+
 }
+
 }
+
 </script>
 
 <!-- FIREBASE -->
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { getFirestore, collection, onSnapshot, deleteDoc, doc }
+
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+
+apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+
+authDomain: "adawe-gas-system-82187.firebaseapp.com",
+
+projectId: "adawe-gas-system-82187",
+
+storageBucket: "adawe-gas-system-82187.appspot.com",
+
+messagingSenderId: "644303663526",
+
+appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
 // DELETE FUNCTION
+
 async function deleteItem(collectionName, id) {
-if(confirm("Are you sure you want to delete?")) {
+
+if(confirm("Delete this item?")) {
+
 await deleteDoc(doc(db, collectionName, id));
+
 }
+
 }
+
 window.deleteItem = deleteItem;
 
+
 // ORDERS
+
 const ordersTable = document.getElementById("ordersTable");
+
 const orderCount = document.getElementById("orderCount");
 
-onSnapshot(collection(db, "orders"), (snapshot) => {
+onSnapshot(collection(db,"orders"),(snapshot)=>{
+
 ordersTable.innerHTML="";
-orderCount.innerText=snapshot.size;
+
+orderCount.innerText = snapshot.size;
 
 snapshot.forEach(docSnap=>{
-const d=docSnap.data();
-ordersTable.innerHTML+=`
+
+const d = docSnap.data();
+
+ordersTable.innerHTML += `
+
 <tr>
+
 <td>${d.name}</td>
+
 <td>${d.location}</td>
+
 <td>${d.brand}</td>
+
 <td>${d.quantity} ${d.unit}</td>
+
 <td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
+
 <td>
+
 <button class="btn btn-danger btn-sm"
-onclick="deleteItem('orders','${docSnap.id}')">Delete</button>
+
+onclick="deleteItem('orders','${docSnap.id}')">
+
+Delete
+
+</button>
+
 </td>
+
 </tr>
+
 `;
-});
+
 });
 
-// PARTNERS
-const partnersTable=document.getElementById("partnersTable");
-const partnerCount=document.getElementById("partnerCount");
+});
 
-onSnapshot(collection(db,"partners"),(snapshot)=>{
-partnersTable.innerHTML="";
-partnerCount.innerText=snapshot.size;
+
+// SELLERS
+
+const sellersTable = document.getElementById("sellersTable");
+
+const sellerCount = document.getElementById("sellerCount");
+
+onSnapshot(collection(db,"sellers"),(snapshot)=>{
+
+sellersTable.innerHTML="";
+
+sellerCount.innerText = snapshot.size;
 
 snapshot.forEach(docSnap=>{
-const d=docSnap.data();
-partnersTable.innerHTML+=`
+
+const d = docSnap.data();
+
+sellersTable.innerHTML += `
+
 <tr>
+
 <td>${d.name}</td>
+
 <td>${d.location}</td>
+
 <td>${d.phone}</td>
-<td>${d.brand}</td>
+
+<td>${d.businessType}</td>
+
 <td>${new Date(d.createdAt.seconds*1000).toLocaleString()}</td>
+
 <td>
+
 <button class="btn btn-danger btn-sm"
-onclick="deleteItem('partners','${docSnap.id}')">Delete</button>
+
+onclick="deleteItem('sellers','${docSnap.id}')">
+
+Delete
+
+</button>
+
 </td>
+
 </tr>
+
 `;
+
 });
+
 });
 
 </script>
