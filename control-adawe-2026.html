@@ -30,6 +30,21 @@ th { background:#198754; color:white; }
 
 <body>
 
+<!-- LOGIN PAGE -->
+<div id="loginPage" class="container mt-5" style="max-width:400px;">
+<h3 class="text-center mb-3">Admin Login</h3>
+
+<input type="email" id="email" class="form-control mb-2" placeholder="Email">
+<input type="password" id="password" class="form-control mb-3" placeholder="Password">
+
+<button onclick="login()" class="btn btn-success w-100">Login</button>
+
+<p id="loginError" style="color:red;"></p>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+
 <header>Adawe Gas Control</header>
 
 <section class="section">
@@ -50,17 +65,14 @@ th { background:#198754; color:white; }
 </div>
 </div>
 
-<!-- Download Buttons -->
 <div class="mb-3">
-  <button id="downloadOrders" class="btn btn-primary btn-download">Download Orders CSV</button>
-  <button id="downloadSellers" class="btn btn-info btn-download">Download Sellers CSV</button>
+<button id="downloadOrders" class="btn btn-primary btn-download">Download Orders CSV</button>
+<button id="downloadSellers" class="btn btn-info btn-download">Download Sellers CSV</button>
 </div>
 
-<!-- Search Bars -->
 <input type="text" id="searchOrders" class="form-control search-input" placeholder="Search Orders by Name, Location, Brand">
 <input type="text" id="searchSellers" class="form-control search-input" placeholder="Search Sellers by Company, Location, Phone, Type">
 
-<!-- Orders Table -->
 <h3>Orders</h3>
 <table id="ordersTable">
 <tr>
@@ -68,7 +80,6 @@ th { background:#198754; color:white; }
 </tr>
 </table>
 
-<!-- Sellers Table -->
 <h3>Sellers</h3>
 <table id="sellersTable">
 <tr>
@@ -78,153 +89,140 @@ th { background:#198754; color:white; }
 
 </section>
 
+</div>
+
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-// Firebase config
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+authDomain: "adawe-gas-system-82187.firebaseapp.com",
+projectId: "adawe-gas-system-82187",
+storageBucket: "adawe-gas-system-82187.appspot.com",
+messagingSenderId: "644303663526",
+appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
+const auth = getAuth(app);
 
-async function fetchDashboard() {
-  // ===== Orders =====
-  const ordersSnap = await getDocs(query(collection(db, "orders"), orderBy("createdAt", "desc")));
-  const ordersTable = document.getElementById("ordersTable");
-  ordersTable.innerHTML = `<tr>
+window.login = function(){
+
+const email = document.getElementById("email").value;
+const password = document.getElementById("password").value;
+
+signInWithEmailAndPassword(auth,email,password)
+.then(()=>{
+
+document.getElementById("loginPage").style.display="none";
+document.getElementById("dashboard").style.display="block";
+
+fetchDashboard();
+
+})
+.catch(()=>{
+document.getElementById("loginError").innerText="Login failed";
+});
+
+}
+
+async function fetchDashboard(){
+
+const ordersSnap = await getDocs(query(collection(db,"orders"),orderBy("createdAt","desc")));
+const ordersTable=document.getElementById("ordersTable");
+
+ordersTable.innerHTML=`<tr>
 <th>Name</th><th>Location</th><th>Brand</th><th>Quantity</th><th>Unit</th><th>Status</th><th>Actions</th>
 </tr>`;
 
-  let totalOrders = 0, pendingOrders = 0;
+let totalOrders=0;
+let pendingOrders=0;
 
-  ordersSnap.forEach(docSnap => {
-    const o = docSnap.data();
-    const tr = document.createElement("tr");
+ordersSnap.forEach(docSnap=>{
 
-    const status = o.status || "Pending";
-    tr.className = status === "Pending" ? "status-pending" : "status-delivered";
+const o=docSnap.data();
+const tr=document.createElement("tr");
 
-    const actionBtn = status==="Pending" 
-      ? `<button class="btn btn-sm btn-delivered mark-delivered">Delivered</button>` 
-      : `<span class="btn btn-sm btn-pending">Delivered</span>`;
+const status=o.status||"Pending";
 
-    tr.innerHTML = `<td>${o.name}</td>
-                    <td>${o.location}</td>
-                    <td>${o.brand}</td>
-                    <td>${o.quantity}</td>
-                    <td>${o.unit || ""}</td>
-                    <td>${status}</td>
-                    <td>${actionBtn} <button class="btn btn-sm btn-danger delete-order">Delete</button></td>`;
-    ordersTable.appendChild(tr);
+tr.className=status==="Pending"?"status-pending":"status-delivered";
 
-    if(status==="Pending") {
-      tr.querySelector(".mark-delivered").addEventListener("click", async () => {
-        await updateDoc(doc(db, "orders", docSnap.id), { status: "Delivered" });
-        fetchDashboard();
-      });
-    }
+const actionBtn=status==="Pending"
+? `<button class="btn btn-sm btn-delivered mark-delivered">Delivered</button>`
+: `<span class="btn btn-sm btn-pending">Delivered</span>`;
 
-    tr.querySelector(".delete-order").addEventListener("click", async () => {
-      if(confirm("Are you sure you want to delete this order?")) {
-        await deleteDoc(doc(db, "orders", docSnap.id));
-        fetchDashboard();
-      }
-    });
+tr.innerHTML=`
+<td>${o.name}</td>
+<td>${o.location}</td>
+<td>${o.brand}</td>
+<td>${o.quantity}</td>
+<td>${o.unit||""}</td>
+<td>${status}</td>
+<td>${actionBtn} <button class="btn btn-sm btn-danger delete-order">Delete</button></td>
+`;
 
-    totalOrders++;
-    if(status==="Pending") pendingOrders++;
-  });
+ordersTable.appendChild(tr);
 
-  document.getElementById("totalOrders").textContent = totalOrders;
-  document.getElementById("pendingOrders").textContent = pendingOrders;
-
-  // ===== Sellers =====
-  const sellersSnap = await getDocs(collection(db, "sellers"));
-  const sellersTable = document.getElementById("sellersTable");
-  sellersTable.innerHTML = `<tr>
-<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
-</tr>`;
-  sellersSnap.forEach(docSnap => {
-    const s = docSnap.data();
-    const tr = document.createElement("tr");
-    tr.innerHTML = `<td>${s.name}</td><td>${s.location}</td><td>${s.phone}</td><td>${s.businessType}</td>
-                   <td><button class="btn btn-sm btn-danger delete-seller">Delete</button></td>`;
-    sellersTable.appendChild(tr);
-
-    tr.querySelector(".delete-seller").addEventListener("click", async () => {
-      if(confirm("Are you sure you want to delete this seller?")) {
-        await deleteDoc(doc(db, "sellers", docSnap.id));
-        fetchDashboard();
-      }
-    });
-  });
-  document.getElementById("totalSellers").textContent = sellersSnap.size;
+if(status==="Pending"){
+tr.querySelector(".mark-delivered").addEventListener("click",async()=>{
+await updateDoc(doc(db,"orders",docSnap.id),{status:"Delivered"});
+fetchDashboard();
+});
 }
 
-// ===== Download Orders =====
-document.getElementById("downloadOrders").addEventListener("click", async () => {
-  const ordersSnap = await getDocs(collection(db, "orders"));
-  let csv = "Name,Location,Brand,Quantity,Unit,Status,CreatedAt\n";
-  ordersSnap.forEach(docSnap => {
-    const o = docSnap.data();
-    const createdAt = o.createdAt?.toDate?.() || o.createdAt || "";
-    csv += `"${o.name}","${o.location}","${o.brand}","${o.quantity}","${o.unit || ""}","${o.status || "Pending"}","${createdAt}"\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "orders.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// ===== Download Sellers =====
-document.getElementById("downloadSellers").addEventListener("click", async () => {
-  const sellersSnap = await getDocs(collection(db, "sellers"));
-  let csv = "Company,Location,Phone,BusinessType,CreatedAt\n";
-  sellersSnap.forEach(docSnap => {
-    const s = docSnap.data();
-    const createdAt = s.createdAt?.toDate?.() || s.createdAt || "";
-    csv += `"${s.name}","${s.location}","${s.phone}","${s.businessType}","${createdAt}"\n`;
-  });
-  const blob = new Blob([csv], { type: "text/csv" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "sellers.csv";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-// ===== Search / Filter =====
-document.getElementById("searchOrders").addEventListener("input", () => {
-  const filter = document.getElementById("searchOrders").value.toLowerCase();
-  const rows = document.querySelectorAll("#ordersTable tr:not(:first-child)");
-  rows.forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
-  });
-});
-
-document.getElementById("searchSellers").addEventListener("input", () => {
-  const filter = document.getElementById("searchSellers").value.toLowerCase();
-  const rows = document.querySelectorAll("#sellersTable tr:not(:first-child)");
-  rows.forEach(row => {
-    row.style.display = row.innerText.toLowerCase().includes(filter) ? "" : "none";
-  });
-});
-
-// Initial fetch
+tr.querySelector(".delete-order").addEventListener("click",async()=>{
+if(confirm("Delete order?")){
+await deleteDoc(doc(db,"orders",docSnap.id));
 fetchDashboard();
-setInterval(fetchDashboard, 10000);
+}
+});
+
+totalOrders++;
+if(status==="Pending") pendingOrders++;
+
+});
+
+document.getElementById("totalOrders").textContent=totalOrders;
+document.getElementById("pendingOrders").textContent=pendingOrders;
+
+const sellersSnap=await getDocs(collection(db,"sellers"));
+const sellersTable=document.getElementById("sellersTable");
+
+sellersTable.innerHTML=`<tr>
+<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
+</tr>`;
+
+sellersSnap.forEach(docSnap=>{
+
+const s=docSnap.data();
+const tr=document.createElement("tr");
+
+tr.innerHTML=`
+<td>${s.name}</td>
+<td>${s.location}</td>
+<td>${s.phone}</td>
+<td>${s.businessType}</td>
+<td><button class="btn btn-sm btn-danger delete-seller">Delete</button></td>
+`;
+
+sellersTable.appendChild(tr);
+
+tr.querySelector(".delete-seller").addEventListener("click",async()=>{
+if(confirm("Delete seller?")){
+await deleteDoc(doc(db,"sellers",docSnap.id));
+fetchDashboard();
+}
+});
+
+});
+
+document.getElementById("totalSellers").textContent=sellersSnap.size;
+
+}
 
 </script>
 
