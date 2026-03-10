@@ -55,13 +55,20 @@ th { background:#198754; color:white; }
 <h4>Total Orders</h4>
 <p id="totalOrders">0</p>
 </div>
+
 <div class="stat-box">
 <h4>Pending Orders</h4>
 <p id="pendingOrders">0</p>
 </div>
+
 <div class="stat-box">
 <h4>Total Sellers</h4>
 <p id="totalSellers">0</p>
+</div>
+
+<div class="stat-box">
+<h4>Cheapest 13kg Seller</h4>
+<p id="cheapestSeller">-</p>
 </div>
 </div>
 
@@ -83,7 +90,13 @@ th { background:#198754; color:white; }
 <h3>Sellers</h3>
 <table id="sellersTable">
 <tr>
-<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
+<th>Company</th>
+<th>Location</th>
+<th>Phone</th>
+<th>6kg Price</th>
+<th>13kg Price</th>
+<th>Business Type</th>
+<th>Actions</th>
 </tr>
 </table>
 
@@ -117,12 +130,9 @@ const password = document.getElementById("password").value;
 
 signInWithEmailAndPassword(auth,email,password)
 .then(()=>{
-
 document.getElementById("loginPage").style.display="none";
 document.getElementById("dashboard").style.display="block";
-
 fetchDashboard();
-
 })
 .catch(()=>{
 document.getElementById("loginError").innerText="Login failed";
@@ -192,8 +202,17 @@ document.getElementById("pendingOrders").textContent=pendingOrders;
 const sellersSnap=await getDocs(collection(db,"sellers"));
 const sellersTable=document.getElementById("sellersTable");
 
+let cheapestPrice=Infinity;
+let cheapestSeller="-";
+
 sellersTable.innerHTML=`<tr>
-<th>Company</th><th>Location</th><th>Phone</th><th>Business Type</th><th>Actions</th>
+<th>Company</th>
+<th>Location</th>
+<th>Phone</th>
+<th>6kg Price</th>
+<th>13kg Price</th>
+<th>Business Type</th>
+<th>Actions</th>
 </tr>`;
 
 sellersSnap.forEach(docSnap=>{
@@ -201,10 +220,17 @@ sellersSnap.forEach(docSnap=>{
 const s=docSnap.data();
 const tr=document.createElement("tr");
 
+if(s.price13 && Number(s.price13)<cheapestPrice){
+cheapestPrice=Number(s.price13);
+cheapestSeller=s.name+" ("+s.price13+")";
+}
+
 tr.innerHTML=`
 <td>${s.name}</td>
 <td>${s.location}</td>
 <td>${s.phone}</td>
+<td>${s.price6||"-"}</td>
+<td>${s.price13||"-"}</td>
 <td>${s.businessType}</td>
 <td><button class="btn btn-sm btn-danger delete-seller">Delete</button></td>
 `;
@@ -221,8 +247,23 @@ fetchDashboard();
 });
 
 document.getElementById("totalSellers").textContent=sellersSnap.size;
+document.getElementById("cheapestSeller").textContent=cheapestSeller;
 
 }
+
+document.getElementById("searchSellers").addEventListener("keyup",function(){
+
+const filter=this.value.toLowerCase();
+const rows=document.querySelectorAll("#sellersTable tr");
+
+rows.forEach((row,i)=>{
+if(i===0) return;
+
+const text=row.innerText.toLowerCase();
+row.style.display=text.includes(filter)?"":"none";
+});
+
+});
 
 </script>
 
