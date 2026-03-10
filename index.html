@@ -54,6 +54,7 @@ body { font-family: Arial; scroll-behavior: smooth; background: #f8f9fa; }
 <a href="#order" class="btn btn-light mt-3">Order Now</a>
 </section>
 
+<!-- ===== ORDER FORM ===== -->
 <section class="section bg-white" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
@@ -97,6 +98,7 @@ Cheapest 13kg Gas: Loading...
 </div>
 </section>
 
+<!-- ===== SELLER REGISTRATION ===== -->
 <section class="section bg-white" id="seller">
 <div class="container">
 <h2 class="text-center">Register as Gas Seller</h2>
@@ -123,6 +125,21 @@ Cheapest 13kg Gas: Loading...
 </div>
 </section>
 
+<!-- ===== BRANDS LOGOS ===== -->
+<section class="section bg-light" id="brands">
+<div class="container">
+<h2 class="text-center">Gas Brands</h2>
+<div class="row text-center">
+<div class="col"><img src="rubis.png" class="brand-logo"><p>Rubis</p></div>
+<div class="col"><img src="ola.png" class="brand-logo"><p>OLA Gas</p></div>
+<div class="col"><img src="total.png" class="brand-logo"><p>TotalEnergies</p></div>
+<div class="col"><img src="hashi.png" class="brand-logo"><p>Hashi Gas</p></div>
+<div class="col"><img src="lakegas.png" class="brand-logo"><p>Lake Gas</p></div>
+</div>
+</div>
+</section>
+
+<!-- ===== PRICE COMPARISON ===== -->
 <section class="section bg-white" id="price-comparison">
 <div class="container">
 <h2 class="text-center">Compare Gas Prices</h2>
@@ -144,6 +161,7 @@ Cheapest 13kg Gas: Loading...
 </div>
 </section>
 
+<!-- ===== NEAREST GAS SELLERS (MAP) ===== -->
 <section class="section bg-light" id="nearest-sellers">
 <div class="container">
 <h2 class="text-center">Nearest Gas Sellers</h2>
@@ -154,6 +172,7 @@ src="https://www.google.com/maps?q=Nairobi&output=embed"></iframe>
 </div>
 </section>
 
+<!-- ===== CONTACT ===== -->
 <section class="section bg-light" id="contact">
 <div class="container text-center">
 <h2>Contact</h2>
@@ -186,90 +205,80 @@ appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-document.getElementById("orderForm").addEventListener("submit", async (e)=>{
-
+// ====== ORDER SUBMIT ======
+document.getElementById("orderForm").addEventListener("submit", async (e) => {
 e.preventDefault();
 
-const name=name.value;
-const location=location.value;
-const quantity=quantity.value;
-const unit=unit.value;
-const brand=brand.value;
+const name = document.getElementById("name").value;
+const location = document.getElementById("location").value;
+const quantity = document.getElementById("quantity").value;
+const unit = document.getElementById("unit").value;
+const brand = document.getElementById("brand").value;
 
 await addDoc(collection(db,"orders"),{
-name,location,quantity,unit,brand,status:"Pending",createdAt:new Date()
+name, location, quantity, unit, brand, status:"Pending", createdAt: new Date()
 });
 
 window.open(`https://wa.me/254727015434?text=Order ${brand} ${quantity}${unit} at ${location}`);
-
 alert("Order sent!");
-
 });
 
-document.getElementById("sellerForm").addEventListener("submit",async(e)=>{
-
+// ====== SELLER SUBMIT ======
+document.getElementById("sellerForm").addEventListener("submit", async (e) => {
 e.preventDefault();
 
+const name = document.getElementById("sname").value;
+const location = document.getElementById("slocation").value;
+const phone = document.getElementById("sphone").value;
+const price6 = document.getElementById("price6").value;
+const price13 = document.getElementById("price13").value;
+const businessType = document.getElementById("stype").value;
+
 await addDoc(collection(db,"sellers"),{
-
-name:sname.value,
-location:slocation.value,
-phone:sphone.value,
-price6:price6.value,
-price13:price13.value,
-businessType:stype.value,
-rating:5,
-createdAt:new Date()
-
+name, location, phone, price6, price13, businessType, rating:5, createdAt:new Date()
 });
 
 alert("Seller registered!");
-
 loadPrices();
-
 });
 
-async function loadPrices(){
+// ====== LOAD PRICES & CHEAPEST ======
+async function loadPrices() {
+const snap = await getDocs(collection(db,"sellers"));
+const table = document.getElementById("priceTable");
 
-const snap=await getDocs(collection(db,"sellers"));
-const table=document.getElementById("priceTable");
+let cheapest6 = Infinity;
+let cheapest13 = Infinity;
+let seller6 = "Not available";
+let seller13 = "Not available";
 
-let cheapest6=Infinity;
-let cheapest13=Infinity;
+table.innerHTML = "";
 
-let seller6="Not available";
-let seller13="Not available";
+snap.forEach(doc => {
+const s = doc.data();
 
-table.innerHTML="";
-
-snap.forEach(doc=>{
-
-const s=doc.data();
-
-if(s.price6 && Number(s.price6)<cheapest6){
-cheapest6=Number(s.price6);
-seller6=s.name+" - KES "+s.price6;
+if(s.price6 && Number(s.price6) < cheapest6){
+cheapest6 = Number(s.price6);
+seller6 = s.name + " - KES " + s.price6;
 }
 
-if(s.price13 && Number(s.price13)<cheapest13){
-cheapest13=Number(s.price13);
-seller13=s.name+" - KES "+s.price13;
+if(s.price13 && Number(s.price13) < cheapest13){
+cheapest13 = Number(s.price13);
+seller13 = s.name + " - KES " + s.price13;
 }
 
-table.innerHTML+=`
+table.innerHTML += `
 <tr>
 <td>${s.name}</td>
 <td>${s.location}</td>
-<td>${s.price6||"-"}</td>
-<td>${s.price13||"-"}</td>
-<td>${"⭐".repeat(s.rating||0)}</td>
+<td>${s.price6 || "-"}</td>
+<td>${s.price13 || "-"}</td>
+<td>${"⭐".repeat(s.rating || 0)}</td>
 </tr>`;
-
 });
 
-document.getElementById("cheapest6").innerText="💰 Cheapest 6kg Gas: "+seller6;
-document.getElementById("cheapest13").innerText="🔥 Cheapest 13kg Gas: "+seller13;
-
+document.getElementById("cheapest6").innerText = "💰 Cheapest 6kg Gas: " + seller6;
+document.getElementById("cheapest13").innerText = "🔥 Cheapest 13kg Gas: " + seller13;
 }
 
 loadPrices();
