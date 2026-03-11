@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="so">
 <head>
@@ -20,6 +21,30 @@ body { font-family: Arial; scroll-behavior: smooth; background: #f8f9fa; }
 .form-control, .form-select { border-radius:5px; }
 .btn-success, .btn-primary, .btn-warning { border-radius:5px; font-weight:bold; }
 .brand-logo { width:80px; margin-bottom:10px; }
+
+/* BRAND SLIDER */
+
+.brands{
+overflow:hidden;
+background:white;
+padding:40px 0;
+}
+
+.brand-slider{
+display:flex;
+gap:50px;
+width:max-content;
+animation:scrollBrands 20s linear infinite;
+}
+
+.brand-slider img{
+height:60px;
+}
+
+@keyframes scrollBrands{
+0%{transform:translateX(0)}
+100%{transform:translateX(-50%)}
+}
 
 @media (max-width:768px){
 .hero h1 { font-size:2rem; }
@@ -52,6 +77,36 @@ body { font-family: Arial; scroll-behavior: smooth; background: #f8f9fa; }
 <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
 <p>Fast • Safe • Reliable</p>
 <a href="#order" class="btn btn-light mt-3">Order Now</a>
+</section>
+
+<!-- BRANDS -->
+
+<section class="section bg-light" id="brands">
+<div class="container">
+<h2 class="text-center mb-4">Available LPG Brands</h2>
+
+<div class="brands">
+<div class="brand-slider">
+
+<img src="images/rubis.png">
+<img src="images/ola.png">
+<img src="images/total.png">
+<img src="images/hashi.png">
+<img src="images/lakegas.png">
+<img src="images/kgas.png">
+<img src="images/afrigas.png">
+
+<img src="images/rubis.png">
+<img src="images/ola.png">
+<img src="images/total.png">
+<img src="images/hashi.png">
+<img src="images/lakegas.png">
+<img src="images/kgas.png">
+<img src="images/afrigas.png">
+
+</div>
+</div>
+</div>
 </section>
 
 <section class="section bg-white" id="order">
@@ -169,6 +224,8 @@ src="https://www.google.com/maps?q=Nairobi&output=embed"></iframe>
 </footer>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- FIREBASE SCRIPT (unchanged) -->
 
 <script type="module">
 
@@ -293,3 +350,4 @@ loadPrices();
 
 </body>
 </html>
+```
