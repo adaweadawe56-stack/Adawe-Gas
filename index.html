@@ -1,290 +1,537 @@
+```html
 <!DOCTYPE html>
-<html lang="so">
+<html lang="en">
 <head>
+
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas – LPG Delivery Kenya</title>
+
+<title>Adawe Gas</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-body { font-family: Arial; scroll-behavior: smooth; background: #f8f9fa; }
-.navbar { background:#0f7b3f; }
-.navbar a { color:white !important; font-weight:bold; }
-.section { padding:80px 20px; }
-.hero { background:linear-gradient(135deg,#0f5132,#198754); color:white; padding:120px 20px; text-align:center; }
-.hero h1 { font-size:2.8rem; margin-bottom:15px; }
-.hero p { font-size:1.3rem; margin-bottom:20px; }
-.hero .btn { font-size:1.2rem; padding:10px 25px; }
-.footer { background:#0f7b3f; color:white; text-align:center; padding:20px; margin-top:40px; }
-.form-control, .form-select { border-radius:5px; }
-.btn-success, .btn-primary, .btn-warning { border-radius:5px; font-weight:bold; }
-.brand-logo { width:80px; margin-bottom:10px; }
-.brands{overflow:hidden;background:white;padding:40px 0;}
-.brand-slider{display:flex;gap:50px;width:max-content;animation:scrollBrands 20s linear infinite;}
-.brand-slider img{height:60px;}
-@keyframes scrollBrands{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
-@media (max-width:768px){.hero h1 { font-size:2rem; }.hero p { font-size:1rem; }}
+
+body{
+font-family: Arial;
+}
+
+.navbar{
+background:#0b7a3c;
+}
+
+.navbar-brand{
+color:white;
+font-weight:bold;
+}
+
+.nav-link{
+color:white !important;
+}
+
+.hero{
+background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
+url('https://images.unsplash.com/photo-1581091870627-3f2c7c8c0b62');
+background-size:cover;
+background-position:center;
+color:white;
+padding:120px 0;
+}
+
+.btn-main{
+background:#28a745;
+color:white;
+}
+
+.section{
+padding:70px 0;
+}
+
+.service-card{
+padding:30px;
+border-radius:10px;
+box-shadow:0 0 15px rgba(0,0,0,0.1);
+background:white;
+}
+
+.review{
+background:#f5f5f5;
+padding:20px;
+border-radius:10px;
+}
+
+footer{
+background:#0b7a3c;
+color:white;
+padding:20px;
+}
+
+.cheapest{
+background:#d4edda;
+font-weight:bold;
+}
+
 </style>
+
 </head>
 
 <body>
 
 <!-- NAVBAR -->
-<nav class="navbar navbar-expand-lg fixed-top shadow-sm">
+
+<nav class="navbar navbar-expand-lg">
 <div class="container">
-<a class="navbar-brand text-white" href="#home">Adawe Gas</a>
-<button class="navbar-toggler bg-light" data-bs-toggle="collapse" data-bs-target="#menu">☰</button>
+
+<a class="navbar-brand">Adawe Gas</a>
+
+<button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
+<span class="navbar-toggler-icon"></span>
+</button>
+
 <div class="collapse navbar-collapse" id="menu">
+
 <ul class="navbar-nav ms-auto">
+
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#seller">Seller</a></li>
-<li class="nav-item"><a class="nav-link" href="#brands">Brands</a></li>
-<li class="nav-item"><a class="nav-link" href="#price-comparison">Prices</a></li>
-<li class="nav-item"><a class="nav-link" href="#nearest-sellers">Map</a></li>
+<li class="nav-item"><a class="nav-link" href="#prices">Prices</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+
 </ul>
+
 </div>
+
 </div>
 </nav>
 
+
 <!-- HERO -->
+
 <section class="hero" id="home">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-md-6">
+
 <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
-<p>Fast • Safe • Reliable</p>
-<a href="#order" class="btn btn-light mt-3">Order Now</a>
+
+<p>Fast • Safe • Reliable gas delivery across Kenya</p>
+
+<a href="#order" class="btn btn-main btn-lg">Order Gas Now</a>
+
+</div>
+
+<div class="col-md-6 text-center">
+
+<img src="https://cdn-icons-png.flaticon.com/512/1048/1048313.png"
+class="img-fluid"
+style="max-height:300px">
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<!-- BRANDS -->
-<section class="section bg-light" id="brands">
-<div class="container">
-<h2 class="text-center mb-4">Available LPG Brands</h2>
-<div class="brands">
-<div class="brand-slider">
-<img src="images/rubis.png">
-<img src="images/ola.png">
-<img src="images/total.png">
-<img src="images/hashi.png">
-<img src="images/lakegas.png">
-<img src="images/kgas.png">
-<img src="images/afrigas.png">
-<img src="images/rubis.png">
-<img src="images/ola.png">
-<img src="images/total.png">
-<img src="images/hashi.png">
-<img src="images/lakegas.png">
-<img src="images/kgas.png">
-<img src="images/afrigas.png">
-</div>
-</div>
-</div>
-</section>
 
 <!-- ORDER FORM -->
-<section class="section bg-white" id="order">
+
+<section class="section bg-light" id="order">
+
 <div class="container">
-<h2 class="text-center">Place Order</h2>
-<div class="alert alert-success text-center" id="cheapest6">Cheapest 6kg Gas: Loading...</div>
-<div class="alert alert-warning text-center" id="cheapest13">Cheapest 13kg Gas: Loading...</div>
-<form id="orderForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
-<input class="form-control mb-3" id="name" placeholder="Name" required>
-<input class="form-control mb-3" id="location" placeholder="Location" required>
-<input class="form-control mb-3" id="quantity" type="number" placeholder="Quantity" required>
-<select class="form-select mb-3" id="unit" required>
-<option value="">Select Unit</option>
-<option>Kgs</option>
-<option>Cylinder(s)</option>
+
+<h2 class="text-center mb-4">Order Gas</h2>
+
+<div class="row justify-content-center">
+
+<div class="col-md-6">
+
+<form>
+
+<div class="mb-3">
+<label>Name</label>
+<input type="text" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Phone</label>
+<input type="text" class="form-control">
+</div>
+
+<div class="mb-3">
+<label>Gas Size</label>
+
+<select class="form-control">
+<option>6kg</option>
+<option>13kg</option>
+<option>50kg</option>
 </select>
-<select class="form-select mb-3" id="brand" required>
-<option value="">Select Gas Brand</option>
-<option>K-Gas</option>
-<option>AfriGas</option>
-<option>Pro Gas</option>
-<option>TotalEnergies</option>
-<option>Hashi Gas</option>
-<option>Lake Gas</option>
-<option>Oil Libya (OLA Gas)</option>
-<option>Rubis Gas</option>
-<option>Taifa Gas</option>
-<option>Marangi</option>
-<option>National Oil Gas</option>
-</select>
-<button type="submit" class="btn btn-success w-100">Send Order</button>
-<p id="trackingNumber" class="mt-2 font-weight-bold text-success"></p>
+
+</div>
+
+<div class="mb-3">
+<label>Location</label>
+<input type="text" class="form-control">
+</div>
+
+<button class="btn btn-success w-100">
+Place Order
+</button>
+
 </form>
+
 </div>
+
+</div>
+
+</div>
+
 </section>
 
-<!-- SELLER REGISTER -->
-<section class="section bg-white" id="seller">
+
+<!-- SERVICES -->
+
+<section class="section text-center">
+
 <div class="container">
-<h2 class="text-center">Register as Gas Seller</h2>
-<form id="sellerForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
-<input class="form-control mb-3" id="sname" placeholder="Company Name" required>
-<input class="form-control mb-3" id="slocation" placeholder="Location" required>
-<input class="form-control mb-3" id="sphone" placeholder="Phone" required>
-<input class="form-control mb-3" id="price6" placeholder="6kg Price" type="number">
-<input class="form-control mb-3" id="price13" placeholder="13kg Price" type="number">
-<select class="form-select mb-3" id="stype" required>
-<option value="">Select Business Type</option>
-<option value="Wholesale">Wholesale</option>
-<option value="Retail">Retail</option>
-<option value="Wholesale & Retail">Wholesale & Retail</option>
-</select>
-<button type="submit" class="btn btn-primary w-100">Register Seller</button>
-</form>
+
+<h2>Our Services</h2>
+
+<div class="row mt-5">
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>LPG Delivery</h4>
+<p>Fast home gas cylinder delivery</p>
+
 </div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>Partner Network</h4>
+<p>Work with Adawe Gas partners</p>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>Same Day Delivery</h4>
+<p>Order gas and receive same day</p>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<!-- PRICE COMPARISON -->
-<section class="section bg-white" id="price-comparison">
-<div class="container">
-<h2 class="text-center">Compare Gas Prices</h2>
-<table class="table table-bordered">
-<thead>
-<tr>
-<th>Seller</th>
-<th>Location</th>
-<th>6kg Price</th>
-<th>13kg Price</th>
-<th>Rating</th>
-</tr>
-</thead>
-<tbody id="priceTable"></tbody>
-</table>
-</div>
-</section>
 
-<!-- DELIVERY TRACKING MAP -->
-<section class="section bg-light" id="nearest-sellers">
-<div class="container">
-<h2 class="text-center">Track & Nearest Gas Sellers</h2>
-<div id="deliveryMap" style="width:100%;height:400px;border-radius:8px;"></div>
-</div>
-</section>
+<!-- GAS PRICES -->
 
-<!-- CONTACT -->
-<section class="section bg-light" id="contact">
+<section class="section bg-light" id="prices">
+
 <div class="container text-center">
-<h2>Contact</h2>
-<p>📞 0727 015 434</p>
-<p>📧 adaweadawe56@gmail.com</p>
-<p>📍 Nairobi, Kenya</p>
+
+<h2>Gas Prices</h2>
+
+<div class="row mt-4">
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>6KG</h4>
+<h3>KES 1200</h3>
+
 </div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>13KG</h4>
+<h3>KES 2500</h3>
+
+</div>
+
+</div>
+
+<div class="col-md-4">
+
+<div class="service-card">
+
+<h4>50KG</h4>
+<h3>KES 7500</h3>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
 </section>
 
-<footer class="footer">
-© 2026 Adawe Gas – All Rights Reserved
+
+<!-- CHEAPEST GAS -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="text-center mb-4">Find Cheapest Gas</h2>
+
+<table class="table table-bordered text-center">
+
+<thead class="table-success">
+
+<tr>
+<th>Brand</th>
+<th>6KG</th>
+<th>13KG</th>
+<th>Order</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr class="cheapest">
+<td>Total Gas</td>
+<td>KES 1150</td>
+<td>KES 2450</td>
+<td>
+<a href="https://wa.me/254727015434?text=I%20want%20Total%20Gas"
+class="btn btn-success">
+Order
+</a>
+</td>
+</tr>
+
+<tr>
+<td>Shell Gas</td>
+<td>KES 1180</td>
+<td>KES 2500</td>
+<td><button class="btn btn-success">Order</button></td>
+</tr>
+
+<tr>
+<td>Rubis Gas</td>
+<td>KES 1200</td>
+<td>KES 2550</td>
+<td><button class="btn btn-success">Order</button></td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- PARTNERS -->
+
+<section class="section bg-light">
+
+<div class="container">
+
+<h2 class="text-center mb-4">Top Partners</h2>
+
+<table class="table table-bordered text-center">
+
+<thead class="table-success">
+
+<tr>
+<th>Rank</th>
+<th>Partner</th>
+<th>Orders</th>
+</tr>
+
+</thead>
+
+<tbody>
+
+<tr>
+<td>1</td>
+<td>Nairobi Gas</td>
+<td>540</td>
+</tr>
+
+<tr>
+<td>2</td>
+<td>Mombasa Gas</td>
+<td>430</td>
+</tr>
+
+<tr>
+<td>3</td>
+<td>Kisumu LPG</td>
+<td>320</td>
+</tr>
+
+</tbody>
+
+</table>
+
+</div>
+
+</section>
+
+
+<!-- GROWTH CHART -->
+
+<section class="section">
+
+<div class="container">
+
+<h2 class="text-center">Orders Growth</h2>
+
+<canvas id="gasChart"></canvas>
+
+</div>
+
+</section>
+
+
+<!-- ABOUT -->
+
+<section class="section bg-light">
+
+<div class="container">
+
+<div class="row align-items-center">
+
+<div class="col-md-6">
+
+<h2>About Adawe Gas</h2>
+
+<p>
+
+Adawe Gas provides reliable LPG delivery across Kenya.
+Our mission is fast and safe gas delivery.
+
+</p>
+
+</div>
+
+<div class="col-md-6 text-center">
+
+<img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" width="250">
+
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<!-- MAP -->
+
+<section class="section" id="contact">
+
+<div class="container text-center">
+
+<h2>Our Location</h2>
+
+<iframe
+src="https://maps.google.com/maps?q=Nairobi&t=&z=13&ie=UTF8&iwloc=&output=embed"
+width="100%"
+height="350"
+style="border:0">
+</iframe>
+
+</div>
+
+</section>
+
+
+<!-- FOOTER -->
+
+<footer class="text-center">
+
+<p>Adawe Gas • Kenya</p>
+
+<p>Phone: 0727 015 434</p>
+
 </footer>
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
-<!-- FIREBASE & MAIN SCRIPT -->
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+<!-- WHATSAPP BUTTON -->
 
-const firebaseConfig = {
-apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-authDomain: "adawe-gas-system-82187.firebaseapp.com",
-projectId: "adawe-gas-system-82187",
-storageBucket: "adawe-gas-system-82187.appspot.com",
-messagingSenderId: "644303663526",
-appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-};
-const app = initializeApp(firebaseConfig);
-const db = getFirestore(app);
+<a href="https://wa.me/254727015434"
+style="
+position:fixed;
+bottom:20px;
+right:20px;
+background:#25D366;
+color:white;
+padding:15px 20px;
+border-radius:50px;
+text-decoration:none;
+font-weight:bold;
+">
 
-/* LOAD PRICES */
-async function loadPrices(){
-const snap=await getDocs(collection(db,"sellers"));
-const table=document.getElementById("priceTable");
-let cheapest6=Infinity,cheapest13=Infinity,seller6="Not available",seller13="Not available";
-table.innerHTML="";
-snap.forEach(doc=>{
-const s=doc.data();
-if(s.price6 && Number(s.price6)<cheapest6){cheapest6=Number(s.price6);seller6=s.name+" - KES "+s.price6;}
-if(s.price13 && Number(s.price13)<cheapest13){cheapest13=Number(s.price13);seller13=s.name+" - KES "+s.price13;}
-table.innerHTML+=`<tr>
-<td>${s.name}</td>
-<td>${s.location}</td>
-<td>${s.price6||"-"}</td>
-<td>${s.price13||"-"}</td>
-<td>${"⭐".repeat(s.rating||0)}</td>
-</tr>`;
+WhatsApp Order
+
+</a>
+
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+
+const ctx = document.getElementById('gasChart');
+
+new Chart(ctx, {
+
+type: 'line',
+
+data: {
+
+labels: ['Jan','Feb','Mar','Apr','May','Jun'],
+
+datasets: [{
+
+label: 'Orders Delivered',
+
+data: [50,120,180,260,310,400],
+
+borderWidth: 3
+
+}]
+
+}
+
 });
-document.getElementById("cheapest6").innerText="💰 Cheapest 6kg Gas: "+seller6;
-document.getElementById("cheapest13").innerText="🔥 Cheapest 13kg Gas: "+seller13;
-}
-loadPrices();
-
-/* ORDER SUBMIT */
-document.getElementById("orderForm")?.addEventListener("submit", async e=>{
-e.preventDefault();
-const name=document.getElementById("name").value;
-const location=document.getElementById("location").value;
-const quantity=document.getElementById("quantity").value;
-const unit=document.getElementById("unit").value;
-const brand=document.getElementById("brand").value;
-await addDoc(collection(db,"orders"),{name,location,quantity,unit,brand,status:"Pending",createdAt:new Date()});
-const message=`Hello Adawe Gas\nName: ${name}\nLocation: ${location}\nBrand: ${brand}\nOrder: ${quantity} ${unit}`;
-window.open("https://wa.me/254727015434?text="+encodeURIComponent(message));
-const tracking="AG"+Math.floor(Math.random()*1000000);
-document.getElementById("trackingNumber").innerText="Your Tracking Number: "+tracking;
-alert("Order sent!");
-});
-
-/* SELLER REGISTER */
-document.getElementById("sellerForm")?.addEventListener("submit", async e=>{
-e.preventDefault();
-const name=document.getElementById("sname").value;
-const location=document.getElementById("slocation").value;
-const phone=document.getElementById("sphone").value;
-const price6=document.getElementById("price6").value;
-const price13=document.getElementById("price13").value;
-const businessType=document.getElementById("stype").value;
-await addDoc(collection(db,"sellers"),{name,location,phone,price6,price13,businessType,rating:5,createdAt:new Date()});
-alert("Seller registered!");
-loadPrices();
-});
-
-/* GOOGLE MAP DELIVERY + ROUTE + NEAREST SHOP + USER LOCATION */
-let map,directionsService,directionsRenderer;
-const shops=[{name:"Adawe Gas Nairobi",lat:-1.286389,lng:36.817223},{name:"Westlands Gas",lat:-1.267,lng:36.801},{name:"Eastlands Gas",lat:-1.292,lng:36.888}];
-function findNearestShop(userLat,userLng){
-let nearest=null,minDistance=Infinity;
-shops.forEach(shop=>{
-let distance=Math.sqrt(Math.pow(userLat-shop.lat,2)+Math.pow(userLng-shop.lng,2));
-if(distance<minDistance){minDistance=distance;nearest=shop;}
-});
-return nearest;
-}
-function initMap(){
-const mapElement=document.getElementById("deliveryMap");
-if(!mapElement) return;
-map=new google.maps.Map(mapElement,{zoom:12,center:{lat:-1.286389,lng:36.817223}});
-directionsService=new google.maps.DirectionsService();
-directionsRenderer=new google.maps.DirectionsRenderer();
-directionsRenderer.setMap(map);
-if(navigator.geolocation){
-navigator.geolocation.getCurrentPosition(position=>{
-const userLocation={lat:position.coords.latitude,lng:position.coords.longitude};
-const nearestShop=findNearestShop(userLocation.lat,userLocation.lng);
-new google.maps.Marker({position:userLocation,map:map,label:"You"});
-new google.maps.Marker({position:{lat:nearestShop.lat,lng:nearestShop.lng},map:map,label:"Gas Shop"});
-drawRoute({lat:nearestShop.lat,lng:nearestShop.lng},userLocation);
-},()=>{console.log("Location permission denied");});
-}
-}
-function drawRoute(start,end){
-const request={origin:start,destination:end,travelMode:"DRIVING"};
-directionsService.route(request,(result,status)=>{if(status==="OK"){directionsRenderer.setDirections(result);}});
-}
 
 </script>
 
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
+```
