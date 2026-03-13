@@ -348,24 +348,45 @@ Track
 </footer>
 
 
-<!-- WHATSAPP BUTTON -->
-
+<!-- WHATSAPP BUTTON STICKY CASRII AH -->
 <a href="https://wa.me/254727015434"
-style="
-position:fixed;
-bottom:20px;
-right:20px;
-background:#25D366;
-color:white;
-padding:15px 20px;
-border-radius:50px;
-text-decoration:none;
-font-weight:bold;
-">
-
-WhatsApp Order
-
+   style="
+   position:fixed;
+   bottom:20px;
+   right:20px;
+   background:#25D366;
+   color:white;
+   padding:15px 20px;
+   border-radius:50px;
+   text-decoration:none;
+   font-weight:bold;
+   display:flex;
+   align-items:center;
+   gap:8px;
+   transition: transform 0.2s, box-shadow 0.2s;
+   z-index:9999;
+   box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+   ">
+   
+   <!-- WhatsApp Icon -->
+   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
+        alt="WhatsApp" style="width:24px;height:24px;">
+   
+   WhatsApp Order
 </a>
+
+<!-- Hover and Touch Effect -->
+<style>
+a[href^="https://wa.me"] {
+    /* Mobile tap effect */
+    touch-action: manipulation;
+}
+a[href^="https://wa.me"]:hover,
+a[href^="https://wa.me"]:active {
+    transform: scale(1.1);
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+}
+</style>
 
 
 <!-- TRACKING SCRIPT -->
@@ -467,7 +488,7 @@ label:"You"
 </script>
 
 <script async defer
-src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1vYb9QwHzK6L7xXXXXXXX-yourkey&callback=initMap">
 </script>
 
 
