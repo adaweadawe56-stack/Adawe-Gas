@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -12,22 +11,13 @@
 
 <style>
 
-body{
-font-family: Arial;
-}
+body{font-family:Arial;}
 
-.navbar{
-background:#0b7a3c;
-}
+.navbar{background:#0b7a3c;}
 
-.navbar-brand{
-color:white;
-font-weight:bold;
-}
+.navbar-brand{color:white;font-weight:bold;}
 
-.nav-link{
-color:white !important;
-}
+.nav-link{color:white!important;}
 
 .hero{
 background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
@@ -38,14 +28,9 @@ color:white;
 padding:120px 0;
 }
 
-.btn-main{
-background:#28a745;
-color:white;
-}
+.btn-main{background:#28a745;color:white;}
 
-.section{
-padding:70px 0;
-}
+.section{padding:70px 0;}
 
 .service-card{
 padding:30px;
@@ -54,21 +39,12 @@ box-shadow:0 0 15px rgba(0,0,0,0.1);
 background:white;
 }
 
-.review{
-background:#f5f5f5;
-padding:20px;
-border-radius:10px;
-}
+.cheapest{background:#d4edda;font-weight:bold;}
 
 footer{
 background:#0b7a3c;
 color:white;
 padding:20px;
-}
-
-.cheapest{
-background:#d4edda;
-font-weight:bold;
 }
 
 </style>
@@ -80,12 +56,15 @@ font-weight:bold;
 <!-- NAVBAR -->
 
 <nav class="navbar navbar-expand-lg">
+
 <div class="container">
 
 <a class="navbar-brand">Adawe Gas</a>
 
 <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
+
 <span class="navbar-toggler-icon"></span>
+
 </button>
 
 <div class="collapse navbar-collapse" id="menu">
@@ -94,7 +73,10 @@ font-weight:bold;
 
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+<li class="nav-item"><a class="nav-link" href="#seller">Register Seller</a></li>
+<li class="nav-item"><a class="nav-link" href="#tracking">Track Order</a></li>
 <li class="nav-item"><a class="nav-link" href="#prices">Prices</a></li>
+<li class="nav-item"><a class="nav-link" href="#map">Map</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
 
 </ul>
@@ -102,6 +84,7 @@ font-weight:bold;
 </div>
 
 </div>
+
 </nav>
 
 
@@ -138,48 +121,36 @@ style="max-height:300px">
 </section>
 
 
-<!-- ORDER FORM -->
+<!-- PLACE ORDER -->
 
 <section class="section bg-light" id="order">
 
 <div class="container">
 
-<h2 class="text-center mb-4">Order Gas</h2>
+<h2 class="text-center mb-4">Place Order</h2>
 
 <div class="row justify-content-center">
 
 <div class="col-md-6">
 
-<form>
+<form id="orderForm">
 
-<div class="mb-3">
-<label>Name</label>
-<input type="text" class="form-control">
-</div>
+<input class="form-control mb-3" placeholder="Name" required>
 
-<div class="mb-3">
-<label>Phone</label>
-<input type="text" class="form-control">
-</div>
+<input class="form-control mb-3" placeholder="Phone" required>
 
-<div class="mb-3">
-<label>Gas Size</label>
-
-<select class="form-control">
+<select class="form-control mb-3">
 <option>6kg</option>
 <option>13kg</option>
 <option>50kg</option>
 </select>
 
-</div>
-
-<div class="mb-3">
-<label>Location</label>
-<input type="text" class="form-control">
-</div>
+<input class="form-control mb-3" placeholder="Location" id="location">
 
 <button class="btn btn-success w-100">
+
 Place Order
+
 </button>
 
 </form>
@@ -193,46 +164,77 @@ Place Order
 </section>
 
 
-<!-- SERVICES -->
+<!-- REGISTER SELLER -->
 
-<section class="section text-center">
+<section class="section bg-light" id="seller">
 
 <div class="container">
 
-<h2>Our Services</h2>
+<h2 class="text-center mb-4">Register as Gas Seller</h2>
 
-<div class="row mt-5">
+<div class="row justify-content-center">
 
-<div class="col-md-4">
+<div class="col-md-6">
 
-<div class="service-card">
+<form>
 
-<h4>LPG Delivery</h4>
-<p>Fast home gas cylinder delivery</p>
+<input class="form-control mb-3" placeholder="Company Name">
+
+<input class="form-control mb-3" placeholder="Location">
+
+<input class="form-control mb-3" placeholder="Phone">
+
+<input class="form-control mb-3" placeholder="6kg Price">
+
+<input class="form-control mb-3" placeholder="13kg Price">
+
+<select class="form-control mb-3">
+
+<option>Business Type</option>
+<option>Wholesale</option>
+<option>Retail</option>
+<option>Wholesale & Retail</option>
+
+</select>
+
+<button class="btn btn-primary w-100">
+
+Register Seller
+
+</button>
+
+</form>
 
 </div>
 
 </div>
 
-<div class="col-md-4">
-
-<div class="service-card">
-
-<h4>Partner Network</h4>
-<p>Work with Adawe Gas partners</p>
-
 </div>
 
-</div>
+</section>
 
-<div class="col-md-4">
 
-<div class="service-card">
+<!-- ORDER TRACKING -->
 
-<h4>Same Day Delivery</h4>
-<p>Order gas and receive same day</p>
+<section class="section" id="tracking">
 
-</div>
+<div class="container">
+
+<h2 class="text-center mb-4">Track Order</h2>
+
+<div class="row justify-content-center">
+
+<div class="col-md-5">
+
+<input class="form-control mb-3" id="trackInput" placeholder="Enter Tracking Number">
+
+<button class="btn btn-primary w-100" onclick="trackOrder()">
+
+Track
+
+</button>
+
+<p id="trackResult" class="text-center mt-3"></p>
 
 </div>
 
@@ -293,176 +295,32 @@ Place Order
 </section>
 
 
-<!-- CHEAPEST GAS -->
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="text-center mb-4">Find Cheapest Gas</h2>
-
-<table class="table table-bordered text-center">
-
-<thead class="table-success">
-
-<tr>
-<th>Brand</th>
-<th>6KG</th>
-<th>13KG</th>
-<th>Order</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr class="cheapest">
-<td>Total Gas</td>
-<td>KES 1150</td>
-<td>KES 2450</td>
-<td>
-<a href="https://wa.me/254727015434?text=I%20want%20Total%20Gas"
-class="btn btn-success">
-Order
-</a>
-</td>
-</tr>
-
-<tr>
-<td>Shell Gas</td>
-<td>KES 1180</td>
-<td>KES 2500</td>
-<td><button class="btn btn-success">Order</button></td>
-</tr>
-
-<tr>
-<td>Rubis Gas</td>
-<td>KES 1200</td>
-<td>KES 2550</td>
-<td><button class="btn btn-success">Order</button></td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<!-- PARTNERS -->
-
-<section class="section bg-light">
-
-<div class="container">
-
-<h2 class="text-center mb-4">Top Partners</h2>
-
-<table class="table table-bordered text-center">
-
-<thead class="table-success">
-
-<tr>
-<th>Rank</th>
-<th>Partner</th>
-<th>Orders</th>
-</tr>
-
-</thead>
-
-<tbody>
-
-<tr>
-<td>1</td>
-<td>Nairobi Gas</td>
-<td>540</td>
-</tr>
-
-<tr>
-<td>2</td>
-<td>Mombasa Gas</td>
-<td>430</td>
-</tr>
-
-<tr>
-<td>3</td>
-<td>Kisumu LPG</td>
-<td>320</td>
-</tr>
-
-</tbody>
-
-</table>
-
-</div>
-
-</section>
-
-
-<!-- GROWTH CHART -->
-
-<section class="section">
-
-<div class="container">
-
-<h2 class="text-center">Orders Growth</h2>
-
-<canvas id="gasChart"></canvas>
-
-</div>
-
-</section>
-
-
-<!-- ABOUT -->
-
-<section class="section bg-light">
-
-<div class="container">
-
-<div class="row align-items-center">
-
-<div class="col-md-6">
-
-<h2>About Adawe Gas</h2>
-
-<p>
-
-Adawe Gas provides reliable LPG delivery across Kenya.
-Our mission is fast and safe gas delivery.
-
-</p>
-
-</div>
-
-<div class="col-md-6 text-center">
-
-<img src="https://cdn-icons-png.flaticon.com/512/2933/2933245.png" width="250">
-
-</div>
-
-</div>
-
-</div>
-
-</section>
-
-
 <!-- MAP -->
 
-<section class="section" id="contact">
+<section class="section" id="map">
+
+<div class="container">
+
+<h2 class="text-center mb-4">Nearest Gas Seller</h2>
+
+<div id="mapArea" style="height:400px;"></div>
+
+</div>
+
+</section>
+
+
+<!-- CONTACT -->
+
+<section class="section bg-light" id="contact">
 
 <div class="container text-center">
 
-<h2>Our Location</h2>
+<h2>Contact</h2>
 
-<iframe
-src="https://maps.google.com/maps?q=Nairobi&t=&z=13&ie=UTF8&iwloc=&output=embed"
-width="100%"
-height="350"
-style="border:0">
-</iframe>
+<p>📞 0727 015 434</p>
+
+<p>📍 Nairobi Kenya</p>
 
 </div>
 
@@ -473,9 +331,7 @@ style="border:0">
 
 <footer class="text-center">
 
-<p>Adawe Gas • Kenya</p>
-
-<p>Phone: 0727 015 434</p>
+<p>© 2026 Adawe Gas – Kenya</p>
 
 </footer>
 
@@ -500,38 +356,107 @@ WhatsApp Order
 </a>
 
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<!-- TRACKING SCRIPT -->
 
 <script>
 
-const ctx = document.getElementById('gasChart');
+function generateTracking(){
 
-new Chart(ctx, {
-
-type: 'line',
-
-data: {
-
-labels: ['Jan','Feb','Mar','Apr','May','Jun'],
-
-datasets: [{
-
-label: 'Orders Delivered',
-
-data: [50,120,180,260,310,400],
-
-borderWidth: 3
-
-}]
+return "AG"+Math.floor(100000+Math.random()*900000);
 
 }
 
+document.getElementById("orderForm").addEventListener("submit",function(e){
+
+e.preventDefault();
+
+const tracking=generateTracking();
+
+alert("Order placed! Tracking Number: "+tracking);
+
 });
 
+function trackOrder(){
+
+let t=document.getElementById("trackInput").value;
+
+if(t===""){
+
+document.getElementById("trackResult").innerText="Enter tracking number";
+
+return;
+
+}
+
+document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";
+
+}
+
 </script>
+
+
+<!-- GOOGLE MAP -->
+
+<script>
+
+function initMap(){
+
+const shop={lat:-1.286389,lng:36.817223};
+
+const map=new google.maps.Map(document.getElementById("mapArea"),{
+
+zoom:12,
+
+center:shop
+
+});
+
+new google.maps.Marker({
+
+position:shop,
+
+map:map,
+
+label:"Gas Shop"
+
+});
+
+if(navigator.geolocation){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+const user={
+
+lat:pos.coords.latitude,
+
+lng:pos.coords.longitude
+
+};
+
+new google.maps.Marker({
+
+position:user,
+
+map:map,
+
+label:"You"
+
+});
+
+});
+
+}
+
+}
+
+</script>
+
+<script async defer
+src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&callback=initMap">
+</script>
+
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
-```
