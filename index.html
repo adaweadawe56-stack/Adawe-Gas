@@ -120,47 +120,57 @@ style="max-height:300px">
 
 </section>
 
-
-<!-- PLACE ORDER -->
-
-<section class="section bg-light" id="order">
-
+<!-- ORDER FORM -->
+<section class="section bg-white" id="order">
 <div class="container">
+<h2 class="text-center">Place Order</h2>
 
-<h2 class="text-center mb-4">Place Order</h2>
+<div class="alert alert-success text-center" id="cheapest6">
+Cheapest 6kg Gas: Loading...
+</div>
 
-<div class="row justify-content-center">
+<div class="alert alert-warning text-center" id="cheapest13">
+Cheapest 13kg Gas: Loading...
+</div>
 
-<div class="col-md-6">
+<form id="orderForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
 
-<form id="orderForm">
+<input class="form-control mb-3" id="name" placeholder="Name" required>
 
-<input class="form-control mb-3" placeholder="Name" required>
+<input class="form-control mb-3" id="location" placeholder="Location" required>
 
-<input class="form-control mb-3" placeholder="Phone" required>
+<input class="form-control mb-3" id="quantity" type="number" placeholder="Quantity" required>
 
-<select class="form-control mb-3">
-<option>6kg</option>
-<option>13kg</option>
-<option>50kg</option>
+<select class="form-select mb-3" id="unit" required>
+<option value="">Select Unit</option>
+<option>Kgs</option>
+<option>Cylinder(s)</option>
 </select>
 
-<input class="form-control mb-3" placeholder="Location" id="location">
+<select class="form-select mb-3" id="brand" required>
+<option value="">Select Gas Brand</option>
+<option>K-Gas</option>
+<option>AfriGas</option>
+<option>Pro Gas</option>
+<option>TotalEnergies</option>
+<option>Hashi Gas</option>
+<option>Lake Gas</option>
+<option>Oil Libya (OLA Gas)</option>
+<option>Rubis Gas</option>
+<option>Taifa Gas</option>
+<option>Marangi</option>
+<option>National Oil Gas</option>
+</select>
 
-<button class="btn btn-success w-100">
-
-Place Order
-
+<button type="submit" class="btn btn-success w-100">
+Send Order
 </button>
+
+<p id="trackingNumber" class="mt-2 fw-bold text-success"></p>
 
 </form>
 
 </div>
-
-</div>
-
-</div>
-
 </section>
 
 
