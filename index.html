@@ -380,9 +380,12 @@ document.getElementById("orderForm").addEventListener("submit",function(e){
 
 e.preventDefault();
 
-const tracking=generateTracking();
+const tracking = generateTracking();
 
-alert("Order placed! Tracking Number: "+tracking);
+alert("Order placed! Tracking Number: " + tracking);
+
+document.getElementById("trackingNumber").innerText =
+"Tracking Number: " + tracking;
 
 });
 
