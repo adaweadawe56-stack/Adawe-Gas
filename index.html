@@ -439,7 +439,8 @@ document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚
 <!-- GOOGLE MAP -->
 
 <script>
-
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 function initMap(){
 
 const shop={lat:-1.286389,lng:36.817223};
@@ -491,11 +492,6 @@ label:"You"
 }
 
 </script>
-
-<script async defer
-src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC1vYb9QwHzK6L7xXXXXXXX-yourkey&callback=initMap">
-</script>
-
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
