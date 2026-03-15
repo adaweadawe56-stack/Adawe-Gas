@@ -494,6 +494,31 @@ label:"You"
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
 
+// Map tiles
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+}).addTo(map);
+
+// Gas shop marker
+L.marker([-1.286389, 36.817223])
+.addTo(map)
+.bindPopup("Adawe Gas Seller")
+.openPopup();
+
+// User location
+if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+        var userLat = position.coords.latitude;
+        var userLng = position.coords.longitude;
+
+        L.marker([userLat, userLng])
+        .addTo(map)
+        .bindPopup("You are here");
+    });
+}
+</script>
 </body>
 </html>
