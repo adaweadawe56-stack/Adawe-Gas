@@ -439,41 +439,64 @@ document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚
 <!-- MAP SECTION -->
 <section class="section" id="map">
   <div class="container">
-    <h2 class="text-center mb-4">Nearest Gas Seller</h2>
+    <h2 class="text-center mb-4">Nearest Gas Sellers</h2>
     <div id="mapArea" style="height:400px;"></div>
   </div>
 </section>
 
-<!-- LEAFLET MAP SCRIPT -->
+<!-- LEAFLET + FIREBASE SCRIPTS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script>
-  // Initialize map centered at Adawe Gas
-  var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-  // Map tiles
+<script>
+  // 1️⃣ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+    authDomain: "adawe-gas-system-82187.firebaseapp.com",
+    projectId: "adawe-gas-system-82187",
+    storageBucket: "adawe-gas-system-82187.appspot.com",
+    messagingSenderId: "644303663526",
+    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
+
+  // 2️⃣ Initialize Leaflet map
+  var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
       attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // Adawe Gas marker
-  L.marker([-1.286389, 36.817223])
-    .addTo(map)
-    .bindPopup("Adawe Gas Seller")
-    .openPopup();
-
-  // Show user location if allowed
-  if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition(function(position) {
-          var userLat = position.coords.latitude;
-          var userLng = position.coords.longitude;
-
-          L.marker([userLat, userLng])
+  // 3️⃣ Function to add markers from Firestore
+  function addSellersMarkers() {
+    db.collection("sellers").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.lat && data.lng) {
+          L.marker([data.lat, data.lng])
             .addTo(map)
-            .bindPopup("You are here");
-
-          // Zoom map to user location
-          map.setView([userLat, userLng], 13);
+            .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6 || '-'}<br>13kg: ${data.price13 || '-'}`);
+        }
       });
+    });
+  }
+
+  addSellersMarkers();
+
+  // 4️⃣ Show user location if allowed
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var userLat = position.coords.latitude;
+      var userLng = position.coords.longitude;
+
+      L.marker([userLat, userLng])
+        .addTo(map)
+        .bindPopup("You are here")
+        .openPopup();
+
+      map.setView([userLat, userLng], 13);
+    });
   }
 </script>
