@@ -3,142 +3,66 @@
 
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Fast LPG gas delivery across Kenya. Order cooking gas online with Adawe Gas.">
+  <meta name="keywords" content="LPG Kenya, gas delivery Nairobi, cooking gas delivery Kenya, gas sellers map Kenya">
+  <meta name="author" content="Adawe Gas">
+
+  <title>Adawe Gas</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
   
-  <!-- ✅ Meta Tags -->
-  <meta name="description" content="Fast LPG gas delivery across Kenya. Order cooking gas online with Adawe Gas.">
-  <meta name="keywords" content="LPG Kenya, gas delivery Nairobi, cooking gas delivery Kenya, gas sellers map Kenya">
-  <meta name="author" content="Adawe Gas">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<title>Adawe Gas</title>
-
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="Fast LPG gas delivery across Kenya. Order cooking gas online with Adawe Gas.">
-  <meta name="keywords" content="LPG Kenya, gas delivery Nairobi, cooking gas delivery Kenya, gas sellers map Kenya">
-  <meta name="author" content="Adawe Gas">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 
   <style>
     /* ===================== */
-    /* General Styles */
     body { font-family: Arial, sans-serif; margin:0; padding:0; }
-
     .navbar { background: #0b7a3c; }
     .navbar-brand { color: white; font-weight: bold; }
     .nav-link { color: white!important; }
-
-    /* Hero Section */
-    .hero {
-      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
-                  url("images/hero-gas.png");
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      color: white;
-      padding: 160px 0;
-      text-align: left;
-    }
+    .hero { background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url("images/hero-gas.png"); background-size: cover; background-position: center; background-repeat: no-repeat; color: white; padding: 160px 0; text-align: left; }
     .hero h1 { font-size: 48px; font-weight: bold; margin-bottom: 20px; }
     .hero p { font-size: 20px; margin-bottom: 20px; }
-
-    /* Buttons */
-    .btn-main {
-      background: #28a745;
-      color: white;
-      font-weight: bold;
-      padding: 12px 25px;
-      border-radius: 8px;
-      text-decoration: none;
-    }
-
-    /* Section Spacing */
+    .btn-main { background: #28a745; color: white; font-weight: bold; padding: 12px 25px; border-radius: 8px; text-decoration: none; }
     .section { padding: 70px 0; }
-
-    /* Cards */
-    .service-card {
-      padding: 30px;
-      border-radius: 10px;
-      box-shadow: 0 0 15px rgba(0,0,0,0.1);
-      background: white;
-      margin-bottom: 20px;
-    }
-
-    /* Cheapest Alerts */
+    .service-card { padding: 30px; border-radius: 10px; box-shadow: 0 0 15px rgba(0,0,0,0.1); background: white; margin-bottom: 20px; }
     .cheapest { background: #d4edda; font-weight: bold; padding:10px; border-radius:5px; }
+    footer { background: #0b7a3c; color: white; padding: 20px; text-align: center; }
 
-    /* Footer */
-    footer {
-      background: #0b7a3c;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-
-    /* ===================== */
-    /* Mobile UI Improvements */
     @media (max-width: 768px) {
-
-      /* Buttons bigger on mobile */
-      .btn-main {
-        padding: 16px 30px;
-        font-size: 20px;
-      }
-
-      /* Map height */
+      .btn-main { padding: 16px 30px; font-size: 20px; }
       #mapArea { height: 300px; }
-
-      /* Section spacing */
       .section { padding: 50px 15px; }
-
-      /* Hero text smaller on mobile */
       .hero h1 { font-size: 32px; }
       .hero p { font-size: 16px; }
-
-      /* Order form full width */
-      #orderForm {
-        width: 100%;
-        padding: 20px;
-      }
+      #orderForm { width: 100%; padding: 20px; }
     }
   </style>
 </head>
-  
+
 <body>
 
 <!-- NAVBAR -->
-
 <nav class="navbar navbar-expand-lg">
-
-<div class="container">
-
-<a class="navbar-brand">Adawe Gas</a>
-
-<button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
-
-<span class="navbar-toggler-icon"></span>
-</button>
-
-<div class="collapse navbar-collapse" id="menu">
-
-<ul class="navbar-nav ms-auto">
-
-<li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-<li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#seller">Register Seller</a></li>
-<li class="nav-item"><a class="nav-link" href="#tracking">Track Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#prices">Prices</a></li>
-<li class="nav-item"><a class="nav-link" href="#map">Map</a></li>
-<li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
-
-</ul>
-
-</div>
-
-</div>
-
+  <div class="container">
+    <a class="navbar-brand">Adawe Gas</a>
+    <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="#seller">Register Seller</a></li>
+        <li class="nav-item"><a class="nav-link" href="#tracking">Track Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="#prices">Prices</a></li>
+        <li class="nav-item"><a class="nav-link" href="#map">Map</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
+
+<!-- HERO -->
 <section class="hero" id="home">
   <div class="container">
     <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
@@ -147,443 +71,122 @@
   </div>
 </section>
 
-<style>
-.hero{
-  background-color: #28a745; /* Hero background green */
-  color: white; /* Text color white */
-  padding: 160px 0;
-  text-align: left;
-}
-
-.hero h1{
-  font-size:48px;
-  font-weight:bold;
-}
-
-.hero p{
-  font-size:20px;
-  margin-bottom:20px;
-}
-
-.btn-main{
-  background:#ffffff; /* button background white */
-  color:#28a745;      /* button text green */
-  font-weight:bold;
-  padding:12px 25px;
-  border-radius:8px;
-  text-decoration:none;
-}
-</style>
-
 <!-- ORDER FORM -->
 <section class="section bg-white" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
-
-<div class="alert alert-success text-center" id="cheapest6">
-Cheapest 6kg Gas: Loading...
-</div>
-
-<div class="alert alert-warning text-center" id="cheapest13">
-Cheapest 13kg Gas: Loading...
-</div>
-
+<div class="alert alert-success text-center" id="cheapest6">Cheapest 6kg Gas: Loading...</div>
+<div class="alert alert-warning text-center" id="cheapest13">Cheapest 13kg Gas: Loading...</div>
 <form id="orderForm" class="col-md-6 mx-auto p-4 shadow-sm rounded bg-light">
-
 <input class="form-control mb-3" id="name" placeholder="Name" required>
-
 <input class="form-control mb-3" id="location" placeholder="Location" required>
-
 <input class="form-control mb-3" id="quantity" type="number" placeholder="Quantity" required>
-
 <select class="form-select mb-3" id="unit" required>
-<option value="">Select Unit</option>
-<option>Kgs</option>
-<option>Cylinder(s)</option>
+  <option value="">Select Unit</option>
+  <option>Kgs</option>
+  <option>Cylinder(s)</option>
 </select>
-
 <select class="form-select mb-3" id="brand" required>
-<option value="">Select Gas Brand</option>
-<option>K-Gas</option>
-<option>AfriGas</option>
-<option>Pro Gas</option>
-<option>TotalEnergies</option>
-<option>Hashi Gas</option>
-<option>Lake Gas</option>
-<option>Oil Libya (OLA Gas)</option>
-<option>Rubis Gas</option>
-<option>Taifa Gas</option>
-<option>Marangi</option>
-<option>National Oil Gas</option>
+  <option value="">Select Gas Brand</option>
+  <option>K-Gas</option>
+  <option>AfriGas</option>
+  <option>Pro Gas</option>
+  <option>TotalEnergies</option>
+  <option>Hashi Gas</option>
+  <option>Lake Gas</option>
+  <option>Oil Libya (OLA Gas)</option>
+  <option>Rubis Gas</option>
+  <option>Taifa Gas</option>
+  <option>Marangi</option>
+  <option>National Oil Gas</option>
 </select>
-
-<button type="submit" class="btn btn-success w-100">
-Send Order
-</button>
-
+<button type="submit" class="btn btn-success w-100">Send Order</button>
 <p id="trackingNumber" class="mt-2 fw-bold text-success"></p>
-
 </form>
-
 </div>
+</section>
 
 <!-- REGISTER SELLER -->
 <section class="section bg-light" id="seller">
 <div class="container">
-
 <h2 class="text-center mb-4">Register as Gas Seller</h2>
-
 <form id="sellerForm">
-
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-
-<button type="button" onclick="getLocation()" class="btn btn-secondary mb-3 w-100">
-Detect My Location
-</button>
-
+<button type="button" onclick="getLocation()" class="btn btn-secondary mb-3 w-100">Detect My Location</button>
 <input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price" required>
-
 <input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price" required>
-
 <select id="sellerType" class="form-control mb-3" required>
-<option value="">Business Type</option>
-<option>Wholesale</option>
-<option>Retail</option>
-<option>Wholesale & Retail</option>
+  <option value="">Business Type</option>
+  <option>Wholesale</option>
+  <option>Retail</option>
+  <option>Wholesale & Retail</option>
 </select>
-
-<button type="submit" class="btn btn-primary w-100">
-Register Seller
-</button>
-
+<button type="submit" class="btn btn-primary w-100">Register Seller</button>
 </form>
-
 </div>
 </section>
 
-<!-- FIREBASE + LEAFLET SCRIPTS -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
-
-<script>
-  // Firebase config
-  const firebaseConfig = {
-    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-    authDomain: "adawe-gas-system-82187.firebaseapp.com",
-    projectId: "adawe-gas-system-82187",
-    storageBucket: "adawe-gas-system-82187.appspot.com",
-    messagingSenderId: "644303663526",
-    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
-
-  // Initialize Leaflet map
-  var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
-  }).addTo(map);
-
-  // Load sellers from Firestore and add markers
-  function loadSellers() {
-    db.collection("sellers").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
-        const data = doc.data();
-        if(data.lat && data.lng) {
-          L.marker([data.lat, data.lng])
-            .addTo(map)
-            .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6}<br>13kg: ${data.price13}`);
-        }
-      });
-    });
-  }
-
-  loadSellers();
-
-  // Show user location if allowed
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var userLat = position.coords.latitude;
-      var userLng = position.coords.longitude;
-
-      L.marker([userLat, userLng])
-        .addTo(map)
-        .bindPopup("You are here")
-        .openPopup();
-
-      map.setView([userLat, userLng], 13);
-    });
-  }
-
-  // Handle seller registration form
-<script>
-
-const sellerForm = document.getElementById("sellerForm");
-
-sellerForm.addEventListener("submit", (e) => {
-  e.preventDefault();
-
-  const name = document.getElementById("sellerName").value.trim();
-  const location = document.getElementById("sellerLocation").value.trim();
-  const price6 = parseInt(document.getElementById("sellerPrice6").value);
-  const price13 = parseInt(document.getElementById("sellerPrice13").value);
-  const type = document.getElementById("sellerType").value;
-
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by this browser.");
-    return;
-  }
-
-  navigator.geolocation.getCurrentPosition(function(position){
-
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
-
-    db.collection("sellers").add({
-      name,
-      location,
-      lat,
-      lng,
-      price6,
-      price13,
-      type,
-      createdAt: new Date()
-    })
-
-    .then(() => {
-
-      alert("Seller registered successfully!");
-
-      L.marker([lat, lng])
-        .addTo(map)
-        .bindPopup(`<b>${name}</b><br>${location}`)
-        .openPopup();
-
-      sellerForm.reset();
-    });
-
-  });
-
-});
-
- catch((error) => {
-      console.error("Error adding seller: ", error);
-      alert("There was an error. Please try again.");
-    });
-  });
-</script>
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
+<!-- MAP -->
+<section class="section" id="map">
+  <div class="container">
+    <h2 class="text-center mb-4">Nearest Gas Sellers</h2>
+    <div id="mapArea" style="height:400px;"></div>
+  </div>
 </section>
 
-
-<!-- ORDER TRACKING -->
-
+<!-- TRACKING -->
 <section class="section" id="tracking">
-
 <div class="container">
-
 <h2 class="text-center mb-4">Track Order</h2>
-
 <div class="row justify-content-center">
-
 <div class="col-md-5">
-
 <input class="form-control mb-3" id="trackInput" placeholder="Enter Tracking Number">
-
-<button class="btn btn-primary w-100" onclick="trackOrder()">
-
-Track
-
-</button>
-
+<button class="btn btn-primary w-100" onclick="trackOrder()">Track</button>
 <p id="trackResult" class="text-center mt-3"></p>
-
 </div>
-
 </div>
-
 </div>
-
 </section>
 
-
-<!-- GAS PRICES -->
-
+<!-- PRICES -->
 <section class="section bg-light" id="prices">
-
 <div class="container text-center">
-
 <h2>Gas Prices</h2>
-
 <div class="row mt-4">
-
-<div class="col-md-4">
-
-<div class="service-card">
-
-<h4>6KG</h4>
-<h3>KES 1200</h3>
-
+<div class="col-md-4"><div class="service-card"><h4>6KG</h4><h3>KES 1200</h3></div></div>
+<div class="col-md-4"><div class="service-card"><h4>13KG</h4><h3>KES 2500</h3></div></div>
+<div class="col-md-4"><div class="service-card"><h4>50KG</h4><h3>KES 7500</h3></div></div>
 </div>
-
 </div>
-
-<div class="col-md-4">
-
-<div class="service-card">
-
-<h4>13KG</h4>
-<h3>KES 2500</h3>
-
-</div>
-
-</div>
-
-<div class="col-md-4">
-
-<div class="service-card">
-
-<h4>50KG</h4>
-<h3>KES 7500</h3>
-
-</div>
-
-</div>
-
-</div>
-
-</div>
+</section>
 
 <!-- CONTACT -->
-
 <section class="section bg-light" id="contact">
-
 <div class="container text-center">
-
 <h2>Contact</h2>
-
 <p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
-
 <p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
-
 <p>📍 Nairobi Kenya</p>
-
 </div>
-
 </section>
 
-
 <!-- FOOTER -->
-
 <footer class="text-center">
-
 <p>© 2026 Adawe Gas – Kenya</p>
-
 </footer>
 
-
-<!-- WHATSAPP BUTTON STICKY CASRII AH -->
-<a href="https://wa.me/254727015434"
-   style="
-   position:fixed;
-   bottom:20px;
-   right:20px;
-   background:#25D366;
-   color:white;
-   padding:15px 20px;
-   border-radius:50px;
-   text-decoration:none;
-   font-weight:bold;
-   display:flex;
-   align-items:center;
-   gap:8px;
-   transition: transform 0.2s, box-shadow 0.2s;
-   z-index:9999;
-   box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-   ">
-   
-   <!-- WhatsApp Icon -->
-   <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" 
-        alt="WhatsApp" style="width:24px;height:24px;">
-   
-   WhatsApp Order
+<!-- WHATSAPP BUTTON -->
+<a href="https://wa.me/254727015434" style="position:fixed; bottom:20px; right:20px; background:#25D366; color:white; padding:15px 20px; border-radius:50px; text-decoration:none; font-weight:bold; display:flex; align-items:center; gap:8px; z-index:9999; box-shadow: 0 3px 10px rgba(0,0,0,0.2);">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:24px;height:24px;"> WhatsApp Order
 </a>
 
-<!-- Hover and Touch Effect -->
-<style>
-a[href^="https://wa.me"] {
-    /* Mobile tap effect */
-    touch-action: manipulation;
-}
-a[href^="https://wa.me"]:hover,
-a[href^="https://wa.me"]:active {
-    transform: scale(1.1);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-}
-</style>
-
-
-<!-- TRACKING SCRIPT -->
-
-<script>
-
-function generateTracking(){
-
-return "AG"+Math.floor(100000+Math.random()*900000);
-
-}
-
-document.getElementById("orderForm").addEventListener("submit",function(e){
-
-e.preventDefault();
-
-const tracking = generateTracking();
-
-alert("Order placed! Tracking Number: " + tracking);
-
-document.getElementById("trackingNumber").innerText =
-"Tracking Number: " + tracking;
-
-});
-
-function trackOrder(){
-
-let t=document.getElementById("trackInput").value;
-
-if(t===""){
-
-document.getElementById("trackResult").innerText="Enter tracking number";
-
-return;
-
-}
-
-document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";
-
-}
-
-</script>
-
-<!-- LEAFLET + FIREBASE -->
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<!-- SCRIPTS -->
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-  // 1️⃣ Firebase config
+  // Firebase
   const firebaseConfig = {
     apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
     authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -595,36 +198,108 @@ document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // 2️⃣ Initialize Leaflet map
+  // Map
   var map = L.map('mapArea').setView([-1.286389, 36.817223], 6);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '© OpenStreetMap'
-  }).addTo(map);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
 
-  // 3️⃣ Realtime listener for sellers collection
+  // Load sellers
   db.collection("sellers").onSnapshot((snapshot) => {
     snapshot.docChanges().forEach((change) => {
-      if (change.type === "added" || change.type === "modified") {
+      if(change.type === "added"){
         const data = change.doc.data();
-        if (data.lat && data.lng) {
+        if(data.lat && data.lng){
           L.marker([data.lat, data.lng])
             .addTo(map)
-            .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6 || '-'}<br>13kg: ${data.price13 || '-'}`);
+            .bindPopup(`<b>${data.name}</b><br>6kg: ${data.price6}<br>13kg: ${data.price13}`);
         }
       }
     });
   });
 
-  // 4️⃣ Show user location if allowed
-  if (navigator.geolocation) {
-    navigator.geolocation.getCurrentPosition(function(position) {
-      var userLat = position.coords.latitude;
-      var userLng = position.coords.longitude;
-      L.marker([userLat, userLng])
+  // User location on map
+  if(navigator.geolocation){
+    navigator.geolocation.getCurrentPosition(function(position){
+      L.marker([position.coords.latitude, position.coords.longitude])
         .addTo(map)
         .bindPopup("You are here")
         .openPopup();
-      map.setView([userLat, userLng], 12);
+      map.setView([position.coords.latitude, position.coords.longitude], 12);
     });
   }
+
+  // Seller auto GPS
+  let sellerLat, sellerLng;
+  function getLocation(){
+    if(!navigator.geolocation){
+      alert("Geolocation not supported by browser");
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(function(position){
+      sellerLat = position.coords.latitude;
+      sellerLng = position.coords.longitude;
+      alert("Location detected! Ready to submit.");
+    }, function(){
+      alert("Could not detect location. Please allow location access.");
+    });
+  }
+
+  const sellerForm = document.getElementById("sellerForm");
+  sellerForm.addEventListener("submit", function(e){
+    e.preventDefault();
+    const name = document.getElementById("sellerName").value.trim();
+    const price6 = parseInt(document.getElementById("sellerPrice6").value);
+    const price13 = parseInt(document.getElementById("sellerPrice13").value);
+    const type = document.getElementById("sellerType").value;
+
+    if(!sellerLat || !sellerLng){
+      alert("Please detect your location first!");
+      return;
+    }
+
+    db.collection("sellers").add({
+      name,
+      lat: sellerLat,
+      lng: sellerLng,
+      price6,
+      price13,
+      type,
+      createdAt: new Date()
+    }).then(()=>{
+      alert("Seller registered successfully!");
+      L.marker([sellerLat, sellerLng])
+        .addTo(map)
+        .bindPopup(`<b>${name}</b><br>6kg: ${price6}<br>13kg: ${price13}`)
+        .openPopup();
+      sellerForm.reset();
+      sellerLat = sellerLng = null;
+    }).catch((err)=>{
+      console.error(err);
+      alert("Error registering seller. Try again.");
+    });
+  });
+
+  // Order tracking
+  function generateTracking(){
+    return "AG"+Math.floor(100000+Math.random()*900000);
+  }
+
+  document.getElementById("orderForm").addEventListener("submit",function(e){
+    e.preventDefault();
+    const tracking = generateTracking();
+    alert("Order placed! Tracking Number: " + tracking);
+    document.getElementById("trackingNumber").innerText = "Tracking Number: " + tracking;
+  });
+
+  function trackOrder(){
+    let t=document.getElementById("trackInput").value;
+    if(t===""){
+      document.getElementById("trackResult").innerText="Enter tracking number";
+      return;
+    }
+    document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";
+  }
+
 </script>
+
+</body>
+</html>
