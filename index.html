@@ -15,15 +15,61 @@
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
+    /* ✅ Halkan waa CSS-ka guud */
+    body { font-family: Arial; }
+    .navbar { background: #0b7a3c; }
+    .navbar-brand { color: white; font-weight: bold; }
+    .nav-link { color: white!important; }
 
-body{font-family:Arial;}
+    .hero {
+      background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)),
+                  url("images/hero-gas.png");
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      color: white;
+      padding: 160px 0;
+      text-align: left;
+    }
 
-.navbar{background:#0b7a3c;}
+    .btn-main {
+      background: #28a745;
+      color: white;
+      font-weight: bold;
+      padding: 12px 25px;
+      border-radius: 8px;
+    }
 
-.navbar-brand{color:white;font-weight:bold;}
+    .section { padding: 70px 0; }
 
-.nav-link{color:white!important;}
+    /* ===================== */
+    /* ✅ Mobile UI Improvements */
+    @media (max-width: 768px) {
+      /* Buttons */
+      .btn-main {
+        padding: 16px 30px;
+        font-size: 20px;
+      }
 
+      /* Map height */
+      #mapArea { height: 300px; }
+
+      /* Section spacing */
+      .section { padding: 50px 15px; }
+
+      /* Hero text */
+      .hero h1 { font-size: 32px; }
+      .hero p { font-size: 16px; }
+
+      /* Order form width */
+      #orderForm {
+        width: 100%;
+        padding: 20px;
+      }
+    }
+    /* ===================== */
+  </style>
+</head>
 .hero{
 background:linear-gradient(rgba(0,0,0,0.5),rgba(0,0,0,0.5)),
 url('https://images.unsplash.com/photo-1581091870627-3f2c7c8c0b62');
