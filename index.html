@@ -229,11 +229,11 @@ Send Order
 
 <!-- REGISTER SELLER -->
 <section class="section bg-light" id="seller">
-  <div class="container">
-    <h2 class="text-center mb-4">Register as Gas Seller</h2>
-    <div class="row justify-content-center">
-      <div class="col-md-6">
-     <form id="sellerForm">
+<div class="container">
+
+<h2 class="text-center mb-4">Register as Gas Seller</h2>
+
+<form id="sellerForm">
 
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
 
@@ -255,6 +255,9 @@ Register Seller
 </button>
 
 </form>
+
+</div>
+</section>
 
 <!-- FIREBASE + LEAFLET SCRIPTS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
@@ -313,22 +316,28 @@ Register Seller
   }
 
   // Handle seller registration form
-  const sellerForm = document.getElementById("sellerForm");
-  sellerForm.addEventListener("submit", (e) => {
-    e.preventDefault();
+<script>
 
-    const name = document.getElementById("sellerName").value.trim();
-    const location = document.getElementById("sellerLocation").value.trim();
-    const lat = parseFloat(document.getElementById("sellerLat").value);
-    const lng = parseFloat(document.getElementById("sellerLng").value);
-    const price6 = parseInt(document.getElementById("sellerPrice6").value);
-    const price13 = parseInt(document.getElementById("sellerPrice13").value);
-    const type = document.getElementById("sellerType").value;
+const sellerForm = document.getElementById("sellerForm");
 
-    if (!name || !location || isNaN(lat) || isNaN(lng) || isNaN(price6) || isNaN(price13) || !type) {
-      alert("Please fill in all required fields correctly.");
-      return;
-    }
+sellerForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+
+  const name = document.getElementById("sellerName").value.trim();
+  const location = document.getElementById("sellerLocation").value.trim();
+  const price6 = parseInt(document.getElementById("sellerPrice6").value);
+  const price13 = parseInt(document.getElementById("sellerPrice13").value);
+  const type = document.getElementById("sellerType").value;
+
+  if (!navigator.geolocation) {
+    alert("Geolocation is not supported by this browser.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(function(position){
+
+    const lat = position.coords.latitude;
+    const lng = position.coords.longitude;
 
     db.collection("sellers").add({
       name,
@@ -340,18 +349,24 @@ Register Seller
       type,
       createdAt: new Date()
     })
-    .then((docRef) => {
-      alert("Seller successfully registered!");
 
-      // Add new marker immediately
+    .then(() => {
+
+      alert("Seller registered successfully!");
+
       L.marker([lat, lng])
         .addTo(map)
-        .bindPopup(`<b>${name}</b><br>${location}<br>6kg: ${price6}<br>13kg: ${price13}`)
+        .bindPopup(`<b>${name}</b><br>${location}`)
         .openPopup();
 
       sellerForm.reset();
-    })
-    .catch((error) => {
+    });
+
+  });
+
+});
+
+ catch((error) => {
       console.error("Error adding seller: ", error);
       alert("There was an error. Please try again.");
     });
