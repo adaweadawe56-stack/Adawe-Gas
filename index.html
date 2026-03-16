@@ -228,43 +228,142 @@ Send Order
 </div>
 </section>
 
+<!-- MAP SECTION -->
+<section class="section" id="map">
+  <div class="container">
+    <h2 class="text-center mb-4">Nearest Gas Sellers</h2>
+    <div id="mapArea" style="height:400px;"></div>
+  </div>
+</section>
 
 <!-- REGISTER SELLER -->
-
 <section class="section bg-light" id="seller">
+  <div class="container">
+    <h2 class="text-center mb-4">Register as Gas Seller</h2>
+    <div class="row justify-content-center">
+      <div class="col-md-6">
+        <form id="sellerForm">
+          <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
+          <input id="sellerLocation" class="form-control mb-3" placeholder="Location (e.g., Nairobi)" required>
+          <input id="sellerLat" class="form-control mb-3" placeholder="Latitude" required>
+          <input id="sellerLng" class="form-control mb-3" placeholder="Longitude" required>
+          <input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price" required>
+          <input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price" required>
+          <select id="sellerType" class="form-control mb-3" required>
+            <option value="">Business Type</option>
+            <option>Wholesale</option>
+            <option>Retail</option>
+            <option>Wholesale & Retail</option>
+          </select>
 
-<div class="container">
+          <button type="submit" class="btn btn-primary w-100">Register Seller</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
 
-<h2 class="text-center mb-4">Register as Gas Seller</h2>
+<!-- FIREBASE + LEAFLET SCRIPTS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
-<div class="row justify-content-center">
+<script>
+  // Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+    authDomain: "adawe-gas-system-82187.firebaseapp.com",
+    projectId: "adawe-gas-system-82187",
+    storageBucket: "adawe-gas-system-82187.appspot.com",
+    messagingSenderId: "644303663526",
+    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-<div class="col-md-6">
+  // Initialize Leaflet map
+  var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-<form>
+  // Load sellers from Firestore and add markers
+  function loadSellers() {
+    db.collection("sellers").get().then((querySnapshot) => {
+      querySnapshot.forEach((doc) => {
+        const data = doc.data();
+        if(data.lat && data.lng) {
+          L.marker([data.lat, data.lng])
+            .addTo(map)
+            .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6}<br>13kg: ${data.price13}`);
+        }
+      });
+    });
+  }
 
-<input class="form-control mb-3" placeholder="Company Name">
+  loadSellers();
 
-<input class="form-control mb-3" placeholder="Location">
+  // Show user location if allowed
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var userLat = position.coords.latitude;
+      var userLng = position.coords.longitude;
 
-<input class="form-control mb-3" placeholder="Phone">
+      L.marker([userLat, userLng])
+        .addTo(map)
+        .bindPopup("You are here")
+        .openPopup();
 
-<input class="form-control mb-3" placeholder="6kg Price">
+      map.setView([userLat, userLng], 13);
+    });
+  }
 
-<input class="form-control mb-3" placeholder="13kg Price">
+  // Handle seller registration form
+  const sellerForm = document.getElementById("sellerForm");
+  sellerForm.addEventListener("submit", (e) => {
+    e.preventDefault();
 
-<select class="form-control mb-3">
+    const name = document.getElementById("sellerName").value.trim();
+    const location = document.getElementById("sellerLocation").value.trim();
+    const lat = parseFloat(document.getElementById("sellerLat").value);
+    const lng = parseFloat(document.getElementById("sellerLng").value);
+    const price6 = parseInt(document.getElementById("sellerPrice6").value);
+    const price13 = parseInt(document.getElementById("sellerPrice13").value);
+    const type = document.getElementById("sellerType").value;
 
-<option>Business Type</option>
-<option>Wholesale</option>
-<option>Retail</option>
-<option>Wholesale & Retail</option>
+    if (!name || !location || isNaN(lat) || isNaN(lng) || isNaN(price6) || isNaN(price13) || !type) {
+      alert("Please fill in all required fields correctly.");
+      return;
+    }
 
-</select>
+    db.collection("sellers").add({
+      name,
+      location,
+      lat,
+      lng,
+      price6,
+      price13,
+      type,
+      createdAt: new Date()
+    })
+    .then((docRef) => {
+      alert("Seller successfully registered!");
 
-<button class="btn btn-primary w-100">
+      // Add new marker immediately
+      L.marker([lat, lng])
+        .addTo(map)
+        .bindPopup(`<b>${name}</b><br>${location}<br>6kg: ${price6}<br>13kg: ${price13}`)
+        .openPopup();
 
-Register Seller
+      sellerForm.reset();
+    })
+    .catch((error) => {
+      console.error("Error adding seller: ", error);
+      alert("There was an error. Please try again.");
+    });
+  });
+</script>
 
 </button>
 
