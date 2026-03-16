@@ -431,6 +431,7 @@ document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚
 
 </script>
 
+<!-- MAP SECTION -->
 <section class="section" id="map">
   <div class="container">
     <h2 class="text-center mb-4">Nearest Gas Sellers</h2>
@@ -438,46 +439,55 @@ document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚
   </div>
 </section>
 
+<!-- LEAFLET + FIREBASE -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 
 <script>
-const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-};
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+  // 1️⃣ Firebase config
+  const firebaseConfig = {
+    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+    authDomain: "adawe-gas-system-82187.firebaseapp.com",
+    projectId: "adawe-gas-system-82187",
+    storageBucket: "adawe-gas-system-82187.appspot.com",
+    messagingSenderId: "644303663526",
+    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const db = firebase.firestore();
 
-var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution: '© OpenStreetMap' }).addTo(map);
+  // 2️⃣ Initialize Leaflet map
+  var map = L.map('mapArea').setView([-1.286389, 36.817223], 6);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '© OpenStreetMap'
+  }).addTo(map);
 
-db.collection("sellers").get().then((querySnapshot) => {
-  querySnapshot.forEach((doc) => {
-    const data = doc.data();
-    if(data.lat && data.lng){
-      L.marker([data.lat, data.lng])
+  // 3️⃣ Realtime listener for sellers collection
+  db.collection("sellers").onSnapshot((snapshot) => {
+    snapshot.docChanges().forEach((change) => {
+      if (change.type === "added" || change.type === "modified") {
+        const data = change.doc.data();
+        if (data.lat && data.lng) {
+          L.marker([data.lat, data.lng])
+            .addTo(map)
+            .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6 || '-'}<br>13kg: ${data.price13 || '-'}`);
+        }
+      }
+    });
+  });
+
+  // 4️⃣ Show user location if allowed
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var userLat = position.coords.latitude;
+      var userLng = position.coords.longitude;
+      L.marker([userLat, userLng])
         .addTo(map)
-        .bindPopup(`<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6 || '-'}<br>13kg: ${data.price13 || '-'}`);
-    }
-  });
-});
-
-if (navigator.geolocation) {
-  navigator.geolocation.getCurrentPosition(function(position) {
-    var userLat = position.coords.latitude;
-    var userLng = position.coords.longitude;
-    L.marker([userLat, userLng])
-      .addTo(map)
-      .bindPopup("You are here")
-      .openPopup();
-    map.setView([userLat, userLng], 13);
-  });
-}
+        .bindPopup("You are here")
+        .openPopup();
+      map.setView([userLat, userLng], 12);
+    });
+  }
 </script>
