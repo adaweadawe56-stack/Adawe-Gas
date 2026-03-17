@@ -270,18 +270,15 @@ Register Seller
 <script>
   // Firebase config
   const firebaseConfig = {
-    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+    apiKey: "AIzaSy...",
     authDomain: "adawe-gas-system-82187.firebaseapp.com",
-    projectId: "adawe-gas-system-82187",
-    storageBucket: "adawe-gas-system-82187.appspot.com",
-    messagingSenderId: "644303663526",
-    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+    projectId: "adawe-gas-system-82187"
   };
 
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Initialize map
+  // Map
   var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
 
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -290,8 +287,8 @@ Register Seller
 
   // Load sellers
   function loadSellers() {
-    db.collection("sellers").get().then((querySnapshot) => {
-      querySnapshot.forEach((doc) => {
+    db.collection("sellers").get().then((snapshot) => {
+      snapshot.forEach((doc) => {
         const data = doc.data();
         if (data.lat && data.lng) {
           L.marker([data.lat, data.lng])
@@ -302,55 +299,99 @@ Register Seller
     });
   }
 
-  loadSellers();
+  loadSellers(); // muhiim
 
-  // Show user location
+  // USER LOCATION + NEAREST
+  let userLat, userLng;
+
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      const userLat = position.coords.latitude;
-      const userLng = position.coords.longitude;
+      userLat = position.coords.latitude;
+      userLng = position.coords.longitude;
 
+      // show user
       L.marker([userLat, userLng])
         .addTo(map)
         .bindPopup("You are here")
         .openPopup();
 
       map.setView([userLat, userLng], 13);
+
+      findNearestSeller();
     });
   }
 
-  // Auto GPS function
+  // Distance function
+  function getDistance(lat1, lng1, lat2, lng2) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI/180;
+    const dLng = (lng2 - lng1) * Math.PI/180;
+
+    const a =
+      Math.sin(dLat/2) * Math.sin(dLat/2) +
+      Math.cos(lat1 * Math.PI/180) *
+      Math.cos(lat2 * Math.PI/180) *
+      Math.sin(dLng/2) * Math.sin(dLng/2);
+
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+    return R * c;
+  }
+
+  // Find nearest
+  function findNearestSeller() {
+    db.collection("sellers").get().then((snapshot) => {
+
+      let nearest = null;
+      let minDistance = Infinity;
+
+      snapshot.forEach(doc => {
+        const data = doc.data();
+
+        if (data.lat && data.lng) {
+          const distance = getDistance(userLat, userLng, data.lat, data.lng);
+
+          if (distance < minDistance) {
+            minDistance = distance;
+            nearest = data;
+          }
+        }
+      });
+
+      if (nearest) {
+        alert("Nearest Seller: " + nearest.name + " (" + minDistance.toFixed(2) + " km)");
+
+        L.marker([nearest.lat, nearest.lng])
+          .addTo(map)
+          .bindPopup(`<b>${nearest.name}</b><br>${minDistance.toFixed(2)} km`)
+          .openPopup();
+      }
+    });
+  }
+
+  // SELLER GPS
   let sellerLat, sellerLng;
 
   function getLocation() {
-    if (!navigator.geolocation) {
-      alert("Geolocation not supported");
-      return;
-    }
-
     navigator.geolocation.getCurrentPosition(function(position) {
       sellerLat = position.coords.latitude;
       sellerLng = position.coords.longitude;
-
-      alert("Location detected successfully!");
-    }, function() {
-      alert("Please allow location access.");
+      alert("Location detected!");
     });
   }
 
-  // Form submit
+  // FORM
   const sellerForm = document.getElementById("sellerForm");
 
   sellerForm.addEventListener("submit", (e) => {
     e.preventDefault();
 
-    const name = document.getElementById("sellerName").value.trim();
+    const name = document.getElementById("sellerName").value;
     const price6 = parseInt(document.getElementById("sellerPrice6").value);
     const price13 = parseInt(document.getElementById("sellerPrice13").value);
     const type = document.getElementById("sellerType").value;
 
-    if (!sellerLat || !sellerLng) {
-      alert("Please click 'Detect My Location' first!");
+    if (!sellerLat) {
+      alert("Click Detect Location first!");
       return;
     }
 
@@ -362,21 +403,14 @@ Register Seller
       price13,
       type,
       createdAt: new Date()
-    })
-    .then(() => {
-      alert("Seller registered successfully!");
+    }).then(() => {
+      alert("Seller added!");
 
       L.marker([sellerLat, sellerLng])
         .addTo(map)
-        .bindPopup(`<b>${name}</b><br>6kg: ${price6}<br>13kg: ${price13}`)
-        .openPopup();
+        .bindPopup(`<b>${name}</b>`);
 
       sellerForm.reset();
-      sellerLat = sellerLng = null;
-    })
-    .catch((error) => {
-      console.error(error);
-      alert("Error saving seller. Try again.");
     });
   });
 </script>
