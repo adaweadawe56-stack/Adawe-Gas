@@ -177,17 +177,32 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // MAP + MARKERS
+  // MESSAGE UI
+  function showMessage(message, type){
+    let box = document.getElementById("messageBox");
+    if(!box){
+      box = document.createElement("div");
+      box.id = "messageBox";
+      document.body.prepend(box);
+    }
+    box.innerHTML = `<div class="alert alert-${type} text-center m-2">${message}</div>`;
+    setTimeout(()=>{box.innerHTML="";},4000);
+  }
+
+  // MAP
   const map = L.map('mapArea').setView([-1.286389,36.817223],6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
-  const clusterGroup = L.markerClusterGroup(); map.addLayer(clusterGroup);
+  const clusterGroup = L.markerClusterGroup(); 
+  map.addLayer(clusterGroup);
+
   const icons = {
     "6kg": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888879.png',iconSize:[30,30]}),
     "13kg": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888857.png',iconSize:[30,30]}),
     "both": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888851.png',iconSize:[30,30]})
   };
 
-  let userLat=null,userLng=null,sellerLat=null,sellerLng=null,cheapest6=Infinity,cheapest13=Infinity,nearestSeller=null,suggestedSeller=null;
+  let userLat=null,userLng=null,sellerLat=null,sellerLng=null;
+  let cheapest6=Infinity,cheapest13=Infinity,nearestSeller=null,suggestedSeller=null;
 
   function getDistance(lat1,lng1,lat2,lng2){
     const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
@@ -199,43 +214,60 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
     const el=document.getElementById("orderSuggestion");
     if(!el) return;
     if(suggestedSeller){
-      el.innerHTML=`<div class="alert alert-info">Suggested Seller: <b>${suggestedSeller.name}</b><br>6kg: ${suggestedSeller.price6||'-'}<br>13kg: ${suggestedSeller.price13||'-'}<br>Distance: ${suggestedSeller.distance.toFixed(2)} km</div>`;
-    }else{el.innerHTML=`<div class="alert alert-secondary">No nearby seller detected yet.</div>`;}
+      el.innerHTML=`<div class="alert alert-info">
+      Suggested Seller: <b>${suggestedSeller.name}</b><br>
+      6kg: ${suggestedSeller.price6||'-'}<br>
+      13kg: ${suggestedSeller.price13||'-'}<br>
+      Distance: ${suggestedSeller.distance.toFixed(2)} km
+      </div>`;
+    }else{
+      el.innerHTML=`<div class="alert alert-secondary">No nearby seller detected yet.</div>`;
+    }
   }
 
+  // LOAD SELLERS
   db.collection("sellers").onSnapshot(snapshot=>{
-    clusterGroup.clearLayers(); cheapest6=Infinity; cheapest13=Infinity; nearestSeller=null; suggestedSeller=null;
+    clusterGroup.clearLayers();
+    cheapest6=Infinity; cheapest13=Infinity;
+    nearestSeller=null; suggestedSeller=null;
+
     snapshot.forEach(doc=>{
       const data=doc.data();
+
       if(data.lat && data.lng){
         let iconType="both";
         if(data.price6 && !data.price13) iconType="6kg";
         if(!data.price6 && data.price13) iconType="13kg";
-        const marker=L.marker([data.lat,data.lng],{icon:icons[iconType]}).bindPopup(`<b>${data.name}</b><br>6kg: ${data.price6||'-'}<br>13kg: ${data.price13||'-'}<br>Type: ${data.type}`);
+
+        const marker=L.marker([data.lat,data.lng],{icon:icons[iconType]})
+        .bindPopup(`<b>${data.name}</b><br>6kg: ${data.price6||'-'}<br>13kg: ${data.price13||'-'}<br>Type: ${data.type}`);
+
         clusterGroup.addLayer(marker);
+
         if(data.price6 && data.price6<cheapest6) cheapest6=data.price6;
         if(data.price13 && data.price13<cheapest13) cheapest13=data.price13;
+
         if(userLat && userLng){
           const dist=getDistance(userLat,userLng,data.lat,data.lng);
-          if(!nearestSeller || dist<nearestSeller.distance){nearestSeller={...data,distance:dist}; suggestedSeller=nearestSeller;}
+          if(!nearestSeller || dist<nearestSeller.distance){
+            nearestSeller={...data,distance:dist};
+            suggestedSeller=nearestSeller;
+          }
         }
       }
     });
+
     document.getElementById("cheapest6").innerText=`Cheapest 6kg: KES ${cheapest6===Infinity?'-':cheapest6}`;
     document.getElementById("cheapest13").innerText=`Cheapest 13kg: KES ${cheapest13===Infinity?'-':cheapest13}`;
-    if(nearestSeller){
-      L.marker([nearestSeller.lat,nearestSeller.lng],{icon:icons["both"]})
-        .addTo(map)
-        .bindPopup(`<b>Nearest Seller: ${nearestSeller.name}</b><br>6kg: ${nearestSeller.price6||'-'}<br>13kg: ${nearestSeller.price13||'-'}<br>Distance: ${nearestSeller.distance.toFixed(2)} km`)
-        .openPopup();
-    }
+
     updateOrderSuggestion();
   });
 
   // USER LOCATION
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
-      userLat=pos.coords.latitude; userLng=pos.coords.longitude;
+      userLat=pos.coords.latitude;
+      userLng=pos.coords.longitude;
       L.marker([userLat,userLng]).addTo(map).bindPopup("You are here").openPopup();
       map.setView([userLat,userLng],12);
       updateOrderSuggestion();
@@ -244,39 +276,97 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 
   // SELLER LOCATION
   function getLocation(){
-    if(!navigator.geolocation){alert("Geolocation not supported");return;}
+    if(!navigator.geolocation){
+      showMessage("Geolocation not supported","danger");
+      return;
+    }
     navigator.geolocation.getCurrentPosition(pos=>{
-      sellerLat=pos.coords.latitude; sellerLng=pos.coords.longitude;
-      alert("Location detected!");
+      sellerLat=pos.coords.latitude;
+      sellerLng=pos.coords.longitude;
+      showMessage("Location detected!","success");
     });
   }
 
   // SELLER FORM
-  const sellerForm=document.getElementById("sellerForm");
-  sellerForm.addEventListener("submit",e=>{
+  document.getElementById("sellerForm").addEventListener("submit",e=>{
     e.preventDefault();
+
     const name=document.getElementById("sellerName").value;
     const price6=parseInt(document.getElementById("sellerPrice6").value);
     const price13=parseInt(document.getElementById("sellerPrice13").value);
     const type=document.getElementById("sellerType").value;
-    if(!sellerLat){alert("Click Detect Location first!"); return;}
-    db.collection("sellers").add({name,lat:sellerLat,lng:sellerLng,price6,price13,type,createdAt:new Date()})
-      .then(()=>{alert("Seller added!"); sellerForm.reset(); sellerLat=sellerLng=null;});
+
+    if(!sellerLat){
+      showMessage("Click Detect Location first!","warning");
+      return;
+    }
+
+    db.collection("sellers").add({
+      name,lat:sellerLat,lng:sellerLng,price6,price13,type,createdAt:new Date()
+    })
+    .then(()=>{
+      showMessage("Seller added successfully!","success");
+      sellerForm.reset();
+      sellerLat=null; sellerLng=null;
+    })
+    .catch(()=>{showMessage("Error adding seller","danger");});
   });
 
-  // ORDER TRACKING
-  function generateTracking(){return "AG"+Math.floor(100000+Math.random()*900000);}
+  // TRACKING
+  function generateTracking(){
+    return "AG"+Math.floor(100000+Math.random()*900000);
+  }
+
+  // ORDER (WITH PHONE + WHATSAPP)
   document.getElementById("orderForm").addEventListener("submit",function(e){
     e.preventDefault();
+
+    const name=document.getElementById("name").value;
+    const phone=document.getElementById("phone").value;
+    const location=document.getElementById("location").value;
+    const quantity=document.getElementById("quantity").value;
+    const brand=document.getElementById("brand").value;
+
     const tracking=generateTracking();
-    alert("Order placed! Tracking Number: "+tracking);
-    document.getElementById("trackingNumber").innerText="Tracking Number: "+tracking;
+
+    db.collection("orders").add({
+      name,phone,location,quantity,brand,tracking,status:"Pending",date:new Date()
+    })
+    .then(()=>{
+      showMessage("Order placed! Tracking: "+tracking,"success");
+
+      document.getElementById("trackingNumber").innerText="Tracking Number: "+tracking;
+      document.getElementById("orderForm").reset();
+
+      // WHATSAPP AUTO MESSAGE
+      const msg = `New Order\nName: ${name}\nPhone: ${phone}\nLocation: ${location}\nQty: ${quantity}\nBrand: ${brand}\nTracking: ${tracking}`;
+      window.open(`https://wa.me/254727015434?text=${encodeURIComponent(msg)}`);
+    })
+    .catch(()=>{showMessage("Error placing order","danger");});
   });
+
+  // TRACK ORDER
   function trackOrder(){
     let t=document.getElementById("trackInput").value;
-    if(t===""){document.getElementById("trackResult").innerText="Enter tracking number"; return;}
-    document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";
+
+    if(t===""){
+      document.getElementById("trackResult").innerText="Enter tracking number";
+      return;
+    }
+
+    db.collection("orders")
+      .where("tracking","==",t)
+      .get()
+      .then(snapshot=>{
+        if(snapshot.empty){
+          document.getElementById("trackResult").innerText="Order not found";
+        }else{
+          snapshot.forEach(doc=>{
+            const data=doc.data();
+            document.getElementById("trackResult").innerText=
+              "Status: "+data.status+" | Location: "+data.location;
+          });
+        }
+      });
   }
 </script>
-</body>
-</html>
