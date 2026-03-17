@@ -10,7 +10,6 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-
 <style>
 body{font-family:Arial,sans-serif;margin:0;padding:0;}
 .navbar{background:#0b7a3c;}
@@ -26,7 +25,6 @@ body{font-family:Arial,sans-serif;margin:0;padding:0;}
 footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 #mapArea{height:400px;width:100%;}
 @media(max-width:768px){.btn-main{padding:16px 30px;font-size:20px;}#mapArea{height:300px;}.section{padding:50px 15px;}.hero h1{font-size:32px;}.hero p{font-size:16px;}#orderForm{width:100%;padding:20px;}}
-/* WhatsApp button */
 a[href^="https://wa.me"]{touch-action:manipulation;}
 a[href^="https://wa.me"]:hover,a[href^="https://wa.me"]:active{transform:scale(1.1);box-shadow:0 5px 15px rgba(0,0,0,0.3);}
 </style>
@@ -159,97 +157,73 @@ a[href^="https://wa.me"]:hover,a[href^="https://wa.me"]:active{transform:scale(1
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function(){
-  const firebaseConfig = {
-    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-    authDomain: "adawe-gas-system-82187.firebaseapp.com",
-    projectId: "adawe-gas-system-82187",
-    storageBucket: "adawe-gas-system-82187.appspot.com",
-    messagingSenderId: "644303663526",
-    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.firestore();
+document.addEventListener("DOMContentLoaded",function(){
+const firebaseConfig={apiKey:"AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",authDomain:"adawe-gas-system-82187.firebaseapp.com",projectId:"adawe-gas-system-82187",storageBucket:"adawe-gas-system-82187.appspot.com",messagingSenderId:"644303663526",appId:"1:644303663526:web:bacf9e5db0d7787f705f67"};
+firebase.initializeApp(firebaseConfig);
+const db=firebase.firestore();
 
-  var map = L.map('mapArea').setView([-1.286389,36.817223],12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
+var map=L.map('mapArea').setView([-1.286389,36.817223],12);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
 
-  let userLat,userLng,sellerLat,sellerLng;
+let userLat,userLng,sellerLat,sellerLng;
+const markers={};
 
-  function loadSellers(){
-    db.collection("sellers").get().then(snapshot=>{
-      let cheapest6=Infinity,cheapest13=Infinity;
-      snapshot.forEach(doc=>{
-        const data=doc.data();
-        if(data.lat && data.lng){
-          L.marker([data.lat,data.lng])
-          .addTo(map)
-          .bindPopup(`<b>${data.name}</b><br>6kg:${data.price6 || '-'}<br>13kg:${data.price13 || '-'}`);
-          if(data.price6 && data.price6<cheapest6) cheapest6=data.price6;
-          if(data.price13 && data.price13<cheapest13) cheapest13=data.price13;
-        }
-      });
-      document.getElementById("cheapest6").innerText="Cheapest 6kg Gas: KES "+(cheapest6===Infinity?"N/A":cheapest6);
-      document.getElementById("cheapest13").innerText="Cheapest 13kg Gas: KES "+(cheapest13===Infinity?"N/A":cheapest13);
-    });
-  }
-  loadSellers();
+function loadSellersRealtime(){
+db.collection("sellers").onSnapshot(snapshot=>{
+let cheapest6=Infinity,cheapest13=Infinity;
+snapshot.docChanges().forEach(change=>{
+const data=change.doc.data();
+if(data.lat && data.lng){
+if(markers[data.name]){map.removeLayer(markers[data.name]);}
+markers[data.name]=L.marker([data.lat,data.lng]).addTo(map).bindPopup(`<b>${data.name}</b><br>6kg:${data.price6 || '-'}<br>13kg:${data.price13 || '-'}`);
+if(data.price6 && data.price6<cheapest6) cheapest6=data.price6;
+if(data.price13 && data.price13<cheapest13) cheapest13=data.price13;
+}
+});
+document.getElementById("cheapest6").innerText="Cheapest 6kg Gas: KES "+(cheapest6===Infinity?"N/A":cheapest6);
+document.getElementById("cheapest13").innerText="Cheapest 13kg Gas: KES "+(cheapest13===Infinity?"N/A":cheapest13);
+});
+}
+loadSellersRealtime();
 
-  function getDistance(lat1,lng1,lat2,lng2){
-    const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLng=(lng2-lng1)*Math.PI/180;
-    const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;
-    const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-    return R*c;
-  }
+function getDistance(lat1,lng1,lat2,lng2){const R=6371;const dLat=(lat2-lat1)*Math.PI/180;const dLng=(lng2-lng1)*Math.PI/180;const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLng/2)**2;const c=2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));return R*c;}
 
-  function findNearestSeller(){
-    db.collection("sellers").get().then(snapshot=>{
-      let nearest=null,minDistance=Infinity;
-      snapshot.forEach(doc=>{
-        const data=doc.data();
-        if(data.lat && data.lng){
-          const distance=getDistance(userLat,userLng,data.lat,data.lng);
-          if(distance<minDistance){minDistance=distance;nearest=data;}
-        }
-      });
-      if(nearest){
-        alert(`Nearest Seller: ${nearest.name} (${minDistance.toFixed(2)} km)`);
-        L.marker([nearest.lat,nearest.lng]).addTo(map).bindPopup(`<b>${nearest.name}</b><br>${minDistance.toFixed(2)} km`).openPopup();
-      }
-    });
-  }
+function findNearestSeller(){
+db.collection("sellers").get().then(snapshot=>{
+let nearest=null,minDistance=Infinity;
+snapshot.forEach(doc=>{
+const data=doc.data();
+if(data.lat && data.lng){
+const distance=getDistance(userLat,userLng,data.lat,data.lng);
+if(distance<minDistance){minDistance=distance;nearest=data;}
+}
+});
+if(nearest){alert(`Nearest Seller: ${nearest.name} (${minDistance.toFixed(2)} km)`);L.marker([nearest.lat,nearest.lng]).addTo(map).bindPopup(`<b>${nearest.name}</b><br>${minDistance.toFixed(2)} km`).openPopup();}
+});
 
-  if(navigator.geolocation){
-    navigator.geolocation.getCurrentPosition(function(position){
-      userLat=position.coords.latitude;
-      userLng=position.coords.longitude;
-      L.marker([userLat,userLng]).addTo(map).bindPopup("You are here").openPopup();
-      map.setView([userLat,userLng],13);
-      findNearestSeller();
-    });
-  }
+}
 
-  window.getLocation=function(){
-    if(navigator.geolocation){
-      navigator.geolocation.getCurrentPosition(function(position){sellerLat=position.coords.latitude;sellerLng=position.coords.longitude;alert("Location detected!");},function(){alert("Allow location access!");});
-    } else alert("Geolocation not supported");
-  }
+if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(position){userLat=position.coords.latitude;userLng=position.coords.longitude;L.marker([userLat,userLng]).addTo(map).bindPopup("You are here").openPopup();map.setView([userLat,userLng],13);findNearestSeller();});}
 
-  document.getElementById("sellerForm").addEventListener("submit",function(e){
-    e.preventDefault();
-    const name=document.getElementById("sellerName").value;
-    const price6=parseInt(document.getElementById("sellerPrice6").value);
-    const price13=parseInt(document.getElementById("sellerPrice13").value);
-    const type=document.getElementById("sellerType").value;
-    if(!sellerLat||!sellerLng){alert("Click Detect Location first!");return;}
-    db.collection("sellers").add({name,lat:sellerLat,lng:sellerLng,price6,price13,type,createdAt:new Date()})
-    .then(()=>{alert("Seller added!");L.marker([sellerLat,sellerLng]).addTo(map).bindPopup(`<b>${name}</b>`);document.getElementById("sellerForm").reset();loadSellers();}).catch(err=>{console.error(err);alert("Error saving seller.");});
-  });
+window.getLocation=function(){if(navigator.geolocation){navigator.geolocation.getCurrentPosition(function(position){sellerLat=position.coords.latitude;sellerLng=position.coords.longitude;alert("Location detected!");},function(){alert("Allow location access!");});} else alert("Geolocation not supported");}
 
-  function generateTracking(){return "AG"+Math.floor(100000+Math.random()*900000);}
-  document.getElementById("orderForm").addEventListener("submit",function(e){e.preventDefault();const tracking=generateTracking();alert("Order placed! Tracking Number: "+tracking);document.getElementById("trackingNumber").innerText="Tracking Number: "+tracking;});
-  window.trackOrder=function(){let t=document.getElementById("trackInput").value;if(t===""){document.getElementById("trackResult").innerText="Enter tracking number";return;}document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";};
+document.getElementById("sellerForm").addEventListener("submit",function(e){
+e.preventDefault();
+const name=document.getElementById("sellerName").value;
+const price6=parseInt(document.getElementById("sellerPrice6").value);
+const price13=parseInt(document.getElementById("sellerPrice13").value);
+const type=document.getElementById("sellerType").value;
+if(!sellerLat||!sellerLng){alert("Click Detect Location first!");return;}
+db.collection("sellers").add({name,lat:sellerLat,lng:sellerLng,price6,price13,type,createdAt:new Date()})
+.then(()=>{alert("Seller added!");document.getElementById("sellerForm").reset();})
+.catch(err=>{console.error(err);alert("Error saving seller.");});
+});
+
+function generateTracking(){return "AG"+Math.floor(100000+Math.random()*900000);}
+document.getElementById("orderForm").addEventListener("submit",function(e){e.preventDefault();const tracking=generateTracking();alert("Order placed! Tracking Number: "+tracking);document.getElementById("trackingNumber").innerText="Tracking Number: "+tracking;});
+window.trackOrder=function(){let t=document.getElementById("trackInput").value;if(t===""){document.getElementById("trackResult").innerText="Enter tracking number";return;}document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";};
 });
 </script>
 </body>
