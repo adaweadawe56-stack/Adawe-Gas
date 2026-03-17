@@ -277,24 +277,26 @@ Register Seller
     messagingSenderId: "644303663526",
     appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
   };
+
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // Initialize Leaflet map
+  // Initialize map
   var map = L.map('mapArea').setView([-1.286389, 36.817223], 12);
+
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '© OpenStreetMap'
+    attribution: '© OpenStreetMap'
   }).addTo(map);
 
-  // Load sellers from Firestore and add markers
+  // Load sellers
   function loadSellers() {
     db.collection("sellers").get().then((querySnapshot) => {
       querySnapshot.forEach((doc) => {
         const data = doc.data();
-        if(data.lat && data.lng) {
+        if (data.lat && data.lng) {
           L.marker([data.lat, data.lng])
             .addTo(map)
-            .bindPopup(<b>${data.name}</b><br>${data.location}<br>6kg: ${data.price6}<br>13kg: ${data.price13});
+            .bindPopup(`<b>${data.name}</b><br>6kg: ${data.price6}<br>13kg: ${data.price13}`);
         }
       });
     });
@@ -302,11 +304,11 @@ Register Seller
 
   loadSellers();
 
-  // Show user location if allowed
+  // Show user location
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(function(position) {
-      var userLat = position.coords.latitude;
-      var userLng = position.coords.longitude;
+      const userLat = position.coords.latitude;
+      const userLng = position.coords.longitude;
 
       L.marker([userLat, userLng])
         .addTo(map)
@@ -317,75 +319,67 @@ Register Seller
     });
   }
 
-  // Handle seller registration form
-<script>
+  // Auto GPS function
+  let sellerLat, sellerLng;
 
-const sellerForm = document.getElementById("sellerForm");
+  function getLocation() {
+    if (!navigator.geolocation) {
+      alert("Geolocation not supported");
+      return;
+    }
 
-sellerForm.addEventListener("submit", (e) => {
-  e.preventDefault();
+    navigator.geolocation.getCurrentPosition(function(position) {
+      sellerLat = position.coords.latitude;
+      sellerLng = position.coords.longitude;
 
-  const name = document.getElementById("sellerName").value.trim();
-  const location = document.getElementById("sellerLocation").value.trim();
-  const price6 = parseInt(document.getElementById("sellerPrice6").value);
-  const price13 = parseInt(document.getElementById("sellerPrice13").value);
-  const type = document.getElementById("sellerType").value;
-
-  if (!navigator.geolocation) {
-    alert("Geolocation is not supported by this browser.");
-    return;
+      alert("Location detected successfully!");
+    }, function() {
+      alert("Please allow location access.");
+    });
   }
 
-  navigator.geolocation.getCurrentPosition(function(position){
+  // Form submit
+  const sellerForm = document.getElementById("sellerForm");
 
-    const lat = position.coords.latitude;
-    const lng = position.coords.longitude;
+  sellerForm.addEventListener("submit", (e) => {
+    e.preventDefault();
+
+    const name = document.getElementById("sellerName").value.trim();
+    const price6 = parseInt(document.getElementById("sellerPrice6").value);
+    const price13 = parseInt(document.getElementById("sellerPrice13").value);
+    const type = document.getElementById("sellerType").value;
+
+    if (!sellerLat || !sellerLng) {
+      alert("Please click 'Detect My Location' first!");
+      return;
+    }
 
     db.collection("sellers").add({
       name,
-      location,
-      lat,
-      lng,
+      lat: sellerLat,
+      lng: sellerLng,
       price6,
       price13,
       type,
       createdAt: new Date()
     })
-
     .then(() => {
-
       alert("Seller registered successfully!");
 
-      L.marker([lat, lng])
+      L.marker([sellerLat, sellerLng])
         .addTo(map)
-        .bindPopup(<b>${name}</b><br>${location})
+        .bindPopup(`<b>${name}</b><br>6kg: ${price6}<br>13kg: ${price13}`)
         .openPopup();
 
       sellerForm.reset();
-    });
-
-  });
-
-});
-
- catch((error) => {
-      console.error("Error adding seller: ", error);
-      alert("There was an error. Please try again.");
+      sellerLat = sellerLng = null;
+    })
+    .catch((error) => {
+      console.error(error);
+      alert("Error saving seller. Try again.");
     });
   });
 </script>
-
-</button>
-
-</form>
-
-</div>
-
-</div>
-
-</div>
-
-</section>
 
 
 <!-- ORDER TRACKING -->
