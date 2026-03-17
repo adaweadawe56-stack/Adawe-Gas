@@ -26,6 +26,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </head>
 <body>
 
+<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
 <div class="container">
 <a class="navbar-brand">Adawe Gas</a>
@@ -46,6 +47,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero" id="home">
 <div class="container">
 <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
@@ -54,6 +56,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- ORDER SECTION -->
 <section class="section bg-white" id="order">
 <div class="container">
 <h2 class="text-center">Place Order</h2>
@@ -85,6 +88,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- SELLER SECTION -->
 <section class="section bg-light" id="seller">
 <div class="container">
 <h2 class="text-center mb-4">Register as Gas Seller</h2>
@@ -104,6 +108,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- MAP SECTION -->
 <section class="section" id="map">
 <div class="container">
 <h2 class="text-center mb-4">Sellers Map</h2>
@@ -111,6 +116,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- TRACK ORDER -->
 <section class="section" id="tracking">
 <div class="container">
 <h2 class="text-center mb-4">Track Order</h2>
@@ -124,6 +130,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- GAS PRICES -->
 <section class="section bg-light" id="prices">
 <div class="container text-center">
 <h2>Gas Prices</h2>
@@ -135,6 +142,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 </div>
 </section>
 
+<!-- CONTACT -->
 <section class="section bg-light" id="contact">
 <div class="container text-center">
 <h2>Contact</h2>
@@ -154,8 +162,10 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 <script src="https://unpkg.com/leaflet.markercluster@1.5.3/dist/leaflet.markercluster.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
 <script>
-  // FIREBASE INIT
+  // FIREBASE
   const firebaseConfig = {
     apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
     authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -167,18 +177,17 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
   firebase.initializeApp(firebaseConfig);
   const db = firebase.firestore();
 
-  // MAP
-  var map = L.map('mapArea').setView([-1.286389,36.817223],6);
+  // MAP + MARKERS
+  const map = L.map('mapArea').setView([-1.286389,36.817223],6);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'© OpenStreetMap'}).addTo(map);
   const clusterGroup = L.markerClusterGroup(); map.addLayer(clusterGroup);
-
   const icons = {
     "6kg": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888879.png',iconSize:[30,30]}),
     "13kg": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888857.png',iconSize:[30,30]}),
     "both": L.icon({iconUrl:'https://cdn-icons-png.flaticon.com/512/888/888851.png',iconSize:[30,30]})
   };
 
-  let userLat,userLng,sellerLat,sellerLng,cheapest6=Infinity,cheapest13=Infinity,nearestSeller=null,suggestedSeller=null;
+  let userLat=null,userLng=null,sellerLat=null,sellerLng=null,cheapest6=Infinity,cheapest13=Infinity,nearestSeller=null,suggestedSeller=null;
 
   function getDistance(lat1,lng1,lat2,lng2){
     const R=6371,dLat=(lat2-lat1)*Math.PI/180,dLng=(lng2-lng1)*Math.PI/180;
@@ -212,10 +221,8 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
         }
       }
     });
-    const cheapest6El=document.getElementById("cheapest6");
-    const cheapest13El=document.getElementById("cheapest13");
-    if(cheapest6El) cheapest6El.innerText=`Cheapest 6kg: KES ${cheapest6===Infinity?'-':cheapest6}`;
-    if(cheapest13El) cheapest13El.innerText=`Cheapest 13kg: KES ${cheapest13===Infinity?'-':cheapest13}`;
+    document.getElementById("cheapest6").innerText=`Cheapest 6kg: KES ${cheapest6===Infinity?'-':cheapest6}`;
+    document.getElementById("cheapest13").innerText=`Cheapest 13kg: KES ${cheapest13===Infinity?'-':cheapest13}`;
     if(nearestSeller){
       L.marker([nearestSeller.lat,nearestSeller.lng],{icon:icons["both"]})
         .addTo(map)
@@ -225,6 +232,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
     updateOrderSuggestion();
   });
 
+  // USER LOCATION
   if(navigator.geolocation){
     navigator.geolocation.getCurrentPosition(pos=>{
       userLat=pos.coords.latitude; userLng=pos.coords.longitude;
@@ -234,6 +242,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
     });
   }
 
+  // SELLER LOCATION
   function getLocation(){
     if(!navigator.geolocation){alert("Geolocation not supported");return;}
     navigator.geolocation.getCurrentPosition(pos=>{
@@ -242,6 +251,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
     });
   }
 
+  // SELLER FORM
   const sellerForm=document.getElementById("sellerForm");
   sellerForm.addEventListener("submit",e=>{
     e.preventDefault();
@@ -268,6 +278,5 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
     document.getElementById("trackResult").innerText="Order "+t+" is on the way 🚚";
   }
 </script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
