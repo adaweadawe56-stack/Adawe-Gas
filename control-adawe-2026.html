@@ -18,31 +18,47 @@ th { background:#198754; color:white; }
 .stats { display:flex; gap:20px; margin-top:20px; }
 .stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; }
 .btn-sm { font-size:.75rem; padding:.25rem .5rem; }
-.status-pending { background:#fff3cd; }
-.status-delivered { background:#d4edda; }
-.btn-pending { background:#ffc107; color:black; pointer-events:none; }
-.btn-delivered { background:#28a745; color:white; }
 .btn-danger { background:#dc3545; color:white; }
-.btn-download { margin-bottom:15px; }
-.search-input { margin-bottom:10px; }
+.search-input { margin-bottom:10px; width:100%; padding:6px 8px; }
 </style>
 </head>
 
 <body>
   
+<!-- LOGIN PAGE -->
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
   <h3 class="text-center mb-3">Admin Login</h3>
-
   <input id="email" type="email" class="form-control mb-2" placeholder="Email">
   <input id="password" type="password" class="form-control mb-2" placeholder="Password">
-
   <button onclick="login()" class="btn btn-success w-100">Login</button>
-
   <p id="loginError" style="color:red;"></p>
 </div>
 
-<div id="
-  
+<!-- DASHBOARD -->
+<div id="dashboard" style="display:none;">
+  <header>Adawe Gas Control</header>
+  <div class="section">
+    <div class="stats">
+      <div class="stat-box">
+        <h4 id="totalOrders">0</h4>
+        <p>Total Orders</p>
+      </div>
+      <div class="stat-box">
+        <h4 id="pendingOrders">0</h4>
+        <p>Pending Orders</p>
+      </div>
+    </div>
+
+    <h3>Orders</h3>
+    <input type="text" id="searchOrders" class="search-input" placeholder="Search Orders...">
+    <table id="ordersTable"></table>
+
+    <h3>Sellers</h3>
+    <input type="text" id="searchSellers" class="search-input" placeholder="Search Sellers...">
+    <table id="sellersTable"></table>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -52,7 +68,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com", // ✅ FIXED
+  storageBucket: "adawe-gas-system-82187.appspot.com",
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
@@ -61,217 +77,162 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ===== TEST DATA (RUN ONCE ONLY) =====
-async function addTestOrders(){
-  const snapshot = await getDocs(collection(db,"orders"));
-
-  if(snapshot.empty){
-    await addDoc(collection(db,"orders"),{
-      name: "Hassan",
-      phone: "0720000000",
-      location: "Mombasa",
-      brand: "Rubis",
-      quantity: 6,
-      unit: "Kgs",
-      status: "Pending",
-      tracking: "AG222333",
-      date: new Date()
-    });
-
-    await addDoc(collection(db,"orders"),{
-      name: "Fatima",
-      phone: "0733333333",
-      location: "Nairobi",
-      brand: "Oryx",
-      quantity: 13,
-      unit: "Kgs",
-      status: "Delivered",
-      tracking: "AG999888",
-      date: new Date()
-    });
-
-    console.log("Test orders added ✅");
-  }
-}
-
-// ===== ADMIN SYSTEM =====
 let currentAdminRole = null;
+let ordersData = [], sellersData = [];
 
+// ===== ADMIN CHECK =====
 async function checkAdminAccess(user){
   const snapshot = await getDocs(collection(db,"admins"));
-
   let found = false;
-
   snapshot.forEach(docSnap=>{
     const data = docSnap.data();
-
     if(data.email === user.email){
       found = true;
       currentAdminRole = data.role;
     }
   });
-
-  if(!found){
-    alert("Not authorized");
-    location.reload();
-  }
+  if(!found){ alert("Not authorized"); location.reload(); }
 }
 
 // ===== LOGIN =====
 window.login = function(){
+  const email = document.getElementById("email").value;
+  const password = document.getElementById("password").value;
 
-const email = document.getElementById("email").value;
-const password = document.getElementById("password").value;
-
-signInWithEmailAndPassword(auth,email,password)
-.then(async(res)=>{
-
-await checkAdminAccess(res.user);
-
-document.getElementById("loginPage").style.display="none";
-document.getElementById("dashboard").style.display="block";
-
-showRole();
-startRealtime();
-addTestOrders();
-
-})
-.catch(()=>{
-document.getElementById("loginError").innerText="Login failed";
-});
-
+  signInWithEmailAndPassword(auth,email,password)
+  .then(async(res)=>{
+    await checkAdminAccess(res.user);
+    document.getElementById("loginPage").style.display="none";
+    document.getElementById("dashboard").style.display="block";
+    showRole();
+    startRealtime();
+    addTestOrders();
+  })
+  .catch(()=>{
+    document.getElementById("loginError").innerText="Login failed";
+  });
 }
 
 // ===== SHOW ROLE =====
 function showRole(){
-const header = document.querySelector("header");
+  const header = document.querySelector("header");
+  if(!header) return;
+  const role = document.createElement("div");
+  role.style.fontSize="14px";
+  role.innerHTML = "Role: " + currentAdminRole;
+  header.appendChild(role);
+}
 
-if(!header) return; // ✅ FIX (avoid crash)
-
-const role = document.createElement("div");
-role.style.fontSize="14px";
-role.innerHTML = "Role: " + currentAdminRole;
-
-header.appendChild(role);
+// ===== TEST ORDERS =====
+async function addTestOrders(){
+  const snapshot = await getDocs(collection(db,"orders"));
+  if(snapshot.empty){
+    await addDoc(collection(db,"orders"),{
+      name: "Hassan", phone: "0720000000", location: "Mombasa",
+      brand: "Rubis", quantity: 6, unit: "Kgs", status: "Pending",
+      tracking: "AG222333", date: new Date()
+    });
+    await addDoc(collection(db,"orders"),{
+      name: "Fatima", phone: "0733333333", location: "Nairobi",
+      brand: "Oryx", quantity: 13, unit: "Kgs", status: "Delivered",
+      tracking: "AG999888", date: new Date()
+    });
+  }
 }
 
 // ===== REALTIME =====
 function startRealtime(){
+  // ORDERS
+  onSnapshot(collection(db,"orders"), snapshot=>{
+    ordersData = [];
+    snapshot.forEach(docSnap=>{
+      ordersData.push({id: docSnap.id, ...docSnap.data()});
+    });
+    renderOrdersTable();
+  });
 
-onSnapshot(collection(db,"orders"), snapshot=>{
-
-const table=document.getElementById("ordersTable");
-
-if(!table) return; // ✅ FIX
-
-table.innerHTML=`
-<tr>
-<th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
-<th>Quantity</th><th>Status</th><th>Actions</th>
-</tr>`;
-
-let total=0,pending=0;
-
-snapshot.forEach(docSnap=>{
-
-const o=docSnap.data();
-const status=o.status||"Pending";
-
-const tr=document.createElement("tr");
-
-tr.innerHTML=`
-<td>${o.name}</td>
-<td>${o.phone||"-"}</td>
-<td>${o.location}</td>
-<td>${o.brand}</td>
-<td>${o.quantity}</td>
-<td>${status}</td>
-<td>
-${status==="Pending"
-? `<button class="btn btn-sm btn-success deliver">Delivered</button>`
-: `Delivered`}
-<button class="btn btn-sm btn-danger delete">Delete</button>
-</td>
-`;
-
-table.appendChild(tr);
-
-// DELIVER
-if(status==="Pending"){
-tr.querySelector(".deliver").onclick=async()=>{
-await updateDoc(doc(db,"orders",docSnap.id),{status:"Delivered"});
-};
+  // SELLERS
+  onSnapshot(collection(db,"sellers"), snapshot=>{
+    sellersData = [];
+    snapshot.forEach(docSnap=>{
+      sellersData.push({id: docSnap.id, ...docSnap.data()});
+    });
+    renderSellersTable();
+  });
 }
 
-// DELETE
-tr.querySelector(".delete").onclick=async()=>{
-if(currentAdminRole !== "super"){
-alert("Only Super Admin can delete");
-return;
+// ===== RENDER ORDERS =====
+function renderOrdersTable(filter=""){
+  const table=document.getElementById("ordersTable");
+  if(!table) return;
+  table.innerHTML=`
+    <tr>
+      <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
+      <th>Quantity</th><th>Status</th><th>Actions</th>
+    </tr>
+  `;
+  let total=0, pending=0;
+  ordersData.forEach(o=>{
+    if(filter && !JSON.stringify(o).toLowerCase().includes(filter.toLowerCase())) return;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${o.name}</td><td>${o.phone||"-"}</td><td>${o.location}</td><td>${o.brand}</td>
+      <td>${o.quantity}</td><td>${o.status}</td>
+      <td>
+        ${o.status==="Pending"? `<button class="btn btn-sm btn-success deliver">Delivered</button>`:"Delivered"}
+        <button class="btn btn-sm btn-danger delete">Delete</button>
+      </td>
+    `;
+    table.appendChild(tr);
+
+    if(o.status==="Pending"){
+      tr.querySelector(".deliver").onclick=async()=> await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
+    }
+    tr.querySelector(".delete").onclick=async()=>{
+      if(currentAdminRole!=="super"){ alert("Only Super Admin can delete"); return; }
+      if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",o.id));
+    };
+    total++;
+    if(o.status==="Pending") pending++;
+  });
+  document.getElementById("totalOrders").innerText=total;
+  document.getElementById("pendingOrders").innerText=pending;
 }
 
-if(confirm("Delete order?")){
-await deleteDoc(doc(db,"orders",docSnap.id));
+// ===== RENDER SELLERS =====
+function renderSellersTable(filter=""){
+  const table=document.getElementById("sellersTable");
+  if(!table) return;
+  table.innerHTML=`
+    <tr>
+      <th>Company</th><th>Location</th><th>Phone</th>
+      <th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
+    </tr>
+  `;
+  sellersData.forEach(s=>{
+    if(filter && !JSON.stringify(s).toLowerCase().includes(filter.toLowerCase())) return;
+    const tr=document.createElement("tr");
+    tr.innerHTML=`
+      <td>${s.name}</td><td>${s.location}</td><td>${s.phone}</td>
+      <td>${s.price6||"-"}</td><td>${s.price13||"-"}</td><td>${s.businessType}</td>
+      <td><button class="btn btn-sm btn-danger delete">Delete</button></td>
+    `;
+    table.appendChild(tr);
+    tr.querySelector(".delete").onclick=async()=>{
+      if(currentAdminRole!=="super"){ alert("Only Super Admin can delete"); return; }
+      if(confirm("Delete seller?")) await deleteDoc(doc(db,"sellers",s.id));
+    };
+  });
 }
-};
 
-total++;
-if(status==="Pending") pending++;
-
+// ===== SEARCH =====
+document.getElementById("searchOrders").addEventListener("input",(e)=>{
+  renderOrdersTable(e.target.value);
 });
-
-document.getElementById("totalOrders").innerText=total;
-document.getElementById("pendingOrders").innerText=pending;
-
+document.getElementById("searchSellers").addEventListener("input",(e)=>{
+  renderSellersTable(e.target.value);
 });
-
-// SELLERS
-onSnapshot(collection(db,"sellers"), snapshot=>{
-
-const table=document.getElementById("sellersTable");
-
-if(!table) return; // ✅ FIX
-
-table.innerHTML=`
-<tr>
-<th>Company</th><th>Location</th><th>Phone</th>
-<th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
-</tr>`;
-
-snapshot.forEach(docSnap=>{
-
-const s=docSnap.data();
-
-const tr=document.createElement("tr");
-
-tr.innerHTML=`
-<td>${s.name}</td>
-<td>${s.location}</td>
-<td>${s.phone}</td>
-<td>${s.price6||"-"}</td>
-<td>${s.price13||"-"}</td>
-<td>${s.businessType}</td>
-<td><button class="btn btn-sm btn-danger delete">Delete</button></td>
-`;
-
-table.appendChild(tr);
-
-// DELETE
-tr.querySelector(".delete").onclick=async()=>{
-if(currentAdminRole !== "super"){
-alert("Only Super Admin only");
-return;
-}
-
-if(confirm("Delete seller?")){
-await deleteDoc(doc(db,"sellers",docSnap.id));
-}
-};
-
-});
-
-});
-
-}
-
 </script>
+
+</body>
+</html>
