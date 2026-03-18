@@ -8,7 +8,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com"
+  storageBucket: "adawe-gas-system-82187.appspot.com", // ✅ FIXED
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
@@ -19,11 +19,9 @@ const auth = getAuth(app);
 
 // ===== TEST DATA (RUN ONCE ONLY) =====
 async function addTestOrders(){
-
   const snapshot = await getDocs(collection(db,"orders"));
 
   if(snapshot.empty){
-
     await addDoc(collection(db,"orders"),{
       name: "Hassan",
       phone: "0720000000",
@@ -50,32 +48,29 @@ async function addTestOrders(){
 
     console.log("Test orders added ✅");
   }
-
 }
 
 // ===== ADMIN SYSTEM =====
 let currentAdminRole = null;
 
 async function checkAdminAccess(user){
+  const snapshot = await getDocs(collection(db,"admins"));
 
-const snapshot = await getDocs(collection(db,"admins"));
+  let found = false;
 
-let found = false;
+  snapshot.forEach(docSnap=>{
+    const data = docSnap.data();
 
-snapshot.forEach(docSnap=>{
-const data = docSnap.data();
+    if(data.email === user.email){
+      found = true;
+      currentAdminRole = data.role;
+    }
+  });
 
-if(data.email === user.email){
-found = true;
-currentAdminRole = data.role;
-}
-});
-
-if(!found){
-alert("Not authorized");
-location.reload();
-}
-
+  if(!found){
+    alert("Not authorized");
+    location.reload();
+  }
 }
 
 // ===== LOGIN =====
@@ -94,7 +89,7 @@ document.getElementById("dashboard").style.display="block";
 
 showRole();
 startRealtime();
-addTestOrders(); // 🔥 muhiim
+addTestOrders();
 
 })
 .catch(()=>{
@@ -106,6 +101,8 @@ document.getElementById("loginError").innerText="Login failed";
 // ===== SHOW ROLE =====
 function showRole(){
 const header = document.querySelector("header");
+
+if(!header) return; // ✅ FIX (avoid crash)
 
 const role = document.createElement("div");
 role.style.fontSize="14px";
@@ -120,6 +117,8 @@ function startRealtime(){
 onSnapshot(collection(db,"orders"), snapshot=>{
 
 const table=document.getElementById("ordersTable");
+
+if(!table) return; // ✅ FIX
 
 table.innerHTML=`
 <tr>
@@ -160,9 +159,8 @@ await updateDoc(doc(db,"orders",docSnap.id),{status:"Delivered"});
 };
 }
 
-// DELETE (SUPER ONLY)
+// DELETE
 tr.querySelector(".delete").onclick=async()=>{
-
 if(currentAdminRole !== "super"){
 alert("Only Super Admin can delete");
 return;
@@ -171,7 +169,6 @@ return;
 if(confirm("Delete order?")){
 await deleteDoc(doc(db,"orders",docSnap.id));
 }
-
 };
 
 total++;
@@ -184,10 +181,12 @@ document.getElementById("pendingOrders").innerText=pending;
 
 });
 
-// ===== SELLERS =====
+// SELLERS
 onSnapshot(collection(db,"sellers"), snapshot=>{
 
 const table=document.getElementById("sellersTable");
+
+if(!table) return; // ✅ FIX
 
 table.innerHTML=`
 <tr>
@@ -213,9 +212,8 @@ tr.innerHTML=`
 
 table.appendChild(tr);
 
-// DELETE (SUPER ONLY)
+// DELETE
 tr.querySelector(".delete").onclick=async()=>{
-
 if(currentAdminRole !== "super"){
 alert("Only Super Admin only");
 return;
@@ -224,7 +222,6 @@ return;
 if(confirm("Delete seller?")){
 await deleteDoc(doc(db,"sellers",docSnap.id));
 }
-
 };
 
 });
