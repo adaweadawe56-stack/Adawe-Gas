@@ -80,13 +80,30 @@ const auth = getAuth(app);
 let currentAdminRole = null;
 let ordersData = [], sellersData = [];
 
+// ===== ADD YOUR EMAIL AS ADMIN (AUTO) =====
+const adminEmail = "yourgmail@gmail.com"; // <---- BEDDEL Halkan
+const adminRole = "super";
+
+async function addAdminIfNotExists() {
+  const snapshot = await getDocs(collection(db,"admins"));
+  let exists = false;
+  snapshot.forEach(docSnap=>{
+    if(docSnap.data().email.toLowerCase() === adminEmail.toLowerCase()) exists = true;
+  });
+  if(!exists){
+    await addDoc(collection(db,"admins"),{email: adminEmail, role: adminRole});
+    console.log(`Admin ${adminEmail} added ✅`);
+  }
+}
+addAdminIfNotExists();
+
 // ===== ADMIN CHECK =====
 async function checkAdminAccess(user){
   const snapshot = await getDocs(collection(db,"admins"));
   let found = false;
   snapshot.forEach(docSnap=>{
     const data = docSnap.data();
-    if(data.email === user.email){
+    if(data.email.toLowerCase() === user.email.toLowerCase()){
       found = true;
       currentAdminRole = data.role;
     }
@@ -145,18 +162,14 @@ function startRealtime(){
   // ORDERS
   onSnapshot(collection(db,"orders"), snapshot=>{
     ordersData = [];
-    snapshot.forEach(docSnap=>{
-      ordersData.push({id: docSnap.id, ...docSnap.data()});
-    });
+    snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
     renderOrdersTable();
   });
 
   // SELLERS
   onSnapshot(collection(db,"sellers"), snapshot=>{
     sellersData = [];
-    snapshot.forEach(docSnap=>{
-      sellersData.push({id: docSnap.id, ...docSnap.data()});
-    });
+    snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
     renderSellersTable();
   });
 }
@@ -184,16 +197,12 @@ function renderOrdersTable(filter=""){
       </td>
     `;
     table.appendChild(tr);
-
-    if(o.status==="Pending"){
-      tr.querySelector(".deliver").onclick=async()=> await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
-    }
+    if(o.status==="Pending") tr.querySelector(".deliver").onclick=async()=> await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
     tr.querySelector(".delete").onclick=async()=>{
       if(currentAdminRole!=="super"){ alert("Only Super Admin can delete"); return; }
       if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",o.id));
     };
-    total++;
-    if(o.status==="Pending") pending++;
+    total++; if(o.status==="Pending") pending++;
   });
   document.getElementById("totalOrders").innerText=total;
   document.getElementById("pendingOrders").innerText=pending;
@@ -226,12 +235,8 @@ function renderSellersTable(filter=""){
 }
 
 // ===== SEARCH =====
-document.getElementById("searchOrders").addEventListener("input",(e)=>{
-  renderOrdersTable(e.target.value);
-});
-document.getElementById("searchSellers").addEventListener("input",(e)=>{
-  renderSellersTable(e.target.value);
-});
+document.getElementById("searchOrders").addEventListener("input",(e)=> renderOrdersTable(e.target.value));
+document.getElementById("searchSellers").addEventListener("input",(e)=> renderSellersTable(e.target.value));
 </script>
 
 </body>
