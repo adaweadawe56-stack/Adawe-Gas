@@ -2,7 +2,7 @@
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
 apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
@@ -17,86 +17,87 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-// ===== ADMIN SECURITY =====
-const ADMIN_EMAIL = "adaweadawe56@gmail.com";
+// ===== ADMIN SYSTEM =====
+let currentAdminRole = null;
 
-onAuthStateChanged(auth,user=>{
-if(user && user.email !== ADMIN_EMAIL){
-alert("Not authorized");
-location.reload();
+async function checkAdminAccess(user){
+
+const snapshot = await getDocs(collection(db,"admins"));
+
+let found = false;
+
+snapshot.forEach(docSnap=>{
+const data = docSnap.data();
+
+if(data.email === user.email){
+found = true;
+currentAdminRole = data.role;
 }
 });
 
+if(!found){
+alert("Not authorized");
+location.reload();
+}
+
+}
+
 // ===== LOGIN =====
 window.login = function(){
+
 const email = document.getElementById("email").value;
 const password = document.getElementById("password").value;
 
 signInWithEmailAndPassword(auth,email,password)
-.then(()=>{
+.then(async(res)=>{
+
+await checkAdminAccess(res.user);
+
 document.getElementById("loginPage").style.display="none";
 document.getElementById("dashboard").style.display="block";
+
+showRole();
 startRealtime();
+
 })
 .catch(()=>{
 document.getElementById("loginError").innerText="Login failed";
 });
+
 }
 
-// ===== STATUS FILTER =====
-const statusFilter = document.createElement("select");
-statusFilter.className="form-control mb-2";
-statusFilter.innerHTML=`
-<option value="all">All Orders</option>
-<option value="Pending">Pending</option>
-<option value="Delivered">Delivered</option>
-`;
-document.querySelector(".section").prepend(statusFilter);
+// ===== SHOW ROLE =====
+function showRole(){
+const header = document.querySelector("header");
 
-// ===== EXTRA STATS =====
-const statsBox=document.querySelector(".stats");
+const role = document.createElement("div");
+role.style.fontSize="14px";
+role.innerHTML = "Role: " + currentAdminRole;
 
-const deliveredBox=document.createElement("div");
-deliveredBox.className="stat-box";
-deliveredBox.innerHTML="<h4>Delivered Orders</h4><p id='deliveredOrders'>0</p>";
+header.appendChild(role);
+}
 
-const todayBox=document.createElement("div");
-todayBox.className="stat-box";
-todayBox.innerHTML="<h4>Today Orders</h4><p id='todayOrders'>0</p>";
-
-statsBox.appendChild(deliveredBox);
-statsBox.appendChild(todayBox);
-
-// ===== REALTIME DASHBOARD =====
-let lastCount=0;
-
+// ===== REALTIME =====
 function startRealtime(){
 
 onSnapshot(collection(db,"orders"), snapshot=>{
 
-const ordersTable=document.getElementById("ordersTable");
+const table=document.getElementById("ordersTable");
 
-ordersTable.innerHTML=`
+table.innerHTML=`
 <tr>
-<th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Quantity</th><th>Date</th><th>Status</th><th>Actions</th>
-</tr>
-`;
+<th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
+<th>Quantity</th><th>Status</th><th>Actions</th>
+</tr>`;
 
-let total=0,pending=0,delivered=0,today=0;
-const todayDate=new Date().toDateString();
+let total=0,pending=0;
 
 snapshot.forEach(docSnap=>{
 
 const o=docSnap.data();
 const status=o.status||"Pending";
 
-// FILTER
-if(statusFilter.value!=="all" && status!==statusFilter.value) return;
-
 const tr=document.createElement("tr");
-tr.className=status==="Pending"?"status-pending":"status-delivered";
-
-const date=o.date?.toDate().toLocaleString()||"-";
 
 tr.innerHTML=`
 <td>${o.name}</td>
@@ -104,88 +105,64 @@ tr.innerHTML=`
 <td>${o.location}</td>
 <td>${o.brand}</td>
 <td>${o.quantity}</td>
-<td>${date}</td>
 <td>${status}</td>
 <td>
 ${status==="Pending"
-? `<button class="btn btn-sm btn-delivered">Delivered</button>`
-: `<span class="btn btn-sm btn-pending">Delivered</span>`}
-<button class="btn btn-sm btn-danger">Delete</button>
+? `<button class="btn btn-sm btn-success deliver">Delivered</button>`
+: `Delivered`}
+<button class="btn btn-sm btn-danger delete">Delete</button>
 </td>
 `;
 
-ordersTable.appendChild(tr);
+table.appendChild(tr);
 
-// ACTIONS
+// DELIVER
 if(status==="Pending"){
-tr.querySelector(".btn-delivered").onclick=async()=>{
+tr.querySelector(".deliver").onclick=async()=>{
 await updateDoc(doc(db,"orders",docSnap.id),{status:"Delivered"});
 };
 }
 
-tr.querySelector(".btn-danger").onclick=async()=>{
+// DELETE (SUPER ONLY)
+tr.querySelector(".delete").onclick=async()=>{
+
+if(currentAdminRole !== "super"){
+alert("Only Super Admin can delete");
+return;
+}
+
 if(confirm("Delete order?")){
 await deleteDoc(doc(db,"orders",docSnap.id));
 }
+
 };
 
-// STATS
-if(status==="Pending") pending++;
-if(status==="Delivered") delivered++;
-
-if(o.date){
-const d=o.date.toDate().toDateString();
-if(d===todayDate) today++;
-}
-
-// HIGHLIGHT NEW
-if(o.date){
-const diff=(new Date()-o.date.toDate())/1000;
-if(diff<120){
-tr.style.borderLeft="5px solid green";
-}
-}
-
 total++;
+if(status==="Pending") pending++;
 
 });
 
-// UPDATE UI
 document.getElementById("totalOrders").innerText=total;
 document.getElementById("pendingOrders").innerText=pending;
-document.getElementById("deliveredOrders").innerText=delivered;
-document.getElementById("todayOrders").innerText=today;
-
-// NOTIFICATION
-if(snapshot.size>lastCount){
-showToast("New order received!");
-}
-lastCount=snapshot.size;
 
 });
 
 // SELLERS
 onSnapshot(collection(db,"sellers"), snapshot=>{
 
-const sellersTable=document.getElementById("sellersTable");
-sellersTable.innerHTML=`
+const table=document.getElementById("sellersTable");
+
+table.innerHTML=`
 <tr>
 <th>Company</th><th>Location</th><th>Phone</th>
-<th>6kg Price</th><th>13kg Price</th><th>Business Type</th><th>Actions</th>
-</tr>
-`;
-
-let cheapest=Infinity;
-let cheapestName="-";
+<th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
+</tr>`;
 
 snapshot.forEach(docSnap=>{
-const s=docSnap.data();
-const tr=document.createElement("tr");
 
-if(s.price13 && Number(s.price13)<cheapest){
-cheapest=Number(s.price13);
-cheapestName=s.name+" ("+s.price13+")";
-}
+const s=docSnap.data();
+
+const tr=document.createElement("tr");
 
 tr.innerHTML=`
 <td>${s.name}</td>
@@ -194,85 +171,29 @@ tr.innerHTML=`
 <td>${s.price6||"-"}</td>
 <td>${s.price13||"-"}</td>
 <td>${s.businessType}</td>
-<td><button class="btn btn-sm btn-danger">Delete</button></td>
+<td><button class="btn btn-sm btn-danger delete">Delete</button></td>
 `;
 
-sellersTable.appendChild(tr);
+table.appendChild(tr);
 
-tr.querySelector(".btn-danger").onclick=async()=>{
+// DELETE (SUPER ONLY)
+tr.querySelector(".delete").onclick=async()=>{
+
+if(currentAdminRole !== "super"){
+alert("Only Super Admin only");
+return;
+}
+
 if(confirm("Delete seller?")){
 await deleteDoc(doc(db,"sellers",docSnap.id));
 }
+
 };
 
 });
 
-document.getElementById("totalSellers").innerText=snapshot.size;
-document.getElementById("cheapestSeller").innerText=cheapestName;
-
 });
 
-}
-
-// ===== SEARCH =====
-document.getElementById("searchOrders").onkeyup=function(){
-const f=this.value.toLowerCase();
-document.querySelectorAll("#ordersTable tr").forEach((r,i)=>{
-if(i===0) return;
-r.style.display=r.innerText.toLowerCase().includes(f)?"":"none";
-});
-};
-
-document.getElementById("searchSellers").onkeyup=function(){
-const f=this.value.toLowerCase();
-document.querySelectorAll("#sellersTable tr").forEach((r,i)=>{
-if(i===0) return;
-r.style.display=r.innerText.toLowerCase().includes(f)?"":"none";
-});
-};
-
-// ===== CSV =====
-document.getElementById("downloadOrders").onclick=async()=>{
-const snap=await getDocs(collection(db,"orders"));
-let csv="Name,Phone,Location,Brand,Quantity,Status\n";
-snap.forEach(d=>{
-const x=d.data();
-csv+=`${x.name},${x.phone},${x.location},${x.brand},${x.quantity},${x.status}\n`;
-});
-download(csv,"orders.csv");
-};
-
-document.getElementById("downloadSellers").onclick=async()=>{
-const snap=await getDocs(collection(db,"sellers"));
-let csv="Name,Location,Phone,6kg,13kg,Type\n";
-snap.forEach(d=>{
-const x=d.data();
-csv+=`${x.name},${x.location},${x.phone},${x.price6},${x.price13},${x.businessType}\n`;
-});
-download(csv,"sellers.csv");
-};
-
-function download(data,name){
-const blob=new Blob([data],{type:"text/csv"});
-const a=document.createElement("a");
-a.href=URL.createObjectURL(blob);
-a.download=name;
-a.click();
-}
-
-// ===== TOAST =====
-function showToast(msg){
-let t=document.createElement("div");
-t.innerText=msg;
-t.style.position="fixed";
-t.style.bottom="20px";
-t.style.right="20px";
-t.style.background="#198754";
-t.style.color="white";
-t.style.padding="10px";
-t.style.borderRadius="6px";
-document.body.appendChild(t);
-setTimeout(()=>t.remove(),3000);
 }
 
 </script>
