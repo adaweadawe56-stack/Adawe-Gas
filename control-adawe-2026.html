@@ -1,7 +1,7 @@
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, query, orderBy, doc, updateDoc, deleteDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
@@ -16,6 +16,42 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
+
+// ===== TEST DATA (RUN ONCE ONLY) =====
+async function addTestOrders(){
+
+  const snapshot = await getDocs(collection(db,"orders"));
+
+  if(snapshot.empty){
+
+    await addDoc(collection(db,"orders"),{
+      name: "Hassan",
+      phone: "0720000000",
+      location: "Mombasa",
+      brand: "Rubis",
+      quantity: 6,
+      unit: "Kgs",
+      status: "Pending",
+      tracking: "AG222333",
+      date: new Date()
+    });
+
+    await addDoc(collection(db,"orders"),{
+      name: "Fatima",
+      phone: "0733333333",
+      location: "Nairobi",
+      brand: "Oryx",
+      quantity: 13,
+      unit: "Kgs",
+      status: "Delivered",
+      tracking: "AG999888",
+      date: new Date()
+    });
+
+    console.log("Test orders added ✅");
+  }
+
+}
 
 // ===== ADMIN SYSTEM =====
 let currentAdminRole = null;
@@ -58,6 +94,7 @@ document.getElementById("dashboard").style.display="block";
 
 showRole();
 startRealtime();
+addTestOrders(); // 🔥 muhiim
 
 })
 .catch(()=>{
@@ -147,7 +184,7 @@ document.getElementById("pendingOrders").innerText=pending;
 
 });
 
-// SELLERS
+// ===== SELLERS =====
 onSnapshot(collection(db,"sellers"), snapshot=>{
 
 const table=document.getElementById("sellersTable");
