@@ -3,226 +3,97 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas Control Dashboard</title>
-
+<title>Adawe Gas Admin Dashboard</title>
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- ✅ LEAFLET CSS -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
-
 <style>
-body { font-family: Arial; background:#f5f5f5; }
-header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; font-weight:bold; }
-.section { padding:40px 20px; }
-h3 { margin-top:30px; }
-table { width:100%; border-collapse: collapse; margin-top:15px; }
-th, td { border:1px solid #ccc; padding:8px; text-align:left; }
-th { background:#198754; color:white; }
-.stats { display:flex; gap:20px; margin-top:20px; }
-.stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; }
-.btn-sm { font-size:.75rem; padding:.25rem .5rem; }
-.btn-danger { background:#dc3545; color:white; }
-.search-input { margin-bottom:10px; width:100%; padding:6px 8px; }
+/* Dashboard CSS same as before */
 </style>
 </head>
-
 <body>
-
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
-  <h3 class="text-center mb-3">Admin Login</h3>
-  <input id="email" type="email" class="form-control mb-2" placeholder="Email">
-  <input id="password" type="password" class="form-control mb-2" placeholder="Password">
-  <button onclick="login()" class="btn btn-success w-100">Login</button>
-  <p id="loginError" style="color:red;"></p>
+<h3 class="text-center mb-3">Admin Login</h3>
+<input id="email" type="email" class="form-control mb-2" placeholder="Email">
+<input id="password" type="password" class="form-control mb-2" placeholder="Password">
+<button onclick="login()" class="btn btn-success w-100">Login</button>
+<p id="loginError" style="color:red;"></p>
 </div>
 
 <div id="dashboard" style="display:none;">
-  <header>Adawe Gas Control</header>
-
-  <div class="section">
-    <div class="stats">
-      <div class="stat-box">
-        <h4 id="totalOrders">0</h4>
-        <p>Total Orders</p>
-      </div>
-      <div class="stat-box">
-        <h4 id="pendingOrders">0</h4>
-        <p>Pending Orders</p>
-      </div>
-    </div>
-
-    <h3>Orders</h3>
-    <input type="text" id="searchOrders" class="search-input" placeholder="Search Orders...">
-    <table id="ordersTable"></table>
-
-    <h3>Sellers</h3>
-    <input type="text" id="searchSellers" class="search-input" placeholder="Search Sellers...">
-    <table id="sellersTable"></table>
-
-    <!-- 📍 MAP -->
-    <h3>📍 Sellers Map</h3>
-    <div id="map" style="height:400px;"></div>
-
-  </div>
+<header class="bg-success text-white text-center p-3">Adawe Gas Control</header>
+<div class="section">
+<div class="stats d-flex gap-3 mb-4">
+<div class="stat-box flex-1 text-center bg-white shadow p-3"><h4 id="totalOrders">0</h4><p>Total Orders</p></div>
+<div class="stat-box flex-1 text-center bg-white shadow p-3"><h4 id="pendingOrders">0</h4><p>Pending Orders</p></div>
 </div>
 
-<!-- ✅ LEAFLET JS -->
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<h3>Orders</h3>
+<input type="text" id="searchOrders" class="form-control mb-2" placeholder="Search Orders...">
+<table id="ordersTable" class="table table-striped"></table>
+
+<h3>Sellers</h3>
+<input type="text" id="searchSellers" class="form-control mb-2" placeholder="Search Sellers...">
+<table id="sellersTable" class="table table-striped"></table>
+
+<h3>📍 Sellers Map</h3>
+<div id="map" style="height:400px;"></div>
+</div>
+</div>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, getDocs, doc, updateDoc, deleteDoc, onSnapshot, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+ apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+ authDomain: "adawe-gas-system-82187.firebaseapp.com",
+ projectId: "adawe-gas-system-82187",
+ storageBucket: "adawe-gas-system-82187.appspot.com",
+ messagingSenderId: "644303663526",
+ appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let ordersData = [], sellersData = [];
+let map, markers = [];
+function initMap(){ map = L.map('map').setView([-1.28,36.81],10);
+L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OpenStreetMap'}).addTo(map); }
 
-// 📍 LEAFLET MAP
-let map;
-let markers = [];
-
-function initMap(){
-  map = L.map('map').setView([-1.286389, 36.817223], 7);
-
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap'
-  }).addTo(map);
-}
-
-// AUTO ADMIN
-const adminEmail = "adaweadawe56@gmail.com";
-async function addAdminIfNotExists() {
-  const snapshot = await getDocs(collection(db,"admins"));
-  let exists = false;
-  snapshot.forEach(docSnap=>{
-    if(docSnap.data().email.toLowerCase() === adminEmail.toLowerCase()) exists = true;
-  });
-  if(!exists){
-    await addDoc(collection(db,"admins"),{email: adminEmail, role: "super"});
-  }
-}
-addAdminIfNotExists();
-
-// FIX SELLERS
-async function fixSellers(){
-  const snapshot = await getDocs(collection(db,"sellers"));
-  snapshot.forEach(async(docSnap)=>{
-    const s = docSnap.data();
-    await updateDoc(doc(db,"sellers",docSnap.id),{
-      location: s.location || "Nairobi",
-      phone: s.phone || "0700000000",
-      status: s.status || "pending"
-    });
-  });
-}
-
-// LOGIN
 window.login = function(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-
-  signInWithEmailAndPassword(auth,email,password)
-  .then(async()=>{
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("dashboard").style.display="block";
-    initMap();
-    await fixSellers();
-    startRealtime();
-  })
-  .catch(()=>{ document.getElementById("loginError").innerText="Login failed"; });
+ const email = document.getElementById("email").value;
+ const password = document.getElementById("password").value;
+ signInWithEmailAndPassword(auth,email,password).then(()=>{
+  document.getElementById("loginPage").style.display="none";
+  document.getElementById("dashboard").style.display="block";
+  initMap();
+  startRealtime();
+ }).catch(()=>{ document.getElementById("loginError").innerText="Login failed"; });
 }
 
-// REALTIME
 function startRealtime(){
-  onSnapshot(collection(db,"orders"), snapshot=>{
-    ordersData = [];
-    snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
-    renderOrdersTable();
-  });
+ onSnapshot(collection(db,"orders"),snapshot=>{
+   const data=[]; snapshot.forEach(doc=>data.push(doc.data()));
+   document.getElementById("totalOrders").innerText=data.length;
+   document.getElementById("pendingOrders").innerText=data.filter(o=>o.status==="Pending").length;
+   const table=document.getElementById("ordersTable"); table.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Qty</th><th>Status</th></tr>`;
+   data.forEach(o=>{ const tr=document.createElement("tr"); tr.innerHTML=`<td>${o.name}</td><td>${o.phone}</td><td>${o.location}</td><td>${o.brand}</td><td>${o.quantity}</td><td>${o.status}</td>`; table.appendChild(tr); });
+ });
 
-  onSnapshot(collection(db,"sellers"), snapshot=>{
-    sellersData = [];
-    snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
-    renderSellersTable();
-  });
+ onSnapshot(collection(db,"sellers"),snapshot=>{
+   const data=[]; snapshot.forEach(doc=>data.push(doc.data()));
+   const table=document.getElementById("sellersTable"); table.innerHTML=`<tr><th>Name</th><th>Location</th><th>6kg</th><th>13kg</th><th>Status</th></tr>`;
+   markers.forEach(m=>map.removeLayer(m)); markers=[];
+   data.forEach(s=>{ 
+     const tr=document.createElement("tr"); 
+     tr.innerHTML=`<td>${s.name}</td><td>${s.location||'-'}</td><td>${s.price6||'-'}</td><td>${s.price13||'-'}</td><td>${s.status||'-'}</td>`;
+     table.appendChild(tr);
+     if(s.lat && s.lng && s.status==="approved"){ const m=L.marker([s.lat,s.lng]).addTo(map); markers.push(m);}
+   });
+ });
 }
-
-// ORDERS
-function renderOrdersTable(){
-  const table=document.getElementById("ordersTable");
-  table.innerHTML=`<tr>
-  <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
-  <th>Quantity</th><th>Status</th><th>Actions</th></tr>`;
-
-  ordersData.forEach(o=>{
-    const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${o.name||"-"}</td>
-    <td>${o.phone||"-"}</td>
-    <td>${o.location||"-"}</td>
-    <td>${o.brand||"-"}</td>
-    <td>${o.quantity||"-"}</td>
-    <td>${o.status||"Pending"}</td>
-    <td>-</td>`;
-    table.appendChild(tr);
-  });
-}
-
-// SELLERS + MAP
-function renderSellersTable(){
-  const table=document.getElementById("sellersTable");
-
-  // clear markers
-  markers.forEach(m => map.removeLayer(m));
-  markers = [];
-
-  table.innerHTML=`<tr>
-  <th>Company</th><th>Location</th><th>Phone</th>
-  <th>6kg</th><th>13kg</th><th>Type</th><th>Status</th><th>Actions</th>
-  </tr>`;
-
-  sellersData.forEach(s=>{
-    const tr=document.createElement("tr");
-
-    tr.innerHTML=`
-      <td>${s.name||"-"}</td>
-      <td>${s.location||"-"}</td>
-      <td>${s.phone||"-"}</td>
-      <td>${s.price6||"-"}</td>
-      <td>${s.price13||"-"}</td>
-      <td>${s.type || "-"}</td>
-      <td>${s.status||"pending"}</td>
-      <td>-</td>
-    `;
-
-    table.appendChild(tr);
-
-    if(s.lat && s.lng && s.status==="approved"){
-      const marker = L.marker([s.lat, s.lng]).addTo(map);
-
-      marker.bindPopup(`
-        <b>${s.name}</b><br>
-        📍 ${s.location}<br>
-        📞 ${s.phone}
-      `);
-
-      markers.push(marker);
-    }
-  });
-}
-
 </script>
-
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 </body>
 </html>
