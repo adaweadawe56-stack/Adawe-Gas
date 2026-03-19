@@ -79,9 +79,8 @@ const auth = getAuth(app);
 let currentAdminRole = null;
 let ordersData = [], sellersData = [];
 
-// AUTO ADMIN
+// 🔹 AUTO ADMIN
 const adminEmail = "adaweadawe56@gmail.com";
-
 async function addAdminIfNotExists() {
   const snapshot = await getDocs(collection(db,"admins"));
   let exists = false;
@@ -94,23 +93,30 @@ async function addAdminIfNotExists() {
 }
 addAdminIfNotExists();
 
-// AUTO FIX SELLERS (🔥 muhiim)
+// 🔹 Reverse Geocoding OpenStreetMap
+async function getCityFromLatLng(lat,lng){
+  try{
+    const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+    const data = await res.json();
+    return data.address.city || data.address.town || data.address.village || "Unknown";
+  } catch(e){ return "Unknown"; }
+}
+
+// 🔹 FIX SELLERS AUTO
 async function fixSellers(){
   const snapshot = await getDocs(collection(db,"sellers"));
-
   snapshot.forEach(async(docSnap)=>{
     const s = docSnap.data();
-
     await updateDoc(doc(db,"sellers",docSnap.id),{
       location: s.location || s.Location || "Nairobi",
-      phone: s.phone || s.Phone || "0700000000"
+      phone: s.phone || s.Phone || "0700000000",
+      status: s.status || "pending"
     });
   });
-
   console.log("Sellers fixed ✅");
 }
 
-// ADMIN CHECK
+// 🔹 ADMIN CHECK
 async function checkAdminAccess(user){
   const snapshot = await getDocs(collection(db,"admins"));
   let found = false;
@@ -123,7 +129,7 @@ async function checkAdminAccess(user){
   if(!found){ alert("Not authorized"); location.reload(); }
 }
 
-// LOGIN
+// 🔹 LOGIN
 window.login = function(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -131,37 +137,32 @@ window.login = function(){
   signInWithEmailAndPassword(auth,email,password)
   .then(async(res)=>{
     await checkAdminAccess(res.user);
-    await fixSellers(); // 🔥 AUTO FIX RUN
+    await fixSellers(); // 🔥 AUTO FIX
     document.getElementById("loginPage").style.display="none";
     document.getElementById("dashboard").style.display="block";
     startRealtime();
   })
-  .catch(()=>{
-    document.getElementById("loginError").innerText="Login failed";
+  .catch(()=>{ document.getElementById("loginError").innerText="Login failed"; });
+}
+
+// 🔹 REALTIME DATA
+function startRealtime(){
+  onSnapshot(collection(db,"orders"), snapshot=>{
+    ordersData = [];
+    snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
+    renderOrdersTable();
+  });
+
+  onSnapshot(collection(db,"sellers"), snapshot=>{
+    sellersData = [];
+    snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
+    renderSellersTable();
   });
 }
 
-// REALTIME
-function startRealtime(){
-
-onSnapshot(collection(db,"orders"), snapshot=>{
-  ordersData = [];
-  snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
-  renderOrdersTable();
-});
-
-onSnapshot(collection(db,"sellers"), snapshot=>{
-  sellersData = [];
-  snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
-  renderSellersTable();
-});
-
-}
-
-// ORDERS
+// 🔹 ORDERS TABLE
 function renderOrdersTable(filter=""){
   const table=document.getElementById("ordersTable");
-
   table.innerHTML=`
     <tr>
       <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
@@ -170,7 +171,6 @@ function renderOrdersTable(filter=""){
   `;
 
   let total=0,pending=0;
-
   ordersData.forEach(o=>{
     if(filter && !JSON.stringify(o).toLowerCase().includes(filter.toLowerCase())) return;
 
@@ -187,18 +187,14 @@ function renderOrdersTable(filter=""){
         <button class="btn btn-sm btn-danger delete">Delete</button>
       </td>
     `;
-
     table.appendChild(tr);
 
     if((o.status||"Pending")==="Pending"){
-      tr.querySelector(".deliver").onclick=async()=>{
-        await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
-      };
+      tr.querySelector(".deliver").onclick=async()=>{ await updateDoc(doc(db,"orders",o.id),{status:"Delivered"}); };
     }
-
-    tr.querySelector(".delete").onclick=async()=>{
+    tr.querySelector(".delete").onclick=async()=>{ 
       if(currentAdminRole!=="super"){ alert("Only Super Admin"); return; }
-      if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",o.id));
+      if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",o.id)); 
     };
 
     total++;
@@ -209,14 +205,13 @@ function renderOrdersTable(filter=""){
   document.getElementById("pendingOrders").innerText=pending;
 }
 
-// SELLERS
+// 🔹 SELLERS TABLE + APPROVE/REJECT
 function renderSellersTable(filter=""){
   const table=document.getElementById("sellersTable");
-
   table.innerHTML=`
     <tr>
       <th>Company</th><th>Location</th><th>Phone</th>
-      <th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
+      <th>6kg</th><th>13kg</th><th>Type</th><th>Status</th><th>Actions</th>
     </tr>
   `;
 
@@ -224,7 +219,6 @@ function renderSellersTable(filter=""){
     if(filter && !JSON.stringify(s).toLowerCase().includes(filter.toLowerCase())) return;
 
     const tr=document.createElement("tr");
-
     tr.innerHTML=`
       <td>${s.name||"-"}</td>
       <td>${s.location||"-"}</td>
@@ -232,10 +226,20 @@ function renderSellersTable(filter=""){
       <td>${s.price6||"-"}</td>
       <td>${s.price13||"-"}</td>
       <td>${s.businessType||"-"}</td>
-      <td><button class="btn btn-sm btn-danger delete">Delete</button></td>
+      <td>${s.status||"pending"}</td>
+      <td>
+        ${s.status==="pending" ? `<button class="btn btn-sm btn-success approve">Approve</button>
+        <button class="btn btn-sm btn-danger reject">Reject</button>` : ""}
+        <button class="btn btn-sm btn-danger delete">Delete</button>
+      </td>
     `;
 
     table.appendChild(tr);
+
+    if(s.status==="pending"){
+      tr.querySelector(".approve").onclick=async()=>{ await updateDoc(doc(db,"sellers",s.id),{status:"approved"}); };
+      tr.querySelector(".reject").onclick=async()=>{ await updateDoc(doc(db,"sellers",s.id),{status:"rejected"}); };
+    }
 
     tr.querySelector(".delete").onclick=async()=>{
       if(currentAdminRole!=="super"){ alert("Only Super Admin"); return; }
@@ -244,7 +248,7 @@ function renderSellersTable(filter=""){
   });
 }
 
-// SEARCH
+// 🔹 SEARCH
 document.getElementById("searchOrders").addEventListener("input",(e)=> renderOrdersTable(e.target.value));
 document.getElementById("searchSellers").addEventListener("input",(e)=> renderSellersTable(e.target.value));
 
