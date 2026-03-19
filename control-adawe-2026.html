@@ -7,6 +7,9 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<!-- ✅ LEAFLET CSS -->
+<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
+
 <style>
 body { font-family: Arial; background:#f5f5f5; }
 header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; font-weight:bold; }
@@ -56,10 +59,15 @@ th { background:#198754; color:white; }
     <input type="text" id="searchSellers" class="search-input" placeholder="Search Sellers...">
     <table id="sellersTable"></table>
 
+    <!-- 📍 MAP -->
+    <h3>📍 Sellers Map</h3>
+    <div id="map" style="height:400px;"></div>
+
+  </div>
 </div>
 
-<!-- Google Maps -->
-<script src="https://maps.googleapis.com/maps/api/js?key=YOUR_GOOGLE_MAPS_API_KEY"></script>
+<!-- ✅ LEAFLET JS -->
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -79,18 +87,18 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let currentAdminRole = null;
 let ordersData = [], sellersData = [];
 
-// MAP
+// 📍 LEAFLET MAP
 let map;
 let markers = [];
 
-function initMap() {
-  map = new google.maps.Map(document.getElementById("map"), {
-    center: { lat: -1.286389, lng: 36.817223 },
-    zoom: 7
-  });
+function initMap(){
+  map = L.map('map').setView([-1.286389, 36.817223], 7);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; OpenStreetMap'
+  }).addTo(map);
 }
 
 // AUTO ADMIN
@@ -126,10 +134,10 @@ window.login = function(){
   const password = document.getElementById("password").value;
 
   signInWithEmailAndPassword(auth,email,password)
-  .then(async(res)=>{
+  .then(async()=>{
     document.getElementById("loginPage").style.display="none";
     document.getElementById("dashboard").style.display="block";
-    initMap(); // 🔥 muhiim
+    initMap();
     await fixSellers();
     startRealtime();
   })
@@ -152,7 +160,7 @@ function startRealtime(){
 }
 
 // ORDERS
-function renderOrdersTable(filter=""){
+function renderOrdersTable(){
   const table=document.getElementById("ordersTable");
   table.innerHTML=`<tr>
   <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
@@ -166,20 +174,17 @@ function renderOrdersTable(filter=""){
     <td>${o.brand||"-"}</td>
     <td>${o.quantity||"-"}</td>
     <td>${o.status||"Pending"}</td>
-    <td>
-    ${(o.status||"Pending")==="Pending" ? `<button class="btn btn-sm btn-success deliver">Delivered</button>`:"Delivered"}
-    <button class="btn btn-sm btn-danger delete">Delete</button>
-    </td>`;
+    <td>-</td>`;
     table.appendChild(tr);
   });
 }
 
 // SELLERS + MAP
-function renderSellersTable(filter=""){
+function renderSellersTable(){
   const table=document.getElementById("sellersTable");
 
   // clear markers
-  markers.forEach(m => m.setMap(null));
+  markers.forEach(m => map.removeLayer(m));
   markers = [];
 
   table.innerHTML=`<tr>
@@ -198,27 +203,20 @@ function renderSellersTable(filter=""){
       <td>${s.price13||"-"}</td>
       <td>${s.type || "-"}</td>
       <td>${s.status||"pending"}</td>
-      <td>
-        ${s.status==="pending" ? `<button class="btn btn-sm btn-success approve">Approve</button>
-        <button class="btn btn-sm btn-danger reject">Reject</button>` : ""}
-      </td>
+      <td>-</td>
     `;
 
     table.appendChild(tr);
 
-    // MAP MARKER
     if(s.lat && s.lng && s.status==="approved"){
-      const marker = new google.maps.Marker({
-        position:{lat:s.lat,lng:s.lng},
-        map:map,
-        title:s.name
-      });
+      const marker = L.marker([s.lat, s.lng]).addTo(map);
 
-      const info = new google.maps.InfoWindow({
-        content:`<b>${s.name}</b><br>${s.location}<br>${s.phone}`
-      });
+      marker.bindPopup(`
+        <b>${s.name}</b><br>
+        📍 ${s.location}<br>
+        📞 ${s.phone}
+      `);
 
-      marker.addListener("click",()=>info.open(map,marker));
       markers.push(marker);
     }
   });
