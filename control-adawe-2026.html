@@ -214,9 +214,12 @@ function renderSellersTable(filter=""){
   if(!table) return;
   table.innerHTML=`
     <tr>
-      <th>Company</th><th>Location</th><th>Phone</th>
-      <th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
-    </tr>
+     <td>${s.name || "-"}</td>
+<td>${s.location || s.Location || "-"}</td>
+<td>${s.phone || s.Phone || "-"}</td>
+<td>${s.price6 || "-"}</td>
+<td>${s.price13 || "-"}</td>
+<td>${s.businessType || s.type || "-"}</td>
   `;
   sellersData.forEach(s=>{
     if(filter && !JSON.stringify(s).toLowerCase().includes(filter.toLowerCase())) return;
