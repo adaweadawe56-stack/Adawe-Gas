@@ -25,7 +25,6 @@ th { background:#198754; color:white; }
 
 <body>
   
-<!-- LOGIN -->
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
   <h3 class="text-center mb-3">Admin Login</h3>
   <input id="email" type="email" class="form-control mb-2" placeholder="Email">
@@ -34,7 +33,6 @@ th { background:#198754; color:white; }
   <p id="loginError" style="color:red;"></p>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" style="display:none;">
   <header>Adawe Gas Control</header>
 
@@ -81,9 +79,8 @@ const auth = getAuth(app);
 let currentAdminRole = null;
 let ordersData = [], sellersData = [];
 
-// AUTO ADD ADMIN
+// AUTO ADMIN
 const adminEmail = "adaweadawe56@gmail.com";
-const adminRole = "super";
 
 async function addAdminIfNotExists() {
   const snapshot = await getDocs(collection(db,"admins"));
@@ -92,20 +89,35 @@ async function addAdminIfNotExists() {
     if(docSnap.data().email.toLowerCase() === adminEmail.toLowerCase()) exists = true;
   });
   if(!exists){
-    await addDoc(collection(db,"admins"),{email: adminEmail, role: adminRole});
+    await addDoc(collection(db,"admins"),{email: adminEmail, role: "super"});
   }
 }
 addAdminIfNotExists();
+
+// AUTO FIX SELLERS (🔥 muhiim)
+async function fixSellers(){
+  const snapshot = await getDocs(collection(db,"sellers"));
+
+  snapshot.forEach(async(docSnap)=>{
+    const s = docSnap.data();
+
+    await updateDoc(doc(db,"sellers",docSnap.id),{
+      location: s.location || s.Location || "Nairobi",
+      phone: s.phone || s.Phone || "0700000000"
+    });
+  });
+
+  console.log("Sellers fixed ✅");
+}
 
 // ADMIN CHECK
 async function checkAdminAccess(user){
   const snapshot = await getDocs(collection(db,"admins"));
   let found = false;
   snapshot.forEach(docSnap=>{
-    const data = docSnap.data();
-    if(data.email.toLowerCase() === user.email.toLowerCase()){
+    if(docSnap.data().email.toLowerCase() === user.email.toLowerCase()){
       found = true;
-      currentAdminRole = data.role;
+      currentAdminRole = docSnap.data().role;
     }
   });
   if(!found){ alert("Not authorized"); location.reload(); }
@@ -119,9 +131,9 @@ window.login = function(){
   signInWithEmailAndPassword(auth,email,password)
   .then(async(res)=>{
     await checkAdminAccess(res.user);
+    await fixSellers(); // 🔥 AUTO FIX RUN
     document.getElementById("loginPage").style.display="none";
     document.getElementById("dashboard").style.display="block";
-    showRole();
     startRealtime();
   })
   .catch(()=>{
@@ -129,27 +141,15 @@ window.login = function(){
   });
 }
 
-// ROLE
-function showRole(){
-  const header = document.querySelector("header");
-  if(!header) return;
-  const role = document.createElement("div");
-  role.style.fontSize="14px";
-  role.innerHTML = "Role: " + currentAdminRole;
-  header.appendChild(role);
-}
-
 // REALTIME
 function startRealtime(){
 
-// ORDERS
 onSnapshot(collection(db,"orders"), snapshot=>{
   ordersData = [];
   snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
   renderOrdersTable();
 });
 
-// SELLERS
 onSnapshot(collection(db,"sellers"), snapshot=>{
   sellersData = [];
   snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
@@ -158,15 +158,17 @@ onSnapshot(collection(db,"sellers"), snapshot=>{
 
 }
 
-// ORDERS TABLE
+// ORDERS
 function renderOrdersTable(filter=""){
   const table=document.getElementById("ordersTable");
+
   table.innerHTML=`
     <tr>
       <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
       <th>Quantity</th><th>Status</th><th>Actions</th>
     </tr>
   `;
+
   let total=0,pending=0;
 
   ordersData.forEach(o=>{
@@ -174,10 +176,10 @@ function renderOrdersTable(filter=""){
 
     const tr=document.createElement("tr");
     tr.innerHTML=`
-      <td>${o.name||o.Name||"-"}</td>
-      <td>${o.phone||o.Phone||"-"}</td>
-      <td>${o.location||o.Location||"-"}</td>
-      <td>${o.brand||o.Brand||"-"}</td>
+      <td>${o.name||"-"}</td>
+      <td>${o.phone||"-"}</td>
+      <td>${o.location||"-"}</td>
+      <td>${o.brand||"-"}</td>
       <td>${o.quantity||"-"}</td>
       <td>${o.status||"Pending"}</td>
       <td>
@@ -185,6 +187,7 @@ function renderOrdersTable(filter=""){
         <button class="btn btn-sm btn-danger delete">Delete</button>
       </td>
     `;
+
     table.appendChild(tr);
 
     if((o.status||"Pending")==="Pending"){
@@ -206,19 +209,14 @@ function renderOrdersTable(filter=""){
   document.getElementById("pendingOrders").innerText=pending;
 }
 
-// SELLERS TABLE (FIXED)
+// SELLERS
 function renderSellersTable(filter=""){
   const table=document.getElementById("sellersTable");
 
   table.innerHTML=`
     <tr>
-      <th>Company</th>
-      <th>Location</th>
-      <th>Phone</th>
-      <th>6kg</th>
-      <th>13kg</th>
-      <th>Type</th>
-      <th>Actions</th>
+      <th>Company</th><th>Location</th><th>Phone</th>
+      <th>6kg</th><th>13kg</th><th>Type</th><th>Actions</th>
     </tr>
   `;
 
@@ -226,13 +224,14 @@ function renderSellersTable(filter=""){
     if(filter && !JSON.stringify(s).toLowerCase().includes(filter.toLowerCase())) return;
 
     const tr=document.createElement("tr");
+
     tr.innerHTML=`
       <td>${s.name||"-"}</td>
-      <td>${s.location||s.Location||"-"}</td>
-      <td>${s.phone||s.Phone||"-"}</td>
+      <td>${s.location||"-"}</td>
+      <td>${s.phone||"-"}</td>
       <td>${s.price6||"-"}</td>
       <td>${s.price13||"-"}</td>
-      <td>${s.businessType||s.type||"-"}</td>
+      <td>${s.businessType||"-"}</td>
       <td><button class="btn btn-sm btn-danger delete">Delete</button></td>
     `;
 
