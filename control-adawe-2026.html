@@ -25,7 +25,7 @@ th { background:#198754; color:white; }
 
 <body>
   
-<!-- LOGIN PAGE -->
+<!-- LOGIN -->
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
   <h3 class="text-center mb-3">Admin Login</h3>
   <input id="email" type="email" class="form-control mb-2" placeholder="Email">
@@ -37,6 +37,7 @@ th { background:#198754; color:white; }
 <!-- DASHBOARD -->
 <div id="dashboard" style="display:none;">
   <header>Adawe Gas Control</header>
+
   <div class="section">
     <div class="stats">
       <div class="stat-box">
@@ -80,8 +81,8 @@ const auth = getAuth(app);
 let currentAdminRole = null;
 let ordersData = [], sellersData = [];
 
-// ===== ADD YOUR EMAIL AS ADMIN (AUTO) =====
-const adminEmail = "adaweadawe56@gmail.com"; // <---- BEDDEL Halkan
+// AUTO ADD ADMIN
+const adminEmail = "adaweadawe56@gmail.com";
 const adminRole = "super";
 
 async function addAdminIfNotExists() {
@@ -92,12 +93,11 @@ async function addAdminIfNotExists() {
   });
   if(!exists){
     await addDoc(collection(db,"admins"),{email: adminEmail, role: adminRole});
-    console.log(`Admin ${adminEmail} added ✅`);
   }
 }
 addAdminIfNotExists();
 
-// ===== ADMIN CHECK =====
+// ADMIN CHECK
 async function checkAdminAccess(user){
   const snapshot = await getDocs(collection(db,"admins"));
   let found = false;
@@ -111,7 +111,7 @@ async function checkAdminAccess(user){
   if(!found){ alert("Not authorized"); location.reload(); }
 }
 
-// ===== LOGIN =====
+// LOGIN
 window.login = function(){
   const email = document.getElementById("email").value;
   const password = document.getElementById("password").value;
@@ -123,14 +123,13 @@ window.login = function(){
     document.getElementById("dashboard").style.display="block";
     showRole();
     startRealtime();
-    addTestOrders();
   })
   .catch(()=>{
     document.getElementById("loginError").innerText="Login failed";
   });
 }
 
-// ===== SHOW ROLE =====
+// ROLE
 function showRole(){
   const header = document.querySelector("header");
   if(!header) return;
@@ -140,106 +139,116 @@ function showRole(){
   header.appendChild(role);
 }
 
-// ===== TEST ORDERS =====
-async function addTestOrders(){
-  const snapshot = await getDocs(collection(db,"orders"));
-  if(snapshot.empty){
-    await addDoc(collection(db,"orders"),{
-      name: "Hassan", phone: "0720000000", location: "Mombasa",
-      brand: "Rubis", quantity: 6, unit: "Kgs", status: "Pending",
-      tracking: "AG222333", date: new Date()
-    });
-    await addDoc(collection(db,"orders"),{
-      name: "Fatima", phone: "0733333333", location: "Nairobi",
-      brand: "Oryx", quantity: 13, unit: "Kgs", status: "Delivered",
-      tracking: "AG999888", date: new Date()
-    });
-  }
-}
-
-// ===== REALTIME =====
+// REALTIME
 function startRealtime(){
-  // ORDERS
-  onSnapshot(collection(db,"orders"), snapshot=>{
-    ordersData = [];
-    snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
-    renderOrdersTable();
-  });
 
-  // SELLERS
-  onSnapshot(collection(db,"sellers"), snapshot=>{
-    sellersData = [];
-    snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
-    renderSellersTable();
-  });
+// ORDERS
+onSnapshot(collection(db,"orders"), snapshot=>{
+  ordersData = [];
+  snapshot.forEach(docSnap=> ordersData.push({id: docSnap.id, ...docSnap.data()}));
+  renderOrdersTable();
+});
+
+// SELLERS
+onSnapshot(collection(db,"sellers"), snapshot=>{
+  sellersData = [];
+  snapshot.forEach(docSnap=> sellersData.push({id: docSnap.id, ...docSnap.data()}));
+  renderSellersTable();
+});
+
 }
 
-// ===== RENDER ORDERS =====
+// ORDERS TABLE
 function renderOrdersTable(filter=""){
   const table=document.getElementById("ordersTable");
-  if(!table) return;
   table.innerHTML=`
     <tr>
       <th>Name</th><th>Phone</th><th>Location</th><th>Brand</th>
       <th>Quantity</th><th>Status</th><th>Actions</th>
     </tr>
   `;
-  let total=0, pending=0;
+  let total=0,pending=0;
+
   ordersData.forEach(o=>{
     if(filter && !JSON.stringify(o).toLowerCase().includes(filter.toLowerCase())) return;
+
     const tr=document.createElement("tr");
     tr.innerHTML=`
-      <td>${o.name}</td><td>${o.phone||"-"}</td><td>${o.location}</td><td>${o.brand}</td>
-      <td>${o.quantity}</td><td>${o.status}</td>
+      <td>${o.name||o.Name||"-"}</td>
+      <td>${o.phone||o.Phone||"-"}</td>
+      <td>${o.location||o.Location||"-"}</td>
+      <td>${o.brand||o.Brand||"-"}</td>
+      <td>${o.quantity||"-"}</td>
+      <td>${o.status||"Pending"}</td>
       <td>
-        ${o.status==="Pending"? `<button class="btn btn-sm btn-success deliver">Delivered</button>`:"Delivered"}
+        ${(o.status||"Pending")==="Pending" ? `<button class="btn btn-sm btn-success deliver">Delivered</button>`:"Delivered"}
         <button class="btn btn-sm btn-danger delete">Delete</button>
       </td>
     `;
     table.appendChild(tr);
-    if(o.status==="Pending") tr.querySelector(".deliver").onclick=async()=> await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
+
+    if((o.status||"Pending")==="Pending"){
+      tr.querySelector(".deliver").onclick=async()=>{
+        await updateDoc(doc(db,"orders",o.id),{status:"Delivered"});
+      };
+    }
+
     tr.querySelector(".delete").onclick=async()=>{
-      if(currentAdminRole!=="super"){ alert("Only Super Admin can delete"); return; }
+      if(currentAdminRole!=="super"){ alert("Only Super Admin"); return; }
       if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",o.id));
     };
-    total++; if(o.status==="Pending") pending++;
+
+    total++;
+    if((o.status||"Pending")==="Pending") pending++;
   });
+
   document.getElementById("totalOrders").innerText=total;
   document.getElementById("pendingOrders").innerText=pending;
 }
 
-// ===== RENDER SELLERS =====
+// SELLERS TABLE (FIXED)
 function renderSellersTable(filter=""){
   const table=document.getElementById("sellersTable");
-  if(!table) return;
+
   table.innerHTML=`
     <tr>
-     <td>${s.name || "-"}</td>
-<td>${s.location || s.Location || "-"}</td>
-<td>${s.phone || s.Phone || "-"}</td>
-<td>${s.price6 || "-"}</td>
-<td>${s.price13 || "-"}</td>
-<td>${s.businessType || s.type || "-"}</td>
+      <th>Company</th>
+      <th>Location</th>
+      <th>Phone</th>
+      <th>6kg</th>
+      <th>13kg</th>
+      <th>Type</th>
+      <th>Actions</th>
+    </tr>
   `;
+
   sellersData.forEach(s=>{
     if(filter && !JSON.stringify(s).toLowerCase().includes(filter.toLowerCase())) return;
+
     const tr=document.createElement("tr");
     tr.innerHTML=`
-      <td>${s.name}</td><td>${s.location}</td><td>${s.phone}</td>
-      <td>${s.price6||"-"}</td><td>${s.price13||"-"}</td><td>${s.businessType}</td>
+      <td>${s.name||"-"}</td>
+      <td>${s.location||s.Location||"-"}</td>
+      <td>${s.phone||s.Phone||"-"}</td>
+      <td>${s.price6||"-"}</td>
+      <td>${s.price13||"-"}</td>
+      <td>${s.businessType||s.type||"-"}</td>
       <td><button class="btn btn-sm btn-danger delete">Delete</button></td>
     `;
+
     table.appendChild(tr);
+
     tr.querySelector(".delete").onclick=async()=>{
-      if(currentAdminRole!=="super"){ alert("Only Super Admin can delete"); return; }
+      if(currentAdminRole!=="super"){ alert("Only Super Admin"); return; }
       if(confirm("Delete seller?")) await deleteDoc(doc(db,"sellers",s.id));
     };
   });
 }
 
-// ===== SEARCH =====
+// SEARCH
 document.getElementById("searchOrders").addEventListener("input",(e)=> renderOrdersTable(e.target.value));
 document.getElementById("searchSellers").addEventListener("input",(e)=> renderSellersTable(e.target.value));
+
 </script>
 
 </body>
