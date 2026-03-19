@@ -144,15 +144,3 @@ document.getElementById("sellerForm").addEventListener("submit", function(e){
  db.collection("sellers").add({name,price6:price6?parseInt(price6):null,price13:price13?parseInt(price13):null,lat:sellerLat,lng:sellerLng,status:"pending",createdAt:new Date()})
  .then(()=>{ alert("Seller registered!"); document.getElementById("sellerForm").reset(); sellerLat=null;sellerLng=null; loadSellersOnMap(); });
 });
-
-// Map
-const mapArea=L.map('mapArea').setView([-1.28,36.81],10);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(mapArea);
-let sellerMarkers = L.layerGroup().addTo(mapArea);
-function loadSellersOnMap(){
- sellerMarkers.clearLayers();
- db.collection("sellers").get().then(snapshot=>{
-  snapshot.forEach(doc=>{
-   const data=doc.data();
-   if(data.lat && data.lng){
-     L.marker([data.lat,data.lng]).bindPopup(`<b>${data.name}</b><br>6kg:${dat
