@@ -16,6 +16,8 @@ body {font-family: Arial;margin:0;}
 .section{padding:60px 0;}
 .card-modern{background:white;padding:25px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
+
+button:hover{transform:scale(1.03);transition:0.2s;}
 </style>
 </head>
 
@@ -76,7 +78,7 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 
 <button class="btn btn-success w-100">Send Order</button>
 
-<a id="whatsappBtn" target="_blank" class="btn w-100 mt-2" style="background:#25D366;color:white;">
+<a id="whatsappBtn" class="btn w-100 mt-2" style="background:#25D366;color:white;">
 📲 WhatsApp Order
 </a>
 
@@ -131,7 +133,7 @@ WhatsApp
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// FULL CONFIG
+// CONFIG
 const firebaseConfig = {
  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
  authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -153,38 +155,45 @@ function generateTracking(){
 let sellerLat=null, sellerLng=null;
 
 window.getLocation = function(){
- navigator.geolocation.getCurrentPosition(pos=>{
-  sellerLat = pos.coords.latitude;
-  sellerLng = pos.coords.longitude;
-  alert("Location detected");
- });
+ navigator.geolocation.getCurrentPosition(
+  pos=>{
+   sellerLat = pos.coords.latitude;
+   sellerLng = pos.coords.longitude;
+   alert("Location detected");
+  },
+  err=>{
+   alert("Location access denied ❌");
+  }
+ );
 }
 
-// ORDER SYSTEM
+// ORDER
 document.getElementById("orderForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
  const name = document.getElementById("name").value.trim();
  const phone = document.getElementById("phone").value.trim();
  const location = document.getElementById("location").value.trim();
- const quantity = document.getElementById("quantity").value;
+ const quantity = parseInt(document.getElementById("quantity").value);
  const brand = document.getElementById("brand").value;
 
- if(!name || !phone || !location || !quantity || !brand){
-  alert("Fill all fields");
-  return;
- }
+ if(name.length < 2){ alert("Enter valid name"); return; }
+ if(phone.length < 9){ alert("Invalid phone"); return; }
+ if(quantity <= 0){ alert("Quantity must be > 0"); return; }
+ if(!location || !brand){ alert("Fill all fields"); return; }
 
  const tracking = generateTracking();
 
- await addDoc(collection(db,"orders"),{
-  name, phone, location,
-  quantity:parseInt(quantity),
-  brand,
-  tracking,
-  status:"Pending",
-  createdAt:new Date()
- });
+ try{
+  await addDoc(collection(db,"orders"),{
+   name, phone, location, quantity, brand,
+   tracking, status:"Pending", createdAt:new Date()
+  });
+ }catch(error){
+  alert("Order failed ❌");
+  console.error(error);
+  return;
+ }
 
  document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
 
@@ -195,14 +204,15 @@ Phone:${phone}
 Location:${location}
 Qty:${quantity}
 Brand:${brand}
-Tracking:${tracking}`
- )}`);
+Tracking:${tracking}`)}`);
 
  this.reset();
 });
 
 // WHATSAPP BUTTON
-document.getElementById("whatsappBtn").addEventListener("click",function(){
+document.getElementById("whatsappBtn").addEventListener("click",function(e){
+ e.preventDefault();
+
  const name = document.getElementById("name").value;
  const phone = document.getElementById("phone").value;
  const location = document.getElementById("location").value;
@@ -214,17 +224,16 @@ document.getElementById("whatsappBtn").addEventListener("click",function(){
   return;
  }
 
- this.href = `https://wa.me/254727015434?text=${encodeURIComponent(
+ window.open(`https://wa.me/254727015434?text=${encodeURIComponent(
 `New Order:
 Name:${name}
 Phone:${phone}
 Location:${location}
 Qty:${quantity}
-Brand:${brand}`
- )}`;
+Brand:${brand}`)}`);
 });
 
-// SELLER SYSTEM
+// SELLER
 document.getElementById("sellerForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
@@ -232,22 +241,30 @@ document.getElementById("sellerForm").addEventListener("submit", async function(
  const price6 = document.getElementById("sellerPrice6").value;
  const price13 = document.getElementById("sellerPrice13").value;
 
+ if(name.length < 2){ alert("Enter valid name"); return; }
+
  if(!sellerLat || !sellerLng){
   alert("Click Detect Location first");
   return;
  }
 
- await addDoc(collection(db,"sellers"),{
-  name,
-  price6: price6 ? parseInt(price6) : null,
-  price13: price13 ? parseInt(price13) : null,
-  lat: sellerLat,
-  lng: sellerLng,
-  status:"pending",
-  createdAt:new Date()
- });
+ try{
+  await addDoc(collection(db,"sellers"),{
+   name,
+   price6: price6 ? parseInt(price6) : null,
+   price13: price13 ? parseInt(price13) : null,
+   lat: sellerLat,
+   lng: sellerLng,
+   status:"pending",
+   createdAt:new Date()
+  });
+ }catch(error){
+  alert("Registration failed ❌");
+  console.error(error);
+  return;
+ }
 
- alert("Seller Registered");
+ alert("Seller Registered ✅");
  this.reset();
  sellerLat=null;
  sellerLng=null;
