@@ -4,43 +4,37 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Adawe Gas</title>
+
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.css"/>
-<link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.5.3/dist/MarkerCluster.Default.css"/>
+
 <style>
-body {font-family: Arial,sans-serif;margin:0;padding:0;}
+body {font-family: Arial;margin:0;}
 .navbar {background:#0b7a3c;}
 .navbar-brand,.nav-link {color:white!important;}
-.hero{background:#28a745;color:white;padding:160px 0;text-align:left;}
-.hero h1{font-size:48px;font-weight:bold;}
-.hero p{font-size:20px;margin-bottom:20px;}
+.hero{background:#28a745;color:white;padding:140px 0;}
 .btn-main{background:white;color:#28a745;font-weight:bold;padding:12px 25px;border-radius:8px;text-decoration:none;}
-.section{padding:70px 0;}
-.service-card{padding:30px;border-radius:10px;box-shadow:0 0 15px rgba(0,0,0,0.1);background:white;margin-bottom:20px;}
-.cheapest{background:#d4edda;font-weight:bold;padding:10px;border-radius:5px;}
+.section{padding:60px 0;}
+.card-modern{background:white;padding:25px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
-#mapArea{height:400px;margin-bottom:30px;}
-@media(max-width:768px){.btn-main{padding:16px 30px;font-size:20px;}#mapArea{height:300px;}.section{padding:50px 15px;}.hero h1{font-size:32px;}.hero p{font-size:16px;}#orderForm{width:100%;padding:20px;}}
 </style>
 </head>
+
 <body>
 
 <!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
 <div class="container">
 <a class="navbar-brand">Adawe Gas</a>
+
 <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
 <span class="navbar-toggler-icon"></span>
 </button>
+
 <div class="collapse navbar-collapse" id="menu">
 <ul class="navbar-nav ms-auto">
 <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
 <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#seller">Register Seller</a></li>
-<li class="nav-item"><a class="nav-link" href="#tracking">Track Order</a></li>
-<li class="nav-item"><a class="nav-link" href="#prices">Prices</a></li>
-<li class="nav-item"><a class="nav-link" href="#map">Map</a></li>
+<li class="nav-item"><a class="nav-link" href="#seller">Seller</a></li>
 <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
 </ul>
 </div>
@@ -50,70 +44,94 @@ footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
 <!-- HERO -->
 <section class="hero" id="home">
 <div class="container">
-<h1>Kenya’s Fast Growing LPG Delivery Network</h1>
-<p>Fast • Safe • Reliable gas delivery across Kenya</p>
-<a href="#order" class="btn btn-main btn-lg">Order Gas Now</a>
+<h1>Fast & Reliable Gas Delivery</h1>
+<p>Order gas instantly across Kenya</p>
+<a href="#order" class="btn btn-main">Order Now</a>
 </div>
 </section>
 
+<!-- ORDER -->
 <section class="section" id="order">
 <div class="container">
 <h2 class="text-center mb-4">Place Order</h2>
+
 <form id="orderForm" class="col-md-6 mx-auto card-modern">
-<input class="form-control mb-3" id="name" placeholder="Name" required>
-<input class="form-control mb-3" id="phone" placeholder="Phone" required>
-<input class="form-control mb-3" id="location" placeholder="Location" required>
-<input class="form-control mb-3" id="quantity" type="number" placeholder="Quantity" required>
-<select class="form-select mb-3" id="brand" required>
+
+<input id="name" class="form-control mb-3" placeholder="Name" required>
+<input id="phone" class="form-control mb-3" placeholder="Phone" required>
+<input id="location" class="form-control mb-3" placeholder="Location" required>
+<input id="quantity" type="number" class="form-control mb-3" placeholder="Quantity" required>
+
+<select id="brand" class="form-select mb-3" required>
 <option value="">Select Brand</option>
-<option>K-Gas</option><option>AfriGas</option><option>Pro Gas</option>
-<option>TotalEnergies</option><option>Hashi Gas</option><option>Lake Gas</option>
-<option>Oil Libya (OLA Gas)</option><option>Rubis Gas</option><option>Taifa Gas</option>
-<option>Marangi</option><option>National Oil Gas</option>
+<option>K-Gas</option>
+<option>AfriGas</option>
+<option>Pro Gas</option>
+<option>TotalEnergies</option>
+<option>Hashi Gas</option>
+<option>Lake Gas</option>
+<option>Rubis Gas</option>
+<option>Taifa Gas</option>
 </select>
 
 <button class="btn btn-success w-100">Send Order</button>
-<a id="whatsappBtn" target="_blank" class="btn w-100 mt-2" style="background:#25D366;color:white;">📲 Order via WhatsApp</a>
+
+<a id="whatsappBtn" target="_blank" class="btn w-100 mt-2" style="background:#25D366;color:white;">
+📲 WhatsApp Order
+</a>
+
 <p id="trackingNumber" class="mt-3 text-success fw-bold"></p>
+
 </form>
 </div>
 </section>
 
+<!-- SELLER -->
 <section class="section" id="seller">
 <div class="container">
 <h2 class="text-center mb-4">Register Seller</h2>
+
 <form id="sellerForm" class="col-md-6 mx-auto card-modern">
+
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-<button type="button" onclick="getLocation()" class="btn btn-secondary mb-3 w-100">Detect Location</button>
+
+<button type="button" onclick="getLocation()" class="btn btn-secondary w-100 mb-3">
+Detect Location
+</button>
+
 <input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price">
 <input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price">
+
 <button class="btn btn-primary w-100">Register</button>
+
 </form>
 </div>
 </section>
 
-<footer class="text-center"><p>© 2026 Adawe Gas – Kenya</p></footer>
-  
-  <a href="https://wa.me/254727015434" style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:15px 20px;border-radius:50px;text-decoration:none;font-weight:bold;display:flex;align-items:center;gap:8px;z-index:9999;box-shadow:0 3px 10px rgba(0,0,0,0.2);">
-<img src="https://upload.wikimedia.org/wikipedia/commons/6/6b/WhatsApp.svg" alt="WhatsApp" style="width:24px;height:24px;"> WhatsApp Order
+<!-- CONTACT -->
+<section class="section bg-light text-center" id="contact">
+<h2>Contact</h2>
+<p>📞 0727 015 434</p>
+<p>📧 adaweadawe56@gmail.com</p>
+<p>📍 Nairobi, Kenya</p>
+</section>
+
+<footer>
+<p>© 2026 Adawe Gas</p>
+</footer>
+
+<!-- FLOAT WHATSAPP -->
+<a href="https://wa.me/254727015434"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:14px;border-radius:50px;text-decoration:none;">
+WhatsApp
 </a>
 
-</section>
-<!-- CONTACT -->
-<section class="section bg-light" id="contact">
-<div class="container text-center">
-<h2>Contact</h2>
-<p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
-<p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
-<p>📍 Nairobi Kenya</p>
-</div>
-</section>
-  
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js"></script>
+<!-- FIREBASE -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-<script>
+// FULL CONFIG
 const firebaseConfig = {
  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
  authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -122,56 +140,119 @@ const firebaseConfig = {
  messagingSenderId: "644303663526",
  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
 
-function generateTracking(){ return "AG"+Math.floor(100000+Math.random()*900000); }
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
 
+// TRACKING
+function generateTracking(){
+ return "AG"+Math.floor(100000+Math.random()*900000);
+}
+
+// LOCATION
 let sellerLat=null, sellerLng=null;
-function getLocation(){
+
+window.getLocation = function(){
  navigator.geolocation.getCurrentPosition(pos=>{
-  sellerLat=pos.coords.latitude;
-  sellerLng=pos.coords.longitude;
-  alert("Location detected!");
+  sellerLat = pos.coords.latitude;
+  sellerLng = pos.coords.longitude;
+  alert("Location detected");
  });
 }
 
-// Customer order
-document.getElementById("orderForm").addEventListener("submit", function(e){
+// ORDER SYSTEM
+document.getElementById("orderForm").addEventListener("submit", async function(e){
  e.preventDefault();
- const name=document.getElementById("name").value;
- const phone=document.getElementById("phone").value;
- const location=document.getElementById("location").value;
- const quantity=document.getElementById("quantity").value;
- const brand=document.getElementById("brand").value;
- if(!name||!phone||!location||!quantity||!brand){ alert("Fill all fields"); return; }
- const tracking=generateTracking();
- db.collection("orders").add({name,phone,location,quantity:parseInt(quantity),brand,tracking,status:"Pending",createdAt:new Date()})
- .then(()=>{
-   document.getElementById("trackingNumber").innerText="Tracking: "+tracking;
-   window.open(`https://wa.me/254727015434?text=${encodeURIComponent(`New Order:\nName:${name}\nPhone:${phone}\nLocation:${location}\nQty:${quantity}\nBrand:${brand}\nTracking:${tracking}`)}`);
-   document.getElementById("orderForm").reset();
+
+ const name = document.getElementById("name").value.trim();
+ const phone = document.getElementById("phone").value.trim();
+ const location = document.getElementById("location").value.trim();
+ const quantity = document.getElementById("quantity").value;
+ const brand = document.getElementById("brand").value;
+
+ if(!name || !phone || !location || !quantity || !brand){
+  alert("Fill all fields");
+  return;
+ }
+
+ const tracking = generateTracking();
+
+ await addDoc(collection(db,"orders"),{
+  name, phone, location,
+  quantity:parseInt(quantity),
+  brand,
+  tracking,
+  status:"Pending",
+  createdAt:new Date()
  });
+
+ document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
+
+ window.open(`https://wa.me/254727015434?text=${encodeURIComponent(
+`New Order:
+Name:${name}
+Phone:${phone}
+Location:${location}
+Qty:${quantity}
+Brand:${brand}
+Tracking:${tracking}`
+ )}`);
+
+ this.reset();
 });
 
-// WhatsApp button
+// WHATSAPP BUTTON
 document.getElementById("whatsappBtn").addEventListener("click",function(){
- const name=document.getElementById("name").value;
- const phone=document.getElementById("phone").value;
- const location=document.getElementById("location").value;
- const quantity=document.getElementById("quantity").value;
- const brand=document.getElementById("brand").value;
- if(!name||!phone||!location||!quantity||!brand){ alert("Fill form first"); return; }
- this.href=`https://wa.me/254727015434?text=${encodeURIComponent(`New Order:\nName:${name}\nPhone:${phone}\nLocation:${location}\nQty:${quantity}\nBrand:${brand}`)}`;
+ const name = document.getElementById("name").value;
+ const phone = document.getElementById("phone").value;
+ const location = document.getElementById("location").value;
+ const quantity = document.getElementById("quantity").value;
+ const brand = document.getElementById("brand").value;
+
+ if(!name||!phone||!location||!quantity||!brand){
+  alert("Fill form first");
+  return;
+ }
+
+ this.href = `https://wa.me/254727015434?text=${encodeURIComponent(
+`New Order:
+Name:${name}
+Phone:${phone}
+Location:${location}
+Qty:${quantity}
+Brand:${brand}`
+ )}`;
 });
 
-// Seller form
-document.getElementById("sellerForm").addEventListener("submit", function(e){
+// SELLER SYSTEM
+document.getElementById("sellerForm").addEventListener("submit", async function(e){
  e.preventDefault();
- const name=document.getElementById("sellerName").value;
- const price6=document.getElementById("sellerPrice6").value;
- const price13=document.getElementById("sellerPrice13").value;
- if(!sellerLat||!sellerLng){ alert("Click Detect Location first"); return; }
- db.collection("sellers").add({name,price6:price6?parseInt(price6):null,price13:price13?parseInt(price13):null,lat:sellerLat,lng:sellerLng,status:"pending",createdAt:new Date()})
- .then(()=>{ alert("Seller registered!"); document.getElementById("sellerForm").reset(); sellerLat=null;sellerLng=null; loadSellersOnMap(); });
+
+ const name = document.getElementById("sellerName").value.trim();
+ const price6 = document.getElementById("sellerPrice6").value;
+ const price13 = document.getElementById("sellerPrice13").value;
+
+ if(!sellerLat || !sellerLng){
+  alert("Click Detect Location first");
+  return;
+ }
+
+ await addDoc(collection(db,"sellers"),{
+  name,
+  price6: price6 ? parseInt(price6) : null,
+  price13: price13 ? parseInt(price13) : null,
+  lat: sellerLat,
+  lng: sellerLng,
+  status:"pending",
+  createdAt:new Date()
+ });
+
+ alert("Seller Registered");
+ this.reset();
+ sellerLat=null;
+ sellerLng=null;
 });
+</script>
+
+</body>
+</html>
