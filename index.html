@@ -16,7 +16,6 @@ body {font-family: Arial;margin:0;}
 .section{padding:60px 0;}
 .card-modern{background:white;padding:25px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
-
 button:hover{transform:scale(1.03);transition:0.2s;}
 </style>
 </head>
@@ -113,8 +112,8 @@ Detect Location
 <!-- CONTACT -->
 <section class="section bg-light text-center" id="contact">
 <h2>Contact</h2>
-<p>📞 0727 015 434</p>
-<p>📧 adaweadawe56@gmail.com</p>
+<p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
+<p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
 <p>📍 Nairobi, Kenya</p>
 </section>
 
@@ -131,9 +130,8 @@ WhatsApp
 <!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// CONFIG
 const firebaseConfig = {
  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
  authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -146,7 +144,6 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// TRACKING
 function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
@@ -159,10 +156,10 @@ window.getLocation = function(){
   pos=>{
    sellerLat = pos.coords.latitude;
    sellerLng = pos.coords.longitude;
-   alert("Location detected");
+   alert("Location detected 📍");
   },
   err=>{
-   alert("Location access denied ❌");
+   alert("Allow location access 📍");
   }
  );
 }
@@ -178,7 +175,12 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
  const brand = document.getElementById("brand").value;
 
  if(name.length < 2){ alert("Enter valid name"); return; }
- if(phone.length < 9){ alert("Invalid phone"); return; }
+
+ if(!/^07\d{8}$/.test(phone)){
+  alert("Enter valid Kenyan phone (07XXXXXXXX)");
+  return;
+ }
+
  if(quantity <= 0){ alert("Quantity must be > 0"); return; }
  if(!location || !brand){ alert("Fill all fields"); return; }
 
@@ -187,7 +189,9 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
  try{
   await addDoc(collection(db,"orders"),{
    name, phone, location, quantity, brand,
-   tracking, status:"Pending", createdAt:new Date()
+   tracking,
+   status:"Pending",
+   createdAt: serverTimestamp()
   });
  }catch(error){
   alert("Order failed ❌");
@@ -196,15 +200,16 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
  }
 
  document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
+ document.getElementById("trackingNumber").scrollIntoView({behavior:"smooth"});
 
- window.open(`https://wa.me/254727015434?text=${encodeURIComponent(
+ window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
 `New Order:
 Name:${name}
 Phone:${phone}
 Location:${location}
 Qty:${quantity}
 Brand:${brand}
-Tracking:${tracking}`)}`);
+Tracking:${tracking}`)}`;
 
  this.reset();
 });
@@ -224,13 +229,13 @@ document.getElementById("whatsappBtn").addEventListener("click",function(e){
   return;
  }
 
- window.open(`https://wa.me/254727015434?text=${encodeURIComponent(
+ window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
 `New Order:
 Name:${name}
 Phone:${phone}
 Location:${location}
 Qty:${quantity}
-Brand:${brand}`)}`);
+Brand:${brand}`)}`;
 });
 
 // SELLER
@@ -251,12 +256,12 @@ document.getElementById("sellerForm").addEventListener("submit", async function(
  try{
   await addDoc(collection(db,"sellers"),{
    name,
-   price6: price6 ? parseInt(price6) : null,
-   price13: price13 ? parseInt(price13) : null,
+   price6: price6 ? Number(price6) : null,
+   price13: price13 ? Number(price13) : null,
    lat: sellerLat,
    lng: sellerLng,
    status:"pending",
-   createdAt:new Date()
+   createdAt: serverTimestamp()
   });
  }catch(error){
   alert("Registration failed ❌");
