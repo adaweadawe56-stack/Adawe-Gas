@@ -22,7 +22,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
 <div class="container">
 <a class="navbar-brand">Adawe Gas</a>
@@ -42,16 +41,14 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 </div>
 </nav>
 
-<!-- HERO -->
 <section class="hero" id="home">
-  <div class="container">
-    <h1>Kenya’s Fast Growing LPG Delivery Network</h1>
-    <p>Fast • Safe • Reliable gas delivery across Kenya</p>
-    <a href="#order" class="btn btn-main btn-lg">Order Gas Now</a>
-  </div>
+<div class="container">
+<h1>Fast & Reliable Gas Delivery</h1>
+<p>Order gas instantly across Kenya</p>
+<a href="#order" class="btn btn-main">Order Now</a>
+</div>
 </section>
- 
-<!-- ORDER -->
+
 <section class="section" id="order">
 <div class="container">
 <h2 class="text-center mb-4">Place Order</h2>
@@ -75,11 +72,10 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <option>Taifa Gas</option>
 </select>
 
-<button class="btn btn-success w-100">Send Order</button>
-
-<a id="whatsappBtn" class="btn w-100 mt-2" style="background:#25D366;color:white;">
-📲 WhatsApp Order
-</a>
+<!-- ✅ HAL BUTTON -->
+<button class="btn w-100" style="background:#25D366;color:white;">
+📲 Send Order via WhatsApp
+</button>
 
 <p id="trackingNumber" class="mt-3 text-success fw-bold"></p>
 
@@ -87,7 +83,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 </div>
 </section>
 
-<!-- SELLER -->
 <section class="section" id="seller">
 <div class="container">
 <h2 class="text-center mb-4">Register Seller</h2>
@@ -95,9 +90,7 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <form id="sellerForm" class="col-md-6 mx-auto card-modern">
 
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-
 <input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
-
 <input id="sellerLocation" class="form-control mb-3" placeholder="Location (auto or manual)" required>
 
 <button type="button" onclick="getLocation()" class="btn btn-secondary w-100 mb-3">
@@ -113,7 +106,6 @@ Detect Location
 </div>
 </section>
 
-<!-- CONTACT -->
 <section class="section bg-light text-center" id="contact">
 <h2>Contact</h2>
 <p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
@@ -146,44 +138,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// LOCATION NAME (Kenya auto detect)
-async function getLocationName(lat, lng){
- try{
-  const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
-  const data = await res.json();
-  return data.address.suburb || data.address.city || data.address.town || "Kenya";
- }catch{
-  return "Kenya";
- }
+function generateTracking(){
+ return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
-let sellerLat=null, sellerLng=null;
-
-window.getLocation = function(){
- navigator.geolocation.getCurrentPosition(async pos=>{
-  sellerLat = pos.coords.latitude;
-  sellerLng = pos.coords.longitude;
-
-  const place = await getLocationName(sellerLat, sellerLng);
-
-  document.getElementById("sellerLocation").value = place;
-
-  alert("Location detected: " + place + " 📍");
-
- }, err=>{
-  alert("Allow location access 📍");
- });
-}
-
-// SELLER SAVE (FIXED)
-document.getElementById("sellerForm").addEventListener("submit", async function(e){
+document.getElementById("orderForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
- const name = document.getElementById("sellerName").value.trim();
- const phone = document.getElementById("sellerPhone").value.trim();
- const location = document.getElementById("sellerLocation").value.trim();
- const price6 = document.getElementById("sellerPrice6").value;
- const price13 = document.getElementById("sellerPrice13").value;
+ const name = document.getElementById("name").value.trim();
+ const phone = document.getElementById("phone").value.trim();
+ const location = document.getElementById("location").value.trim();
+ const quantity = parseInt(document.getElementById("quantity").value);
+ const brand = document.getElementById("brand").value;
 
  if(name.length < 2){ alert("Enter valid name"); return; }
 
@@ -192,38 +158,36 @@ document.getElementById("sellerForm").addEventListener("submit", async function(
   return;
  }
 
- if(!location){
-  alert("Location required");
-  return;
- }
+ if(quantity <= 0){ alert("Quantity must be > 0"); return; }
+ if(!location || !brand){ alert("Fill all fields"); return; }
 
- if(!sellerLat || !sellerLng){
-  alert("Click Detect Location first");
-  return;
- }
+ const tracking = generateTracking();
 
  try{
-  await addDoc(collection(db,"sellers"),{
-   name,
-   phone,
-   location,
-   price6: price6 ? Number(price6) : null,
-   price13: price13 ? Number(price13) : null,
-   lat: sellerLat,
-   lng: sellerLng,
-   status:"pending",
+  await addDoc(collection(db,"orders"),{
+   name, phone, location, quantity, brand,
+   tracking,
+   status:"Pending",
    createdAt: serverTimestamp()
   });
  }catch(error){
-  alert("Registration failed ❌");
+  alert("Order failed ❌");
   console.error(error);
   return;
  }
 
- alert("Seller Registered ✅");
+ document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
+
+ window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
+`New Order:
+Name:${name}
+Phone:${phone}
+Location:${location}
+Qty:${quantity}
+Brand:${brand}
+Tracking:${tracking}`)}`;
+
  this.reset();
- sellerLat=null;
- sellerLng=null;
 });
 </script>
 
