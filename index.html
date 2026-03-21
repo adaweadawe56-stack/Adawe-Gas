@@ -75,12 +75,14 @@ button:hover{transform:scale(1.03);transition:0.2s;}
   </div>
 </section>
 
+<!-- ✅ FIXED -->
 <section class="section text-center" id="becomeSeller">
   <div class="container">
     <h2>Become a Gas Seller</h2>
     <p style="max-width:700px;margin:auto;margin-top:20px;">
       Are you a licensed LPG supplier anywhere in Kenya? Join Adawe Gas and get more customers in your area.
     </p>
+  </div>
 </section>
 
 <section class="section" id="order">
@@ -106,8 +108,8 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <option>Taifa Gas</option>
 </select>
 
-<!-- ✅ HAL BUTTON -->
-<button class="btn w-100" style="background:#25D366;color:white;">
+<!-- ✅ FIXED BUTTON -->
+<button type="submit" class="btn w-100" style="background:#25D366;color:white;">
 📲 Send Order via WhatsApp
 </button>
 
@@ -174,6 +176,7 @@ function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
+// ✅ FIXED WhatsApp link
 document.getElementById("orderForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
@@ -183,30 +186,19 @@ document.getElementById("orderForm").addEventListener("submit", async function(e
  const quantity = parseInt(document.getElementById("quantity").value);
  const brand = document.getElementById("brand").value;
 
- if(name.length < 2){ alert("Enter valid name"); return; }
-
- if(!/^07\d{8}$/.test(phone)){
-  alert("Enter valid Kenyan phone");
+ if(!name || !phone || !location || !quantity || !brand){
+  alert("Fill all fields");
   return;
  }
-
- if(quantity <= 0){ alert("Quantity must be > 0"); return; }
- if(!location || !brand){ alert("Fill all fields"); return; }
 
  const tracking = generateTracking();
 
- try{
-  await addDoc(collection(db,"orders"),{
-   name, phone, location, quantity, brand,
-   tracking,
-   status:"Pending",
-   createdAt: serverTimestamp()
-  });
- }catch(error){
-  alert("Order failed ❌");
-  console.error(error);
-  return;
- }
+ await addDoc(collection(db,"orders"),{
+  name, phone, location, quantity, brand,
+  tracking,
+  status:"Pending",
+  createdAt: serverTimestamp()
+ });
 
  document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
 
@@ -217,8 +209,43 @@ Phone:${phone}
 Location:${location}
 Qty:${quantity}
 Brand:${brand}
-Tracking:${tracking})};
+Tracking:${tracking}`
+)}`;
 
+ this.reset();
+});
+
+// ✅ FIXED getLocation
+window.getLocation = function(){
+ if(navigator.geolocation){
+  navigator.geolocation.getCurrentPosition(pos=>{
+   document.getElementById("sellerLocation").value =
+    pos.coords.latitude + "," + pos.coords.longitude;
+  });
+ } else {
+  alert("Geolocation not supported");
+ }
+}
+
+// ✅ Seller save
+document.getElementById("sellerForm").addEventListener("submit", async function(e){
+ e.preventDefault();
+
+ const name = document.getElementById("sellerName").value;
+ const phone = document.getElementById("sellerPhone").value;
+ const location = document.getElementById("sellerLocation").value;
+ const price6 = document.getElementById("sellerPrice6").value;
+ const price13 = document.getElementById("sellerPrice13").value;
+
+ await addDoc(collection(db,"sellers"),{
+  name, phone, location,
+  price6: price6 ? parseInt(price6) : null,
+  price13: price13 ? parseInt(price13) : null,
+  status:"pending",
+  createdAt: serverTimestamp()
+ });
+
+ alert("Seller submitted ✔");
  this.reset();
 });
 </script>
