@@ -96,6 +96,10 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
 
+<input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
+
+<input id="sellerLocation" class="form-control mb-3" placeholder="Location (auto or manual)" required>
+
 <button type="button" onclick="getLocation()" class="btn btn-secondary w-100 mb-3">
 Detect Location
 </button>
@@ -121,13 +125,11 @@ Detect Location
 <p>© 2026 Adawe Gas</p>
 </footer>
 
-<!-- FLOAT WHATSAPP -->
 <a href="https://wa.me/254727015434"
 style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:14px;border-radius:50px;text-decoration:none;">
 WhatsApp
 </a>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -144,109 +146,56 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-function generateTracking(){
- return "AG"+Math.floor(100000+Math.random()*900000);
+// LOCATION NAME (Kenya auto detect)
+async function getLocationName(lat, lng){
+ try{
+  const res = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}`);
+  const data = await res.json();
+  return data.address.suburb || data.address.city || data.address.town || "Kenya";
+ }catch{
+  return "Kenya";
+ }
 }
 
-// LOCATION
 let sellerLat=null, sellerLng=null;
 
 window.getLocation = function(){
- navigator.geolocation.getCurrentPosition(
-  pos=>{
-   sellerLat = pos.coords.latitude;
-   sellerLng = pos.coords.longitude;
-   alert("Location detected 📍");
-  },
-  err=>{
-   alert("Allow location access 📍");
-  }
- );
+ navigator.geolocation.getCurrentPosition(async pos=>{
+  sellerLat = pos.coords.latitude;
+  sellerLng = pos.coords.longitude;
+
+  const place = await getLocationName(sellerLat, sellerLng);
+
+  document.getElementById("sellerLocation").value = place;
+
+  alert("Location detected: " + place + " 📍");
+
+ }, err=>{
+  alert("Allow location access 📍");
+ });
 }
 
-// ORDER
-document.getElementById("orderForm").addEventListener("submit", async function(e){
- e.preventDefault();
-
- const name = document.getElementById("name").value.trim();
- const phone = document.getElementById("phone").value.trim();
- const location = document.getElementById("location").value.trim();
- const quantity = parseInt(document.getElementById("quantity").value);
- const brand = document.getElementById("brand").value;
-
- if(name.length < 2){ alert("Enter valid name"); return; }
-
- if(!/^07\d{8}$/.test(phone)){
-  alert("Enter valid Kenyan phone (07XXXXXXXX)");
-  return;
- }
-
- if(quantity <= 0){ alert("Quantity must be > 0"); return; }
- if(!location || !brand){ alert("Fill all fields"); return; }
-
- const tracking = generateTracking();
-
- try{
-  await addDoc(collection(db,"orders"),{
-   name, phone, location, quantity, brand,
-   tracking,
-   status:"Pending",
-   createdAt: serverTimestamp()
-  });
- }catch(error){
-  alert("Order failed ❌");
-  console.error(error);
-  return;
- }
-
- document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
- document.getElementById("trackingNumber").scrollIntoView({behavior:"smooth"});
-
- window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
-`New Order:
-Name:${name}
-Phone:${phone}
-Location:${location}
-Qty:${quantity}
-Brand:${brand}
-Tracking:${tracking}`)}`;
-
- this.reset();
-});
-
-// WHATSAPP BUTTON
-document.getElementById("whatsappBtn").addEventListener("click",function(e){
- e.preventDefault();
-
- const name = document.getElementById("name").value;
- const phone = document.getElementById("phone").value;
- const location = document.getElementById("location").value;
- const quantity = document.getElementById("quantity").value;
- const brand = document.getElementById("brand").value;
-
- if(!name||!phone||!location||!quantity||!brand){
-  alert("Fill form first");
-  return;
- }
-
- window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
-`New Order:
-Name:${name}
-Phone:${phone}
-Location:${location}
-Qty:${quantity}
-Brand:${brand}`)}`;
-});
-
-// SELLER
+// SELLER SAVE (FIXED)
 document.getElementById("sellerForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
  const name = document.getElementById("sellerName").value.trim();
+ const phone = document.getElementById("sellerPhone").value.trim();
+ const location = document.getElementById("sellerLocation").value.trim();
  const price6 = document.getElementById("sellerPrice6").value;
  const price13 = document.getElementById("sellerPrice13").value;
 
  if(name.length < 2){ alert("Enter valid name"); return; }
+
+ if(!/^07\d{8}$/.test(phone)){
+  alert("Enter valid Kenyan phone");
+  return;
+ }
+
+ if(!location){
+  alert("Location required");
+  return;
+ }
 
  if(!sellerLat || !sellerLng){
   alert("Click Detect Location first");
@@ -256,6 +205,8 @@ document.getElementById("sellerForm").addEventListener("submit", async function(
  try{
   await addDoc(collection(db,"sellers"),{
    name,
+   phone,
+   location,
    price6: price6 ? Number(price6) : null,
    price13: price13 ? Number(price13) : null,
    lat: sellerLat,
