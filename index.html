@@ -22,7 +22,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar navbar-expand-lg">
   <div class="container">
     <a class="navbar-brand">Adawe Gas</a>
@@ -31,7 +30,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
     </button>
     <div class="collapse navbar-collapse" id="menu">
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
         <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
         <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
         <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
@@ -43,14 +41,13 @@ button:hover{transform:scale(1.03);transition:0.2s;}
   </div>
 </nav>
 
-<!-- SECTIONS -->
 <section class="section bg-light text-center" id="services">
   <div class="container">
     <h2>Our Services</h2>
     <ul style="list-style:none;padding:0;margin-top:20px;">
       <li>• LPG Gas Cylinder Delivery</li>
       <li>• Seller Distribution Network</li>
-      <li>• Same-Day Delivery in Selected Areas</li>
+      <li>• Same-Day Delivery</li>
     </ul>
   </div>
 </section>
@@ -59,7 +56,7 @@ button:hover{transform:scale(1.03);transition:0.2s;}
   <div class="container">
     <h2>About Adawe Gas</h2>
     <p style="max-width:700px;margin:auto;margin-top:20px;">
-      Adawe Gas provides reliable LPG gas delivery services across Kenya. Our mission is to make gas delivery fast, safe, and accessible.
+      Adawe Gas provides reliable LPG gas delivery services across Kenya.
     </p>
   </div>
 </section>
@@ -68,20 +65,10 @@ button:hover{transform:scale(1.03);transition:0.2s;}
   <div class="container">
     <h2>How It Works</h2>
     <ol style="max-width:700px;margin:auto;margin-top:20px;text-align:left;">
-      <li>Customer places order online or via WhatsApp.</li>
-      <li>We connect you to the nearest licensed gas Seller.</li>
-      <li>Fast and safe LPG delivery to your location.</li>
+      <li>Customer places order</li>
+      <li>We connect nearest seller</li>
+      <li>Fast delivery</li>
     </ol>
-  </div>
-</section>
-
-<!-- ✅ FIXED -->
-<section class="section text-center" id="becomeSeller">
-  <div class="container">
-    <h2>Become a Gas Seller</h2>
-    <p style="max-width:700px;margin:auto;margin-top:20px;">
-      Are you a licensed LPG supplier anywhere in Kenya? Join Adawe Gas and get more customers in your area.
-    </p>
   </div>
 </section>
 
@@ -90,7 +77,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <h2 class="text-center mb-4">Place Order</h2>
 
 <form id="orderForm" class="col-md-6 mx-auto card-modern">
-
 <input id="name" class="form-control mb-3" placeholder="Name" required>
 <input id="phone" class="form-control mb-3" placeholder="Phone" required>
 <input id="location" class="form-control mb-3" placeholder="Location" required>
@@ -108,13 +94,11 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <option>Taifa Gas</option>
 </select>
 
-<!-- ✅ FIXED BUTTON -->
 <button type="submit" class="btn w-100" style="background:#25D366;color:white;">
 📲 Send Order via WhatsApp
 </button>
 
 <p id="trackingNumber" class="mt-3 text-success fw-bold"></p>
-
 </form>
 </div>
 </section>
@@ -124,16 +108,14 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <h2 class="text-center mb-4">Register Seller</h2>
 
 <form id="sellerForm" class="col-md-6 mx-auto card-modern">
-
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
 <input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
-<input id="sellerLocation" class="form-control mb-3" placeholder="Location (auto or manual)" required>
+<input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
 
 <input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price">
 <input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price">
 
-<button class="btn btn-primary w-100">Register</button>
-
+<button type="submit" class="btn btn-primary w-100">Register</button>
 </form>
 </div>
 </section>
@@ -146,11 +128,6 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 </section>
 
 <footer class="text-center"><p>© 2026 Adawe Gas – Kenya</p></footer>
-
-<a href="https://wa.me/254727015434"
-style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:14px;border-radius:50px;text-decoration:none;">
-WhatsApp
-</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -165,84 +142,56 @@ const firebaseConfig = {
  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
-const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
-// ✅ FIXED WhatsApp link
-document.getElementById("orderForm").addEventListener("submit", async function(e){
+// ORDER
+document.getElementById("orderForm").addEventListener("submit", async e=>{
  e.preventDefault();
+ try{
+  const tracking = generateTracking();
 
- const name = document.getElementById("name").value.trim();
- const phone = document.getElementById("phone").value.trim();
- const location = document.getElementById("location").value.trim();
- const quantity = parseInt(document.getElementById("quantity").value);
- const brand = document.getElementById("brand").value;
+  await addDoc(collection(db,"orders"),{
+    name:name.value,
+    phone:phone.value,
+    location:location.value,
+    quantity:parseInt(quantity.value),
+    brand:brand.value,
+    tracking,
+    createdAt:serverTimestamp()
+  });
 
- if(!name || !phone || !location || !quantity || !brand){
-  alert("Fill all fields");
-  return;
+  trackingNumber.innerText="Tracking: "+tracking;
+
+  window.open(`https://wa.me/254727015434?text=Order ${tracking}`);
+
+  e.target.reset();
+
+ }catch(err){
+  alert("Error saving order");
  }
-
- const tracking = generateTracking();
-
- await addDoc(collection(db,"orders"),{
-  name, phone, location, quantity, brand,
-  tracking,
-  status:"Pending",
-  createdAt: serverTimestamp()
- });
-
- document.getElementById("trackingNumber").innerText = "Tracking: "+tracking;
-
- window.location.href = `https://wa.me/254727015434?text=${encodeURIComponent(
-`New Order:
-Name:${name}
-Phone:${phone}
-Location:${location}
-Qty:${quantity}
-Brand:${brand}
-Tracking:${tracking}`
-)}`;
-
- this.reset();
 });
 
-// ✅ FIXED getLocation
-window.getLocation = function(){
- if(navigator.geolocation){
-  navigator.geolocation.getCurrentPosition(pos=>{
-   document.getElementById("sellerLocation").value =
-    pos.coords.latitude + "," + pos.coords.longitude;
-  });
- } else {
-  alert("Geolocation not supported");
- }
-}
-
-// ✅ Seller save
-document.getElementById("sellerForm").addEventListener("submit", async function(e){
+// SELLER
+document.getElementById("sellerForm").addEventListener("submit", async e=>{
  e.preventDefault();
+ try{
+  await addDoc(collection(db,"sellers"),{
+    name:sellerName.value,
+    phone:sellerPhone.value,
+    location:sellerLocation.value,
+    createdAt:serverTimestamp()
+  });
 
- const name = document.getElementById("sellerName").value;
- const phone = document.getElementById("sellerPhone").value;
- const location = document.getElementById("sellerLocation").value;
- const price6 = document.getElementById("sellerPrice6").value;
- const price13 = document.getElementById("sellerPrice13").value;
+  alert("Seller saved");
+  e.target.reset();
 
- await addDoc(collection(db,"sellers"),{
-  name, phone, location,
-  price6: price6 ? parseInt(price6) : null,
-  price13: price13 ? parseInt(price13) : null,
-  status:"pending",
-  createdAt: serverTimestamp()
- });
-
- alert("Seller submitted ✔");
- this.reset();
+ }catch(err){
+  alert("Error saving seller");
+ }
 });
 </script>
 
