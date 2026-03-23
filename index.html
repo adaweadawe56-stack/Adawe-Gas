@@ -15,14 +15,20 @@ body {
   color: white;
 }
 
+html {
+  scroll-behavior: smooth;
+}
+
 .navbar {
   background: rgba(0,0,0,0.3);
   backdrop-filter: blur(10px);
+  position: sticky;
+  top: 0;
+  z-index: 1000;
 }
 
 .navbar .nav-link {
   color: #ffffff !important;
-  font-weight: 500;
 }
 
 .navbar .nav-link:hover {
@@ -42,14 +48,6 @@ body {
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
 
-h2 {
-  font-weight:bold;
-}
-
-button {
-  border-radius:10px;
-}
-
 .hero {
   text-align:center;
   padding:80px 20px;
@@ -58,10 +56,6 @@ button {
 .hero h1 {
   font-size:42px;
   font-weight:bold;
-}
-
-.hero p {
-  opacity:0.9;
 }
 
 </style>
@@ -97,21 +91,21 @@ button {
 <section class="section text-center" id="services">
   <div class="container card-modern">
     <h2>Our Services</h2>
-    <p class="mt-3">LPG Delivery • Seller Network • Same-Day Delivery</p>
+    <p>LPG Delivery • Seller Network • Same-Day Delivery</p>
   </div>
 </section>
 
 <section class="section text-center" id="about">
   <div class="container card-modern">
     <h2>About Adawe Gas</h2>
-    <p class="mt-3">We provide reliable LPG gas delivery services across Kenya.</p>
+    <p>Reliable LPG gas delivery across Kenya.</p>
   </div>
 </section>
 
 <section class="section text-center" id="howItWorks">
   <div class="container card-modern">
     <h2>How It Works</h2>
-    <p class="mt-3">Order → Nearest Seller → Fast Delivery</p>
+    <p>Order → Nearest Seller → Fast Delivery</p>
   </div>
 </section>
 
