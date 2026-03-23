@@ -11,6 +11,8 @@
 body {font-family: Arial;margin:0;}
 .navbar {background:#0b7a3c;}
 .navbar-brand,.nav-link {color:white!important;}
+.hero{background:#28a745;color:white;padding:140px 0;}
+.btn-main{background:white;color:#28a745;font-weight:bold;padding:12px 25px;border-radius:8px;text-decoration:none;}
 .section{padding:60px 0;}
 .card-modern{background:white;padding:25px;border-radius:12px;box-shadow:0 5px 15px rgba(0,0,0,0.1);}
 footer{background:#0b7a3c;color:white;padding:20px;text-align:center;}
@@ -21,12 +23,56 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <body>
 
 <nav class="navbar navbar-expand-lg">
-<div class="container">
-<a class="navbar-brand">Adawe Gas</a>
-</div>
+  <div class="container">
+    <a class="navbar-brand">Adawe Gas</a>
+    <button class="navbar-toggler bg-white" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="#seller">Become a Seller</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+      </ul>
+    </div>
+  </div>
 </nav>
 
-<!-- ORDER -->
+<section class="section bg-light text-center" id="services">
+  <div class="container">
+    <h2>Our Services</h2>
+    <ul style="list-style:none;padding:0;margin-top:20px;">
+      <li>• LPG Gas Cylinder Delivery</li>
+      <li>• Seller Distribution Network</li>
+      <li>• Same-Day Delivery in Selected Areas</li>
+    </ul>
+  </div>
+</section>
+
+<section class="section text-center" id="about">
+  <div class="container">
+    <h2>About Adawe Gas</h2>
+    <p style="max-width:700px;margin:auto;margin-top:20px;">
+      Adawe Gas provides reliable LPG gas delivery services across Kenya.
+    </p>
+  </div>
+</section>
+
+<section class="section bg-light text-center" id="howItWorks">
+  <div class="container">
+    <h2>How It Works</h2>
+    <ol style="max-width:700px;margin:auto;margin-top:20px;text-align:left;">
+      <li>Customer places order online or via WhatsApp.</li>
+      <li>We connect nearest seller.</li>
+      <li>Fast delivery.</li>
+    </ol>
+  </div>
+</section>
+
 <section class="section" id="order">
 <div class="container">
 <h2 class="text-center mb-4">Place Order</h2>
@@ -35,16 +81,22 @@ button:hover{transform:scale(1.03);transition:0.2s;}
 <input id="name" class="form-control mb-3" placeholder="Name" required>
 <input id="phone" class="form-control mb-3" placeholder="Phone" required>
 <input id="location" class="form-control mb-3" placeholder="Location" required>
+<input id="quantity" type="number" class="form-control mb-3" placeholder="Quantity (6 or 13)" required>
 
 <select id="brand" class="form-select mb-3" required>
 <option value="">Select Brand</option>
 <option>K-Gas</option>
 <option>AfriGas</option>
+<option>Pro Gas</option>
 <option>TotalEnergies</option>
+<option>Hashi Gas</option>
+<option>Lake Gas</option>
+<option>Rubis Gas</option>
+<option>Taifa Gas</option>
 </select>
 
 <button type="submit" class="btn w-100" style="background:#25D366;color:white;">
-Send Order
+📲 Send Order via WhatsApp
 </button>
 
 <p id="trackingNumber" class="mt-3 text-success fw-bold"></p>
@@ -52,7 +104,6 @@ Send Order
 </div>
 </section>
 
-<!-- SELLER -->
 <section class="section" id="seller">
 <div class="container">
 <h2 class="text-center mb-4">Register Seller</h2>
@@ -62,16 +113,31 @@ Send Order
 <input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
 <input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
 
-<button type="submit" class="btn btn-primary w-100">Register</button>
+<input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price" required>
+<input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price" required>
+
+<button class="btn btn-primary w-100">Register</button>
 </form>
 </div>
 </section>
 
-<footer class="text-center"><p>© Adawe Gas</p></footer>
+<section class="section bg-light text-center" id="contact">
+<h2>Contact</h2>
+<p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
+<p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
+<p>📍 Nairobi, Kenya</p>
+</section>
+
+<footer class="text-center"><p>© 2026 Adawe Gas – Kenya</p></footer>
+
+<a href="https://wa.me/254727015434"
+style="position:fixed;bottom:20px;right:20px;background:#25D366;color:white;padding:14px;border-radius:50px;text-decoration:none;">
+WhatsApp
+</a>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, getDocs, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
@@ -82,92 +148,105 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// TRACKING
 function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
-// GET SELLERS
-async function getSellers(){
- const snapshot = await getDocs(collection(db,"sellers"));
- let list = [];
- snapshot.forEach(doc=>{
-  list.push(doc.data());
- });
- return list;
-}
-
-// ORDER
-document.getElementById("orderForm").addEventListener("submit", async e=>{
+// ORDER FIXED
+document.getElementById("orderForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
- try{
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const location = document.getElementById("location").value;
-  const brand = document.getElementById("brand").value;
+ const name = name.value.trim();
+ const phone = phone.value.trim();
+ const location = location.value.trim();
+ const quantity = parseInt(quantity.value);
+ const brand = brand.value;
 
-  const sellers = await getSellers();
+ if(!name || !phone || !location || !quantity || !brand){
+  alert("Fill all fields");
+  return;
+ }
 
-  if(sellers.length === 0){
-    alert("No sellers available");
-    return;
+ if(quantity !== 6 && quantity !== 13){
+  alert("Only 6kg or 13kg allowed");
+  return;
+ }
+
+ const snap = await getDocs(collection(db,"sellers"));
+ let sellers=[];
+
+ snap.forEach(doc=>{
+  let s = doc.data();
+  if(s.price6 || s.price13){
+    sellers.push(s);
   }
+ });
 
-  // AUTO ASSIGN (random)
-  const seller = sellers[Math.floor(Math.random()*sellers.length)];
+ if(sellers.length===0){
+  alert("No sellers available");
+  return;
+ }
 
-  const tracking = generateTracking();
+ const seller = sellers[Math.floor(Math.random()*sellers.length)];
+ const price = quantity===6 ? seller.price6 : seller.price13;
 
-  await addDoc(collection(db,"orders"),{
-    name, phone, location, brand,
-    sellerName: seller.name,
-    sellerPhone: seller.phone,
-    tracking,
-    status:"Pending",
-    createdAt: serverTimestamp()
-  });
+ if(!price){
+  alert("Seller has no price");
+  return;
+ }
 
-  document.getElementById("trackingNumber").innerText =
-   "Tracking: "+tracking+" | Seller: "+seller.name;
+ const tracking = generateTracking();
 
-  // WHATSAPP TO SELLER
-  const msg = `New Order:
-${name}
-${location}
-${brand}
+ await addDoc(collection(db,"orders"),{
+  name,phone,location,quantity,brand,
+  price,
+  sellerName:seller.name,
+  sellerPhone:seller.phone,
+  tracking,
+  status:"Pending",
+  createdAt:serverTimestamp()
+ });
+
+ trackingNumber.innerText=`Tracking: ${tracking} | ${quantity}kg - ${price}`;
+
+ const message=`New Order:
+Name:${name}
+Phone:${phone}
+Location:${location}
+Size:${quantity}kg
+Brand:${brand}
+Price:${price}
 Tracking:${tracking}`;
 
-  window.open(`https://wa.me/${seller.phone}?text=${encodeURIComponent(msg)}`);
+ window.location.href=`https://wa.me/${seller.phone}?text=${encodeURIComponent(message)}`;
 
-  e.target.reset();
-
- }catch(err){
-  console.error(err);
-  alert("Error order");
- }
+ this.reset();
 });
 
-// SELLER
-document.getElementById("sellerForm").addEventListener("submit", async e=>{
+// SELLER FIXED
+document.getElementById("sellerForm").addEventListener("submit", async function(e){
  e.preventDefault();
 
- try{
-  const name = document.getElementById("sellerName").value;
-  const phone = document.getElementById("sellerPhone").value;
-  const location = document.getElementById("sellerLocation").value;
+ const name = sellerName.value;
+ const phone = sellerPhone.value;
+ const location = sellerLocation.value;
+ const price6 = sellerPrice6.value;
+ const price13 = sellerPrice13.value;
 
-  await addDoc(collection(db,"sellers"),{
-    name, phone, location,
-    createdAt: serverTimestamp()
-  });
-
-  alert("Seller registered");
-  e.target.reset();
-
- }catch(err){
-  alert("Error seller");
+ if(!price6 || !price13){
+  alert("Enter both prices");
+  return;
  }
+
+ await addDoc(collection(db,"sellers"),{
+  name,phone,location,
+  price6:parseInt(price6),
+  price13:parseInt(price13),
+  createdAt:serverTimestamp()
+ });
+
+ alert("Seller saved ✔");
+ this.reset();
 });
 </script>
 
