@@ -1,9 +1,10 @@
 <!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas Admin Dashboard PRO</title>
+<title>Adawe Gas Admin Dashboard PRO Safe</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
@@ -23,16 +24,18 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 .search-input { margin-bottom:10px; width:100%; padding:6px 8px; }
 #map{height:400px;border-radius:20px;}
 </style>
+
 </head>
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
 <div class="container">
-<a class="navbar-brand">Adawe Gas Admin PRO</a>
+<a class="navbar-brand">Adawe Gas Admin PRO Safe</a>
 </div>
 </nav>
 
 <!-- LOGIN -->
+
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
   <h3 class="text-center mb-3">Admin Login</h3>
   <input id="email" type="email" class="form-control mb-2" placeholder="Email">
@@ -42,9 +45,10 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 </div>
 
 <!-- DASHBOARD -->
+
 <div id="dashboard" style="display:none;">
 <header>
-  Adawe Gas Control PRO
+  Adawe Gas Control PRO Safe
   <span id="pendingCount" style="background:#dc3545;color:white;padding:3px 8px;border-radius:50%;margin-left:10px;">0</span>
 </header>
 
@@ -119,14 +123,14 @@ let ordersData=[], sellersData=[], map, markers=[];
 
 function initMap(){ map = L.map('map').setView([-1.28,36.81],10); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
 
-window.login = function(){ const email = document.getElementById("email").value; const password = document.getElementById("password").value; signInWithEmailAndPassword(auth,email,password).then(res=>{if(res.user.email !== email){alert("Not admin"); return;} document.getElementById("loginPage").style.display="none"; document.getElementById("dashboard").style.display="block"; initMap(); startRealtime(); }).catch(()=>{document.getElementById("loginError").innerText="Login failed";});}
+window.login = function(){ const email=document.getElementById("email").value; const password=document.getElementById("password").value; signInWithEmailAndPassword(auth,email,password).then(res=>{if(res.user.email!==email){alert("Not admin"); return;} document.getElementById("loginPage").style.display="none"; document.getElementById("dashboard").style.display="block"; initMap(); startRealtime();}).catch(()=>{document.getElementById("loginError").innerText="Login failed";});}
 
 function startRealtime(){
-  onSnapshot(collection(db,"orders"), snapshot=>{ ordersData=[]; snapshot.forEach(docSnap=> ordersData.push({id:docSnap.id,...docSnap.data()})); renderOrdersTable(); document.getElementById("totalOrders").innerText = ordersData.length; document.getElementById("pendingOrders").innerText = ordersData.filter(o=>o.status==="Pending").length; });
+  onSnapshot(collection(db,"orders"), snapshot=>{ ordersData=[]; snapshot.forEach(docSnap=> ordersData.push({id:docSnap.id,...docSnap.data()})); renderOrdersTable(); document.getElementById("totalOrders").innerText=ordersData.length; document.getElementById("pendingOrders").innerText=ordersData.filter(o=>o.status==="Pending").length; });
   onSnapshot(collection(db,"sellers"), snapshot=>{ sellersData=[]; let pendingCount=0; snapshot.forEach(docSnap=>{const s={id:docSnap.id,...docSnap.data()}; sellersData.push(s); if(s.status==="pending") pendingCount++;}); document.getElementById("pendingCount").innerText=pendingCount; renderSellersTable(); });
 }
 
-function filterByDate(item, field, filter){ const now=new Date(); const date=item[field]&&item[field].toDate?item[field].toDate():new Date(); switch(filter){case 'today': return date.toDateString()===now.toDateString(); case 'yesterday': const yd=new Date(now); yd.setDate(now.getDate()-1); return date.toDateString()===yd.toDateString(); case 'lastWeek': const lw=new Date(now); lw.setDate(now.getDate()-7); return date>=lw; case 'lastMonth': const lm=new Date(now); lm.setMonth(now.getMonth()-1); return date>=lm; default: return true;}}
+function filterByDate(item, field, filter){ if(!item[field] || !item[field].toDate) return false; const now=new Date(); const date=item[field].toDate(); switch(filter){ case 'today': return date.toDateString()===now.toDateString(); case 'yesterday': const yd=new Date(now); yd.setDate(now.getDate()-1); return date.toDateString()===yd.toDateString(); case 'lastWeek': const lw=new Date(now); lw.setDate(now.getDate()-7); return date>=lw; case 'lastMonth': const lm=new Date(now); lm.setMonth(now.getMonth()-1); return date>=lm; default: return true;}}
 
 function renderOrdersTable(){
   const table=document.getElementById("ordersTable");
@@ -148,12 +152,12 @@ function renderSellersTable(){
   const filterDate=document.getElementById("filterSellersDate").value;
   if(map){markers.forEach(m=>map.removeLayer(m)); markers=[];}
   table.innerHTML=`<tr><th>Name</th><th>Location</th><th>Phone</th><th>6kg</th><th>13kg</th><th>Status</th><th>Actions</th></tr>`;
-  sellersData.filter(s=>(!filterStatus || s.status===filterStatus)&&filterByDate(s,'createdAt',filterDate)).filter(s=>(s.name||"").toLowerCase().includes(searchText)).forEach(s=>{
+  sellersData.filter(s=>(!filterStatus||s.status===filterStatus)&&filterByDate(s,'createdAt',filterDate)).filter(s=>(s.name||"").toLowerCase().includes(searchText)).forEach(s=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`<td>${s.name||"-"}</td><td>${s.location||"-"}</td><td>${s.phone||"-"}</td><td>${s.price6||"-"}</td><td>${s.price13||"-"}</td><td class='${s.status.toLowerCase()}'>${s.status||"pending"}</td><td>${s.status==='pending'?`<button class="btn btn-success btn-sm" onclick="approveSeller('${s.id}')">Approve</button>`:""}${s.status!=='rejected'?`<button class="btn btn-danger btn-sm" onclick="rejectSeller('${s.id}')">Reject</button>`:""}<button class="btn btn-primary btn-sm" onclick="editSeller('${s.id}')">Edit</button><button class="btn btn-dark btn-sm" onclick="deleteSeller('${s.id}')">Delete</button></td>`;
     table.appendChild(tr);
     const lat=parseFloat(s.lat), lng=parseFloat(s.lng);
-    if(!isNaN(lat)&&!isNaN(lng)&&s.status==="approved"){const marker=L.marker([lat,lng]).addTo(map); marker.bindPopup(`<b>${s.name}</b>`); markers.push(marker);}
+    if(!isNaN(lat)&&!isNaN(lng)&&s.status==='approved'){const marker=L.marker([lat,lng]).addTo(map); marker.bindPopup(`<b>${s.name}</b>`); markers.push(marker);}
   });
 }
 
@@ -165,12 +169,12 @@ window.editSeller=async id=>{const s=sellersData.find(x=>x.id===id); if(!s) retu
 window.editOrder=async id=>{const o=ordersData.find(x=>x.id===id); if(!o) return; const name=prompt("Name",o.name); const phone=prompt("Phone",o.phone); if(name && phone){await updateDoc(doc(db,"orders",id),{name,phone});}}
 
 window.showTop10Cheapest=()=>{
-  const top10 = sellersData.filter(s=>s.price6||s.price13).sort((a,b)=>Math.min(a.price6||Infinity,a.price13||Infinity)-Math.min(b.price6||Infinity,b.price13||Infinity)).slice(0,10);
+  const top10=sellersData.filter(s=>s.price6>0||s.price13>0).sort((a,b)=>Math.min(a.price6||Infinity,a.price13||Infinity)-Math.min(b.price6||Infinity,b.price13||Infinity)).slice(0,10);
   alert('Top 10 Cheapest Sellers:\n'+top10.map(s=>`${s.name}: 6kg=${s.price6||'-'}, 13kg=${s.price13||'-'}`).join('\n'));
 }
 
 function distance(lat1,lon1,lat2,lon2){const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-window.showNearestSeller=function(){const center=map.getCenter(); let nearest=null,min=Infinity; sellersData.forEach(s=>{const lat=parseFloat(s.lat),lng=parseFloat(s.lng);if(s.status!=="approved"||isNaN(lat)||isNaN(lng)) return;const d=distance(center.lat,center.lng,lat,lng);if(d<min){min=d;nearest=s;min=d;}}); document.getElementById("nearestSellerInfo").innerText=nearest?`Nearest: ${nearest.name} (${min.toFixed(2)} km)`:"No seller";}
+window.showNearestSeller=function(){if(!map){alert('Map not ready'); return;} const center=map.getCenter(); let nearest=null,min=Infinity; sellersData.forEach(s=>{const lat=parseFloat(s.lat),lng=parseFloat(s.lng); if(s.status!=='approved'||isNaN(lat)||isNaN(lng)) return; const d=distance(center.lat,center.lng,lat,lng); if(d<min){min=d;nearest=s; min=d;}}); document.getElementById("nearestSellerInfo").innerText=nearest?`Nearest: ${nearest.name} (${min.toFixed(2)} km)`:"No seller";}
 
 document.getElementById("searchOrders").addEventListener("input",renderOrdersTable);
 document.getElementById("filterOrdersDate").addEventListener("change",renderOrdersTable);
@@ -178,5 +182,6 @@ document.getElementById("searchSellers").addEventListener("input",renderSellersT
 document.getElementById("filterSellersDate").addEventListener("change",renderSellersTable);
 document.getElementById("filterStatus").addEventListener("change",renderSellersTable);
 </script>
+
 </body>
 </html>
