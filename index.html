@@ -210,8 +210,8 @@ orderForm.addEventListener("submit", async function(e){
  const trackingEl = document.getElementById("trackingNumber");
 
  phone = formatKenyaPhone(phone);
- if(!/^\+2547\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
+ if(!/^\+254\d{8}$/.test(phone)){
+   alert("Enter valid Kenya phone (+254XXXXXXXXX)");
    return;
  }
 
@@ -220,7 +220,7 @@ orderForm.addEventListener("submit", async function(e){
   return;
  }
 
- if(quantity !== 6 && quantity !== 13){
+ if(quantity != 6 && quantity != 13){
   alert("Only 6kg or 13kg allowed");
   return;
  }
@@ -278,8 +278,8 @@ sellerForm.addEventListener("submit", async function(e){
  const price13 = parseInt(document.getElementById("sellerPrice13").value);
 
  phone = formatKenyaPhone(phone);
- if(!/^\+2547\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
+ if(!/^\+254\d{8}$/.test(phone)){
+   alert("Enter valid Kenya phone (+254XXXXXXXXX)");
    return;
  }
 
