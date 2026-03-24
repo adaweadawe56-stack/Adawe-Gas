@@ -14,12 +14,14 @@ body{margin:0;background:#f7f9fb}
 .navbar{background:#0b7a3c}
 .navbar-brand,.nav-link{color:white!important}
 header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; font-weight:bold; }
-.stats { display:flex; gap:20px; margin-top:20px; }
-.stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; }
+.stats { display:flex; gap:20px; margin-top:20px; flex-wrap:wrap;}
+.stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; min-width:150px;}
 .table-striped th { background:#198754; color:white; }
 .table-striped td.pending{background:#f8d7da;}
 .table-striped td.approved{background:#d4edda;}
 .table-striped td.rejected{background:#e2e3e5;}
+.table-striped td.processing{background:#fff3cd;}
+.table-striped td.completed{background:#cfe2ff;}
 .search-input { margin-bottom:10px; width:100%; padding:6px 8px; }
 #map{height:400px;border-radius:20px;}
 </style>
@@ -103,32 +105,77 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const app = initializeApp({apiKey:"AIzaSy...",projectId:"adawe-gas-system-82187"});
+const app = initializeApp({
+  apiKey:"AIzaSy...",
+  authDomain:"YOUR_PROJECT.firebaseapp.com",
+  projectId:"adawe-gas-system-82187"
+});
+
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 let ordersData=[], sellersData=[], map, markers=[];
+let unsubOrders=null, unsubSellers=null;
 
-const safe=v=>v||"";
+const safe=v=>v ?? "";
 const lower=v=>(v||"").toLowerCase();
 
+function safeDate(ts){
+  try{
+    return ts?.toDate ? ts.toDate() : new Date(ts);
+  }catch{
+    return new Date();
+  }
+}
+
 function formatDateTime(ts){
-  const d=ts?.toDate?ts.toDate():new Date(ts||Date.now());
+  const d=safeDate(ts);
   return d.toLocaleDateString()+" "+d.toLocaleTimeString();
 }
 
 function isToday(ts){
-  const d=ts?.toDate?ts.toDate():new Date();
+  const d=safeDate(ts);
+  return d.toDateString()===new Date().toDateString();
+}
+
+function checkDate(ts,filter){
+  const d=safeDate(ts);
   const now=new Date();
-  return d.toDateString()===now.toDateString();
+
+  if(filter==="today") return d.toDateString()===now.toDateString();
+
+  if(filter==="yesterday"){
+    const y=new Date();
+    y.setDate(now.getDate()-1);
+    return d.toDateString()===y.toDateString();
+  }
+
+  if(filter==="lastWeek"){
+    const w=new Date();
+    w.setDate(now.getDate()-7);
+    return d>=w;
+  }
+
+  if(filter==="lastMonth"){
+    const m=new Date();
+    m.setMonth(now.getMonth()-1);
+    return d>=m;
+  }
+
+  return true;
 }
 
 function initMap(){
+  if(map) return;
   map=L.map('map').setView([-1.28,36.81],10);
   L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
 }
 
 window.login=function(){
+  if(email.value !== "admin@adawe.com"){
+    loginError.innerText="Not authorized";
+    return;
+  }
   signInWithEmailAndPassword(auth,email.value,password.value)
   .then(()=>{
     loginPage.style.display="none";
@@ -139,41 +186,65 @@ window.login=function(){
   .catch(()=>loginError.innerText="Login failed");
 }
 
-// REALTIME
 function startRealtime(){
-  onSnapshot(collection(db,"orders"), snap=>{
-    ordersData=[];
-    snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
-    renderOrdersTable();
+  if(unsubOrders) unsubOrders();
+  if(unsubSellers) unsubSellers();
 
-    totalOrders.innerText=ordersData.length;
-    pendingOrders.innerText=ordersData.filter(o=>lower(o.status)=="pending").length;
-    todayOrders.innerText=ordersData.filter(o=>isToday(o.createdAt)).length;
+  unsubOrders = onSnapshot(
+    collection(db,"orders"),
+    snap=>{
+      ordersData=[];
+      snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
 
-    // 💰 INCOME (simple example: quantity * 10)
-    totalIncome.innerText=ordersData.reduce((sum,o)=>sum+(parseInt(o.quantity||0)*10),0);
-  });
+      totalOrders.innerText=ordersData.length;
+      pendingOrders.innerText=ordersData.filter(o=>lower(o.status)=="pending").length;
+      todayOrders.innerText=ordersData.filter(o=>isToday(o.createdAt)).length;
 
-  onSnapshot(collection(db,"sellers"), snap=>{
-    sellersData=[];
-    let p=0;
-    snap.forEach(d=>{
-      const s={id:d.id,...d.data()};
-      sellersData.push(s);
-      if(lower(s.status)=="pending") p++;
-    });
-    pendingCount.innerText=p;
-    renderSellersTable();
-  });
+      totalIncome.innerText=ordersData.reduce((sum,o)=>{
+        const qty=parseFloat(o.quantity)||0;
+        return sum + (qty*10);
+      },0);
+
+      renderOrdersTable();
+    },
+    ()=>alert("Orders connection error")
+  );
+
+  unsubSellers = onSnapshot(
+    collection(db,"sellers"),
+    snap=>{
+      sellersData=[];
+      let p=0;
+      snap.forEach(d=>{
+        const s={id:d.id,...d.data()};
+        sellersData.push(s);
+        if(lower(s.status)=="pending") p++;
+      });
+      pendingCount.innerText=p;
+      renderSellersTable();
+    },
+    ()=>alert("Sellers connection error")
+  );
 }
 
-// ORDERS TABLE
+// ORDERS
 function renderOrdersTable(){
   const q=lower(searchOrders.value);
+  const filter=filterOrdersDate.value;
+
   ordersTable.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Qty</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
-  ordersData.filter(o=>lower(o.name).includes(q)||safe(o.phone).includes(q))
-  .forEach(o=>{
+  const filtered=ordersData.filter(o=>
+    (lower(o.name||"").includes(q)||safe(o.phone).includes(q))
+    && checkDate(o.createdAt,filter)
+  );
+
+  if(filtered.length===0){
+    ordersTable.innerHTML += `<tr><td colspan="8">No Orders</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(o=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`
     <td>${safe(o.name)}</td>
@@ -200,11 +271,26 @@ function renderOrdersTable(){
   });
 }
 
-// SELLERS TABLE
+// SELLERS
 function renderSellersTable(){
+  const q=lower(searchSellers.value);
+  const statusF=lower(filterStatus.value);
+  const dateF=filterSellersDate.value;
+
   sellersTable.innerHTML=`<tr><th>Name</th><th>Location</th><th>Phone</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
-  sellersData.forEach(s=>{
+  const filtered=sellersData.filter(s=>
+    (lower(s.name||"").includes(q)||safe(s.phone).includes(q))
+    && (!statusF || lower(s.status)===statusF)
+    && checkDate(s.createdAt,dateF)
+  );
+
+  if(filtered.length===0){
+    sellersTable.innerHTML += `<tr><td colspan="8">No Sellers</td></tr>`;
+    return;
+  }
+
+  filtered.forEach(s=>{
     const st=lower(s.status);
     const tr=document.createElement("tr");
 
@@ -222,9 +308,20 @@ function renderSellersTable(){
     <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm">Edit</button>
     <button onclick="deleteSeller('${s.id}')" class="btn btn-dark btn-sm">Delete</button>
     </td>`;
-
     sellersTable.appendChild(tr);
   });
+
+  if(map){
+    markers.forEach(m=>{ try{map.removeLayer(m);}catch{} });
+    markers.length=0;
+
+    filtered.forEach(s=>{
+      if(s.lat && s.lng){
+        const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(s.name||"Seller");
+        markers.push(m);
+      }
+    });
+  }
 }
 
 // ACTIONS
@@ -235,17 +332,59 @@ window.rejectSeller=id=>updateDoc(doc(db,"sellers",id),{status:"rejected"});
 
 window.editSeller=id=>{
   const s=sellersData.find(x=>x.id==id);
-  const name=prompt("Name",s.name);
-  const phone=prompt("Phone",s.phone);
+  const name=prompt("Name",s?.name||"");
+  const phone=prompt("Phone",s?.phone||"");
   if(name&&phone) updateDoc(doc(db,"sellers",id),{name,phone});
 };
 
 window.editOrder=id=>{
   const o=ordersData.find(x=>x.id==id);
-  const name=prompt("Name",o.name);
-  const phone=prompt("Phone",o.phone);
+  const name=prompt("Name",o?.name||"");
+  const phone=prompt("Phone",o?.phone||"");
   if(name&&phone) updateDoc(doc(db,"orders",id),{name,phone});
 };
+
+// EXTRA
+window.showTop10Cheapest=function(){
+  const sorted=[...sellersData]
+    .filter(s=>s.price6)
+    .sort((a,b)=>(parseFloat(a.price6)||0)-(parseFloat(b.price6)||0))
+    .slice(0,10);
+
+  alert(sorted.map(s=>s.name+" - "+s.price6).join("\n") || "No data");
+}
+
+window.showNearestSeller=function(){
+  if(!navigator.geolocation){
+    alert("Location not supported");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    pos=>{
+      const {latitude,longitude}=pos.coords;
+      let nearest=null,min=Infinity;
+
+      sellersData.forEach(s=>{
+        if(!s.lat||!s.lng) return;
+        const d=Math.hypot(latitude-s.lat,longitude-s.lng);
+        if(d<min){min=d;nearest=s;}
+      });
+
+      nearestSellerInfo.innerText=nearest
+        ? "Nearest: "+nearest.name+" ("+nearest.location+")"
+        : "No seller found";
+    },
+    ()=>alert("Location permission denied")
+  );
+}
+
+// LIVE UI
+searchOrders.oninput=renderOrdersTable;
+searchSellers.oninput=renderSellersTable;
+filterOrdersDate.onchange=renderOrdersTable;
+filterSellersDate.onchange=renderSellersTable;
+filterStatus.onchange=renderSellersTable;
 
 </script>
 </body>
