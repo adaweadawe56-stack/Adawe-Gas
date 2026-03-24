@@ -102,10 +102,14 @@ import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from 
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 // Firebase config
-const app = initializeApp({apiKey:"AIzaSy...",projectId:"adawe-gas-system-82187"});
-const db = getFirestore(app);
-const auth = getAuth(app);
-
+const firebaseConfig = {
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+  authDomain: "adawe-gas-system-82187.firebaseapp.com",
+  projectId: "adawe-gas-system-82187",
+  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+  messagingSenderId: "644303663526",
+  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+};
 let ordersData=[], sellersData=[], map, markers=[];
 let unsubOrders=null, unsubSellers=null;
 
