@@ -98,9 +98,10 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+// 🔑 Firebase Config
 const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -109,6 +110,11 @@ const firebaseConfig = {
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+const auth = getAuth(app);
+
 let ordersData=[], sellersData=[], map, markers=[];
 let unsubOrders=null, unsubSellers=null;
 
@@ -116,55 +122,42 @@ const safe=v=>v ?? "";
 const lower=v=>(v||"").toLowerCase();
 
 // FORMAT DATE
-function formatDateTime(ts){
-  const d=ts?.toDate?ts.toDate():new Date(ts||Date.now());
-  return d.toLocaleDateString()+" "+d.toLocaleTimeString();
-}
+function formatDateTime(ts){ const d=ts?.toDate?ts.toDate():new Date(ts||Date.now()); return d.toLocaleDateString()+" "+d.toLocaleTimeString(); }
 
 // CHECK TODAY
-function isToday(ts){
-  const d=ts?.toDate?ts.toDate():new Date();
-  return d.toDateString()===new Date().toDateString();
-}
+function isToday(ts){ const d=ts?.toDate?ts.toDate():new Date(); return d.toDateString()===new Date().toDateString(); }
 
 // DATE FILTER
-function checkDate(ts,filter){
-  const d=ts?.toDate?ts.toDate():new Date();
-  const now=new Date();
-  if(filter==="today") return d.toDateString()===now.toDateString();
-  if(filter==="yesterday"){ const y=new Date(); y.setDate(now.getDate()-1); return d.toDateString()===y.toDateString(); }
-  if(filter==="lastWeek"){ const w=new Date(); w.setDate(now.getDate()-7); return d>=w; }
-  if(filter==="lastMonth"){ const m=new Date(); m.setMonth(now.getMonth()-1); return d>=m; }
-  return true;
-}
+function checkDate(ts,filter){ const d=ts?.toDate?ts.toDate():new Date(); const now=new Date();
+if(filter==="today") return d.toDateString()===now.toDateString();
+if(filter==="yesterday"){ const y=new Date(); y.setDate(now.getDate()-1); return d.toDateString()===y.toDateString(); }
+if(filter==="lastWeek"){ const w=new Date(); w.setDate(now.getDate()-7); return d>=w; }
+if(filter==="lastMonth"){ const m=new Date(); m.setMonth(now.getMonth()-1); return d>=m; }
+return true; }
 
 // MAP INIT
-function initMap(){
-  if(map) return;
-  map=L.map('map').setView([-1.28,36.81],10);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
-}
+function initMap(){ if(map) return; map=L.map('map').setView([-1.28,36.81],10); L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); }
 
-// LOGIN
-const admins = ["adaweadawe56@gmail.com"];
-window.login=function(){
-  loginError.innerText="";
-  if(!admins.includes(email.value)){
-    loginError.innerText="Not authorized";
-    return;
-  }
-
-  signInWithEmailAndPassword(auth,email.value,password.value)
-  .then(()=>{
+// LOGIN (admins check)
+window.login = async function() {
+  loginError.innerText = "";
+  try{
+    const userCredential = await signInWithEmailAndPassword(auth,email.value,password.value);
+    const uid = userCredential.user.uid;
+    const adminDoc = await getDoc(doc(db,"admins",uid));
+    if(!adminDoc.exists()){
+      loginError.innerText = "Not authorized";
+      await auth.signOut();
+      return;
+    }
     loginPage.style.display="none";
     dashboard.style.display="block";
     initMap();
     startRealtime();
-  })
-  .catch((err)=>{
+  } catch(err){
     console.error(err);
     loginError.innerText = err.message;
-  });
+  }
 }
 
 // REALTIME
@@ -173,23 +166,18 @@ function startRealtime(){
   if(unsubSellers) unsubSellers();
 
   unsubOrders = onSnapshot(collection(db,"orders"), snap=>{
-    ordersData=[];
-    snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
-
+    ordersData=[]; snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
     totalOrders.innerText=ordersData.length;
     pendingOrders.innerText=ordersData.filter(o=>lower(o.status)=="pending").length;
     todayOrders.innerText=ordersData.filter(o=>isToday(o.createdAt)).length;
     totalIncome.innerText=ordersData.reduce((sum,o)=>sum+(parseInt(o.quantity)||0)*10,0);
-
     renderOrdersTable();
   });
 
   unsubSellers = onSnapshot(collection(db,"sellers"), snap=>{
-    sellersData=[];
-    let p=0;
+    sellersData=[]; let p=0;
     snap.forEach(d=>{
-      const s={id:d.id,...d.data()};
-      sellersData.push(s);
+      const s={id:d.id,...d.data()}; sellersData.push(s);
       if(lower(s.status)=="pending") p++;
     });
     pendingCount.innerText=p;
@@ -197,17 +185,13 @@ function startRealtime(){
   });
 }
 
-// RENDER ORDERS
+// ORDERS TABLE
 function renderOrdersTable(){
   const q=lower(searchOrders.value);
   const filter=filterOrdersDate.value;
-
   ordersTable.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Qty</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
-
   const filtered=ordersData.filter(o=>(lower(o.name||"").includes(q)||safe(o.phone).includes(q))&&checkDate(o.createdAt,filter));
-
   if(filtered.length===0){ ordersTable.innerHTML+=`<tr><td colspan="8">No Orders</td></tr>`; return; }
-
   filtered.forEach(o=>{
     const tr=document.createElement("tr");
     tr.innerHTML=`
@@ -232,18 +216,14 @@ function renderOrdersTable(){
   });
 }
 
-// RENDER SELLERS
+// SELLERS TABLE
 function renderSellersTable(){
   const q=lower(searchSellers.value);
   const statusF=lower(filterStatus.value);
   const dateF=filterSellersDate.value;
-
   sellersTable.innerHTML=`<tr><th>Name</th><th>Location</th><th>Phone</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
-
   const filtered=sellersData.filter(s=>(lower(s.name||"").includes(q)||safe(s.phone).includes(q))&&(!statusF||lower(s.status)===statusF)&&checkDate(s.createdAt,dateF));
-
   if(filtered.length===0){ sellersTable.innerHTML+=`<tr><td colspan="8">No Sellers</td></tr>`; return; }
-
   filtered.forEach(s=>{
     const st=lower(s.status);
     const tr=document.createElement("tr");
@@ -264,16 +244,7 @@ function renderSellersTable(){
     sellersTable.appendChild(tr);
   });
 
-  if(map){
-    markers.forEach(m=>map.removeLayer(m));
-    markers=[];
-    filtered.forEach(s=>{
-      if(s.lat && s.lng){
-        const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(s.name||"Seller");
-        markers.push(m);
-      }
-    });
-  }
+  if(map){ markers.forEach(m=>map.removeLayer(m)); markers=[]; filtered.forEach(s=>{ if(s.lat && s.lng){ const m=L.marker([s.lat,s.lng]).addTo(map).bindPopup(s.name||"Seller"); markers.push(m); } }); }
 }
 
 // ACTIONS
@@ -297,27 +268,11 @@ window.editOrder=id=>{
 };
 
 // EXTRA
-window.showTop10Cheapest=function(){
-  const sorted=[...sellersData].filter(s=>s.price6).sort((a,b)=>(parseFloat(a.price6)||0)-(parseFloat(b.price6)||0)).slice(0,10);
-  alert(sorted.map(s=>s.name+" - "+s.price6).join("\n")||"No data");
-}
+window.showTop10Cheapest=function(){ const sorted=[...sellersData].filter(s=>s.price6).sort((a,b)=>(parseFloat(a.price6)||0)-(parseFloat(b.price6)||0)).slice(0,10); alert(sorted.map(s=>s.name+" - "+s.price6).join("\n")||"No data"); }
 
 window.showNearestSeller=function(){
   if(!navigator.geolocation){ alert("Location not supported"); return; }
-
-  navigator.geolocation.getCurrentPosition(
-    pos=>{
-      const {latitude,longitude}=pos.coords;
-      let nearest=null,min=Infinity;
-      sellersData.forEach(s=>{
-        if(!s.lat||!s.lng) return;
-        const d=Math.hypot(latitude-s.lat,longitude-s.lng);
-        if(d<min){min=d;nearest=s;}
-      });
-      nearestSellerInfo.innerText=nearest?"Nearest: "+nearest.name+" ("+nearest.location+")":"No seller found";
-    },
-    ()=>alert("Location permission denied")
-  );
+  navigator.geolocation.getCurrentPosition(pos=>{ const {latitude,longitude}=pos.coords; let nearest=null,min=Infinity; sellersData.forEach(s=>{ if(!s.lat||!s.lng) return; const d=Math.hypot(latitude-s.lat,longitude-s.lng); if(d<min){min=d;nearest=s;} }); nearestSellerInfo.innerText=nearest?"Nearest: "+nearest.name+" ("+nearest.location+")":"No seller found"; },()=>alert("Location permission denied")); 
 }
 
 // LIVE UI
