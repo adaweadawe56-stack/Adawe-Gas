@@ -32,7 +32,6 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 </div>
 </nav>
 
-<!-- LOGIN -->
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
   <h3 class="text-center mb-3">Admin Login</h3>
   <input id="email" type="email" class="form-control mb-2" placeholder="Email">
@@ -41,7 +40,6 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
   <p id="loginError" style="color:red;"></p>
 </div>
 
-<!-- DASHBOARD -->
 <div id="dashboard" style="display:none;">
 <header>
   Adawe Gas Control PRO
@@ -53,6 +51,8 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 <div class="stats">
   <div class="stat-box"><h4 id="totalOrders">0</h4><p>Total Orders</p></div>
   <div class="stat-box"><h4 id="pendingOrders">0</h4><p>Pending Orders</p></div>
+  <div class="stat-box"><h4 id="todayOrders">0</h4><p>Today's Orders</p></div>
+  <div class="stat-box"><h4 id="totalIncome">0</h4><p>Total Income</p></div>
 </div>
 
 <h3 class="mt-4">Orders</h3>
@@ -81,7 +81,8 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
   <option value="approved">Approved</option>
   <option value="rejected">Rejected</option>
 </select>
-<button class="btn btn-info mb-3" onclick="showTop10Cheapest()">Show Top 10 Cheapest Sellers</button>
+
+<button class="btn btn-info mb-3" onclick="showTop10Cheapest()">Top 10 Cheapest Sellers</button>
 <table id="sellersTable" class="table table-striped"></table>
 
 <div class="mt-3 text-center">
@@ -102,177 +103,149 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-  authDomain: "adawe-gas-system-82187.firebaseapp.com",
-  projectId: "adawe-gas-system-82187",
-  storageBucket: "adawe-gas-system-82187.appspot.com",
-  messagingSenderId: "644303663526",
-  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({apiKey:"AIzaSy...",projectId:"adawe-gas-system-82187"});
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 let ordersData=[], sellersData=[], map, markers=[];
 
-function initMap(){ 
-  map = L.map('map').setView([-1.28,36.81],10); 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map); 
+const safe=v=>v||"";
+const lower=v=>(v||"").toLowerCase();
+
+function formatDateTime(ts){
+  const d=ts?.toDate?ts.toDate():new Date(ts||Date.now());
+  return d.toLocaleDateString()+" "+d.toLocaleTimeString();
 }
 
-// LOGIN
-window.login = function(){
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
-  signInWithEmailAndPassword(auth,email,password)
-  .then(res=>{
-    if(res.user.email !== email){alert("Not admin"); return;}
-    document.getElementById("loginPage").style.display="none";
-    document.getElementById("dashboard").style.display="block";
+function isToday(ts){
+  const d=ts?.toDate?ts.toDate():new Date();
+  const now=new Date();
+  return d.toDateString()===now.toDateString();
+}
+
+function initMap(){
+  map=L.map('map').setView([-1.28,36.81],10);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png').addTo(map);
+}
+
+window.login=function(){
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>{
+    loginPage.style.display="none";
+    dashboard.style.display="block";
     initMap();
     startRealtime();
   })
-  .catch(()=>{document.getElementById("loginError").innerText="Login failed";});
-}
-
-// DATE FILTER
-function filterByDate(item, field, filter){ 
-  const now=new Date(); 
-  const date=item[field]&&item[field].toDate?item[field].toDate():new Date(); 
-  switch(filter){
-    case 'today': return date.toDateString()===now.toDateString();
-    case 'yesterday': const yd=new Date(now); yd.setDate(now.getDate()-1); return date.toDateString()===yd.toDateString();
-    case 'lastWeek': const lw=new Date(now); lw.setDate(now.getDate()-7); return date>=lw;
-    case 'lastMonth': const lm=new Date(now); lm.setMonth(now.getMonth()-1); return date>=lm;
-    default: return true;
-  }
+  .catch(()=>loginError.innerText="Login failed");
 }
 
 // REALTIME
 function startRealtime(){
-  onSnapshot(collection(db,"orders"), snapshot=>{
+  onSnapshot(collection(db,"orders"), snap=>{
     ordersData=[];
-    snapshot.forEach(docSnap=> ordersData.push({id:docSnap.id,...docSnap.data()}));
+    snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
     renderOrdersTable();
-    document.getElementById("totalOrders").innerText = ordersData.length;
-    document.getElementById("pendingOrders").innerText = ordersData.filter(o=>o.status.toLowerCase()==="pending").length;
+
+    totalOrders.innerText=ordersData.length;
+    pendingOrders.innerText=ordersData.filter(o=>lower(o.status)=="pending").length;
+    todayOrders.innerText=ordersData.filter(o=>isToday(o.createdAt)).length;
+
+    // 💰 INCOME (simple example: quantity * 10)
+    totalIncome.innerText=ordersData.reduce((sum,o)=>sum+(parseInt(o.quantity||0)*10),0);
   });
 
-  onSnapshot(collection(db,"sellers"), snapshot=>{
+  onSnapshot(collection(db,"sellers"), snap=>{
     sellersData=[];
-    let pendingCount=0;
-    snapshot.forEach(docSnap=>{
-      const s={id:docSnap.id,...docSnap.data()};
+    let p=0;
+    snap.forEach(d=>{
+      const s={id:d.id,...d.data()};
       sellersData.push(s);
-      if(s.status && s.status.toLowerCase()==="pending") pendingCount++;
+      if(lower(s.status)=="pending") p++;
     });
-    document.getElementById("pendingCount").innerText=pendingCount;
+    pendingCount.innerText=p;
     renderSellersTable();
   });
 }
 
-// ORDERS
+// ORDERS TABLE
 function renderOrdersTable(){
-  const table=document.getElementById("ordersTable");
-  const query=document.getElementById("searchOrders").value.toLowerCase();
-  const filterDate=document.getElementById("filterOrdersDate").value;
-  table.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Qty</th><th>Status</th><th>Actions</th></tr>`;
-  ordersData.filter(o=>((o.name||"").toLowerCase().includes(query)||(o.phone||"").includes(query))&&filterByDate(o,'createdAt',filterDate)).forEach(o=>{
+  const q=lower(searchOrders.value);
+  ordersTable.innerHTML=`<tr><th>Name</th><th>Phone</th><th>Location</th><th>Brand</th><th>Qty</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
+
+  ordersData.filter(o=>lower(o.name).includes(q)||safe(o.phone).includes(q))
+  .forEach(o=>{
     const tr=document.createElement("tr");
-    tr.innerHTML=`<td>${o.name||"-"}</td>
-      <td>${o.phone||"-"}</td>
-      <td>${o.location||"-"}</td>
-      <td>${o.brand||"-"}</td>
-      <td>${o.quantity||"-"}</td>
-      <td class='${o.status?o.status.toLowerCase():""}'>${o.status||"-"}</td>
-      <td>
-        <select class="form-select form-select-sm statusSelect">
-          <option ${o.status?.toLowerCase()==="pending"?"selected":""}>Pending</option>
-          <option ${o.status?.toLowerCase()==="processing"?"selected":""}>Processing</option>
-          <option ${o.status?.toLowerCase()==="completed"?"selected":""}>Completed</option>
-        </select>
-        <button class="btn btn-primary btn-sm mt-1" onclick="editOrder('${o.id}')">Edit</button>
-        <button class="btn btn-danger btn-sm mt-1" onclick="deleteOrder('${o.id}')">Delete</button>
-      </td>`;
-    table.appendChild(tr);
-    tr.querySelector(".statusSelect").addEventListener("change", async (e)=>{
-      await updateDoc(doc(db,"orders",o.id),{status:e.target.value});
-    });
+    tr.innerHTML=`
+    <td>${safe(o.name)}</td>
+    <td>${safe(o.phone)}</td>
+    <td>${safe(o.location)}</td>
+    <td>${safe(o.brand)}</td>
+    <td>${safe(o.quantity)}</td>
+    <td class="${lower(o.status)}">${safe(o.status)}</td>
+    <td>${formatDateTime(o.createdAt)}</td>
+    <td>
+    <select class="form-select form-select-sm statusSelect">
+    <option ${lower(o.status)=="pending"?"selected":""}>Pending</option>
+    <option ${lower(o.status)=="processing"?"selected":""}>Processing</option>
+    <option ${lower(o.status)=="completed"?"selected":""}>Completed</option>
+    </select>
+    <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
+    <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+    </td>`;
+    ordersTable.appendChild(tr);
+
+    tr.querySelector(".statusSelect").onchange=e=>{
+      updateDoc(doc(db,"orders",o.id),{status:e.target.value});
+    };
   });
 }
 
-// SELLERS
+// SELLERS TABLE
 function renderSellersTable(){
-  const table=document.getElementById("sellersTable");
-  const searchText=document.getElementById("searchSellers").value.toLowerCase();
-  const filterStatus=document.getElementById("filterStatus").value;
-  const filterDate=document.getElementById("filterSellersDate").value;
-  if(map){markers.forEach(m=>map.removeLayer(m)); markers=[];}
-  table.innerHTML=`<tr><th>Name</th><th>Location</th><th>Phone</th><th>6kg</th><th>13kg</th><th>Status</th><th>Actions</th></tr>`;
-  sellersData.filter(s=>(!filterStatus || s.status?.toLowerCase()===filterStatus.toLowerCase())&&filterByDate(s,'createdAt',filterDate))
-    .filter(s=>(s.name||"").toLowerCase().includes(searchText))
-    .forEach(s=>{
+  sellersTable.innerHTML=`<tr><th>Name</th><th>Location</th><th>Phone</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
+
+  sellersData.forEach(s=>{
+    const st=lower(s.status);
     const tr=document.createElement("tr");
-    const statusClass = s.status ? s.status.toLowerCase() : "";
-    tr.innerHTML=`<td>${s.name||"-"}</td>
-      <td>${s.location||"-"}</td>
-      <td>${s.phone||"-"}</td>
-      <td>${s.price6||"-"}</td>
-      <td>${s.price13||"-"}</td>
-      <td class='${statusClass}'>${s.status||"pending"}</td>
-      <td>
-        ${statusClass==='pending'?`<button class="btn btn-success btn-sm" onclick="approveSeller('${s.id}')">Approve</button>`:""}
-        ${statusClass!=='rejected'?`<button class="btn btn-danger btn-sm" onclick="rejectSeller('${s.id}')">Reject</button>`:""}
-        <button class="btn btn-primary btn-sm" onclick="editSeller('${s.id}')">Edit</button>
-        <button class="btn btn-dark btn-sm" onclick="deleteSeller('${s.id}')">Delete</button>
-      </td>`;
-    table.appendChild(tr);
-    const lat=parseFloat(s.lat), lng=parseFloat(s.lng);
-    if(!isNaN(lat)&&!isNaN(lng)&&statusClass==="approved"){
-      const marker=L.marker([lat,lng]).addTo(map); 
-      marker.bindPopup(`<b>${s.name}</b>`); 
-      markers.push(marker);
-    }
+
+    tr.innerHTML=`
+    <td>${safe(s.name)}</td>
+    <td>${safe(s.location)}</td>
+    <td>${safe(s.phone)}</td>
+    <td>${safe(s.price6)}</td>
+    <td>${safe(s.price13)}</td>
+    <td class="${st}">${safe(s.status)}</td>
+    <td>${formatDateTime(s.createdAt)}</td>
+    <td>
+    ${st=="pending"?`<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
+    <button onclick="rejectSeller('${s.id}')" class="btn btn-danger btn-sm">Reject</button>
+    <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm">Edit</button>
+    <button onclick="deleteSeller('${s.id}')" class="btn btn-dark btn-sm">Delete</button>
+    </td>`;
+
+    sellersTable.appendChild(tr);
   });
 }
 
 // ACTIONS
-window.deleteOrder=async id=>{if(confirm("Delete order?")) await deleteDoc(doc(db,"orders",id));}
-window.deleteSeller=async id=>{if(confirm("Delete seller?")) await deleteDoc(doc(db,"sellers",id));}
-window.approveSeller=async id=>{await updateDoc(doc(db,"sellers",id),{status:"approved"});}
-window.rejectSeller=async id=>{await updateDoc(doc(db,"sellers",id),{status:"rejected"});}
-window.editSeller=async id=>{const s=sellersData.find(x=>x.id===id); if(!s) return; const name=prompt("Name",s.name); const phone=prompt("Phone",s.phone); if(name && phone){await updateDoc(doc(db,"sellers",id),{name,phone});}}
-window.editOrder=async id=>{const o=ordersData.find(x=>x.id===id); if(!o) return; const name=prompt("Name",o.name); const phone=prompt("Phone",o.phone); if(name && phone){await updateDoc(doc(db,"orders",id),{name,phone});}}
+window.deleteOrder=id=>confirm("Delete?")&&deleteDoc(doc(db,"orders",id));
+window.deleteSeller=id=>confirm("Delete?")&&deleteDoc(doc(db,"sellers",id));
+window.approveSeller=id=>updateDoc(doc(db,"sellers",id),{status:"approved"});
+window.rejectSeller=id=>updateDoc(doc(db,"sellers",id),{status:"rejected"});
 
-// TOP 10 CHEAPEST SELLERS
-window.showTop10Cheapest=()=>{
-  const top10 = sellersData.filter(s=>s.price6||s.price13)
-    .sort((a,b)=>Math.min(a.price6||Infinity,a.price13||Infinity)-Math.min(b.price6||Infinity,b.price13||Infinity))
-    .slice(0,10);
-  alert('Top 10 Cheapest Sellers:\n'+top10.map(s=>`${s.name}: 6kg=${s.price6||'-'}, 13kg=${s.price13||'-'}`).join('\n'));
-}
+window.editSeller=id=>{
+  const s=sellersData.find(x=>x.id==id);
+  const name=prompt("Name",s.name);
+  const phone=prompt("Phone",s.phone);
+  if(name&&phone) updateDoc(doc(db,"sellers",id),{name,phone});
+};
 
-// NEAREST SELLER
-function distance(lat1,lon1,lat2,lon2){const R=6371; const dLat=(lat2-lat1)*Math.PI/180; const dLon=(lon2-lon1)*Math.PI/180; const a=Math.sin(dLat/2)**2+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)**2; return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));}
-window.showNearestSeller=function(){
-  const center=map.getCenter(); let nearest=null,min=Infinity;
-  sellersData.forEach(s=>{
-    const lat=parseFloat(s.lat),lng=parseFloat(s.lng);
-    if(s.status?.toLowerCase()!=="approved"||isNaN(lat)||isNaN(lng)) return;
-    const d=distance(center.lat,center.lng,lat,lng);
-    if(d<min){nearest=s; min=d;}
-  });
-  document.getElementById("nearestSellerInfo").innerText=nearest?`Nearest: ${nearest.name} (${min.toFixed(2)} km)`:"No seller";
-}
-
-// LISTENERS
-document.getElementById("searchOrders").addEventListener("input",renderOrdersTable);
-document.getElementById("filterOrdersDate").addEventListener("change",renderOrdersTable);
-document.getElementById("searchSellers").addEventListener("input",renderSellersTable);
-document.getElementById("filterSellersDate").addEventListener("change",renderSellersTable);
-document.getElementById("filterStatus").addEventListener("change",renderSellersTable);
+window.editOrder=id=>{
+  const o=ordersData.find(x=>x.id==id);
+  const name=prompt("Name",o.name);
+  const phone=prompt("Phone",o.phone);
+  if(name&&phone) updateDoc(doc(db,"orders",id),{name,phone});
+};
 
 </script>
 </body>
