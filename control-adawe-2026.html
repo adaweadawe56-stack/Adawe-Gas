@@ -6,58 +6,46 @@
 <title>Adawe Gas Admin Dashboard PRO</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-<link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>
 
 <style>
-*{font-family:'Poppins',sans-serif}
-body{margin:0;background:#f7f9fb}
+body{margin:0;background:#f7f9fb;font-family:Arial}
 .navbar{background:#0b7a3c}
-.navbar-brand,.nav-link{color:white!important}
-header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; font-weight:bold; }
-.stats { display:flex; gap:20px; margin-top:20px; }
-.stat-box { background:white; padding:15px; border-radius:8px; box-shadow:0 2px 5px rgba(0,0,0,0.1); flex:1; text-align:center; }
+.navbar-brand{color:white!important}
+header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; }
 .table-striped th { background:#198754; color:white; }
-.table-striped td.pending{background:#f8d7da;}
-.table-striped td.approved{background:#d4edda;}
-.table-striped td.rejected{background:#e2e3e5;}
-.search-input { margin-bottom:10px; width:100%; padding:6px 8px; }
-#map{height:400px;border-radius:20px;}
+.pending{background:#fff3cd}
+.processing{background:#cfe2ff}
+.completed{background:#d1e7dd}
+.approved{background:#d4edda}
+.rejected{background:#f8d7da}
 </style>
 </head>
+
 <body>
 
-<nav class="navbar navbar-expand-lg navbar-dark">
+<nav class="navbar">
 <div class="container">
-<a class="navbar-brand">Adawe Gas Admin PRO</a>
+<a class="navbar-brand">Adawe Gas Admin</a>
 </div>
 </nav>
 
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
-  <h3 class="text-center mb-3">Admin Login</h3>
-  <input id="email" type="email" class="form-control mb-2" placeholder="Email">
-  <input id="password" type="password" class="form-control mb-2" placeholder="Password">
-  <button onclick="login()" class="btn btn-success w-100">Login</button>
-  <p id="loginError" style="color:red;"></p>
+<h3>Admin Login</h3>
+<input id="email" class="form-control mb-2" placeholder="Email">
+<input id="password" type="password" class="form-control mb-2" placeholder="Password">
+<button onclick="login()" class="btn btn-success w-100">Login</button>
+<p id="loginError" style="color:red;"></p>
 </div>
 
-<div id="dashboard" style="display:none;">
-<header>
-  Adawe Gas Control PRO
-  <span id="pendingCount" style="background:#dc3545;color:white;padding:3px 8px;border-radius:50%;margin-left:10px;">0</span>
-</header>
+<div id="dashboard" style="display:none;" class="container mt-4">
 
-<div class="container">
-
-<h3 class="mt-4">Orders</h3>
+<h3>Orders</h3>
 <table id="ordersTable" class="table table-striped"></table>
 
 <h3 class="mt-4">Sellers</h3>
 <table id="sellersTable" class="table table-striped"></table>
 
 </div>
-</div>
-
-<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -73,141 +61,158 @@ const firebaseConfig = {
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 let ordersData=[], sellersData=[];
 
+// DATE FORMAT
+function formatDate(ts){
+ if(!ts) return "";
+ const d = ts.toDate ? ts.toDate() : new Date(ts);
+ return d.toLocaleString();
+}
+
 // LOGIN
 window.login = async function(){
-  try{
-    const userCredential = await signInWithEmailAndPassword(auth,email.value,password.value);
-    const uid = userCredential.user.uid;
-    const adminDoc = await getDoc(doc(db,"admins",uid));
+ try{
+  const userCredential = await signInWithEmailAndPassword(auth,email.value,password.value);
+  const uid = userCredential.user.uid;
+  const adminDoc = await getDoc(doc(db,"admins",uid));
 
-    if(!adminDoc.exists()){
-      loginError.innerText="Not authorized";
-      return;
-    }
-
-    loginPage.style.display="none";
-    dashboard.style.display="block";
-    startRealtime();
-
-  }catch(err){
-    loginError.innerText=err.message;
+  if(!adminDoc.exists()){
+    loginError.innerText="Not admin";
+    return;
   }
+
+  loginPage.style.display="none";
+  dashboard.style.display="block";
+  startRealtime();
+
+ }catch(err){
+  loginError.innerText=err.message;
+ }
 };
 
 // REALTIME
 function startRealtime(){
 
-  onSnapshot(collection(db,"orders"), snap=>{
-    ordersData=[];
-    snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
-    renderOrders();
-  });
+ onSnapshot(collection(db,"orders"), snap=>{
+  ordersData=[];
+  snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
+  renderOrders();
+ });
 
-  onSnapshot(collection(db,"sellers"), snap=>{
-    sellersData=[];
-    snap.forEach(d=>sellersData.push({id:d.id,...d.data()}));
-    renderSellers();
-  });
+ onSnapshot(collection(db,"sellers"), snap=>{
+  sellersData=[];
+  snap.forEach(d=>sellersData.push({id:d.id,...d.data()}));
+  renderSellers();
+ });
 }
 
-// ORDERS TABLE
+// ORDERS
 function renderOrders(){
-  ordersTable.innerHTML=`<tr>
-  <th>Name</th><th>Phone</th><th>Qty</th><th>Brand</th><th>Status</th><th>Actions</th></tr>`;
+ ordersTable.innerHTML=`<tr>
+ <th>Name</th><th>Phone</th><th>Qty</th><th>Brand</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
-  ordersData.forEach(o=>{
-    ordersTable.innerHTML+=`
-    <tr>
-    <td>${o.name||""}</td>
-    <td>${o.phone||""}</td>
-    <td>${o.quantity||""}</td>
-    <td>${o.brand||""}</td>
-    <td>${o.status||""}</td>
-    <td>
-    <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm">Edit</button>
-    <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">Delete</button>
-    </td>
-    </tr>`;
-  });
+ ordersData.forEach(o=>{
+  ordersTable.innerHTML+=`
+  <tr>
+  <td>${o.name||""}</td>
+  <td>${o.phone||""}</td>
+  <td>${o.quantity||""}</td>
+  <td>${o.brand||""}</td>
+  <td class="${(o.status||"pending").toLowerCase()}">${o.status||"pending"}</td>
+  <td>${formatDate(o.createdAt)}</td>
+  <td>
+  <select onchange="updateOrderStatus('${o.id}',this.value)" class="form-select form-select-sm">
+    <option ${o.status=="Pending"?"selected":""}>Pending</option>
+    <option ${o.status=="Processing"?"selected":""}>Processing</option>
+    <option ${o.status=="Completed"?"selected":""}>Completed</option>
+  </select>
+  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
+  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+  </td>
+  </tr>`;
+ });
 }
 
-// SELLERS TABLE
+// SELLERS
 function renderSellers(){
-  sellersTable.innerHTML=`<tr>
-  <th>Name</th><th>Phone</th><th>Location</th><th>6kg</th><th>13kg</th><th>Status</th><th>Actions</th></tr>`;
+ sellersTable.innerHTML=`<tr>
+ <th>Name</th><th>Phone</th><th>Location</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
-  sellersData.forEach(s=>{
-    sellersTable.innerHTML+=`
-    <tr>
-    <td>${s.name||""}</td>
-    <td>${s.phone||""}</td>
-    <td>${s.location||""}</td>
-    <td>${s.price6||""}</td>
-    <td>${s.price13||""}</td>
-    <td>${s.status||""}</td>
-    <td>
-    ${s.status==="pending" ? `<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
-    <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm">Edit</button>
-    <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm">Delete</button>
-    </td>
-    </tr>`;
-  });
+ sellersData.forEach(s=>{
+  sellersTable.innerHTML+=`
+  <tr>
+  <td>${s.name||""}</td>
+  <td>${s.phone||""}</td>
+  <td>${s.location||""}</td>
+  <td>${s.price6||""}</td>
+  <td>${s.price13||""}</td>
+  <td class="${(s.status||"pending").toLowerCase()}">${s.status||"pending"}</td>
+  <td>${formatDate(s.createdAt)}</td>
+  <td>
+  ${(s.status||"").toLowerCase()==="pending" ? `<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
+  <select onchange="updateSellerStatus('${s.id}',this.value)" class="form-select form-select-sm mt-1">
+    <option ${s.status=="pending"?"selected":""}>pending</option>
+    <option ${s.status=="approved"?"selected":""}>approved</option>
+    <option ${s.status=="rejected"?"selected":""}>rejected</option>
+  </select>
+  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
+  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+  </td>
+  </tr>`;
+ });
 }
 
 // ACTIONS
 window.deleteOrder=id=>confirm("Delete?")&&deleteDoc(doc(db,"orders",id));
 window.deleteSeller=id=>confirm("Delete?")&&deleteDoc(doc(db,"sellers",id));
 
-// APPROVE FIX
-window.approveSeller = async function(id){
-  try{
-    await updateDoc(doc(db,"sellers",id),{status:"approved"});
-    alert("Seller Approved");
-  }catch(e){
-    alert("Approve error");
-  }
+window.updateOrderStatus = async (id,status)=>{
+ await updateDoc(doc(db,"orders",id),{status});
 };
 
-// EDIT SELLER FULL
-window.editSeller=id=>{
-  const s=sellersData.find(x=>x.id==id);
-
-  const name=prompt("Name",s.name);
-  const phone=prompt("Phone",s.phone);
-  const location=prompt("Location",s.location);
-  const price6=prompt("6kg Price",s.price6);
-  const price13=prompt("13kg Price",s.price13);
-
-  updateDoc(doc(db,"sellers",id),{
-    name,
-    phone,
-    location,
-    price6: price6?parseInt(price6):null,
-    price13: price13?parseInt(price13):null
-  });
+window.updateSellerStatus = async (id,status)=>{
+ await updateDoc(doc(db,"sellers",id),{status});
 };
 
-// EDIT ORDER FULL
-window.editOrder=id=>{
-  const o=ordersData.find(x=>x.id==id);
+window.approveSeller = async id=>{
+ await updateDoc(doc(db,"sellers",id),{status:"approved"});
+ alert("Approved");
+};
 
-  const name=prompt("Name",o.name);
-  const phone=prompt("Phone",o.phone);
-  const quantity=prompt("Quantity",o.quantity);
-  const brand=prompt("Brand",o.brand);
+// EDIT
+window.editSeller = async id=>{
+ const s=sellersData.find(x=>x.id==id);
+ const name=prompt("Name",s.name);
+ const phone=prompt("Phone",s.phone);
+ const location=prompt("Location",s.location);
+ const price6=prompt("6kg",s.price6);
+ const price13=prompt("13kg",s.price13);
 
-  updateDoc(doc(db,"orders",id),{
-    name,
-    phone,
-    quantity:parseInt(quantity),
-    brand
-  });
+ await updateDoc(doc(db,"sellers",id),{
+  name,phone,location,
+  price6:parseInt(price6),
+  price13:parseInt(price13)
+ });
+};
+
+window.editOrder = async id=>{
+ const o=ordersData.find(x=>x.id==id);
+ const name=prompt("Name",o.name);
+ const phone=prompt("Phone",o.phone);
+ const quantity=prompt("Qty",o.quantity);
+ const brand=prompt("Brand",o.brand);
+
+ await updateDoc(doc(db,"orders",id),{
+  name,phone,
+  quantity:parseInt(quantity),
+  brand
+ });
 };
 </script>
 
