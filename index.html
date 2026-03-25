@@ -156,11 +156,13 @@ html {
 </div>
 </section>
 
-<section class="section bg-light text-center" id="contact">
+<section class="section text-center" id="contact">
+<div class="container card-modern">
 <h2>Contact</h2>
 <p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
 <p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
 <p>📍 Nairobi, Kenya</p>
+</div>
 </section>
 
 <footer class="text-center"><p>© 2026 Adawe Gas – Kenya</p></footer>
@@ -177,9 +179,9 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, collection, addDoc, serverTimestamp, getDocs } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
- apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
- authDomain: "adawe-gas-system-82187.firebaseapp.com",
- projectId: "adawe-gas-system-82187"
+ apiKey: "YOUR_API_KEY",
+ authDomain: "YOUR_AUTH_DOMAIN",
+ projectId: "YOUR_PROJECT_ID"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -189,15 +191,13 @@ function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
-// Phone formatting function
 function formatKenyaPhone(phone){
   phone = phone.trim();
   if(phone.startsWith("0")) return "+254"+phone.slice(1);
   else if(phone.startsWith("7") && phone.length===9) return "+254"+phone;
-  else return phone; // assume +254 already
+  else return phone;
 }
 
-// ORDER FORM
 const orderForm = document.getElementById("orderForm");
 orderForm.addEventListener("submit", async function(e){
  e.preventDefault();
@@ -210,8 +210,8 @@ orderForm.addEventListener("submit", async function(e){
  const trackingEl = document.getElementById("trackingNumber");
 
  phone = formatKenyaPhone(phone);
- if(!/^\+254\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+254727015434");
+ if(!/^\+254\d{9}$/.test(phone)){
+   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
    return;
  }
 
@@ -220,53 +220,60 @@ orderForm.addEventListener("submit", async function(e){
   return;
  }
 
- if(quantity != 6 && quantity != 13){
+ if(quantity !== 6 && quantity !== 13){
   alert("Only 6kg or 13kg allowed");
   return;
  }
 
- const snap = await getDocs(collection(db,"sellers"));
- let sellers=[];
- snap.forEach(doc=>{
-  let s = doc.data();
-  if(s.price6 || s.price13) sellers.push(s);
- });
+ try {
+  const snap = await getDocs(collection(db,"sellers"));
+  let sellers=[];
 
- if(sellers.length===0){
-  alert("No sellers available");
-  return;
+  snap.forEach(doc=>{
+    let s = doc.data();
+    if(s.price6 || s.price13) sellers.push(s);
+  });
+
+  if(sellers.length===0){
+    alert("No sellers available");
+    return;
+  }
+
+  const seller = sellers[Math.floor(Math.random()*sellers.length)];
+  const price = quantity===6 ? seller.price6 : seller.price13;
+
+  if(!price){
+    alert("Seller has no price");
+    return;
+  }
+
+  const tracking = generateTracking();
+
+  await addDoc(collection(db,"orders"),{
+    name, phone, location, quantity, brand,
+    price,
+    sellerName:seller.name,
+    sellerPhone:seller.phone,
+    tracking,
+    status:"Pending",
+    createdAt:serverTimestamp()
+  });
+
+  trackingEl.innerText=`Tracking: ${tracking} | ${quantity}kg - ${price}`;
+
+  const sellerPhone = formatKenyaPhone(seller.phone);
+
+  const message=`New Order:\nName:${name}\nPhone:${phone}\nLocation:${location}\nSize:${quantity}kg\nBrand:${brand}\nPrice:${price}\nTracking:${tracking}`;
+
+  window.location.href=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
+
+  orderForm.reset();
+
+ } catch(e){
+  alert("Error processing order");
  }
-
- const seller = sellers[Math.floor(Math.random()*sellers.length)];
- const price = quantity===6 ? seller.price6 : seller.price13;
-
- if(!price){
-  alert("Seller has no price");
-  return;
- }
-
- const tracking = generateTracking();
-
- await addDoc(collection(db,"orders"),{
-  name, phone, location, quantity, brand,
-  price,
-  sellerName:seller.name,
-  sellerPhone:seller.phone,
-  tracking,
-  status:"Pending",
-  createdAt:serverTimestamp()
- });
-
- trackingEl.innerText=`Tracking: ${tracking} | ${quantity}kg - ${price}`;
-
- const message=`New Order:\nName:${name}\nPhone:${phone}\nLocation:${location}\nSize:${quantity}kg\nBrand:${brand}\nPrice:${price}\nTracking:${tracking}`;
-
- window.location.href=`https://wa.me/${seller.phone}?text=${encodeURIComponent(message)}`;
-
- orderForm.reset();
 });
 
-// SELLER FORM
 const sellerForm = document.getElementById("sellerForm");
 sellerForm.addEventListener("submit", async function(e){
  e.preventDefault();
@@ -278,24 +285,29 @@ sellerForm.addEventListener("submit", async function(e){
  const price13 = parseInt(document.getElementById("sellerPrice13").value);
 
  phone = formatKenyaPhone(phone);
- if(!/^\+254\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+254727015434)");
+ if(!/^\+254\d{9}$/.test(phone)){
+   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
    return;
  }
 
- if(!price6 || !price13){
+ if(price6 == null || price13 == null){
   alert("Enter both prices");
   return;
  }
 
- await addDoc(collection(db,"sellers"),{
-  name, phone, location,
-  price6, price13,
-  createdAt:serverTimestamp()
- });
+ try {
+  await addDoc(collection(db,"sellers"),{
+    name, phone, location,
+    price6, price13,
+    createdAt:serverTimestamp()
+  });
 
- alert("Seller saved ✔");
- sellerForm.reset();
+  alert("Seller saved ✔");
+  sellerForm.reset();
+
+ } catch(e){
+  alert("Error saving seller");
+ }
 });
 </script>
 
