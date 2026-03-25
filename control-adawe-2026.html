@@ -7,17 +7,20 @@
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
+<!-- 🔥 CHART JS -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <style>
 body{margin:0;background:#f7f9fb;font-family:Arial}
 .navbar{background:#0b7a3c}
 .navbar-brand{color:white!important}
-header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-size:1.8em; }
 .table-striped th { background:#198754; color:white; }
 .pending{background:#fff3cd}
 .processing{background:#cfe2ff}
 .completed{background:#d1e7dd}
 .approved{background:#d4edda}
 .rejected{background:#f8d7da}
+.stat-box{background:white;padding:15px;border-radius:8px;text-align:center;margin-bottom:10px}
 </style>
 </head>
 
@@ -39,7 +42,31 @@ header { background:#0f7b3f; color:white; text-align:center; padding:20px; font-
 
 <div id="dashboard" style="display:none;" class="container mt-4">
 
+<!-- ✅ STATS -->
+<div class="row text-center">
+<div class="col-md-3"><div class="stat-box"><h4 id="totalOrders">0</h4><p>Total Orders</p></div></div>
+<div class="col-md-3"><div class="stat-box"><h4 id="pendingOrders">0</h4><p>Pending Orders</p></div></div>
+<div class="col-md-3"><div class="stat-box"><h4 id="todayOrders">0</h4><p>Today's Orders</p></div></div>
+<div class="col-md-3"><div class="stat-box"><h4 id="totalRevenue">0</h4><p>Total Revenue (KES)</p></div></div>
+</div>
+
+<!-- 📊 CHART -->
+<div class="card p-3 mb-4">
+<h5>Sales Overview</h5>
+<canvas id="salesChart"></canvas>
+</div>
+
 <h3>Orders</h3>
+
+<input id="searchOrders" class="form-control mb-2" placeholder="Search Orders...">
+
+<select id="statusFilter" class="form-select mb-2">
+<option value="">All Status</option>
+<option value="Pending">Pending</option>
+<option value="Processing">Processing</option>
+<option value="Completed">Completed</option>
+</select>
+
 <table id="ordersTable" class="table table-striped"></table>
 
 <h3 class="mt-4">Sellers</h3>
@@ -61,12 +88,12 @@ const firebaseConfig = {
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
-
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
 let ordersData=[], sellersData=[];
+let chart;
 
 // DATE FORMAT
 function formatDate(ts){
@@ -103,6 +130,7 @@ function startRealtime(){
   ordersData=[];
   snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
   renderOrders();
+  updateStatsAndChart();
  });
 
  onSnapshot(collection(db,"sellers"), snap=>{
@@ -112,12 +140,72 @@ function startRealtime(){
  });
 }
 
+// 🔥 STATS + CHART
+function updateStatsAndChart(){
+
+ let total=0,pending=0,today=0,revenue=0;
+ const todayDate = new Date().toDateString();
+
+ let dailyMap={};
+ let monthlyMap={};
+
+ ordersData.forEach(o=>{
+  total++;
+
+  if((o.status||"Pending")==="Pending") pending++;
+
+  if(o.price) revenue += o.price;
+
+  if(o.createdAt){
+    const d = o.createdAt.toDate();
+    if(d.toDateString() === todayDate) today++;
+
+    const day = d.toLocaleDateString();
+    const month = d.getFullYear()+"-"+(d.getMonth()+1);
+
+    dailyMap[day]=(dailyMap[day]||0)+1;
+    monthlyMap[month]=(monthlyMap[month]||0)+1;
+  }
+ });
+
+ document.getElementById("totalOrders").innerText=total;
+ document.getElementById("pendingOrders").innerText=pending;
+ document.getElementById("todayOrders").innerText=today;
+ document.getElementById("totalRevenue").innerText=revenue;
+
+ // CHART (Daily)
+ const labels = Object.keys(dailyMap);
+ const data = Object.values(dailyMap);
+
+ if(chart) chart.destroy();
+
+ chart = new Chart(document.getElementById("salesChart"),{
+  type:"line",
+  data:{
+    labels:labels,
+    datasets:[{
+      label:"Orders per Day",
+      data:data,
+      fill:false,
+      tension:0.3
+    }]
+  }
+ });
+
+}
+
 // ORDERS
 function renderOrders(){
+ const search = document.getElementById("searchOrders").value.toLowerCase();
+ const statusFilter = document.getElementById("statusFilter").value;
+
  ordersTable.innerHTML=`<tr>
  <th>Name</th><th>Phone</th><th>Qty</th><th>Brand</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
  ordersData.forEach(o=>{
+  if(search && !JSON.stringify(o).toLowerCase().includes(search)) return;
+  if(statusFilter && (o.status||"Pending") !== statusFilter) return;
+
   ordersTable.innerHTML+=`
   <tr>
   <td>${o.name||""}</td>
@@ -168,17 +256,16 @@ function renderSellers(){
  });
 }
 
+// EVENTS
+document.getElementById("searchOrders").addEventListener("input",renderOrders);
+document.getElementById("statusFilter").addEventListener("change",renderOrders);
+
 // ACTIONS
 window.deleteOrder=id=>confirm("Delete?")&&deleteDoc(doc(db,"orders",id));
 window.deleteSeller=id=>confirm("Delete?")&&deleteDoc(doc(db,"sellers",id));
 
-window.updateOrderStatus = async (id,status)=>{
- await updateDoc(doc(db,"orders",id),{status});
-};
-
-window.updateSellerStatus = async (id,status)=>{
- await updateDoc(doc(db,"sellers",id),{status});
-};
+window.updateOrderStatus = async (id,status)=>{ await updateDoc(doc(db,"orders",id),{status}); };
+window.updateSellerStatus = async (id,status)=>{ await updateDoc(doc(db,"sellers",id),{status}); };
 
 window.approveSeller = async id=>{
  await updateDoc(doc(db,"sellers",id),{status:"approved"});
