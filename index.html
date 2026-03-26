@@ -138,7 +138,7 @@ html { scroll-behavior: smooth; }
 <input id="price45kg" class="form-control mb-2" placeholder="45kg price">
 <input id="price50kg" class="form-control mb-3" placeholder="50kg price">
 
-<button class="btn btn-primary w-100">Register</button>
+<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">Register</button>
 </form>
 </div>
 </section>
@@ -159,46 +159,73 @@ import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/fireba
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-    authDomain: "adawe-gas-system-82187.firebaseapp.com",
-    projectId: "adawe-gas-system-82187",
-    storageBucket: "adawe-gas-system-82187.firebasestorage.app",
-    messagingSenderId: "644303663526",
-    appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+  authDomain: "adawe-gas-system-82187.firebaseapp.com",
+  projectId: "adawe-gas-system-82187",
+  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+  messagingSenderId: "644303663526",
+  appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// ORDER
 const orderForm = document.getElementById("orderForm");
-
-orderForm.addEventListener("submit", async e=>{
+orderForm.addEventListener("submit", e=>{
   e.preventDefault();
-
+  
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
   const location = document.getElementById("location").value;
   const quantity = document.getElementById("quantity").value;
   const brand = document.getElementById("brand").value;
-
-  // 1️⃣ Keydi order-ka dashboard (Firebase)
-  await addDoc(collection(db,"orders"),{
-    name, phone, location, quantity, brand,
-    status: "pending",
-    createdAt: serverTimestamp()
-  });
-
-  // 2️⃣ Fariinta WhatsApp
+  
   const message = `Hello Adawe Gas New Order:
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Size: ${quantity}
 Brand: ${brand}`;
-
+  
   const waNumber = "254727015434"; 
   const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+  
   window.open(waLink, "_blank");
+});
+
+// SELLER
+const registerBtn = document.getElementById("registerSellerBtn");
+registerBtn.addEventListener("click", async ()=>{
+  const name = document.getElementById("sellerName").value;
+  const phone = document.getElementById("sellerPhone").value;
+  const location = document.getElementById("sellerLocation").value;
+
+  const prices = {
+    "1kg": Number(document.getElementById("price1kg").value)||0,
+    "3kg": Number(document.getElementById("price3kg").value)||0,
+    "6kg": Number(document.getElementById("price6kg").value)||0,
+    "13kg": Number(document.getElementById("price13kg").value)||0,
+    "15kg": Number(document.getElementById("price15kg").value)||0,
+    "22kg": Number(document.getElementById("price22kg").value)||0,
+    "25kg": Number(document.getElementById("price25kg").value)||0,
+    "35kg": Number(document.getElementById("price35kg").value)||0,
+    "40kg": Number(document.getElementById("price40kg").value)||0,
+    "45kg": Number(document.getElementById("price45kg").value)||0,
+    "50kg": Number(document.getElementById("price50kg").value)||0
+  };
+
+  try {
+    await addDoc(collection(db,"sellers"),{
+      name, phone, location, prices, status:"pending", createdAt: serverTimestamp()
+    });
+    alert("Seller saved ✔");
+    
+    // Clear form
+    document.getElementById("sellerForm").reset();
+  } catch(err){
+    alert("Error saving seller: "+err.message);
+  }
 });
 </script>
 
