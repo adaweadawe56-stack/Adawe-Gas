@@ -79,9 +79,9 @@ html { scroll-behavior: smooth; }
 
 <form id="orderForm" class="col-md-6 mx-auto card-modern">
 <input id="name" class="form-control mb-3" placeholder="Name" required>
-<input id="phone" class="form-control mb-3" placeholder="Phone" required>
+<input id="phone" class="form-control mb-3" placeholder="Phone (07 or 01)" required>
 <input id="location" class="form-control mb-3" placeholder="Location" required>
-<input id="quantity" type="number" class="form-control mb-3" placeholder="Quantity (6 or 13)" required>
+<input id="quantity" type="number" class="form-control mb-3" placeholder="Quantity (kg e.g. 1, 5, 10)" required>
 
 <select id="brand" class="form-select mb-3" required>
 <option value="">Select Brand</option>
@@ -110,11 +110,10 @@ html { scroll-behavior: smooth; }
 
 <form id="sellerForm" class="col-md-6 mx-auto card-modern">
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-<input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
+<input id="sellerPhone" class="form-control mb-3" placeholder="Phone (07 or 01)" required>
 <input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
 
-<input id="sellerPrice6" type="number" class="form-control mb-3" placeholder="6kg Price" required>
-<input id="sellerPrice13" type="number" class="form-control mb-3" placeholder="13kg Price" required>
+<input id="sellerPrice" type="number" class="form-control mb-3" placeholder="Price per KG (e.g. 200)" required>
 
 <button class="btn btn-primary w-100">Register</button>
 </form>
@@ -151,6 +150,7 @@ const firebaseConfig = {
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
@@ -158,129 +158,89 @@ function generateTracking(){
  return "AG"+Math.floor(100000+Math.random()*900000);
 }
 
-// ✅ Clean Kenya Phone
+// ✅ Phone FIX (07 + 01)
 function formatKenyaPhone(phone){
-  phone = phone.replace(/\s+/g,'').replace(/-/g,'').trim(); // remove spaces/dashes
-  if(phone.startsWith("0") && phone.length===10) return "+254"+phone.slice(1);
+  phone = phone.replace(/\s+/g,'').replace(/-/g,'').trim();
+
+  if(phone.startsWith("+254")) return phone;
+  if(phone.startsWith("07") && phone.length===10) return "+254"+phone.slice(1);
+  if(phone.startsWith("01") && phone.length===10) return "+254"+phone.slice(1);
   if(phone.startsWith("7") && phone.length===9) return "+254"+phone;
-  if(phone.startsWith("+254") && phone.length===13) return phone;
+  if(phone.startsWith("1") && phone.length===9) return "+254"+phone;
+
   return phone;
 }
 
-// Order Form
-const orderForm = document.getElementById("orderForm");
-orderForm.addEventListener("submit", async function(e){
+// ORDER
+orderForm.addEventListener("submit", async e=>{
  e.preventDefault();
 
- const name = document.getElementById("name").value.trim();
- let phone = document.getElementById("phone").value.trim();
- const location = document.getElementById("location").value.trim();
- const quantity = parseInt(document.getElementById("quantity").value);
- const brand = document.getElementById("brand").value;
- const trackingEl = document.getElementById("trackingNumber");
+ let phone = formatKenyaPhone(phone.value);
+ if(!/^\+254[17]\d{8}$/.test(phone)) return alert("Invalid phone");
 
- phone = formatKenyaPhone(phone);
- if(!/^\+2547\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
-   return;
- }
+ const quantity = parseFloat(document.getElementById("quantity").value);
 
- if(!name || !phone || !location || !quantity || !brand){
-  alert("Fill all fields");
-  return;
- }
+ const snap = await getDocs(collection(db,"sellers"));
+ let best=null, bestPrice=Infinity;
 
- if(quantity !== 6 && quantity !== 13){
-  alert("Only 6kg or 13kg allowed");
-  return;
- }
+ snap.forEach(doc=>{
+   const s=doc.data();
+   if(s.pricePerKg && s.status==="approved"){
+     if(s.pricePerKg < bestPrice){
+       bestPrice=s.pricePerKg;
+       best=s;
+     }
+   }
+ });
 
- try {
-  const snap = await getDocs(collection(db,"sellers"));
-  let sellers=[];
+ if(!best) return alert("No sellers");
 
-  snap.forEach(doc=>{
-    let s = doc.data();
-    // ✅ only approved sellers with prices
-    if((s.price6 || s.price13) && s.status==="approved") sellers.push(s);
-  });
+ const tracking = generateTracking();
 
-  if(sellers.length===0){
-    alert("No sellers available");
-    return;
-  }
+ await addDoc(collection(db,"orders"),{
+   name:name.value,
+   phone,
+   location:location.value,
+   quantity,
+   brand:brand.value,
+   pricePerKg:bestPrice,
+   sellerName:best.name,
+   sellerPhone:best.phone,
+   status:"Pending",
+   createdAt:serverTimestamp()
+ });
 
-  const seller = sellers[Math.floor(Math.random()*sellers.length)];
-  const price = quantity===6 ? seller.price6 : seller.price13;
+ const message =
+`New Order:
+Name:${name.value}
+Phone:${phone}
+Location:${location.value}
+Quantity:${quantity}kg
+Brand:${brand.value}
+Tracking:${tracking}`;
 
-  if(!price){
-    alert("Seller has no price");
-    return;
-  }
+ const sellerPhone = formatKenyaPhone(best.phone);
 
-  const tracking = generateTracking();
+ window.location.href=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
 
-  await addDoc(collection(db,"orders"),{
-    name, phone, location, quantity, brand,
-    price,
-    sellerName:seller.name,
-    sellerPhone:seller.phone,
-    tracking,
-    status:"Pending",
-    createdAt:serverTimestamp()
-  });
-
-  trackingEl.innerText=`Tracking: ${tracking} | ${quantity}kg - ${price}`;
-
-  const sellerPhone = formatKenyaPhone(seller.phone);
-
-  const message=`New Order:\nName:${name}\nPhone:${phone}\nLocation:${location}\nSize:${quantity}kg\nBrand:${brand}\nPrice:${price}\nTracking:${tracking}`;
-
-  window.location.href=`https://wa.me/${sellerPhone}?text=${encodeURIComponent(message)}`;
-
-  orderForm.reset();
-
- } catch(e){
-  alert("Error processing order");
- }
 });
 
-// Seller Form
-const sellerForm = document.getElementById("sellerForm");
-sellerForm.addEventListener("submit", async function(e){
+// SELLER
+sellerForm.addEventListener("submit", async e=>{
  e.preventDefault();
 
- const name = document.getElementById("sellerName").value.trim();
- let phone = document.getElementById("sellerPhone").value.trim();
- const location = document.getElementById("sellerLocation").value.trim();
- const price6 = parseInt(document.getElementById("sellerPrice6").value);
- const price13 = parseInt(document.getElementById("sellerPrice13").value);
+ let phone = formatKenyaPhone(sellerPhone.value);
 
- phone = formatKenyaPhone(phone);
- if(!/^\+2547\d{8}$/.test(phone)){
-   alert("Enter valid Kenya phone (+2547XXXXXXXX)");
-   return;
- }
+ await addDoc(collection(db,"sellers"),{
+   name:sellerName.value,
+   phone,
+   location:sellerLocation.value,
+   pricePerKg:parseFloat(sellerPrice.value),
+   status:"pending",
+   createdAt:serverTimestamp()
+ });
 
- if(isNaN(price6) || isNaN(price13)){
-  alert("Enter both prices");
-  return;
- }
-
- try {
-  await addDoc(collection(db,"sellers"),{
-    name, phone, location,
-    price6, price13,
-    status:"pending", // default pending
-    createdAt:serverTimestamp()
-  });
-
-  alert("Seller saved ✔");
-  sellerForm.reset();
-
- } catch(e){
-  alert("Error saving seller");
- }
+ alert("Seller saved ✔");
 });
 </script>
 
