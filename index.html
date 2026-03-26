@@ -22,6 +22,21 @@ html { scroll-behavior: smooth; }
 .card-modern { background: rgba(255,255,255,0.95); border-radius:15px; padding:25px; color:#064e3b; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
 .hero { text-align:center; padding:80px 20px; }
 .hero h1 { font-size:42px; font-weight:bold; }
+
+/* Toast styles */
+#toast {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #10b981;
+  color: white;
+  padding: 15px 25px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+  display: none;
+  z-index: 2000;
+  font-weight: bold;
+}
 </style>
 </head>
 
@@ -145,6 +160,8 @@ html { scroll-behavior: smooth; }
 </div>
 </section>
 
+<div id="toast"></div>
+
 <section class="section text-center" id="contact">
 <div class="container card-modern">
 <h2>Contact</h2>
@@ -172,15 +189,32 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
+// TOAST FUNCTION
+function showToast(message, success=true){
+  const toast = document.getElementById("toast");
+  toast.innerText = message;
+  toast.style.background = success ? "#10b981" : "#dc2626";
+  toast.style.display = "block";
+  setTimeout(()=>{ toast.style.display = "none"; }, 3000);
+}
+
 // ORDER FORM
 const orderForm = document.getElementById("orderForm");
 orderForm.addEventListener("submit", e=>{
   e.preventDefault();
-  const name = document.getElementById("name").value;
-  const phone = document.getElementById("phone").value;
-  const location = document.getElementById("location").value;
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const location = document.getElementById("location").value.trim();
   const quantity = document.getElementById("quantity").value;
   const brand = document.getElementById("brand").value;
+
+  if(!name || !phone || !location || !quantity || !brand){
+    showToast("Please fill all order fields", false);
+    return;
+  }
+
+  showToast("✅ Order ready to send via WhatsApp");
+
   const message = `Hello Adawe Gas New Order:
 Name: ${name}
 Phone: ${phone}
@@ -189,7 +223,8 @@ Size: ${quantity}
 Brand: ${brand}`;
   const waNumber = "254727015434"; 
   const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-  window.open(waLink, "_blank");
+
+  setTimeout(()=>{ window.open(waLink, "_blank"); }, 500);
 });
 
 // SELLER FORM
@@ -203,7 +238,7 @@ registerBtn.addEventListener("click", async ()=>{
   const location = document.getElementById("sellerLocation").value.trim();
 
   if(!name || !phone || !location){
-    alert("Please fill all required fields");
+    showToast("Please fill all seller fields", false);
     return;
   }
 
@@ -221,7 +256,6 @@ registerBtn.addEventListener("click", async ()=>{
     "50kg": Number(document.getElementById("price50kg").value)||0
   };
 
-  // Show loading
   btnText.style.display="none";
   btnLoader.style.display="inline";
 
@@ -229,11 +263,11 @@ registerBtn.addEventListener("click", async ()=>{
     await addDoc(collection(db,"sellers"),{
       name, phone, location, prices, status:"pending", createdAt: serverTimestamp()
     });
-    alert("✅ Seller saved successfully!");
     document.getElementById("sellerForm").reset();
+    showToast("✅ Seller saved successfully!");
   } catch(err){
     console.error(err);
-    alert("❌ Error saving seller: "+err.message);
+    showToast("❌ Error saving seller: "+err.message, false);
   } finally{
     btnText.style.display="inline";
     btnLoader.style.display="none";
