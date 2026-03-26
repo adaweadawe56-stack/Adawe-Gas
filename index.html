@@ -125,7 +125,6 @@ html { scroll-behavior: smooth; }
 <input id="sellerPhone" class="form-control mb-3" placeholder="Phone (07 or 01)" required>
 <input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
 
-<!-- PRICE INPUTS -->
 <input id="price1kg" class="form-control mb-2" placeholder="1kg price">
 <input id="price3kg" class="form-control mb-2" placeholder="3kg price">
 <input id="price6kg" class="form-control mb-2" placeholder="6kg price">
@@ -138,7 +137,10 @@ html { scroll-behavior: smooth; }
 <input id="price45kg" class="form-control mb-2" placeholder="45kg price">
 <input id="price50kg" class="form-control mb-3" placeholder="50kg price">
 
-<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">Register</button>
+<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">
+<span id="btnText">Register</span>
+<span id="btnLoader" style="display:none;">Saving...</span>
+</button>
 </form>
 </div>
 </section>
@@ -170,36 +172,40 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
-// ORDER
+// ORDER FORM
 const orderForm = document.getElementById("orderForm");
 orderForm.addEventListener("submit", e=>{
   e.preventDefault();
-  
   const name = document.getElementById("name").value;
   const phone = document.getElementById("phone").value;
   const location = document.getElementById("location").value;
   const quantity = document.getElementById("quantity").value;
   const brand = document.getElementById("brand").value;
-  
   const message = `Hello Adawe Gas New Order:
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Size: ${quantity}
 Brand: ${brand}`;
-  
   const waNumber = "254727015434"; 
   const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-  
   window.open(waLink, "_blank");
 });
 
-// SELLER
+// SELLER FORM
 const registerBtn = document.getElementById("registerSellerBtn");
+const btnText = document.getElementById("btnText");
+const btnLoader = document.getElementById("btnLoader");
+
 registerBtn.addEventListener("click", async ()=>{
-  const name = document.getElementById("sellerName").value;
-  const phone = document.getElementById("sellerPhone").value;
-  const location = document.getElementById("sellerLocation").value;
+  const name = document.getElementById("sellerName").value.trim();
+  const phone = document.getElementById("sellerPhone").value.trim();
+  const location = document.getElementById("sellerLocation").value.trim();
+
+  if(!name || !phone || !location){
+    alert("Please fill all required fields");
+    return;
+  }
 
   const prices = {
     "1kg": Number(document.getElementById("price1kg").value)||0,
@@ -215,16 +221,22 @@ registerBtn.addEventListener("click", async ()=>{
     "50kg": Number(document.getElementById("price50kg").value)||0
   };
 
+  // Show loading
+  btnText.style.display="none";
+  btnLoader.style.display="inline";
+
   try {
     await addDoc(collection(db,"sellers"),{
       name, phone, location, prices, status:"pending", createdAt: serverTimestamp()
     });
-    alert("Seller saved ✔");
-    
-    // Clear form
+    alert("✅ Seller saved successfully!");
     document.getElementById("sellerForm").reset();
   } catch(err){
-    alert("Error saving seller: "+err.message);
+    console.error(err);
+    alert("❌ Error saving seller: "+err.message);
+  } finally{
+    btnText.style.display="inline";
+    btnLoader.style.display="none";
   }
 });
 </script>
