@@ -6,8 +6,6 @@
 <title>Adawe Gas Admin Dashboard PRO</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
-<!-- 🔥 CHART JS -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
@@ -42,7 +40,6 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 
 <div id="dashboard" style="display:none;" class="container mt-4">
 
-<!-- ✅ STATS -->
 <div class="row text-center">
 <div class="col-md-3"><div class="stat-box"><h4 id="totalOrders">0</h4><p>Total Orders</p></div></div>
 <div class="col-md-3"><div class="stat-box"><h4 id="pendingOrders">0</h4><p>Pending Orders</p></div></div>
@@ -50,23 +47,19 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 <div class="col-md-3"><div class="stat-box"><h4 id="totalRevenue">0</h4><p>Total Revenue (KES)</p></div></div>
 </div>
 
-<!-- 📊 CHART -->
 <div class="card p-3 mb-4">
 <h5>Sales Overview</h5>
 <canvas id="salesChart"></canvas>
 </div>
 
 <h3>Orders</h3>
-
 <input id="searchOrders" class="form-control mb-2" placeholder="Search Orders...">
-
 <select id="statusFilter" class="form-select mb-2">
 <option value="">All Status</option>
 <option value="Pending">Pending</option>
 <option value="Processing">Processing</option>
 <option value="Completed">Completed</option>
 </select>
-
 <table id="ordersTable" class="table table-striped"></table>
 
 <h3 class="mt-4">Sellers</h3>
@@ -95,14 +88,12 @@ const auth = getAuth(app);
 let ordersData=[], sellersData=[];
 let chart;
 
-// DATE FORMAT
 function formatDate(ts){
  if(!ts) return "";
  const d = ts.toDate ? ts.toDate() : new Date(ts);
  return d.toLocaleString();
 }
 
-// LOGIN
 window.login = async function(){
  try{
   const userCredential = await signInWithEmailAndPassword(auth,email.value,password.value);
@@ -123,12 +114,19 @@ window.login = async function(){
  }
 };
 
-// REALTIME
 function startRealtime(){
 
  onSnapshot(collection(db,"orders"), snap=>{
   ordersData=[];
-  snap.forEach(d=>ordersData.push({id:d.id,...d.data()}));
+  snap.forEach(d=>{
+    const order = {id:d.id,...d.data()};
+    ordersData.push(order);
+
+    // 🔥 AUTO ASSIGN
+    if(!order.sellerName){
+      autoAssignSeller(order);
+    }
+  });
   renderOrders();
   updateStatsAndChart();
  });
@@ -140,94 +138,92 @@ function startRealtime(){
  });
 }
 
-// 🔥 STATS + CHART
+// 🔥 AUTO ASSIGN FUNCTION
+async function autoAssignSeller(order){
+  if(!order.quantity) return;
+
+  let bestSeller=null;
+  let bestPrice=Infinity;
+
+  sellersData.forEach(s=>{
+    if((s.status||"").toLowerCase()!=="approved") return;
+
+    if(s.prices && s.prices[order.quantity]){
+      const p=s.prices[order.quantity];
+      if(p>0 && p<bestPrice){ bestPrice=p; bestSeller=s; }
+    }
+
+    if(order.quantity==="6kg" && s.price6 && s.price6<bestPrice){
+      bestPrice=s.price6; bestSeller=s;
+    }
+
+    if(order.quantity==="13kg" && s.price13 && s.price13<bestPrice){
+      bestPrice=s.price13; bestSeller=s;
+    }
+  });
+
+  if(bestSeller){
+    await updateDoc(doc(db,"orders",order.id),{
+      sellerName:bestSeller.name,
+      sellerPhone:bestSeller.phone,
+      price:bestPrice,
+      status:"Processing"
+    });
+  }
+}
+
 function updateStatsAndChart(){
-
  let total=0,pending=0,today=0,revenue=0;
- const todayDate = new Date().toDateString();
-
+ const todayDate=new Date().toDateString();
  let dailyMap={};
- let monthlyMap={};
 
  ordersData.forEach(o=>{
   total++;
-
   if((o.status||"Pending")==="Pending") pending++;
-
-  if(o.price) revenue += o.price;
+  if(o.price) revenue+=o.price;
 
   if(o.createdAt){
-    const d = o.createdAt.toDate();
-    if(d.toDateString() === todayDate) today++;
-
-    const day = d.toLocaleDateString();
-    const month = d.getFullYear()+"-"+(d.getMonth()+1);
-
+    const d=o.createdAt.toDate();
+    if(d.toDateString()===todayDate) today++;
+    const day=d.toLocaleDateString();
     dailyMap[day]=(dailyMap[day]||0)+1;
-    monthlyMap[month]=(monthlyMap[month]||0)+1;
   }
  });
 
- document.getElementById("totalOrders").innerText=total;
- document.getElementById("pendingOrders").innerText=pending;
- document.getElementById("todayOrders").innerText=today;
- document.getElementById("totalRevenue").innerText=revenue;
-
- // CHART (Daily)
- const labels = Object.keys(dailyMap);
- const data = Object.values(dailyMap);
+ totalOrders.innerText=total;
+ pendingOrders.innerText=pending;
+ todayOrders.innerText=today;
+ totalRevenue.innerText=revenue;
 
  if(chart) chart.destroy();
 
- chart = new Chart(document.getElementById("salesChart"),{
+ chart=new Chart(document.getElementById("salesChart"),{
   type:"line",
-  data:{
-    labels:labels,
-    datasets:[{
-      label:"Orders per Day",
-      data:data,
-      fill:false,
-      tension:0.3
-    }]
-  }
+  data:{labels:Object.keys(dailyMap),datasets:[{label:"Orders per Day",data:Object.values(dailyMap)}]}
  });
-
 }
 
-// ORDERS
 function renderOrders(){
- const search = document.getElementById("searchOrders").value.toLowerCase();
- const statusFilter = document.getElementById("statusFilter").value;
-
  ordersTable.innerHTML=`<tr>
  <th>Name</th><th>Phone</th><th>Qty</th><th>Brand</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
 
  ordersData.forEach(o=>{
-  if(search && !JSON.stringify(o).toLowerCase().includes(search)) return;
-  if(statusFilter && (o.status||"Pending") !== statusFilter) return;
-
   ordersTable.innerHTML+=`
   <tr>
   <td>${o.name||""}</td>
   <td>${o.phone||""}</td>
   <td>${o.quantity||""}</td>
   <td>${o.brand||""}</td>
-  <td class="${(o.status||"pending").toLowerCase()}">${o.status||"pending"}</td>
+  <td>${o.status||"pending"}</td>
   <td>${formatDate(o.createdAt)}</td>
   <td>
-  <select onchange="updateOrderStatus('${o.id}',this.value)" class="form-select form-select-sm">
-    <option ${o.status=="Pending"?"selected":""}>Pending</option>
-    <option ${o.status=="Processing"?"selected":""}>Processing</option>
-    <option ${o.status=="Completed"?"selected":""}>Completed</option>
-  </select>
-  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
-  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm">Edit</button>
+  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">Delete</button>
   </td>
   </tr>`;
  });
 }
 
-// SELLERS
 function renderSellers(){
  sellersTable.innerHTML=`<tr>
  <th>Name</th><th>Phone</th><th>Location</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
@@ -238,69 +234,55 @@ function renderSellers(){
   <td>${s.name||""}</td>
   <td>${s.phone||""}</td>
   <td>${s.location||""}</td>
-  <td>${s.price6||""}</td>
-  <td>${s.price13||""}</td>
-  <td class="${(s.status||"pending").toLowerCase()}">${s.status||"pending"}</td>
+  <td>${s.prices?.["6kg"]||s.price6||""}</td>
+  <td>${s.prices?.["13kg"]||s.price13||""}</td>
+  <td>${s.status||"pending"}</td>
   <td>${formatDate(s.createdAt)}</td>
   <td>
-  ${(s.status||"").toLowerCase()==="pending" ? `<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
-  <select onchange="updateSellerStatus('${s.id}',this.value)" class="form-select form-select-sm mt-1">
-    <option ${s.status=="pending"?"selected":""}>pending</option>
-    <option ${s.status=="approved"?"selected":""}>approved</option>
-    <option ${s.status=="rejected"?"selected":""}>rejected</option>
-  </select>
-  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
-  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm">Edit</button>
+  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm">Delete</button>
   </td>
   </tr>`;
  });
 }
 
-// EVENTS
-document.getElementById("searchOrders").addEventListener("input",renderOrders);
-document.getElementById("statusFilter").addEventListener("change",renderOrders);
-
-// ACTIONS
-window.deleteOrder=id=>confirm("Delete?")&&deleteDoc(doc(db,"orders",id));
-window.deleteSeller=id=>confirm("Delete?")&&deleteDoc(doc(db,"sellers",id));
-
-window.updateOrderStatus = async (id,status)=>{ await updateDoc(doc(db,"orders",id),{status}); };
-window.updateSellerStatus = async (id,status)=>{ await updateDoc(doc(db,"sellers",id),{status}); };
-
-window.approveSeller = async id=>{
- await updateDoc(doc(db,"sellers",id),{status:"approved"});
- alert("Approved");
-};
-
-// EDIT
-window.editSeller = async id=>{
+// 🔥 EDIT SELLER ALL PRICES
+window.editSeller=async id=>{
  const s=sellersData.find(x=>x.id==id);
- const name=prompt("Name",s.name);
- const phone=prompt("Phone",s.phone);
- const location=prompt("Location",s.location);
- const price6=prompt("6kg",s.price6);
- const price13=prompt("13kg",s.price13);
+
+ const prices={
+  "1kg":parseInt(prompt("1kg",s.prices?.["1kg"]||0))||0,
+  "3kg":parseInt(prompt("3kg",s.prices?.["3kg"]||0))||0,
+  "6kg":parseInt(prompt("6kg",s.prices?.["6kg"]||s.price6||0))||0,
+  "13kg":parseInt(prompt("13kg",s.prices?.["13kg"]||s.price13||0))||0,
+  "15kg":parseInt(prompt("15kg",s.prices?.["15kg"]||0))||0,
+  "22kg":parseInt(prompt("22kg",s.prices?.["22kg"]||0))||0,
+  "25kg":parseInt(prompt("25kg",s.prices?.["25kg"]||0))||0,
+  "35kg":parseInt(prompt("35kg",s.prices?.["35kg"]||0))||0,
+  "40kg":parseInt(prompt("40kg",s.prices?.["40kg"]||0))||0,
+  "45kg":parseInt(prompt("45kg",s.prices?.["45kg"]||0))||0,
+  "50kg":parseInt(prompt("50kg",s.prices?.["50kg"]||0))||0
+ };
 
  await updateDoc(doc(db,"sellers",id),{
-  name,phone,location,
-  price6:parseInt(price6),
-  price13:parseInt(price13)
+  name:s.name,
+  phone:s.phone,
+  location:s.location,
+  prices,
+  price6:prices["6kg"],
+  price13:prices["13kg"]
  });
 };
 
-window.editOrder = async id=>{
+window.deleteOrder=id=>deleteDoc(doc(db,"orders",id));
+window.deleteSeller=id=>deleteDoc(doc(db,"sellers",id));
+
+window.editOrder=async id=>{
  const o=ordersData.find(x=>x.id==id);
  const name=prompt("Name",o.name);
- const phone=prompt("Phone",o.phone);
- const quantity=prompt("Qty",o.quantity);
- const brand=prompt("Brand",o.brand);
-
- await updateDoc(doc(db,"orders",id),{
-  name,phone,
-  quantity:parseInt(quantity),
-  brand
- });
+ await updateDoc(doc(db,"orders",id),{name});
 };
+
 </script>
 
 </body>
