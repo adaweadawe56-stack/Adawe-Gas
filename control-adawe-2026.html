@@ -226,7 +226,24 @@ function renderOrders(){
 
 function renderSellers(){
  sellersTable.innerHTML=`<tr>
- <th>Name</th><th>Phone</th><th>Location</th><th>6kg</th><th>13kg</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
+ <th>Name</th>
+ <th>Phone</th>
+ <th>Location</th>
+ <th>1kg</th>
+ <th>3kg</th>
+ <th>6kg</th>
+ <th>13kg</th>
+ <th>15kg</th>
+ <th>22kg</th>
+ <th>25kg</th>
+ <th>35kg</th>
+ <th>40kg</th>
+ <th>45kg</th>
+ <th>50kg</th>
+ <th>Status</th>
+ <th>Date</th>
+ <th>Actions</th>
+ </tr>`;
 
  sellersData.forEach(s=>{
   sellersTable.innerHTML+=`
@@ -234,14 +251,28 @@ function renderSellers(){
   <td>${s.name||""}</td>
   <td>${s.phone||""}</td>
   <td>${s.location||""}</td>
+
+  <td>${s.prices?.["1kg"]||""}</td>
+  <td>${s.prices?.["3kg"]||""}</td>
   <td>${s.prices?.["6kg"]||s.price6||""}</td>
   <td>${s.prices?.["13kg"]||s.price13||""}</td>
-  <td>${s.status||"pending"}</td>
+  <td>${s.prices?.["15kg"]||""}</td>
+  <td>${s.prices?.["22kg"]||""}</td>
+  <td>${s.prices?.["25kg"]||""}</td>
+  <td>${s.prices?.["35kg"]||""}</td>
+  <td>${s.prices?.["40kg"]||""}</td>
+  <td>${s.prices?.["45kg"]||""}</td>
+  <td>${s.prices?.["50kg"]||""}</td>
+
+  <td class="${(s.status||"pending").toLowerCase()}">${s.status||"pending"}</td>
   <td>${formatDate(s.createdAt)}</td>
+
   <td>
-  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm">Edit</button>
-  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm">Delete</button>
+  ${(s.status||"").toLowerCase()==="pending" ? `<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
+  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
+  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
   </td>
+
   </tr>`;
  });
 }
