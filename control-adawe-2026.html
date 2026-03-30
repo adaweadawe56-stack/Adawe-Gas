@@ -67,6 +67,24 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 
 </div>
 
+<!-- 🔥 MODAL -->
+<div class="modal fade" id="priceModal" tabindex="-1">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Seller Prices</h5>
+        <button class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <table class="table table-bordered">
+          <tr><th>Size</th><th>Price</th></tr>
+          <tbody id="priceModalBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -122,7 +140,6 @@ function startRealtime(){
     const order = {id:d.id,...d.data()};
     ordersData.push(order);
 
-    // 🔥 AUTO ASSIGN
     if(!order.sellerName){
       autoAssignSeller(order);
     }
@@ -138,7 +155,6 @@ function startRealtime(){
  });
 }
 
-// 🔥 AUTO ASSIGN FUNCTION
 async function autoAssignSeller(order){
   if(!order.quantity) return;
 
@@ -229,17 +245,8 @@ function renderSellers(){
  <th>Name</th>
  <th>Phone</th>
  <th>Location</th>
- <th>1kg</th>
- <th>3kg</th>
  <th>6kg</th>
  <th>13kg</th>
- <th>15kg</th>
- <th>22kg</th>
- <th>25kg</th>
- <th>35kg</th>
- <th>40kg</th>
- <th>45kg</th>
- <th>50kg</th>
  <th>Status</th>
  <th>Date</th>
  <th>Actions</th>
@@ -251,70 +258,54 @@ function renderSellers(){
   <td>${s.name||""}</td>
   <td>${s.phone||""}</td>
   <td>${s.location||""}</td>
-
-  <td>${s.prices?.["1kg"]||""}</td>
-  <td>${s.prices?.["3kg"]||""}</td>
   <td>${s.prices?.["6kg"]||s.price6||""}</td>
   <td>${s.prices?.["13kg"]||s.price13||""}</td>
-  <td>${s.prices?.["15kg"]||""}</td>
-  <td>${s.prices?.["22kg"]||""}</td>
-  <td>${s.prices?.["25kg"]||""}</td>
-  <td>${s.prices?.["35kg"]||""}</td>
-  <td>${s.prices?.["40kg"]||""}</td>
-  <td>${s.prices?.["45kg"]||""}</td>
-  <td>${s.prices?.["50kg"]||""}</td>
-
-  <td class="${(s.status||"pending").toLowerCase()}">${s.status||"pending"}</td>
+  <td>${s.status||"pending"}</td>
   <td>${formatDate(s.createdAt)}</td>
-
   <td>
-  ${(s.status||"").toLowerCase()==="pending" ? `<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm">Approve</button>`:""}
+  <button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">Prices</button>
   <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
   <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
   </td>
-
   </tr>`;
  });
 }
 
-// 🔥 EDIT SELLER ALL PRICES
+window.showPrices=function(id){
+ const s=sellersData.find(x=>x.id==id);
+ const body=document.getElementById("priceModalBody");
+ body.innerHTML="";
+ const sizes=["1kg","3kg","6kg","13kg","15kg","22kg","25kg","35kg","40kg","45kg","50kg"];
+ sizes.forEach(size=>{
+  body.innerHTML+=`<tr><td>${size}</td><td>${s.prices?.[size]||""}</td></tr>`;
+ });
+ new bootstrap.Modal(document.getElementById("priceModal")).show();
+};
+
+window.deleteOrder=id=>deleteDoc(doc(db,"orders",id));
+window.deleteSeller=id=>deleteDoc(doc(db,"sellers",id));
+
 window.editSeller=async id=>{
  const s=sellersData.find(x=>x.id==id);
-
- const prices={
-  "1kg":parseInt(prompt("1kg",s.prices?.["1kg"]||0))||0,
-  "3kg":parseInt(prompt("3kg",s.prices?.["3kg"]||0))||0,
-  "6kg":parseInt(prompt("6kg",s.prices?.["6kg"]||s.price6||0))||0,
-  "13kg":parseInt(prompt("13kg",s.prices?.["13kg"]||s.price13||0))||0,
-  "15kg":parseInt(prompt("15kg",s.prices?.["15kg"]||0))||0,
-  "22kg":parseInt(prompt("22kg",s.prices?.["22kg"]||0))||0,
-  "25kg":parseInt(prompt("25kg",s.prices?.["25kg"]||0))||0,
-  "35kg":parseInt(prompt("35kg",s.prices?.["35kg"]||0))||0,
-  "40kg":parseInt(prompt("40kg",s.prices?.["40kg"]||0))||0,
-  "45kg":parseInt(prompt("45kg",s.prices?.["45kg"]||0))||0,
-  "50kg":parseInt(prompt("50kg",s.prices?.["50kg"]||0))||0
- };
-
+ const prices={};
+ ["1kg","3kg","6kg","13kg","15kg","22kg","25kg","35kg","40kg","45kg","50kg"].forEach(size=>{
+  prices[size]=parseInt(prompt(size,s.prices?.[size]||0))||0;
+ });
  await updateDoc(doc(db,"sellers",id),{
-  name:s.name,
-  phone:s.phone,
-  location:s.location,
   prices,
   price6:prices["6kg"],
   price13:prices["13kg"]
  });
 };
 
-window.deleteOrder=id=>deleteDoc(doc(db,"orders",id));
-window.deleteSeller=id=>deleteDoc(doc(db,"sellers",id));
-
 window.editOrder=async id=>{
  const o=ordersData.find(x=>x.id==id);
  const name=prompt("Name",o.name);
  await updateDoc(doc(db,"orders",id),{name});
 };
-
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
