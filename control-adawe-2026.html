@@ -240,13 +240,12 @@ function renderOrders(){
  });
 }
 
+/* ✅ HALKAN KALIYA AYAAN SAXNAY */
 function renderSellers(){
  sellersTable.innerHTML=`<tr>
  <th>Name</th>
  <th>Phone</th>
  <th>Location</th>
- <th>6kg</th>
- <th>13kg</th>
  <th>Status</th>
  <th>Date</th>
  <th>Actions</th>
@@ -258,8 +257,6 @@ function renderSellers(){
   <td>${s.name||""}</td>
   <td>${s.phone||""}</td>
   <td>${s.location||""}</td>
-  <td>${s.prices?.["6kg"]||s.price6||""}</td>
-  <td>${s.prices?.["13kg"]||s.price13||""}</td>
   <td>${s.status||"pending"}</td>
   <td>${formatDate(s.createdAt)}</td>
   <td>
