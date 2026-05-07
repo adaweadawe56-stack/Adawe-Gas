@@ -1,4 +1,3 @@
-```html id="t4e1f9"
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -10,7 +9,7 @@
 
 <style>
 body{
-  font-family:Arial;
+  font-family:Arial,sans-serif;
   margin:0;
   background:linear-gradient(135deg,#064e3b,#10b981);
   color:white;
@@ -59,7 +58,6 @@ html{
   font-weight:bold;
 }
 
-/* TOAST */
 #toast{
   position:fixed;
   top:20px;
@@ -81,24 +79,41 @@ a{
 footer{
   padding:20px;
 }
+
+@media(max-width:768px){
+
+  .hero h1{
+    font-size:30px;
+  }
+
+  .section{
+    margin:10px;
+    padding:40px 0;
+  }
+}
 </style>
 </head>
 
 <body>
 
 <nav class="navbar navbar-expand-lg navbar-dark">
+
   <div class="container">
 
-    <a class="navbar-brand fw-bold">
+    <a class="navbar-brand fw-bold" href="#">
       Adawe Gas
     </a>
 
     <button class="navbar-toggler"
             type="button"
             data-bs-toggle="collapse"
-            data-bs-target="#menu">
+            data-bs-target="#menu"
+            aria-controls="menu"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
 
       <span class="navbar-toggler-icon"></span>
+
     </button>
 
     <div class="collapse navbar-collapse" id="menu">
@@ -136,7 +151,9 @@ footer{
       </ul>
 
     </div>
+
   </div>
+
 </nav>
 
 <!-- HERO -->
@@ -205,16 +222,19 @@ Place Order
 <form id="orderForm" class="col-md-6 mx-auto card-modern">
 
 <input id="name"
+       type="text"
        class="form-control mb-3"
        placeholder="Name"
        required>
 
 <input id="phone"
+       type="tel"
        class="form-control mb-3"
        placeholder="Phone (07 or 01)"
        required>
 
 <input id="location"
+       type="text"
        class="form-control mb-3"
        placeholder="Location"
        required>
@@ -286,31 +306,34 @@ Register Seller
       class="col-md-6 mx-auto card-modern">
 
 <input id="sellerName"
+       type="text"
        class="form-control mb-3"
        placeholder="Company Name"
        required>
 
 <input id="sellerPhone"
+       type="tel"
        class="form-control mb-3"
        placeholder="Phone (07 or 01)"
        required>
 
 <input id="sellerLocation"
+       type="text"
        class="form-control mb-3"
        placeholder="Location"
        required>
 
-<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number">
-<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number">
-<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number">
-<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number">
-<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number">
-<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number">
-<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number">
-<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number">
-<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number">
-<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number">
-<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number">
+<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="0">
+<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="0">
+<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number" min="0">
+<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number" min="0">
+<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number" min="0">
+<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number" min="0">
+<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number" min="0">
+<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number" min="0">
+<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number" min="0">
+<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="0">
+<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="0">
 
 <button type="button"
         id="registerSellerBtn"
@@ -331,7 +354,6 @@ Saving...
 </div>
 </section>
 
-<!-- TOAST -->
 <div id="toast"></div>
 
 <!-- CONTACT -->
@@ -356,12 +378,15 @@ adaweadawe56@gmail.com
 </p>
 
 </div>
+
 </section>
 
 <footer class="text-center">
+
 <p>
 © 2026 Adawe Gas – Kenya
 </p>
+
 </footer>
 
 <script type="module">
@@ -419,6 +444,12 @@ function formatKenyaPhone(phone){
   return phone;
 }
 
+/* PHONE VALIDATION */
+function isValidKenyaPhone(phone){
+
+  return /^\+254(7|1)\d{8}$/.test(phone);
+}
+
 /* TOAST */
 function showToast(message, success=true){
 
@@ -466,6 +497,13 @@ orderForm.addEventListener("submit", async e=>{
   if(!name || !phone || !location || !quantity || !brand){
 
     showToast("Please fill all order fields",false);
+
+    return;
+  }
+
+  if(!isValidKenyaPhone(phone)){
+
+    showToast("Enter valid Kenya phone number",false);
 
     return;
   }
@@ -548,6 +586,13 @@ registerBtn.addEventListener("click", async ()=>{
     return;
   }
 
+  if(!isValidKenyaPhone(phone)){
+
+    showToast("Enter valid Kenya phone number",false);
+
+    return;
+  }
+
   const prices = {
 
     "1kg": Number(document.getElementById("price1kg").value)||0,
@@ -576,6 +621,8 @@ registerBtn.addEventListener("click", async ()=>{
   btnText.style.display = "none";
 
   btnLoader.style.display = "inline";
+
+  registerBtn.disabled = true;
 
   try{
 
@@ -608,6 +655,8 @@ registerBtn.addEventListener("click", async ()=>{
     btnText.style.display = "inline";
 
     btnLoader.style.display = "none";
+
+    registerBtn.disabled = false;
   }
 
 });
@@ -618,4 +667,3 @@ registerBtn.addEventListener("click", async ()=>{
 
 </body>
 </html>
-```
