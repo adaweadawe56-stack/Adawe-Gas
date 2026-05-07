@@ -47,15 +47,20 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 <div class="col-md-3"><div class="stat-box"><h4 id="totalRevenue">0</h4><p>Total Revenue (KES)</p></div></div>
 </div>
 
+<div class="card p-3 mb-3">
+<canvas id="salesChart"></canvas>
+</div>
 
 <h3>Orders</h3>
 <input id="searchOrders" class="form-control mb-2" placeholder="Search Orders...">
+
 <select id="statusFilter" class="form-select mb-2">
 <option value="">All Status</option>
 <option value="Pending">Pending</option>
 <option value="Processing">Processing</option>
 <option value="Completed">Completed</option>
 </select>
+
 <table id="ordersTable" class="table table-striped"></table>
 
 <h3 class="mt-4">Sellers</h3>
@@ -71,20 +76,40 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
         <h5 class="modal-title">Seller Prices</h5>
         <button class="btn-close" data-bs-dismiss="modal"></button>
       </div>
+
       <div class="modal-body">
         <table class="table table-bordered">
-          <tr><th>Size</th><th>Price</th></tr>
+          <tr>
+            <th>Size</th>
+            <th>Price</th>
+          </tr>
+
           <tbody id="priceModalBody"></tbody>
         </table>
       </div>
+
     </div>
   </div>
 </div>
 
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, onSnapshot, doc, updateDoc, deleteDoc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-import { getAuth, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+getFirestore,
+collection,
+onSnapshot,
+doc,
+updateDoc,
+deleteDoc,
+getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import {
+getAuth,
+signInWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
@@ -99,146 +124,284 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 const auth = getAuth(app);
 
-let ordersData=[], sellersData=[];
+let ordersData = [];
+let sellersData = [];
 let chart;
 
 function formatDate(ts){
+
  if(!ts) return "";
+
  const d = ts.toDate ? ts.toDate() : new Date(ts);
+
  return d.toLocaleString();
 }
 
 window.login = async function(){
+
  try{
-  const userCredential = await signInWithEmailAndPassword(auth,email.value,password.value);
+
+  const emailValue = document.getElementById("email").value;
+  const passwordValue = document.getElementById("password").value;
+
+  const userCredential = await signInWithEmailAndPassword(
+    auth,
+    emailValue,
+    passwordValue
+  );
+
   const uid = userCredential.user.uid;
+
   const adminDoc = await getDoc(doc(db,"admins",uid));
 
   if(!adminDoc.exists()){
-    loginError.innerText="Not admin";
+
+    loginError.innerText = "Not admin";
+
     return;
   }
 
-  loginPage.style.display="none";
-  dashboard.style.display="block";
+  loginPage.style.display = "none";
+
+  dashboard.style.display = "block";
+
   startRealtime();
 
  }catch(err){
-  loginError.innerText=err.message;
+
+  console.error(err);
+
+  loginError.innerText = err.message;
  }
 };
 
 function startRealtime(){
 
  onSnapshot(collection(db,"orders"), snap=>{
-  ordersData=[];
+
+  ordersData = [];
+
   snap.forEach(d=>{
-    const order = {id:d.id,...d.data()};
+
+    const order = {
+      id:d.id,
+      ...d.data()
+    };
+
     ordersData.push(order);
 
     if(!order.sellerName){
+
       autoAssignSeller(order);
     }
   });
+
   renderOrders();
+
   updateStatsAndChart();
+
  });
 
  onSnapshot(collection(db,"sellers"), snap=>{
-  sellersData=[];
-  snap.forEach(d=>sellersData.push({id:d.id,...d.data()}));
+
+  sellersData = [];
+
+  snap.forEach(d=>{
+
+    sellersData.push({
+      id:d.id,
+      ...d.data()
+    });
+
+  });
+
   renderSellers();
+
  });
+
 }
 
 async function autoAssignSeller(order){
-  if(!order.quantity) return;
 
-  let bestSeller=null;
-  let bestPrice=Infinity;
+ if(!order.quantity) return;
 
-  sellersData.forEach(s=>{
-    if((s.status||"").toLowerCase()!=="approved") return;
+ let bestSeller = null;
+
+ let bestPrice = Infinity;
+
+ sellersData.forEach(s=>{
+
+    if((s.status || "").toLowerCase() !== "approved") return;
 
     if(s.prices && s.prices[order.quantity]){
-      const p=s.prices[order.quantity];
-      if(p>0 && p<bestPrice){ bestPrice=p; bestSeller=s; }
+
+      const p = s.prices[order.quantity];
+
+      if(p > 0 && p < bestPrice){
+
+        bestPrice = p;
+
+        bestSeller = s;
+      }
     }
 
-    if(order.quantity==="6kg" && s.price6 && s.price6<bestPrice){
-      bestPrice=s.price6; bestSeller=s;
+    if(order.quantity === "6kg" && s.price6 && s.price6 < bestPrice){
+
+      bestPrice = s.price6;
+
+      bestSeller = s;
     }
 
-    if(order.quantity==="13kg" && s.price13 && s.price13<bestPrice){
-      bestPrice=s.price13; bestSeller=s;
-    }
-  });
+    if(order.quantity === "13kg" && s.price13 && s.price13 < bestPrice){
 
-  if(bestSeller){
+      bestPrice = s.price13;
+
+      bestSeller = s;
+    }
+
+ });
+
+ if(bestSeller){
+
     await updateDoc(doc(db,"orders",order.id),{
+
       sellerName:bestSeller.name,
       sellerPhone:bestSeller.phone,
       price:bestPrice,
       status:"Processing"
+
     });
-  }
+ }
+
 }
 
 function updateStatsAndChart(){
- let total=0,pending=0,today=0,revenue=0;
- const todayDate=new Date().toDateString();
- let dailyMap={};
+
+ let total = 0;
+
+ let pending = 0;
+
+ let today = 0;
+
+ let revenue = 0;
+
+ const todayDate = new Date().toDateString();
+
+ let dailyMap = {};
 
  ordersData.forEach(o=>{
+
   total++;
-  if((o.status||"Pending")==="Pending") pending++;
-  if(o.price) revenue+=o.price;
+
+  if((o.status || "Pending") === "Pending"){
+
+    pending++;
+  }
+
+  if(o.price){
+
+    revenue += o.price;
+  }
 
   if(o.createdAt){
-    const d=o.createdAt.toDate();
-    if(d.toDateString()===todayDate) today++;
-    const day=d.toLocaleDateString();
-    dailyMap[day]=(dailyMap[day]||0)+1;
+
+    const d = o.createdAt.toDate();
+
+    if(d.toDateString() === todayDate){
+
+      today++;
+    }
+
+    const day = d.toLocaleDateString();
+
+    dailyMap[day] = (dailyMap[day] || 0) + 1;
   }
+
  });
 
- totalOrders.innerText=total;
- pendingOrders.innerText=pending;
- todayOrders.innerText=today;
- totalRevenue.innerText=revenue;
+ totalOrders.innerText = total;
 
- if(chart) chart.destroy();
+ pendingOrders.innerText = pending;
 
- chart=new Chart(document.getElementById("salesChart"),{
+ todayOrders.innerText = today;
+
+ totalRevenue.innerText = revenue;
+
+ if(chart){
+
+  chart.destroy();
+ }
+
+ const salesCanvas = document.getElementById("salesChart");
+
+ if(!salesCanvas) return;
+
+ chart = new Chart(salesCanvas,{
+
   type:"line",
-  data:{labels:Object.keys(dailyMap),datasets:[{label:"Orders per Day",data:Object.values(dailyMap)}]}
+
+  data:{
+
+    labels:Object.keys(dailyMap),
+
+    datasets:[{
+
+      label:"Orders per Day",
+
+      data:Object.values(dailyMap)
+
+    }]
+  }
+
  });
+
 }
 
 function renderOrders(){
- ordersTable.innerHTML=`<tr>
- <th>Name</th><th>Phone</th><th>Qty</th><th>Brand</th><th>Status</th><th>Date</th><th>Actions</th></tr>`;
+
+ ordersTable.innerHTML = `
+ <tr>
+ <th>Name</th>
+ <th>Phone</th>
+ <th>Qty</th>
+ <th>Brand</th>
+ <th>Status</th>
+ <th>Date</th>
+ <th>Actions</th>
+ </tr>`;
 
  ordersData.forEach(o=>{
-  ordersTable.innerHTML+=`
+
+  ordersTable.innerHTML += `
   <tr>
-  <td>${o.name||""}</td>
-  <td>${o.phone||""}</td>
-  <td>${o.quantity||""}</td>
-  <td>${o.brand||""}</td>
-  <td>${o.status||"pending"}</td>
+  <td>${o.name || ""}</td>
+  <td>${o.phone || ""}</td>
+  <td>${o.quantity || ""}</td>
+  <td>${o.brand || ""}</td>
+  <td>${o.status || "pending"}</td>
   <td>${formatDate(o.createdAt)}</td>
+
   <td>
-  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm">Edit</button>
-  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">Delete</button>
+
+  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm">
+  Edit
+  </button>
+
+  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">
+  Delete
+  </button>
+
   </td>
+
   </tr>`;
  });
+
 }
 
-/* ✅ HALKAN KALIYA AYAAN SAXNAY */
 function renderSellers(){
- sellersTable.innerHTML=`<tr>
+
+ sellersTable.innerHTML = `
+ <tr>
  <th>Name</th>
  <th>Phone</th>
  <th>Location</th>
@@ -248,54 +411,132 @@ function renderSellers(){
  </tr>`;
 
  sellersData.forEach(s=>{
-  sellersTable.innerHTML+=`
+
+  sellersTable.innerHTML += `
   <tr>
-  <td>${s.name||""}</td>
-  <td>${s.phone||""}</td>
-  <td>${s.location||""}</td>
-  <td>${s.status||"pending"}</td>
+
+  <td>${s.name || ""}</td>
+
+  <td>${s.phone || ""}</td>
+
+  <td>${s.location || ""}</td>
+
+  <td>${s.status || "pending"}</td>
+
   <td>${formatDate(s.createdAt)}</td>
+
   <td>
-  <button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">Prices</button>
-  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">Edit</button>
-  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">Delete</button>
+
+  <button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">
+  Prices
+  </button>
+
+  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">
+  Edit
+  </button>
+
+  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">
+  Delete
+  </button>
+
   </td>
+
   </tr>`;
  });
+
 }
 
-window.showPrices=function(id){
- const s=sellersData.find(x=>x.id==id);
- const body=document.getElementById("priceModalBody");
- body.innerHTML="";
- const sizes=["1kg","3kg","6kg","13kg","15kg","22kg","25kg","35kg","40kg","45kg","50kg"];
+window.showPrices = function(id){
+
+ const s = sellersData.find(x=>x.id==id);
+
+ const body = document.getElementById("priceModalBody");
+
+ body.innerHTML = "";
+
+ const sizes = [
+ "1kg",
+ "3kg",
+ "6kg",
+ "13kg",
+ "15kg",
+ "22kg",
+ "25kg",
+ "35kg",
+ "40kg",
+ "45kg",
+ "50kg"
+ ];
+
  sizes.forEach(size=>{
-  body.innerHTML+=`<tr><td>${size}</td><td>${s.prices?.[size]||""}</td></tr>`;
+
+  body.innerHTML += `
+  <tr>
+  <td>${size}</td>
+  <td>${s.prices?.[size] || ""}</td>
+  </tr>`;
  });
+
  new bootstrap.Modal(document.getElementById("priceModal")).show();
+
 };
 
-window.deleteOrder=id=>deleteDoc(doc(db,"orders",id));
-window.deleteSeller=id=>deleteDoc(doc(db,"sellers",id));
+window.deleteOrder = id => deleteDoc(doc(db,"orders",id));
 
-window.editSeller=async id=>{
- const s=sellersData.find(x=>x.id==id);
- const prices={};
- ["1kg","3kg","6kg","13kg","15kg","22kg","25kg","35kg","40kg","45kg","50kg"].forEach(size=>{
-  prices[size]=parseInt(prompt(size,s.prices?.[size]||0))||0;
+window.deleteSeller = id => deleteDoc(doc(db,"sellers",id));
+
+window.editSeller = async id => {
+
+ const s = sellersData.find(x=>x.id==id);
+
+ const prices = {};
+
+ [
+ "1kg",
+ "3kg",
+ "6kg",
+ "13kg",
+ "15kg",
+ "22kg",
+ "25kg",
+ "35kg",
+ "40kg",
+ "45kg",
+ "50kg"
+ ].forEach(size=>{
+
+  prices[size] = parseInt(
+    prompt(size,s.prices?.[size] || 0)
+  ) || 0;
+
  });
+
  await updateDoc(doc(db,"sellers",id),{
+
   prices,
+
   price6:prices["6kg"],
+
   price13:prices["13kg"]
+
  });
+
 };
 
-window.editOrder=async id=>{
- const o=ordersData.find(x=>x.id==id);
- const name=prompt("Name",o.name);
- await updateDoc(doc(db,"orders",id),{name});
+window.editOrder = async id => {
+
+ const o = ordersData.find(x=>x.id==id);
+
+ const name = prompt("Name",o.name);
+
+ await updateDoc(doc(db,"orders",id),{
+
+  name
+
+ });
+
 };
+
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
