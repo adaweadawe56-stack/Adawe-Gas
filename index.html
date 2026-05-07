@@ -1,41 +1,85 @@
+```html id="t4e1f9"
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Adawe Gas Network</title> 
+<title>Adawe Gas Network</title>
 
 <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <style>
-body {
-  font-family: Arial;
+body{
+  font-family:Arial;
   margin:0;
-  background: linear-gradient(135deg, #064e3b, #10b981);
-  color: white;
+  background:linear-gradient(135deg,#064e3b,#10b981);
+  color:white;
 }
-html { scroll-behavior: smooth; }
-.navbar { background: rgba(0,0,0,0.3); backdrop-filter: blur(10px); position: sticky; top: 0; z-index: 1000; }
-.navbar .nav-link { color: #ffffff !important; }
-.navbar .nav-link:hover { color: #bbf7d0 !important; }
-.section { padding:60px 0; margin:20px; }
-.card-modern { background: rgba(255,255,255,0.95); border-radius:15px; padding:25px; color:#064e3b; box-shadow:0 10px 25px rgba(0,0,0,0.2); }
-.hero { text-align:center; padding:80px 20px; }
-.hero h1 { font-size:42px; font-weight:bold; }
 
-/* Toast styles */
-#toast {
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: #10b981;
-  color: white;
-  padding: 15px 25px;
-  border-radius: 10px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.3);
-  display: none;
-  z-index: 2000;
-  font-weight: bold;
+html{
+  scroll-behavior:smooth;
+}
+
+.navbar{
+  background:rgba(0,0,0,0.3);
+  backdrop-filter:blur(10px);
+  position:sticky;
+  top:0;
+  z-index:1000;
+}
+
+.navbar .nav-link{
+  color:#ffffff !important;
+}
+
+.navbar .nav-link:hover{
+  color:#bbf7d0 !important;
+}
+
+.section{
+  padding:60px 0;
+  margin:20px;
+}
+
+.card-modern{
+  background:rgba(255,255,255,0.95);
+  border-radius:15px;
+  padding:25px;
+  color:#064e3b;
+  box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+.hero{
+  text-align:center;
+  padding:80px 20px;
+}
+
+.hero h1{
+  font-size:42px;
+  font-weight:bold;
+}
+
+/* TOAST */
+#toast{
+  position:fixed;
+  top:20px;
+  right:20px;
+  background:#10b981;
+  color:white;
+  padding:15px 25px;
+  border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
+  display:none;
+  z-index:2000;
+  font-weight:bold;
+}
+
+a{
+  color:#064e3b;
+}
+
+footer{
+  padding:20px;
 }
 </style>
 </head>
@@ -44,61 +88,145 @@ html { scroll-behavior: smooth; }
 
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
-    <a class="navbar-brand fw-bold">Adawe Gas</a>
-    <button class="navbar-toggler" data-bs-toggle="collapse" data-bs-target="#menu">
+
+    <a class="navbar-brand fw-bold">
+      Adawe Gas
+    </a>
+
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menu">
+
       <span class="navbar-toggler-icon"></span>
     </button>
+
     <div class="collapse navbar-collapse" id="menu">
+
       <ul class="navbar-nav ms-auto">
-        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
-        <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-        <li class="nav-item"><a class="nav-link" href="#seller">Become a Seller</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#home">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#services">Services</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#howItWorks">How It Works</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#order">Order</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#seller">Become a Seller</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#contact">Contact</a>
+        </li>
+
       </ul>
+
     </div>
   </div>
 </nav>
 
+<!-- HERO -->
 <section class="hero" id="home">
+
   <h1>Fast LPG Gas Delivery</h1>
+
   <p>Reliable • Fast • Anywhere in Kenya</p>
+
 </section>
 
+<!-- SERVICES -->
 <section class="section text-center" id="services">
+
   <div class="container card-modern">
+
     <h2>Our Services</h2>
-    <p>LPG Delivery • Seller Network • Same-Day Delivery</p>
+
+    <p>
+      LPG Delivery • Seller Network • Same-Day Delivery
+    </p>
+
   </div>
+
 </section>
 
+<!-- ABOUT -->
 <section class="section text-center" id="about">
+
   <div class="container card-modern">
+
     <h2>About Adawe Gas</h2>
-    <p>Reliable LPG gas delivery across Kenya.</p>
+
+    <p>
+      Reliable LPG gas delivery across Kenya.
+    </p>
+
   </div>
+
 </section>
 
+<!-- HOW IT WORKS -->
 <section class="section text-center" id="howItWorks">
+
   <div class="container card-modern">
+
     <h2>How It Works</h2>
-    <p>Order → Nearest Seller → Fast Delivery</p>
+
+    <p>
+      Order → Nearest Seller → Fast Delivery
+    </p>
+
   </div>
+
 </section>
 
+<!-- ORDER -->
 <section class="section" id="order">
+
 <div class="container">
-<h2 class="text-center mb-4">Place Order</h2>
+
+<h2 class="text-center mb-4">
+Place Order
+</h2>
 
 <form id="orderForm" class="col-md-6 mx-auto card-modern">
-<input id="name" class="form-control mb-3" placeholder="Name" required>
-<input id="phone" class="form-control mb-3" placeholder="Phone (07 or 01)" required>
-<input id="location" class="form-control mb-3" placeholder="Location" required>
 
-<select id="quantity" class="form-select mb-3" required>
-<option value="">Select Gas Size</option>
+<input id="name"
+       class="form-control mb-3"
+       placeholder="Name"
+       required>
+
+<input id="phone"
+       class="form-control mb-3"
+       placeholder="Phone (07 or 01)"
+       required>
+
+<input id="location"
+       class="form-control mb-3"
+       placeholder="Location"
+       required>
+
+<select id="quantity"
+        class="form-select mb-3"
+        required>
+
+<option value="">
+Select Gas Size
+</option>
+
 <option>1kg</option>
 <option>3kg</option>
 <option>6kg</option>
@@ -110,10 +238,17 @@ html { scroll-behavior: smooth; }
 <option>40kg</option>
 <option>45kg</option>
 <option>50kg</option>
+
 </select>
 
-<select id="brand" class="form-select mb-3" required>
-<option value="">Select Brand</option>
+<select id="brand"
+        class="form-select mb-3"
+        required>
+
+<option value="">
+Select Brand
+</option>
+
 <option>K-Gas</option>
 <option>AfriGas</option>
 <option>Pro Gas</option>
@@ -122,127 +257,299 @@ html { scroll-behavior: smooth; }
 <option>Lake Gas</option>
 <option>Rubis Gas</option>
 <option>Taifa Gas</option>
+
 </select>
 
-<button type="submit" class="btn w-100" style="background:#25D366;color:white;">
+<button type="submit"
+        class="btn w-100"
+        style="background:#25D366;color:white;">
+
 📲 Send Order via WhatsApp
+
 </button>
+
 </form>
+
 </div>
 </section>
 
+<!-- SELLER -->
 <section class="section" id="seller">
+
 <div class="container">
-<h2 class="text-center mb-4">Register Seller</h2>
 
-<form id="sellerForm" class="col-md-6 mx-auto card-modern">
-<input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-<input id="sellerPhone" class="form-control mb-3" placeholder="Phone (07 or 01)" required>
-<input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
+<h2 class="text-center mb-4">
+Register Seller
+</h2>
 
-<input id="price1kg" class="form-control mb-2" placeholder="1kg price">
-<input id="price3kg" class="form-control mb-2" placeholder="3kg price">
-<input id="price6kg" class="form-control mb-2" placeholder="6kg price">
-<input id="price13kg" class="form-control mb-2" placeholder="13kg price">
-<input id="price15kg" class="form-control mb-2" placeholder="15kg price">
-<input id="price22kg" class="form-control mb-2" placeholder="22kg price">
-<input id="price25kg" class="form-control mb-2" placeholder="25kg price">
-<input id="price35kg" class="form-control mb-2" placeholder="35kg price">
-<input id="price40kg" class="form-control mb-2" placeholder="40kg price">
-<input id="price45kg" class="form-control mb-2" placeholder="45kg price">
-<input id="price50kg" class="form-control mb-3" placeholder="50kg price">
+<form id="sellerForm"
+      class="col-md-6 mx-auto card-modern">
 
-<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">
-<span id="btnText">Register</span>
-<span id="btnLoader" style="display:none;">Saving...</span>
+<input id="sellerName"
+       class="form-control mb-3"
+       placeholder="Company Name"
+       required>
+
+<input id="sellerPhone"
+       class="form-control mb-3"
+       placeholder="Phone (07 or 01)"
+       required>
+
+<input id="sellerLocation"
+       class="form-control mb-3"
+       placeholder="Location"
+       required>
+
+<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number">
+<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number">
+<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number">
+<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number">
+<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number">
+<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number">
+<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number">
+<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number">
+<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number">
+<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number">
+<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number">
+
+<button type="button"
+        id="registerSellerBtn"
+        class="btn btn-primary w-100">
+
+<span id="btnText">
+Register
+</span>
+
+<span id="btnLoader" style="display:none;">
+Saving...
+</span>
+
 </button>
+
 </form>
+
 </div>
 </section>
 
+<!-- TOAST -->
 <div id="toast"></div>
 
+<!-- CONTACT -->
 <section class="section text-center" id="contact">
+
 <div class="container card-modern">
+
 <h2>Contact</h2>
-<p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
-<p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
-<p>📍 Nairobi, Kenya</p>
+
+<p>
+📞 <a href="tel:+254727015434">0727 015 434</a>
+</p>
+
+<p>
+📧 <a href="mailto:adaweadawe56@gmail.com">
+adaweadawe56@gmail.com
+</a>
+</p>
+
+<p>
+📍 Nairobi, Kenya
+</p>
+
 </div>
 </section>
 
-<footer class="text-center"><p>© 2026 Adawe Gas – Kenya</p></footer>
+<footer class="text-center">
+<p>
+© 2026 Adawe Gas – Kenya
+</p>
+</footer>
 
 <script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
+
   projectId: "adawe-gas-system-82187",
+
   storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+
   messagingSenderId: "644303663526",
+
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
-// TOAST FUNCTION
-function showToast(message, success=true){
-  const toast = document.getElementById("toast");
-  toast.innerText = message;
-  toast.style.background = success ? "#10b981" : "#dc2626";
-  toast.style.display = "block";
-  setTimeout(()=>{ toast.style.display = "none"; }, 3000);
+/* PHONE FORMAT */
+function formatKenyaPhone(phone){
+
+  phone = phone.replace(/\s+/g,'');
+
+  if(phone.startsWith("0")){
+
+    return "+254" + phone.slice(1);
+  }
+
+  if(phone.startsWith("7") && phone.length===9){
+
+    return "+254" + phone;
+  }
+
+  if(phone.startsWith("1") && phone.length===9){
+
+    return "+254" + phone;
+  }
+
+  return phone;
 }
 
-// ORDER FORM
+/* TOAST */
+function showToast(message, success=true){
+
+  const toast = document.getElementById("toast");
+
+  toast.innerText = message;
+
+  toast.style.background = success
+  ? "#10b981"
+  : "#dc2626";
+
+  toast.style.display = "block";
+
+  setTimeout(()=>{
+
+    toast.style.display = "none";
+
+  },3000);
+}
+
+/* ORDER FORM */
 const orderForm = document.getElementById("orderForm");
-orderForm.addEventListener("submit", e=>{
+
+orderForm.addEventListener("submit", async e=>{
+
   e.preventDefault();
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const location = document.getElementById("location").value.trim();
-  const quantity = document.getElementById("quantity").value;
-  const brand = document.getElementById("brand").value;
+
+  const name =
+  document.getElementById("name").value.trim();
+
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("phone").value.trim()
+  );
+
+  const location =
+  document.getElementById("location").value.trim();
+
+  const quantity =
+  document.getElementById("quantity").value;
+
+  const brand =
+  document.getElementById("brand").value;
 
   if(!name || !phone || !location || !quantity || !brand){
-    showToast("Please fill all order fields", false);
+
+    showToast("Please fill all order fields",false);
+
     return;
   }
 
-  showToast("✅ Order ready to send via WhatsApp");
+  try{
+
+    await addDoc(collection(db,"orders"),{
+
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
+      status:"Pending",
+      createdAt:serverTimestamp()
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Failed to save order",false);
+
+    return;
+  }
+
+  showToast("✅ Order saved successfully");
 
   const message = `Hello Adawe Gas New Order:
+
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Size: ${quantity}
 Brand: ${brand}`;
-  const waNumber = "254727015434"; 
-  const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
 
-  setTimeout(()=>{ window.open(waLink, "_blank"); }, 500);
+  const waNumber = "254727015434";
+
+  const waLink =
+  `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
+
+  setTimeout(()=>{
+
+    window.location.href = waLink;
+
+  },500);
+
+  orderForm.reset();
+
 });
 
-// SELLER FORM
-const registerBtn = document.getElementById("registerSellerBtn");
-const btnText = document.getElementById("btnText");
-const btnLoader = document.getElementById("btnLoader");
+/* SELLER FORM */
+const registerBtn =
+document.getElementById("registerSellerBtn");
+
+const btnText =
+document.getElementById("btnText");
+
+const btnLoader =
+document.getElementById("btnLoader");
 
 registerBtn.addEventListener("click", async ()=>{
-  const name = document.getElementById("sellerName").value.trim();
-  const phone = document.getElementById("sellerPhone").value.trim();
-  const location = document.getElementById("sellerLocation").value.trim();
+
+  const name =
+  document.getElementById("sellerName").value.trim();
+
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("sellerPhone").value.trim()
+  );
+
+  const location =
+  document.getElementById("sellerLocation").value.trim();
 
   if(!name || !phone || !location){
-    showToast("Please fill all seller fields", false);
+
+    showToast("Please fill all seller fields",false);
+
     return;
   }
 
   const prices = {
+
     "1kg": Number(document.getElementById("price1kg").value)||0,
     "3kg": Number(document.getElementById("price3kg").value)||0,
     "6kg": Number(document.getElementById("price6kg").value)||0,
@@ -256,24 +563,59 @@ registerBtn.addEventListener("click", async ()=>{
     "50kg": Number(document.getElementById("price50kg").value)||0
   };
 
-  btnText.style.display="none";
-  btnLoader.style.display="inline";
+  const hasPrice =
+  Object.values(prices).some(p=>p>0);
 
-  try {
-    await addDoc(collection(db,"sellers"),{
-      name, phone, location, prices, status:"pending", createdAt: serverTimestamp()
-    });
-    document.getElementById("sellerForm").reset();
-    showToast("✅ Seller saved successfully!");
-  } catch(err){
-    console.error(err);
-    showToast("❌ Error saving seller: "+err.message, false);
-  } finally{
-    btnText.style.display="inline";
-    btnLoader.style.display="none";
+  if(!hasPrice){
+
+    showToast("Enter at least one price",false);
+
+    return;
   }
+
+  btnText.style.display = "none";
+
+  btnLoader.style.display = "inline";
+
+  try{
+
+    await addDoc(collection(db,"sellers"),{
+
+      name,
+      phone,
+      location,
+      prices,
+      status:"pending",
+      createdAt:serverTimestamp()
+
+    });
+
+    document.getElementById("sellerForm").reset();
+
+    showToast("✅ Seller saved successfully!");
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast(
+      "❌ Error saving seller: " + err.message,
+      false
+    );
+
+  }finally{
+
+    btnText.style.display = "inline";
+
+    btnLoader.style.display = "none";
+  }
+
 });
+
 </script>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 </html>
+```
