@@ -80,6 +80,11 @@ footer{
   padding:20px;
 }
 
+input,
+select{
+  color:#064e3b !important;
+}
+
 @media(max-width:768px){
 
   .hero h1{
@@ -100,7 +105,7 @@ footer{
 
   <div class="container">
 
-    <a class="navbar-brand fw-bold" href="#">
+    <a class="navbar-brand fw-bold" href="#home">
       Adawe Gas
     </a>
 
@@ -225,18 +230,21 @@ Place Order
        type="text"
        class="form-control mb-3"
        placeholder="Name"
+       autocomplete="name"
        required>
 
 <input id="phone"
        type="tel"
        class="form-control mb-3"
        placeholder="Phone (07 or 01)"
+       autocomplete="tel"
        required>
 
 <input id="location"
        type="text"
        class="form-control mb-3"
        placeholder="Location"
+       autocomplete="address-level2"
        required>
 
 <select id="quantity"
@@ -247,17 +255,17 @@ Place Order
 Select Gas Size
 </option>
 
-<option>1kg</option>
-<option>3kg</option>
-<option>6kg</option>
-<option>13kg</option>
-<option>15kg</option>
-<option>22kg</option>
-<option>25kg</option>
-<option>35kg</option>
-<option>40kg</option>
-<option>45kg</option>
-<option>50kg</option>
+<option value="1kg">1kg</option>
+<option value="3kg">3kg</option>
+<option value="6kg">6kg</option>
+<option value="13kg">13kg</option>
+<option value="15kg">15kg</option>
+<option value="22kg">22kg</option>
+<option value="25kg">25kg</option>
+<option value="35kg">35kg</option>
+<option value="40kg">40kg</option>
+<option value="45kg">45kg</option>
+<option value="50kg">50kg</option>
 
 </select>
 
@@ -269,14 +277,14 @@ Select Gas Size
 Select Brand
 </option>
 
-<option>K-Gas</option>
-<option>AfriGas</option>
-<option>Pro Gas</option>
-<option>TotalEnergies</option>
-<option>Hashi Gas</option>
-<option>Lake Gas</option>
-<option>Rubis Gas</option>
-<option>Taifa Gas</option>
+<option value="K-Gas">K-Gas</option>
+<option value="AfriGas">AfriGas</option>
+<option value="Pro Gas">Pro Gas</option>
+<option value="TotalEnergies">TotalEnergies</option>
+<option value="Hashi Gas">Hashi Gas</option>
+<option value="Lake Gas">Lake Gas</option>
+<option value="Rubis Gas">Rubis Gas</option>
+<option value="Taifa Gas">Taifa Gas</option>
 
 </select>
 
@@ -354,6 +362,7 @@ Saving...
 </div>
 </section>
 
+<!-- TOAST -->
 <div id="toast"></div>
 
 <!-- CONTACT -->
@@ -410,7 +419,7 @@ const firebaseConfig = {
 
   projectId: "adawe-gas-system-82187",
 
-  storageBucket: "adawe-gas-system-82187.firebasestorage.app",
+  storageBucket: "adawe-gas-system-82187.appspot.com",
 
   messagingSenderId: "644303663526",
 
@@ -426,17 +435,22 @@ function formatKenyaPhone(phone){
 
   phone = phone.replace(/\s+/g,'');
 
+  if(phone.startsWith("+254")){
+
+    return phone;
+  }
+
   if(phone.startsWith("0")){
 
     return "+254" + phone.slice(1);
   }
 
-  if(phone.startsWith("7") && phone.length===9){
+  if(phone.startsWith("7") && phone.length === 9){
 
     return "+254" + phone;
   }
 
-  if(phone.startsWith("1") && phone.length===9){
+  if(phone.startsWith("1") && phone.length === 9){
 
     return "+254" + phone;
   }
@@ -451,7 +465,7 @@ function isValidKenyaPhone(phone){
 }
 
 /* TOAST */
-function showToast(message, success=true){
+function showToast(message, success = true){
 
   const toast = document.getElementById("toast");
 
@@ -595,21 +609,21 @@ registerBtn.addEventListener("click", async ()=>{
 
   const prices = {
 
-    "1kg": Number(document.getElementById("price1kg").value)||0,
-    "3kg": Number(document.getElementById("price3kg").value)||0,
-    "6kg": Number(document.getElementById("price6kg").value)||0,
-    "13kg": Number(document.getElementById("price13kg").value)||0,
-    "15kg": Number(document.getElementById("price15kg").value)||0,
-    "22kg": Number(document.getElementById("price22kg").value)||0,
-    "25kg": Number(document.getElementById("price25kg").value)||0,
-    "35kg": Number(document.getElementById("price35kg").value)||0,
-    "40kg": Number(document.getElementById("price40kg").value)||0,
-    "45kg": Number(document.getElementById("price45kg").value)||0,
-    "50kg": Number(document.getElementById("price50kg").value)||0
+    "1kg": Number(document.getElementById("price1kg").value) || 0,
+    "3kg": Number(document.getElementById("price3kg").value) || 0,
+    "6kg": Number(document.getElementById("price6kg").value) || 0,
+    "13kg": Number(document.getElementById("price13kg").value) || 0,
+    "15kg": Number(document.getElementById("price15kg").value) || 0,
+    "22kg": Number(document.getElementById("price22kg").value) || 0,
+    "25kg": Number(document.getElementById("price25kg").value) || 0,
+    "35kg": Number(document.getElementById("price35kg").value) || 0,
+    "40kg": Number(document.getElementById("price40kg").value) || 0,
+    "45kg": Number(document.getElementById("price45kg").value) || 0,
+    "50kg": Number(document.getElementById("price50kg").value) || 0
   };
 
   const hasPrice =
-  Object.values(prices).some(p=>p>0);
+  Object.values(prices).some(p => p > 0);
 
   if(!hasPrice){
 
