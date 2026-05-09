@@ -322,17 +322,18 @@ Place Order
 </style>
 
 </div>
-</section>
-<!-- SELLER -->
+</section><!-- SELLER -->
 <section class="section" id="seller">
 
 <div class="container">
 
-<h2 class="text-center mb-4">Register Seller</h2>
+<h2 class="text-center mb-4">
+Register Seller
+</h2>
 
-<form id="sellerForm" class="col-md-6 mx-auto card-modern">
+<form id="sellerForm"
+      class="col-md-6 mx-auto card-modern">
 
-<!-- BASIC INFO -->
 <input id="sellerName"
        type="text"
        class="form-control mb-3"
@@ -341,9 +342,8 @@ Place Order
 
 <input id="sellerPhone"
        type="tel"
-       maxlength="10"
        class="form-control mb-3"
-       placeholder="Phone (07XXXXXXXX or 01XXXXXXXX)"
+       placeholder="Phone (07 or 01)"
        required>
 
 <input id="sellerLocation"
@@ -352,44 +352,25 @@ Place Order
        placeholder="Location"
        required>
 
-<!-- PRICING TOGGLE -->
-<div class="pricing-toggle" onclick="togglePricing()">
-📦 Click to Add Pricing
-</div>
-
-<!-- PRICING SECTION -->
-<div id="pricingBox" class="pricing-box">
-
 <input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="0">
-
 <input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="0">
-
 <input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number" min="0">
-
 <input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number" min="0">
-
 <input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number" min="0">
-
 <input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number" min="0">
-
 <input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number" min="0">
-
 <input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number" min="0">
-
 <input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number" min="0">
-
 <input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="0">
-
 <input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="0">
 
-</div>
-
-<!-- BUTTON -->
 <button type="button"
         id="registerSellerBtn"
         class="btn btn-primary w-100">
 
-<span id="btnText">Register Seller</span>
+<span id="btnText">
+Register
+</span>
 
 <span id="btnLoader" style="display:none;">
 Saving...
@@ -400,6 +381,8 @@ Saving...
 </form>
 
 </div>
+</section>
+
 
 </section>
 
