@@ -53,13 +53,21 @@ html{ scroll-behavior:smooth; }
   color:white;
   padding:15px 25px;
   border-radius:10px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.3);
   display:none;
   z-index:2000;
   font-weight:bold;
 }
 
+a{ color:#064e3b; }
+
+footer{ padding:20px; }
+
+input,select{ color:#064e3b !important; }
+
 @media(max-width:768px){
   .hero h1{ font-size:30px; }
+  .section{ margin:10px; padding:40px 0; }
 }
 </style>
 
@@ -70,7 +78,27 @@ html{ scroll-behavior:smooth; }
 <!-- NAV -->
 <nav class="navbar navbar-expand-lg navbar-dark">
   <div class="container">
+
     <a class="navbar-brand fw-bold" href="#home">Adawe Gas</a>
+
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="menu">
+      <ul class="navbar-nav ms-auto">
+
+        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
+        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
+        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
+        <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
+        <li class="nav-item"><a class="nav-link" href="#seller">Become a Seller</a></li>
+        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+
+      </ul>
+    </div>
+
   </div>
 </nav>
 
@@ -78,33 +106,6 @@ html{ scroll-behavior:smooth; }
 <section class="hero" id="home">
   <h1>Fast LPG Gas Delivery</h1>
   <p>Reliable • Fast • Anywhere in Kenya</p>
-</section>
-
-<!-- SERVICES -->
-<section class="section text-center" id="services">
-  <div class="container card-modern">
-    <h2>Our Services</h2>
-    <p>Fast & Reliable LPG Delivery Across Nairobi and Kenya</p>
-  </div>
-</section>
-
-<!-- ABOUT -->
-<section class="section text-center" id="about">
-  <div class="container card-modern">
-    <h2>About Adawe Gas</h2>
-    <p>
-      Adawe Gas is a fast and reliable LPG delivery network connecting customers
-      with trusted gas sellers across Kenya.
-    </p>
-  </div>
-</section>
-
-<!-- HOW IT WORKS -->
-<section class="section text-center" id="howItWorks">
-  <div class="container card-modern">
-    <h2>How It Works</h2>
-    <p>Order → Nearest Seller → Fast Delivery</p>
-  </div>
 </section>
 
 <!-- ORDER -->
@@ -115,9 +116,9 @@ html{ scroll-behavior:smooth; }
 
 <form id="orderForm" class="card-modern">
 
-<input id="name" class="form-control mb-3" placeholder="Full Name" required>
-<input id="phone" class="form-control mb-3" placeholder="Phone Number" required>
-<input id="location" class="form-control mb-3" placeholder="Delivery Location" required>
+<input id="name" type="text" class="form-control mb-3" placeholder="Full Name" required>
+<input id="phone" type="tel" class="form-control mb-3" placeholder="Phone Number" required>
+<input id="location" type="text" class="form-control mb-3" placeholder="Delivery Location" required>
 
 <select id="quantity" class="form-select mb-3" required>
 <option value="">Select Gas Size</option>
@@ -134,7 +135,7 @@ html{ scroll-behavior:smooth; }
 <option>Lake Gas</option><option>Rubis Gas</option><option>Taifa Gas</option>
 </select>
 
-<button class="btn w-100" style="background:#25D366;color:white;font-weight:600;">
+<button type="submit" class="btn w-100" style="background:#25D366;color:white;font-weight:600;">
 📲 Send Order via WhatsApp
 </button>
 
@@ -149,26 +150,26 @@ html{ scroll-behavior:smooth; }
 
 <h2 class="text-center mb-4">Register Seller</h2>
 
-<form class="card-modern">
+<form id="sellerForm" class="card-modern">
 
 <input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
 <input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
 <input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
 
-<input id="price1kg" class="form-control mb-2" placeholder="1kg price">
-<input id="price3kg" class="form-control mb-2" placeholder="3kg price">
-<input id="price6kg" class="form-control mb-2" placeholder="6kg price">
-<input id="price13kg" class="form-control mb-2" placeholder="13kg price">
-<input id="price15kg" class="form-control mb-2" placeholder="15kg price">
-<input id="price22kg" class="form-control mb-2" placeholder="22kg price">
-<input id="price25kg" class="form-control mb-2" placeholder="25kg price">
-<input id="price35kg" class="form-control mb-2" placeholder="35kg price">
-<input id="price40kg" class="form-control mb-2" placeholder="40kg price">
-<input id="price45kg" class="form-control mb-2" placeholder="45kg price">
-<input id="price50kg" class="form-control mb-3" placeholder="50kg price">
+<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number">
+<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number">
+<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number">
+<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number">
+<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number">
+<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number">
+<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number">
+<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number">
+<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number">
+<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number">
+<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number">
 
 <button type="button" id="registerSellerBtn" class="btn btn-primary w-100">
-Register Seller
+Register
 </button>
 
 </form>
@@ -179,13 +180,27 @@ Register Seller
 <!-- TOAST -->
 <div id="toast"></div>
 
+<!-- CONTACT -->
+<section class="section text-center" id="contact">
+
+<div class="container card-modern">
+
+<h2>Contact</h2>
+<p>📞 <a href="tel:+254727015434">0727 015 434</a></p>
+<p>📧 <a href="mailto:adaweadawe56@gmail.com">adaweadawe56@gmail.com</a></p>
+<p>📍 Nairobi, Kenya</p>
+
+</div>
+</section>
+
 <!-- FIREBASE -->
 <script type="module">
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyBVH...",
+  apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
   storageBucket: "adawe-gas-system-82187.appspot.com",
@@ -197,9 +212,10 @@ const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 
 /* TOAST */
-function toast(msg){
+function toast(msg, ok=true){
   const t = document.getElementById("toast");
   t.innerText = msg;
+  t.style.background = ok ? "#10b981" : "#dc2626";
   t.style.display = "block";
   setTimeout(()=>t.style.display="none",3000);
 }
@@ -208,30 +224,37 @@ function toast(msg){
 document.getElementById("orderForm").addEventListener("submit", async (e)=>{
   e.preventDefault();
 
-  const n = document.getElementById("name").value;
-  const p = document.getElementById("phone").value;
-  const l = document.getElementById("location").value;
-  const q = document.getElementById("quantity").value;
-  const b = document.getElementById("brand").value;
+  const name = name.value.trim();
+  const phone = phone.value.trim();
+  const location = location.value.trim();
+  const quantity = quantity.value;
+  const brand = brand.value;
 
   await addDoc(collection(db,"orders"),{
-    name:n, phone:p, location:l, quantity:q, brand:b,
+    name,phone,location,quantity,brand,
     status:"Pending",
     createdAt:serverTimestamp()
   });
 
   toast("Order saved ✔");
 
-  window.open(`https://wa.me/254727015434?text=New Order`);
+  const msg = `Order:
+Name: ${name}
+Phone: ${phone}
+Location: ${location}
+Size: ${quantity}
+Brand: ${brand}`;
+
+  window.open(`https://wa.me/254727015434?text=${encodeURIComponent(msg)}`);
   e.target.reset();
 });
 
 /* SELLER */
 document.getElementById("registerSellerBtn").addEventListener("click", async ()=>{
 
-  const n = document.getElementById("sellerName").value;
-  const p = document.getElementById("sellerPhone").value;
-  const l = document.getElementById("sellerLocation").value;
+  const name = sellerName.value.trim();
+  const phone = sellerPhone.value.trim();
+  const location = sellerLocation.value.trim();
 
   const prices = {
     "1kg": Number(price1kg.value)||0,
@@ -247,9 +270,18 @@ document.getElementById("registerSellerBtn").addEventListener("click", async ()=
     "50kg": Number(price50kg.value)||0
   };
 
+  if(!name||!phone||!location){
+    toast("Fill seller fields",false);
+    return;
+  }
+
+  if(!Object.values(prices).some(p=>p>0)){
+    toast("Add at least one price",false);
+    return;
+  }
+
   await addDoc(collection(db,"sellers"),{
-    name:n, phone:p, location:l,
-    prices,
+    name,phone,location,prices,
     status:"pending",
     createdAt:serverTimestamp()
   });
