@@ -262,35 +262,127 @@ Adawe Gas shall not be held liable for damages, misuse, leaks, accidents, or los
   
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-}
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } 
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+/* FIREBASE */
 const firebaseConfig = {
-
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
-
   projectId: "adawe-gas-system-82187",
-
   storageBucket: "adawe-gas-system-82187.appspot.com",
-
   messagingSenderId: "644303663526",
-
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
+
+/* TOAST */
+function showToast(msg, success=true){
+  const toast = document.getElementById("toast");
+  toast.innerText = msg;
+  toast.style.background = success ? "#10b981" : "#dc2626";
+  toast.style.display = "block";
+
+  setTimeout(()=> toast.style.display="none", 3000);
+}
+
+/* ORDER FORM */
+document.getElementById("orderForm").addEventListener("submit", async (e)=>{
+  e.preventDefault();
+
+  const name = document.getElementById("name").value;
+  const phone = document.getElementById("phone").value;
+  const location = document.getElementById("location").value;
+  const quantity = document.getElementById("quantity").value;
+  const brand = document.getElementById("brand").value;
+
+  if(!name || !phone || !location || !quantity || !brand){
+    showToast("Fadlan buuxi dhammaan fields", false);
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,"orders"),{
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
+      status:"Pending",
+      createdAt:serverTimestamp()
+    });
+
+    showToast("✔ Order waa la keydiyey");
+  }catch(err){
+    showToast("❌ Order lama keydin", false);
+  }
+
+  const msg = `Order Cusub:
+Name: ${name}
+Phone: ${phone}
+Location: ${location}
+Size: ${quantity}
+Brand: ${brand}`;
+
+  window.open(`https://wa.me/254727015434?text=${encodeURIComponent(msg)}`);
+
+  e.target.reset();
+});
+
+
+/* SELLER FORM */
+document.getElementById("registerSellerBtn").addEventListener("click", async ()=>{
+
+  const name = document.getElementById("sellerName").value;
+  const phone = document.getElementById("sellerPhone").value;
+  const location = document.getElementById("sellerLocation").value;
+
+  const prices = {
+    "1kg": Number(document.getElementById("price1kg").value) || 0,
+    "3kg": Number(document.getElementById("price3kg").value) || 0,
+    "6kg": Number(document.getElementById("price6kg").value) || 0,
+    "13kg": Number(document.getElementById("price13kg").value) || 0,
+    "15kg": Number(document.getElementById("price15kg").value) || 0,
+    "22kg": Number(document.getElementById("price22kg").value) || 0,
+    "25kg": Number(document.getElementById("price25kg").value) || 0,
+    "35kg": Number(document.getElementById("price35kg").value) || 0,
+    "40kg": Number(document.getElementById("price40kg").value) || 0,
+    "45kg": Number(document.getElementById("price45kg").value) || 0,
+    "50kg": Number(document.getElementById("price50kg").value) || 0
+  };
+
+  if(!name || !phone || !location){
+    showToast("Fadlan buuxi seller fields", false);
+    return;
+  }
+
+  const hasPrice = Object.values(prices).some(p => p > 0);
+
+  if(!hasPrice){
+    showToast("Geli ugu yaraan hal price", false);
+    return;
+  }
+
+  try{
+    await addDoc(collection(db,"sellers"),{
+      name,
+      phone,
+      location,
+      prices,
+      status:"pending",
+      createdAt:serverTimestamp()
+    });
+
+    showToast("✔ Seller waa la keydiyey");
+  }catch(err){
+    showToast("❌ Seller lama keydin", false);
+  }
+
+});
+
 </script>  
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
