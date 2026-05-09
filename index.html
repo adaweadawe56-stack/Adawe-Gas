@@ -236,13 +236,19 @@ Place Order
        autocomplete="name"
        required>
 
-<!-- PHONE -->
-<input id="phone"
-       type="tel"
-       class="form-control mb-3"
-       placeholder="Phone (07 or 01XXXXXXXX)"
-       pattern="^(07|01)\d{8}$"
-       required>
+<script>
+const phone = document.getElementById("phone");
+
+phone.addEventListener("input", function () {
+  // remove non-digits
+  this.value = this.value.replace(/\D/g, "");
+
+  // limit to 10 digits
+  if (this.value.length > 10) {
+    this.value = this.value.slice(0, 10);
+  }
+});
+</script>
 
 <!-- LOCATION -->
 <input id="location"
