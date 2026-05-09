@@ -236,12 +236,19 @@ Place Order
        autocomplete="name"
        required>
 
+<!-- PHONE -->
+<input id="phone"
+       type="tel"
+       class="form-control mb-3"
+       placeholder="Phone Number"
+       required>
+
 <script>
 document.addEventListener("DOMContentLoaded", function () {
 
   const phone = document.getElementById("phone");
 
-  if (!phone) return; // safety check
+  if (!phone) return;
 
   phone.addEventListener("input", function () {
 
@@ -257,6 +264,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
 });
 </script>
+
 <!-- LOCATION -->
 <input id="location"
        type="text"
