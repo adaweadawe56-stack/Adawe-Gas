@@ -15,7 +15,9 @@ body{
   color:white;
 }
 
-html{ scroll-behavior:smooth; }
+html{
+  scroll-behavior:smooth;
+}
 
 .navbar{
   background:rgba(0,0,0,0.3);
@@ -25,10 +27,18 @@ html{ scroll-behavior:smooth; }
   z-index:1000;
 }
 
-.navbar .nav-link{ color:#ffffff !important; }
-.navbar .nav-link:hover{ color:#bbf7d0 !important; }
+.navbar .nav-link{
+  color:#ffffff !important;
+}
 
-.section{ padding:60px 0; margin:20px; }
+.navbar .nav-link:hover{
+  color:#bbf7d0 !important;
+}
+
+.section{
+  padding:60px 0;
+  margin:20px;
+}
 
 .card-modern{
   background:rgba(255,255,255,0.95);
@@ -43,7 +53,10 @@ html{ scroll-behavior:smooth; }
   padding:80px 20px;
 }
 
-.hero h1{ font-size:42px; font-weight:bold; }
+.hero h1{
+  font-size:42px;
+  font-weight:bold;
+}
 
 #toast{
   position:fixed;
@@ -59,55 +72,151 @@ html{ scroll-behavior:smooth; }
   font-weight:bold;
 }
 
-a{ color:#064e3b; }
+a{
+  color:#064e3b;
+}
 
-footer{ padding:20px; }
+footer{
+  padding:20px;
+}
 
-input,select{ color:#064e3b !important; }
+input,
+select{
+  color:#064e3b !important;
+}
 
 @media(max-width:768px){
-  .hero h1{ font-size:30px; }
-  .section{ margin:10px; padding:40px 0; }
+
+  .hero h1{
+    font-size:30px;
+  }
+
+  .section{
+    margin:10px;
+    padding:40px 0;
+  }
 }
 </style>
-
 </head>
 
 <body>
 
-<!-- NAV -->
 <nav class="navbar navbar-expand-lg navbar-dark">
+
   <div class="container">
 
-    <a class="navbar-brand fw-bold" href="#home">Adawe Gas</a>
+    <a class="navbar-brand fw-bold" href="#home">
+      Adawe Gas
+    </a>
 
-    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#menu">
+    <button class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#menu"
+            aria-controls="menu"
+            aria-expanded="false"
+            aria-label="Toggle navigation">
+
       <span class="navbar-toggler-icon"></span>
+
     </button>
 
     <div class="collapse navbar-collapse" id="menu">
+
       <ul class="navbar-nav ms-auto">
 
-        <li class="nav-item"><a class="nav-link" href="#home">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#services">Services</a></li>
-        <li class="nav-item"><a class="nav-link" href="#about">About</a></li>
-        <li class="nav-item"><a class="nav-link" href="#howItWorks">How It Works</a></li>
-        <li class="nav-item"><a class="nav-link" href="#order">Order</a></li>
-        <li class="nav-item"><a class="nav-link" href="#seller">Become a Seller</a></li>
-        <li class="nav-item"><a class="nav-link" href="#contact">Contact</a></li>
+        <li class="nav-item">
+          <a class="nav-link" href="#home">Home</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#services">Services</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#about">About</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#howItWorks">How It Works</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#order">Order</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#seller">Become a Seller</a>
+        </li>
+
+        <li class="nav-item">
+          <a class="nav-link" href="#contact">Contact</a>
+        </li>
 
       </ul>
+
     </div>
 
   </div>
+
 </nav>
 
 <!-- HERO -->
 <section class="hero" id="home">
+
   <h1>Fast LPG Gas Delivery</h1>
+
   <p>Reliable • Fast • Anywhere in Kenya</p>
+
 </section>
 
+<!-- SERVICES -->
+<section class="section text-center" id="services">
+
+  <div class="container card-modern">
+
+    <h2>Our Services</h2>
+
+    <p>
+      Fast & Reliable LPG Delivery Across Nairobi
+    </p>
+<a href="#order" class="btn btn-light btn-lg mt-3">
+Order Gas Now
+</a>
+  </div>
+
+</section>
+
+<!-- ABOUT -->
+<section class="section text-center" id="about">
+
+  <div class="container card-modern">
+
+    <h2>About Adawe Gas</h2>
+
+    <p>
+      Reliable LPG gas delivery across Kenya.
+    </p>
+
+  </div>
+
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="section text-center" id="howItWorks">
+
+  <div class="container card-modern">
+
+    <h2>How It Works</h2>
+
+    <p>
+      Order → Nearest Seller → Fast Delivery
+    </p>
+
+  </div>
+
+</section> 
+  
 <!-- ORDER -->
 <section class="section" id="order">
 <div class="container">
