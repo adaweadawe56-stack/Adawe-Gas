@@ -341,30 +341,24 @@ document.getElementById("orderForm").addEventListener("submit", function(e){
 
 <div class="container">
 
-<h2 class="text-center mb-4">
-Register Seller
-</h2>
+<h2 class="text-center mb-4">Register Seller</h2>
 
-<form id="sellerForm"
-      class="col-md-6 mx-auto card-modern">
+<form id="sellerForm" class="col-md-6 mx-auto card-modern">
 
-<input id="sellerName"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Company Name"
-       required>
+<!-- BASIC INFO -->
+<input id="sellerName" type="text" class="form-control mb-3" placeholder="Company Name" required>
 
-<input id="sellerPhone"
-       type="tel"
-       class="form-control mb-3"
-       placeholder="Phone (07 or 01)"
-       required>
+<input id="sellerPhone" type="tel" class="form-control mb-3" placeholder="Phone (07 or 01XXXXXXXX)" pattern="^(07|01)\\d{8}$" required>
 
-<input id="sellerLocation"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Location"
-       required>
+<input id="sellerLocation" type="text" class="form-control mb-3" placeholder="Location" required>
+
+<!-- PRICING TOGGLE -->
+<div class="pricing-toggle" onclick="togglePricing()">
+📦 Click to Add Pricing (Optional)
+</div>
+
+<!-- PRICING SECTION -->
+<div id="pricingBox" class="pricing-box">
 
 <input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="0">
 <input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="0">
@@ -378,19 +372,81 @@ Register Seller
 <input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="0">
 <input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="0">
 
-<button type="button"
-        id="registerSellerBtn"
-        class="btn btn-primary w-100">
+</div>
 
-<span id="btnText">
-Register
-</span>
-
-<span id="btnLoader" style="display:none;">
-Saving...
-</span>
-
+<!-- BUTTON -->
+<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">
+<span id="btnText">Register</span>
+<span id="btnLoader" style="display:none;">Saving...</span>
 </button>
+
+</form>
+
+</div>
+
+</section>
+
+<script>
+
+function togglePricing(){
+  document.getElementById("pricingBox").classList.toggle("active");
+}
+
+
+document.getElementById("registerSellerBtn").addEventListener("click", function(){
+
+  const btn = document.getElementById("registerSellerBtn");
+  const loader = document.getElementById("btnLoader");
+  const text = document.getElementById("btnText");
+
+  const phone = document.getElementById("sellerPhone").value;
+  const regex = /^(07|01)\d{8}$/;
+
+  if(!regex.test(phone)){
+    alert("Invalid phone number (Use 07XXXXXXXX or 01XXXXXXXX)");
+    return;
+  }
+
+  btn.disabled = true;
+  loader.style.display = "inline";
+  text.style.display = "none";
+
+  const seller = {
+    name: document.getElementById("sellerName").value,
+    phone: phone,
+    location: document.getElementById("sellerLocation").value,
+    prices: {
+      "1kg": document.getElementById("price1kg").value,
+      "3kg": document.getElementById("price3kg").value,
+      "6kg": document.getElementById("price6kg").value,
+      "13kg": document.getElementById("price13kg").value,
+      "15kg": document.getElementById("price15kg").value,
+      "22kg": document.getElementById("price22kg").value,
+      "25kg": document.getElementById("price25kg").value,
+      "35kg": document.getElementById("price35kg").value,
+      "40kg": document.getElementById("price40kg").value,
+      "45kg": document.getElementById("price45kg").value,
+      "50kg": document.getElementById("price50kg").value
+    }
+  };
+
+  console.log("Seller Saved:", seller);
+
+  setTimeout(()=>{
+    alert("Seller Registered Successfully!");
+
+    btn.disabled = false;
+    loader.style.display = "none";
+    text.style.display = "inline";
+
+    document.getElementById("sellerForm").reset();
+    document.getElementById("pricingBox").classList.remove("active");
+
+  }, 1200);
+
+});
+
+</script>
 
 </form>
 
