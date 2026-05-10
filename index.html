@@ -291,11 +291,13 @@ Place Order
   <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
-<!-- BUTTON -->
 <button type="submit"
         class="btn w-100"
+        aria-label="Send order via WhatsApp"
         style="background:#25D366;color:white;font-weight:600;">
+
 📲 Send Order via WhatsApp
+
 </button>
 
 <!-- TERMS -->
@@ -569,17 +571,21 @@ orderForm.addEventListener("submit", async e=>{
 
   try{
 
-    await addDoc(collection(db,"orders"),{
+  await addDoc(collection(db,"orders"),{
 
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
-      status:"Pending",
-      createdAt:serverTimestamp()
+  name,
+  phone,
+  location,
+  quantity,
+  brand,
 
-    });
+  status:"Awaiting WhatsApp Confirmation",
+
+  whatsappSent:false,
+
+  createdAt:serverTimestamp()
+
+});
 
   }catch(err){
 
