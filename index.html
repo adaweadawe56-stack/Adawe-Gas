@@ -215,86 +215,181 @@ Order Gas Now
 
   </div>
 
-</section> 
-  
+</section>
+
 <!-- ORDER -->
 <section class="section" id="order">
+
 <div class="container">
 
-<h2 class="text-center mb-4">Place Order</h2>
+<h2 class="text-center mb-4">
+Place Order
+</h2>
 
 <form id="orderForm" class="card-modern">
 
-<input id="name" type="text" class="form-control mb-3" placeholder="Full Name" required>
-<input id="phone" type="tel" class="form-control mb-3" placeholder="Phone Number" required>
-<input id="location" type="text" class="form-control mb-3" placeholder="Delivery Location" required>
+<!-- NAME -->
+<input id="name"
+       type="text"
+       class="form-control mb-3"
+       placeholder="Full Name"
+       autocomplete="name"
+       required>
 
+<!-- PHONE -->
+<input id="phone"
+       type="tel"
+       class="form-control mb-3"
+       placeholder="Phone (07 or 01XXXXXXXX)"
+       pattern="^(07|01)\d{8}$"
+       required>
+
+<!-- LOCATION -->
+<input id="location"
+       type="text"
+       class="form-control mb-3"
+       placeholder="Delivery Location"
+       required>
+
+<!-- GAS SIZE -->
 <select id="quantity" class="form-select mb-3" required>
   <option value="">Select Gas Size</option>
-  <option>1kg</option>
-  <option>3kg</option>
-  <option>6kg</option>
-  <option>13kg</option>
-  <option>15kg</option>
-  <option>22kg</option>
-  <option>25kg</option>
-  <option>35kg</option>
-  <option>40kg</option>
-  <option>45kg</option>
-  <option>50kg</option>
+  <option value="1kg">1kg</option>
+  <option value="3kg">3kg</option>
+  <option value="6kg">6kg</option>
+  <option value="13kg">13kg</option>
+  <option value="15kg">15kg</option>
+  <option value="22kg">22kg</option>
+  <option value="25kg">25kg</option>
+  <option value="35kg">35kg</option>
+  <option value="40kg">40kg</option>
+  <option value="45kg">45kg</option>
+  <option value="50kg">50kg</option>
 </select>
 
+<!-- BRAND -->
 <select id="brand" class="form-select mb-3" required>
   <option value="">Select Brand</option>
-  <option>K-Gas</option>
-  <option>AfriGas</option>
-  <option>Pro Gas</option>
-  <option>TotalEnergies</option>
-  <option>Hashi Gas</option>
-  <option>Lake Gas</option>
-  <option>Rubis Gas</option>
-  <option>Taifa Gas</option>
+  <option value="K-Gas">K-Gas</option>
+  <option value="AfriGas">AfriGas</option>
+  <option value="Pro Gas">Pro Gas</option>
+  <option value="TotalEnergies">TotalEnergies</option>
+  <option value="Hashi Gas">Hashi Gas</option>
+  <option value="Lake Gas">Lake Gas</option>
+  <option value="Rubis Gas">Rubis Gas</option>
+  <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
-<button type="submit" class="btn w-100" style="background:#25D366;color:white;font-weight:600;">
+<!-- BUTTON -->
+<button type="submit"
+        class="btn w-100"
+        style="background:#25D366;color:white;font-weight:600;">
 📲 Send Order via WhatsApp
 </button>
 
+<!-- TERMS -->
 <p style="font-size:13px;margin-top:10px;text-align:center;color:#555;">
-By placing an order, you agree to our
-<a href="#terms">Terms & Disclaimer</a>.
+  By placing an order, you agree to our
+  <a href="#terms">Terms & Disclaimer</a>.
 </p>
 
 </form>
 
+<!-- STYLE -->
+<style>
+.card-modern{
+  max-width:500px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+</style>
+
+<!-- WHATSAPP SCRIPT -->
+<script>
+document.getElementById("orderForm").addEventListener("submit", function(e){
+  e.preventDefault();
+
+  const name = document.getElementById("name").value.trim();
+  const phone = document.getElementById("phone").value.trim();
+  const location = document.getElementById("location").value.trim();
+  const quantity = document.getElementById("quantity").value;
+  const brand = document.getElementById("brand").value;
+
+  const message =
+`🟢 NEW GAS ORDER
+----------------------
+👤 Name: ${name}
+📞 Phone: ${phone}
+📍 Location: ${location}
+🔥 Gas Size: ${quantity}
+🏷️ Brand: ${brand}
+----------------------`;
+
+  const url = "https://wa.me/254727015434?text=" + encodeURIComponent(message);
+
+  window.open(url, "_blank");
+});
+</script>
 </div>
 </section>
+
 <!-- SELLER -->
 <section class="section" id="seller">
+
 <div class="container">
 
-<h2 class="text-center mb-4">Register Seller</h2>
+<h2 class="text-center mb-4">
+Register Seller
+</h2>
 
-<form id="sellerForm" class="card-modern">
+<form id="sellerForm"
+      class="col-md-6 mx-auto card-modern">
 
-<input id="sellerName" class="form-control mb-3" placeholder="Company Name" required>
-<input id="sellerPhone" class="form-control mb-3" placeholder="Phone" required>
-<input id="sellerLocation" class="form-control mb-3" placeholder="Location" required>
+<input id="sellerName"
+       type="text"
+       class="form-control mb-3"
+       placeholder="Company Name"
+       required>
 
-<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number">
-<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number">
-<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number">
-<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number">
-<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number">
-<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number">
-<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number">
-<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number">
-<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number">
-<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number">
-<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number">
+<input id="sellerPhone"
+       type="tel"
+       class="form-control mb-3"
+       placeholder="Phone (07 or 01)"
+       required>
 
-<button type="button" id="registerSellerBtn" class="btn btn-primary w-100">
+<input id="sellerLocation"
+       type="text"
+       class="form-control mb-3"
+       placeholder="Location"
+       required>
+
+<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="0">
+<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="0">
+<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number" min="0">
+<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number" min="0">
+<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number" min="0">
+<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number" min="0">
+<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number" min="0">
+<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number" min="0">
+<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number" min="0">
+<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="0">
+<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="0">
+
+<button type="button"
+        id="registerSellerBtn"
+        class="btn btn-primary w-100">
+
+<span id="btnText">
 Register
+</span>
+
+<span id="btnLoader" style="display:none;">
+Saving...
+</span>
+
 </button>
 
 </form>
@@ -330,134 +425,323 @@ Chat on WhatsApp
 </p>
 
 </div>
-</section>
 
+</section>
 <!-- TERMS -->
 <section class="section text-center" id="terms">
 
-<div class="container card-modern">
+  <div class="container card-modern">
 
-<h2>Terms & Disclaimer</h2>
+    <h2>Terms & Disclaimer</h2>
 
-<p>
-Adawe Gas is a marketplace platform connecting
-customers with independent LPG sellers across Kenya.
-</p>
+    <p>
+      Adawe Gas is a marketplace platform connecting
+      customers with independent LPG sellers across Kenya.
+    </p>
 
-<p>
-Sellers are independently responsible for product
-quality, delivery, pricing, safety, and compliance
-with Kenyan LPG regulations.
-</p>
+    <p>
+      Sellers are independently responsible for product
+      quality, delivery, pricing, safety, and compliance
+      with Kenyan LPG regulations.
+    </p>
 
-<p>
-Customers are advised to inspect LPG cylinders,
-regulators, and seals before use.
-</p>
+    <p>
+      Customers are advised to inspect LPG cylinders,
+      regulators, and seals before use.
+    </p>
 
-<p>
-Adawe Gas shall not be held liable for damages,
-misuse, leaks, accidents, or losses resulting from
-LPG products supplied by third-party sellers.
-</p>
+    <p>
+      Adawe Gas shall not be held liable for damages,
+      misuse, leaks, accidents, or losses resulting from
+      LPG products supplied by third-party sellers.
+    </p>
 
-</div>
+  </div>
 
 </section>
-<!-- FIREBASE -->
+<footer class="text-center">
+
+<p>
+© 2026 Adawe Gas Network. All Rights Reserved.
+</p>
+
+</footer>
+
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
+
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
+
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
+
   projectId: "adawe-gas-system-82187",
+
   storageBucket: "adawe-gas-system-82187.appspot.com",
+
   messagingSenderId: "644303663526",
+
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
-/* TOAST */
-function toast(msg, ok=true){
-  const t = document.getElementById("toast");
-  t.innerText = msg;
-  t.style.background = ok ? "#10b981" : "#dc2626";
-  t.style.display = "block";
-  setTimeout(()=>t.style.display="none",3000);
+/* PHONE FORMAT */
+function formatKenyaPhone(phone){
+
+  phone = phone.replace(/\s+/g,'');
+
+  if(phone.startsWith("+254")){
+
+    return phone;
+  }
+
+  if(phone.startsWith("0")){
+
+    return "+254" + phone.slice(1);
+  }
+
+  if(phone.startsWith("7") && phone.length === 9){
+
+    return "+254" + phone;
+  }
+
+  if(phone.startsWith("1") && phone.length === 9){
+
+    return "+254" + phone;
+  }
+
+  return phone;
 }
 
-/* ORDER */
-document.getElementById("orderForm").addEventListener("submit", async (e)=>{
+/* PHONE VALIDATION */
+function isValidKenyaPhone(phone){
+
+  return /^\+254(7|1)\d{8}$/.test(phone);
+}
+
+/* TOAST */
+function showToast(message, success = true){
+
+  const toast = document.getElementById("toast");
+
+  toast.innerText = message;
+
+  toast.style.background = success
+  ? "#10b981"
+  : "#dc2626";
+
+  toast.style.display = "block";
+
+  setTimeout(()=>{
+
+    toast.style.display = "none";
+
+  },3000);
+}
+
+/* ORDER FORM */
+const orderForm = document.getElementById("orderForm");
+
+orderForm.addEventListener("submit", async e=>{
+
   e.preventDefault();
 
-  const name = name.value.trim();
-  const phone = phone.value.trim();
-  const location = location.value.trim();
-  const quantity = quantity.value;
-  const brand = brand.value;
+  const name =
+  document.getElementById("name").value.trim();
 
-  await addDoc(collection(db,"orders"),{
-    name,phone,location,quantity,brand,
-    status:"Pending",
-    createdAt:serverTimestamp()
-  });
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("phone").value.trim()
+  );
 
-  toast("Order saved ✔");
+  const location =
+  document.getElementById("location").value.trim();
 
-  const msg = `Order:
+  const quantity =
+  document.getElementById("quantity").value;
+
+  const brand =
+  document.getElementById("brand").value;
+
+  if(!name || !phone || !location || !quantity || !brand){
+
+    showToast("Please fill all order fields",false);
+
+    return;
+  }
+
+  if(!isValidKenyaPhone(phone)){
+
+    showToast("Enter valid Kenya phone number",false);
+
+    return;
+  }
+
+  try{
+
+    await addDoc(collection(db,"orders"),{
+
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
+      status:"Pending",
+      createdAt:serverTimestamp()
+
+    });
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast("Failed to save order",false);
+
+    return;
+  }
+
+  showToast("✅ Order saved successfully");
+
+  const message = `Hello Adawe Gas New Order:
+
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Size: ${quantity}
 Brand: ${brand}`;
 
-  window.open(`https://wa.me/254727015434?text=${encodeURIComponent(msg)}`);
-  e.target.reset();
+  const waNumber = "254727015434";
+
+  const waLink =
+  https://wa.me/${waNumber}?text=${encodeURIComponent(message)};
+
+  setTimeout(()=>{
+
+    window.location.href = waLink;
+
+  },500);
+
+  orderForm.reset();
+
 });
 
-/* SELLER */
-document.getElementById("registerSellerBtn").addEventListener("click", async ()=>{
+/* SELLER FORM */
+const registerBtn =
+document.getElementById("registerSellerBtn");
 
-  const name = sellerName.value.trim();
-  const phone = sellerPhone.value.trim();
-  const location = sellerLocation.value.trim();
+const btnText =
+document.getElementById("btnText");
+
+const btnLoader =
+document.getElementById("btnLoader");
+
+registerBtn.addEventListener("click", async ()=>{
+
+  const name =
+  document.getElementById("sellerName").value.trim();
+
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("sellerPhone").value.trim()
+  );
+
+  const location =
+  document.getElementById("sellerLocation").value.trim();
+
+  if(!name || !phone || !location){
+
+    showToast("Please fill all seller fields",false);
+
+    return;
+  }
+
+  if(!isValidKenyaPhone(phone)){
+
+    showToast("Enter valid Kenya phone number",false);
+
+    return;
+  }
 
   const prices = {
-    "1kg": Number(price1kg.value)||0,
-    "3kg": Number(price3kg.value)||0,
-    "6kg": Number(price6kg.value)||0,
-    "13kg": Number(price13kg.value)||0,
-    "15kg": Number(price15kg.value)||0,
-    "22kg": Number(price22kg.value)||0,
-    "25kg": Number(price25kg.value)||0,
-    "35kg": Number(price35kg.value)||0,
-    "40kg": Number(price40kg.value)||0,
-    "45kg": Number(price45kg.value)||0,
-    "50kg": Number(price50kg.value)||0
+
+    "1kg": Number(document.getElementById("price1kg").value) || 0,
+    "3kg": Number(document.getElementById("price3kg").value) || 0,
+    "6kg": Number(document.getElementById("price6kg").value) || 0,
+    "13kg": Number(document.getElementById("price13kg").value) || 0,
+    "15kg": Number(document.getElementById("price15kg").value) || 0,
+    "22kg": Number(document.getElementById("price22kg").value) || 0,
+    "25kg": Number(document.getElementById("price25kg").value) || 0,
+    "35kg": Number(document.getElementById("price35kg").value) || 0,
+    "40kg": Number(document.getElementById("price40kg").value) || 0,
+    "45kg": Number(document.getElementById("price45kg").value) || 0,
+    "50kg": Number(document.getElementById("price50kg").value) || 0
   };
 
-  if(!name||!phone||!location){
-    toast("Fill seller fields",false);
+  const hasPrice =
+  Object.values(prices).some(p => p > 0);
+
+  if(!hasPrice){
+
+    showToast("Enter at least one price",false);
+
     return;
   }
 
-  if(!Object.values(prices).some(p=>p>0)){
-    toast("Add at least one price",false);
-    return;
+  btnText.style.display = "none";
+
+  btnLoader.style.display = "inline";
+
+  registerBtn.disabled = true;
+
+  try{
+
+    await addDoc(collection(db,"sellers"),{
+
+      name,
+      phone,
+      location,
+      prices,
+      status:"pending",
+      createdAt:serverTimestamp()
+
+    });
+
+    document.getElementById("sellerForm").reset();
+
+    showToast("✅ Seller saved successfully!");
+
+  }catch(err){
+
+    console.error(err);
+
+    showToast(
+      "❌ Error saving seller: " + err.message,
+      false
+    );
+
+  }finally{
+
+    btnText.style.display = "inline";
+
+    btnLoader.style.display = "none";
+
+    registerBtn.disabled = false;
   }
 
-  await addDoc(collection(db,"sellers"),{
-    name,phone,location,prices,
-    status:"pending",
-    createdAt:serverTimestamp()
-  });
-
-  toast("Seller saved ✔");
 });
 
 </script>
