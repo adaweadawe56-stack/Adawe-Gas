@@ -540,90 +540,83 @@ function showToast(message, success = true){
 
 /* ORDER FORM */
 const orderForm = document.getElementById("orderForm");
+const orderButton = orderForm.querySelector("button[type='submit']");
+const originalBtnText = orderButton.innerText;
 
 orderForm.addEventListener("submit", async e=>{
-
   e.preventDefault();
 
-  const name =
-  document.getElementById("name").value.trim();
+  // 🟢 Loading state ON
+  orderButton.disabled = true;
+  orderButton.innerText = "Processing...";
 
-  const phone =
-  formatKenyaPhone(
+  const name = document.getElementById("name").value.trim();
+  const phone = formatKenyaPhone(
     document.getElementById("phone").value.trim()
   );
-
-  const location =
-  document.getElementById("location").value.trim();
-
-  const quantity =
-  document.getElementById("quantity").value;
-
-  const brand =
-  document.getElementById("brand").value;
+  const location = document.getElementById("location").value.trim();
+  const quantity = document.getElementById("quantity").value;
+  const brand = document.getElementById("brand").value;
 
   if(!name || !phone || !location || !quantity || !brand){
+    showToast("Please fill all order fields", false);
 
-    showToast("Please fill all order fields",false);
-
+    // 🔴 Re-enable
+    orderButton.disabled = false;
+    orderButton.innerText = originalBtnText;
     return;
   }
 
   if(!isValidKenyaPhone(phone)){
+    showToast("Enter valid Kenya phone number", false);
 
-    showToast("Enter valid Kenya phone number",false);
-
+    // 🔴 Re-enable
+    orderButton.disabled = false;
+    orderButton.innerText = originalBtnText;
     return;
   }
 
   try{
-
-  await addDoc(collection(db,"orders"),{
-
-  name,
-  phone,
-  location,
-  quantity,
-  brand,
-
-  status:"Awaiting WhatsApp Confirmation",
-
-  whatsappSent:false,
-
-  createdAt:serverTimestamp()
-
-});
+    await addDoc(collection(db,"orders"),{
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
+      status:"Awaiting WhatsApp Confirmation",
+      whatsappSent:false,
+      createdAt:serverTimestamp()
+    });
 
   }catch(err){
-
     console.error(err);
+    showToast("Failed to save order", false);
 
-    showToast("Failed to save order",false);
-
+    // 🔴 Re-enable
+    orderButton.disabled = false;
+    orderButton.innerText = originalBtnText;
     return;
   }
 
   showToast("✅ Order saved successfully");
 
+  // 🟢 WhatsApp redirect (ad keydisaa)
   const message = `Hello Adawe Gas New Order:
 
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
-Size: ${quantity}
+Quantity: ${quantity}
 Brand: ${brand}`;
 
-  const waNumber = "254727015434";
+  const whatsappUrl =
+    `https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
 
- const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
-  setTimeout(()=>{
+  window.open(whatsappUrl, "_blank");
 
-    window.location.href = waLink;
-
-  },500);
-
-  orderForm.reset();
-
+  // 🟢 Re-enable after redirect
+  orderButton.disabled = false;
+  orderButton.innerText = originalBtnText;
 });
 
 /* SELLER FORM */
