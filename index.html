@@ -95,12 +95,23 @@ select{
     margin:10px;
     padding:40px 0;
   }
+
 }
+
+.card-modern{
+  max-width:500px;
+  margin:auto;
+  background:#fff;
+  padding:20px;
+  border-radius:16px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+}
+
 </style>
+
 </head>
 
 <body>
-
 <nav class="navbar navbar-expand-lg navbar-dark">
 
   <div class="container">
@@ -295,44 +306,9 @@ Place Order
 
 </form>
 
-<!-- STYLE -->
-<style>
-.card-modern{
-  max-width:500px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
-</style>
 
 <!-- WHATSAPP SCRIPT -->
-<script>
-document.getElementById("orderForm").addEventListener("submit", function(e){
-  e.preventDefault();
 
-  const name = document.getElementById("name").value.trim();
-  const phone = document.getElementById("phone").value.trim();
-  const location = document.getElementById("location").value.trim();
-  const quantity = document.getElementById("quantity").value;
-  const brand = document.getElementById("brand").value;
-
-  const message =
-`🟢 NEW GAS ORDER
-----------------------
-👤 Name: ${name}
-📞 Phone: ${phone}
-📍 Location: ${location}
-🔥 Gas Size: ${quantity}
-🏷️ Brand: ${brand}
-----------------------`;
-
-  const url = "https://wa.me/254727015434?text=" + encodeURIComponent(message);
-
-  window.open(url, "_blank");
-});
-</script>
 </div>
 </section>
 
@@ -626,9 +602,7 @@ Brand: ${brand}`;
 
   const waNumber = "254727015434";
 
-  const waLink =
-  https://wa.me/${waNumber}?text=${encodeURIComponent(message)};
-
+ const waLink = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;
   setTimeout(()=>{
 
     window.location.href = waLink;
