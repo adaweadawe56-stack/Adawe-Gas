@@ -636,19 +636,29 @@ registerBtn.addEventListener("click", async ()=>{
   const location =
   document.getElementById("sellerLocation").value.trim();
 
+  /* VALIDATION */
+
   if(!name || !phone || !location){
 
-    showToast("Please fill all seller fields",false);
+    showToast(
+      "Please fill all seller fields",
+      false
+    );
 
     return;
   }
 
   if(!isValidKenyaPhone(phone)){
 
-    showToast("Enter valid Kenya phone number",false);
+    showToast(
+      "Enter valid Kenya phone number",
+      false
+    );
 
     return;
   }
+
+  /* PRICES */
 
   const prices = {
 
@@ -663,17 +673,25 @@ registerBtn.addEventListener("click", async ()=>{
     "40kg": Number(document.getElementById("price40kg").value) || 0,
     "45kg": Number(document.getElementById("price45kg").value) || 0,
     "50kg": Number(document.getElementById("price50kg").value) || 0
+
   };
+
+  /* AT LEAST ONE PRICE */
 
   const hasPrice =
   Object.values(prices).some(p => p > 0);
 
   if(!hasPrice){
 
-    showToast("Enter at least one price",false);
+    showToast(
+      "Enter at least one price",
+      false
+    );
 
     return;
   }
+
+  /* LOADING STATE */
 
   btnText.style.display = "none";
 
@@ -682,6 +700,28 @@ registerBtn.addEventListener("click", async ()=>{
   registerBtn.disabled = true;
 
   try{
+
+    /* CHECK DUPLICATE PHONE */
+
+    const q = query(
+      collection(db,"sellers"),
+      where("phone","==",phone)
+    );
+
+    const existingSeller =
+    await getDocs(q);
+
+    if(!existingSeller.empty){
+
+      showToast(
+        "Seller with this phone already exists",
+        false
+      );
+
+      return;
+    }
+
+    /* SAVE SELLER */
 
     await addDoc(collection(db,"sellers"),{
 
@@ -694,30 +734,36 @@ registerBtn.addEventListener("click", async ()=>{
 
     });
 
+    /* RESET FORM */
+
     document.getElementById("sellerForm").reset();
 
-    showToast("✅ Seller saved successfully!");
+    showToast(
+      "✅ Seller saved successfully!"
+    );
 
   }catch(err){
 
     console.error(err);
 
     showToast(
-      "❌ Error saving seller: " + err.message,
+      "❌ Error saving seller",
       false
     );
 
   }finally{
+
+    /* RESET BUTTON */
 
     btnText.style.display = "inline";
 
     btnLoader.style.display = "none";
 
     registerBtn.disabled = false;
+
   }
 
 });
-
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
