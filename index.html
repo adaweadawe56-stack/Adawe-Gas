@@ -400,19 +400,20 @@ Delivered
 
 window.assignSeller = async function(id, seller){
 
+console.log(id, seller);
+
 if(!seller) return;
 
 const orderRef = doc(db, 'orders', id);
 
 await updateDoc(orderRef, {
-
   seller: seller,
-
   status: 'Assigned'
 });
 
-}
+alert('Seller Assigned');
 
+}
 // ===== DELIVERED =====
 
 window.markDelivered = async function(id){
