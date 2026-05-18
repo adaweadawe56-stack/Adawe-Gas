@@ -1,128 +1,208 @@
-<!DOCTYPE html><html lang="en">
+<!DOCTYPE html>
+<html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
 <title>Adawe Gas MVP</title>
+
 <style>
-body{font-family:Arial;margin:0;background:#f4f4f4;}
-header{background:#111;color:#fff;padding:15px;text-align:center;}
-nav{display:flex;gap:10px;justify-content:center;background:#222;}
-nav button{padding:10px;color:#fff;background:#444;border:none;cursor:pointer;}
-nav button:hover{background:#666;}
-.container{padding:20px;}
-.card{background:#fff;padding:15px;margin-bottom:10px;border-radius:8px;}
-input,select,button{padding:10px;margin:5px 0;width:100%;}
-button.primary{background:#28a745;color:#fff;border:none;cursor:pointer;}
-button.danger{background:#c0392b;color:#fff;border:none;cursor:pointer;}
-.hidden{display:none;}
+
+body{
+  font-family:Arial;
+  margin:0;
+  background:#f4f4f4;
+}
+
+/* HEADER */
+header{
+  background:#111;
+  color:#fff;
+  padding:15px;
+  text-align:center;
+}
+
+/* NAVIGATION */
+nav{
+  display:flex;
+  gap:10px;
+  justify-content:center;
+  background:#222;
+  padding:10px;
+  flex-wrap:wrap;
+}
+
+/* NAV BUTTONS */
+nav button{
+  padding:10px 18px;
+  color:#fff;
+  background:#444;
+  border:none;
+  cursor:pointer;
+  border-radius:8px;
+  transition:0.3s;
+  font-weight:bold;
+}
+
+/* HOVER */
+nav button:hover{
+  background:#666;
+}
+
+/* ACTIVE BUTTON */
+nav button.active{
+  background:#28a745;
+  transform:scale(1.05);
+}
+
+/* CONTAINER */
+.container{
+  padding:20px;
+}
+
+/* CARD */
+.card{
+  background:#fff;
+  padding:15px;
+  margin-bottom:10px;
+  border-radius:8px;
+  animation:fadeIn 0.3s ease;
+}
+
+/* INPUTS */
+input,select,button{
+  padding:10px;
+  margin:5px 0;
+  width:100%;
+  box-sizing:border-box;
+}
+
+/* BUTTONS */
+button.primary{
+  background:#28a745;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+
+button.danger{
+  background:#c0392b;
+  color:#fff;
+  border:none;
+  cursor:pointer;
+}
+
+/* TABS */
+.tab{
+  opacity:1;
+  transition:0.3s ease;
+}
+
+.hidden{
+  display:none;
+}
+
+/* TAB ANIMATION */
+.active-tab{
+  animation:fadeIn 0.3s ease;
+}
+
+/* ANIMATION */
+@keyframes fadeIn{
+  from{
+    opacity:0;
+    transform:translateY(10px);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
 </style>
 </head>
-<body><header>
+
+<body>
+
+<header>
 <h2>Adawe Gas MVP System</h2>
-</header><nav>
-<button onclick="showTab('customer')">Customer</button>
-<button onclick="showTab('admin')">Admin</button>
-<button onclick="showTab('seller')">Seller</button>
-</nav><div class="container"><!-- CUSTOMER --><div id="customer" class="tab">
+</header>
+
+<!-- NAVIGATION -->
+<nav>
+
+<button class="tab-btn active"
+onclick="showTab('customer', this)">
+Customer
+</button>
+
+<button class="tab-btn"
+onclick="showTab('admin', this)">
+Admin
+</button>
+
+<button class="tab-btn"
+onclick="showTab('seller', this)">
+Seller
+</button>
+
+</nav>
+
+<div class="container">
+
+<!-- CUSTOMER -->
+<div id="customer" class="tab active-tab">
+
 <h3>Order Gas</h3>
+
 <div class="card">
+
 <input id="name" placeholder="Your Name" />
+
 <input id="phone" placeholder="Phone" />
+
 <input id="location" placeholder="Location" />
+
 <select id="gasType">
 <option>6KG</option>
 <option>13KG</option>
 </select>
-<button class="primary" onclick="placeOrder()">Place Order</button>
+
+<button class="primary" onclick="placeOrder()">
+Place Order
+</button>
+
 </div>
-</div><!-- ADMIN --><div id="admin" class="tab hidden">
+</div>
+
+<!-- ADMIN -->
+<div id="admin" class="tab hidden">
+
 <h3>Admin Panel</h3>
+
 <div id="orders"></div>
-</div><!-- SELLER --><div id="seller" class="tab hidden">
+
+</div>
+
+<!-- SELLER -->
+<div id="seller" class="tab hidden">
+
 <h3>Seller Panel</h3>
+
 <div id="sellerOrders"></div>
-</div></div><script>
-let orders = JSON.parse(localStorage.getItem('orders') || '[]');
-let sellers = ['Al Amin Gas', 'Quick Gas'];
 
-function save(){
- localStorage.setItem('orders', JSON.stringify(orders));
-}
+</div>
 
-window.showTab = function(tab){
- document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
- document.getElementById(tab).classList.remove('hidden');
- render();
-}
+</div>
 
-function placeOrder(){
-let order = {
- id: Date.now(),
- name: document.getElementById('name').value,
- phone: document.getElementById('phone').value,
- location: document.getElementById('location').value,
- gas: document.getElementById('gasType').value,
- status: 'Pending',
- seller: ''
-};
-orders.push(order);
-save();
-alert('Order placed successfully!');
-render();
-}
+<script type="module">
 
-function assignSeller(id, seller){
-orders = orders.map(o=>o.id===id?{...o,seller, status:'Assigned'}:o);
-save();
-render();
-}
+// ===== FIREBASE =====
 
-function markDelivered(id){
-orders = orders.map(o=>o.id===id?{...o,status:'Delivered'}:o);
-save();
-render();
-}
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-function render(){
-
-// ADMIN
-let adminDiv = document.getElementById('orders');
-adminDiv.innerHTML = '';
-orders.forEach(o=>{
- adminDiv.innerHTML += `
- <div class='card'>
- <b>${o.name}</b> - ${o.gas}<br>
- ${o.location} | ${o.phone}<br>
- Status: ${o.status}<br>
- <select onchange="assignSeller(${o.id}, this.value)">
- <option>Select Seller</option>
- ${sellers.map(s=><option>${s}</option>).join('')}
- </select>
- </div>
- `;
-});
-
-// SELLER
-let sellerDiv = document.getElementById('sellerOrders');
-sellerDiv.innerHTML = '';
-orders.filter(o=>o.seller).forEach(o=>{
- sellerDiv.innerHTML += `
- <div class='card'>
- <b>${o.name}</b> - ${o.gas}<br>
- ${o.location}<br>
- Status: ${o.status}<br>
- <button class='primary' onclick='markDelivered(${o.id})'>Delivered</button>
- </div>
- `;
-});
-}
-
-render();
-</script><script type="module">
-// ===== PHASE 2 CONFIG =====
-// Replace with your Firebase config
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   collection,
@@ -130,7 +210,10 @@ import {
   onSnapshot,
   updateDoc,
   doc
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+// ===== CONFIG =====
 
 const firebaseConfig = {
 
@@ -147,84 +230,203 @@ const firebaseConfig = {
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
+// ===== INIT =====
+
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
-// ===== REALTIME DATABASE =====
+// ===== SELLERS =====
+
+const sellers = [
+  'Al Amin Gas',
+  'Quick Gas'
+];
+
+// ===== TAB SYSTEM =====
+
+window.showTab = function(tabId, btn){
+
+  // Hide all tabs
+  document.querySelectorAll('.tab').forEach(tab=>{
+    tab.classList.add('hidden');
+    tab.classList.remove('active-tab');
+  });
+
+  // Remove active buttons
+  document.querySelectorAll('.tab-btn').forEach(button=>{
+    button.classList.remove('active');
+  });
+
+  // Show selected tab
+  const selectedTab = document.getElementById(tabId);
+
+  if(selectedTab){
+    selectedTab.classList.remove('hidden');
+    selectedTab.classList.add('active-tab');
+  }
+
+  // Active button
+  if(btn){
+    btn.classList.add('active');
+  }
+}
+
+// ===== PLACE ORDER =====
+
 window.placeOrder = async function(){
 
 const order = {
+
   name: document.getElementById('name').value,
+
   phone: document.getElementById('phone').value,
+
   location: document.getElementById('location').value,
+
   gas: document.getElementById('gasType').value,
+
   status: 'Pending',
+
   seller: '',
+
   createdAt: new Date().toISOString()
 };
 
+// Validation
+if(
+  !order.name ||
+  !order.phone ||
+  !order.location
+){
+  alert('Please fill all fields');
+  return;
+}
+
+// Save
 await addDoc(collection(db, 'orders'), order);
+
 alert('Order placed successfully!');
+
+// Clear inputs
+document.getElementById('name').value = '';
+document.getElementById('phone').value = '';
+document.getElementById('location').value = '';
 }
 
 // ===== LIVE ORDERS =====
+
 const adminDiv = document.getElementById('orders');
+
 const sellerDiv = document.getElementById('sellerOrders');
 
 onSnapshot(collection(db, 'orders'), (snapshot)=>{
 
 adminDiv.innerHTML = '';
+
 sellerDiv.innerHTML = '';
 
 snapshot.forEach((docSnap)=>{
 
 const o = docSnap.data();
+
 const id = docSnap.id;
 
+// ===== ADMIN VIEW =====
+
 adminDiv.innerHTML += `
+
 <div class='card'>
+
 <b>${o.name}</b> - ${o.gas}<br>
-${o.location} | ${o.phone}<br>
-Status: ${o.status}<br>
+
+${o.location} | ${o.phone}<br><br>
+
+Status: <b>${o.status}</b><br><br>
+
 <select onchange="assignSeller('${id}', this.value)">
-<option>Select Seller</option>
-<option>Al Amin Gas</option>
-<option>Quick Gas</option>
+
+<option value="">
+Select Seller
+</option>
+
+${sellers.map(s=>`
+
+<option
+value="${s}"
+${o.seller===s?'selected':''}>
+${s}
+</option>
+
+`).join('')}
+
 </select>
+
 </div>
 `;
 
+// ===== SELLER VIEW =====
+
 if(o.seller){
+
 sellerDiv.innerHTML += `
+
 <div class='card'>
-<b>${o.name}</b> - ${o.gas}<br>
-${o.location}<br>
-Seller: ${o.seller}<br>
-Status: ${o.status}<br>
-<button class='primary' onclick="markDelivered('${id}')">Delivered</button>
+
+<b>${o.name}</b> - ${o.gas}<br><br>
+
+${o.location}<br><br>
+
+Seller: <b>${o.seller}</b><br>
+
+Status: <b>${o.status}</b><br><br>
+
+<button class='primary'
+onclick="markDelivered('${id}')">
+
+Delivered
+
+</button>
+
 </div>
 `;
 }
 
 });
+
 });
 
 // ===== ASSIGN SELLER =====
+
 window.assignSeller = async function(id, seller){
+
+if(!seller) return;
+
 const orderRef = doc(db, 'orders', id);
+
 await updateDoc(orderRef, {
+
   seller: seller,
+
   status: 'Assigned'
 });
+
 }
 
 // ===== DELIVERED =====
+
 window.markDelivered = async function(id){
+
 const orderRef = doc(db, 'orders', id);
+
 await updateDoc(orderRef, {
+
   status: 'Delivered'
 });
+
 }
 
-</script></body>
+</script>
+
+</body>
 </html>
