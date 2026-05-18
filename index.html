@@ -1,497 +1,136 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-  <!-- SEO -->
-  <meta name="description" content="Fast LPG gas delivery across Kenya.">
-  <meta name="keywords" content="LPG Kenya, Gas Delivery Nairobi, Adawe Gas">
-
-  <title>Adawe Gas Network</title>
-
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Adawe Gas MVP</title>
 <style>
-body{
-  font-family:Arial,sans-serif;
-  margin:0;
-  background:linear-gradient(135deg,#064e3b,#10b981);
-  color:white;
-}
-
-html{
-  scroll-behavior:smooth;
-}
-
-.navbar{
-  background:rgba(0,0,0,0.3);
-  backdrop-filter:blur(10px);
-  position:sticky;
-  top:0;
-  z-index:1000;
-}
-
-.navbar .nav-link{
-  color:#ffffff !important;
-}
-
-.navbar .nav-link:hover{
-  color:#bbf7d0 !important;
-}
-
-.section{
-  padding:60px 0;
-  margin:20px;
-}
-
-.card-modern{
-  background:rgba(255,255,255,0.95);
-  border-radius:15px;
-  padding:25px;
-  color:#064e3b;
-  box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-.hero{
-  text-align:center;
-  padding:80px 20px;
-}
-
-.hero h1{
-  font-size:42px;
-  font-weight:bold;
-}
-
-#toast{
-  position:fixed;
-  top:20px;
-  right:20px;
-  background:#10b981;
-  color:white;
-  padding:15px 25px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.3);
-  display:none;
-  z-index:2000;
-  font-weight:bold;
-}
-
-a{
-  color:#064e3b;
-}
-
-footer{
-  padding:20px;
-}
-
-input,
-select{
-  color:#064e3b !important;
-}
-
-@media(max-width:768px){
-
-  .hero h1{
-    font-size:30px;
-  }
-
-  .section{
-    margin:10px;
-    padding:40px 0;
-  }
-
-}
-
-.card-modern{
-  max-width:500px;
-  margin:auto;
-  background:#fff;
-  padding:20px;
-  border-radius:16px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-}
-
+body{font-family:Arial;margin:0;background:#f4f4f4;}
+header{background:#111;color:#fff;padding:15px;text-align:center;}
+nav{display:flex;gap:10px;justify-content:center;background:#222;}
+nav button{padding:10px;color:#fff;background:#444;border:none;cursor:pointer;}
+nav button:hover{background:#666;}
+.container{padding:20px;}
+.card{background:#fff;padding:15px;margin-bottom:10px;border-radius:8px;}
+input,select,button{padding:10px;margin:5px 0;width:100%;}
+button.primary{background:#28a745;color:#fff;border:none;cursor:pointer;}
+button.danger{background:#c0392b;color:#fff;border:none;cursor:pointer;}
+.hidden{display:none;}
 </style>
-
 </head>
-<body>
-<nav class="navbar navbar-expand-lg navbar-dark">
-
-  <div class="container">
-
-    <a class="navbar-brand fw-bold" href="#home">
-      Adawe Gas
-    </a>
-
-    <button class="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#menu"
-            aria-controls="menu"
-            aria-expanded="false"
-            aria-label="Toggle navigation">
-
-      <span class="navbar-toggler-icon"></span>
-
-    </button>
-
-    <div class="collapse navbar-collapse" id="menu">
-
-      <ul class="navbar-nav ms-auto">
-
-        <li class="nav-item">
-          <a class="nav-link" href="#home">Home</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#services">Services</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#about">About</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#howItWorks">How It Works</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#order">Order</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#seller">Become a Seller</a>
-        </li>
-
-        <li class="nav-item">
-          <a class="nav-link" href="#contact">Contact</a>
-        </li>
-
-      </ul>
-
-    </div>
-
-  </div>
-
-</nav>
-
-<!-- HERO -->
-<section class="hero" id="home">
-
-  <h1>Fast LPG Gas Delivery</h1>
-
-  <p>Reliable • Fast • Anywhere in Kenya</p>
-
-</section>
-
-<!-- SERVICES -->
-<section class="section text-center" id="services">
-
-  <div class="container card-modern">
-
-    <h2>Our Services</h2>
-
-    <p>
-      Fast & Reliable LPG Delivery Across Nairobi
-    </p>
-<a href="#order" class="btn btn-light btn-lg mt-3">
-Order Gas Now
-</a>
-  </div>
-
-</section>
-
-<!-- ABOUT -->
-<section class="section text-center" id="about">
-
-  <div class="container card-modern">
-
-    <h2>About Adawe Gas</h2>
-
-    <p>
-      Reliable LPG gas delivery across Kenya.
-    </p>
-
-  </div>
-
-</section>
-
-<!-- ABOUT -->
-<section class="section text-center" id="about">
-
-  <div class="container card-modern">
-
-    <h2>About Adawe Gas</h2>
-
-    <p>
-      <p>1. Customer places order online or via WhatsApp.</p>
-<p>2. We connect you to the nearest licensed gas partner.</p>
-<p>3. Fast and safe LPG delivery to your location.</p>
-    </p>
-
-  </div>
-
-</section>
-
-
-<!-- ORDER -->
-<section class="section" id="order">
-
-<div class="container">
-
-<h2 class="text-center mb-4">
-Place Order
-</h2>
-
-<form id="orderForm" class="card-modern">
-
-<!-- NAME -->
-<input id="name"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Full Name"
-       autocomplete="name"
-       required>
-
-<!-- PHONE -->
-<input id="phone"
-       type="tel"
-       class="form-control mb-3"
-       placeholder="Phone (07 or 01XXXXXXXX)"
-       pattern="^(07|01)\d{8}$"
-       required>
-
-<!-- LOCATION -->
-<input id="location"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Delivery Location"
-       required>
-
-<!-- GAS SIZE -->
-<select id="quantity" class="form-select mb-3" required>
-  <option value="">Select Gas Size</option>
-  <option value="1kg">1kg</option>
-  <option value="3kg">3kg</option>
-  <option value="6kg">6kg</option>
-  <option value="13kg">13kg</option>
-  <option value="15kg">15kg</option>
-  <option value="22kg">22kg</option>
-  <option value="25kg">25kg</option>
-  <option value="35kg">35kg</option>
-  <option value="40kg">40kg</option>
-  <option value="45kg">45kg</option>
-  <option value="50kg">50kg</option>
+<body><header>
+<h2>Adawe Gas MVP System</h2>
+</header><nav>
+<button onclick="showTab('customer')">Customer</button>
+<button onclick="showTab('admin')">Admin</button>
+<button onclick="showTab('seller')">Seller</button>
+</nav><div class="container"><!-- CUSTOMER --><div id="customer" class="tab">
+<h3>Order Gas</h3>
+<div class="card">
+<input id="name" placeholder="Your Name" />
+<input id="phone" placeholder="Phone" />
+<input id="location" placeholder="Location" />
+<select id="gasType">
+<option>6KG</option>
+<option>13KG</option>
 </select>
-
-<!-- BRAND -->
-<select id="brand" class="form-select mb-3" required>
-  <option value="">Select Brand</option>
-  <option value="K-Gas">K-Gas</option>
-  <option value="AfriGas">AfriGas</option>
-  <option value="Pro Gas">Pro Gas</option>
-  <option value="TotalEnergies">TotalEnergies</option>
-  <option value="Hashi Gas">Hashi Gas</option>
-  <option value="Lake Gas">Lake Gas</option>
-  <option value="Rubis Gas">Rubis Gas</option>
-  <option value="Taifa Gas">Taifa Gas</option>
-</select>
-
-<button type="submit"
-        class="btn w-100"
-        aria-label="Send order via WhatsApp"
-        style="background:#25D366;color:white;font-weight:600;">
-
-📲 Send Order via WhatsApp
-
-</button>
-
-<!-- TERMS -->
-<p style="font-size:13px;margin-top:10px;text-align:center;color:#555;">
-  By placing an order, you agree to our
-  <a href="#terms">Terms & Disclaimer</a>.
-</p>
-
-</form>
-
-
-<!-- WHATSAPP SCRIPT -->
-
+<button class="primary" onclick="placeOrder()">Place Order</button>
 </div>
-</section>
+</div><!-- ADMIN --><div id="admin" class="tab hidden">
+<h3>Admin Panel</h3>
+<div id="orders"></div>
+</div><!-- SELLER --><div id="seller" class="tab hidden">
+<h3>Seller Panel</h3>
+<div id="sellerOrders"></div>
+</div></div><script>
+let orders = JSON.parse(localStorage.getItem('orders') || '[]');
+let sellers = ['Al Amin Gas', 'Quick Gas'];
 
-<!-- SELLER -->
-<section class="section" id="seller">
+function save(){
+ localStorage.setItem('orders', JSON.stringify(orders));
+}
 
-<div class="container">
+function showTab(tab){
+ document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
+ document.getElementById(tab).classList.remove('hidden');
+ render();
+}
 
-<h2 class="text-center mb-4">
-Register Seller
-</h2>
+function placeOrder(){
+let order = {
+ id: Date.now(),
+ name: document.getElementById('name').value,
+ phone: document.getElementById('phone').value,
+ location: document.getElementById('location').value,
+ gas: document.getElementById('gasType').value,
+ status: 'Pending',
+ seller: ''
+};
+orders.push(order);
+save();
+alert('Order placed successfully!');
+render();
+}
 
-<form id="sellerForm"
-      class="col-md-6 mx-auto card-modern">
+function assignSeller(id, seller){
+orders = orders.map(o=>o.id===id?{...o,seller, status:'Assigned'}:o);
+save();
+render();
+}
 
-<input id="sellerName"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Company Name"
-       required>
+function markDelivered(id){
+orders = orders.map(o=>o.id===id?{...o,status:'Delivered'}:o);
+save();
+render();
+}
 
-<input id="sellerPhone"
-       type="tel"
-       class="form-control mb-3"
-       placeholder="Phone (07 or 01)"
-       required>
+function render(){
 
-<input id="sellerLocation"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Location"
-       required>
+// ADMIN
+let adminDiv = document.getElementById('orders');
+adminDiv.innerHTML = '';
+orders.forEach(o=>{
+ adminDiv.innerHTML += `
+ <div class='card'>
+ <b>${o.name}</b> - ${o.gas}<br>
+ ${o.location} | ${o.phone}<br>
+ Status: ${o.status}<br>
+ <select onchange="assignSeller(${o.id}, this.value)">
+ <option>Select Seller</option>
+ ${sellers.map(s=><option>${s}</option>).join('')}
+ </select>
+ </div>
+ `;
+});
 
-<input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="100" max="100000" step="1">
-<input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="100" max="100000" step="1">
-<input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number" min="100" max="100000" step="1">
-<input id="price13kg" class="form-control mb-2" placeholder="13kg price" type="number" min="100" max="100000" step="1">
-<input id="price15kg" class="form-control mb-2" placeholder="15kg price" type="number" min="100" max="100000" step="1">
-<input id="price22kg" class="form-control mb-2" placeholder="22kg price" type="number" min="100" max="100000" step="1">
-<input id="price25kg" class="form-control mb-2" placeholder="25kg price" type="number" min="100" max="100000" step="1">
-<input id="price35kg" class="form-control mb-2" placeholder="35kg price" type="number" min="100" max="100000" step="1">
-<input id="price40kg" class="form-control mb-2" placeholder="40kg price" type="number" min="100" max="100000" step="1">
-<input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="100" max="100000" step="1">
-<input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="100" max="100000" step="1">
+// SELLER
+let sellerDiv = document.getElementById('sellerOrders');
+sellerDiv.innerHTML = '';
+orders.filter(o=>o.seller).forEach(o=>{
+ sellerDiv.innerHTML += `
+ <div class='card'>
+ <b>${o.name}</b> - ${o.gas}<br>
+ ${o.location}<br>
+ Status: ${o.status}<br>
+ <button class='primary' onclick='markDelivered(${o.id})'>Delivered</button>
+ </div>
+ `;
+});
+}
 
-<button type="button"
-        id="registerSellerBtn"
-        class="btn btn-primary w-100">
+render();
+</script><script type="module">
+// ===== PHASE 2 CONFIG =====
+// Replace with your Firebase config
 
-<span id="btnText">
-Register
-</span>
-
-<span id="btnLoader" style="display:none;">
-Saving...
-</span>
-
-</button>
-
-<p style="font-size:13px;margin-top:10px;text-align:center;color:#555;">
-
-By registering as a seller, you agree to Adawe Gas
-Seller Terms & Disclaimer.
-
-You are independently responsible for LPG quality,
-pricing, delivery, customer safety, licenses,
-and compliance with Kenyan LPG regulations.
-
-Adawe Gas acts only as a marketplace platform
-connecting customers with independent sellers.
-
-</p>
-
-</form>
-
-</div>
-</section>
-
-<!-- TOAST -->
-<div id="toast"></div>
-
-<!-- CONTACT -->
-<section class="section text-center" id="contact">
-
-<div class="container card-modern">
-
-<h2>Contact</h2>
-
-<p>
-📞 <a href="tel:+254727015434">0727 015 434</a>
-</p>
-
-<p>
-📧 <a href="mailto:adaweadawe56@gmail.com">
-adaweadawe56@gmail.com
-</a>
-</p>
-<a href="https://wa.me/254727015434"
-   class="btn btn-success">
-Chat on WhatsApp
-</a>
-<p>
-📍 Nairobi, Kenya
-</p>
-
-</div>
-
-</section>
-<!-- TERMS -->
-<section class="section text-center" id="terms">
-
-  <div class="container card-modern">
-
-    <h2>Terms & Disclaimer</h2>
-
-    <p>
-      Adawe Gas is a marketplace platform connecting
-      customers with independent LPG sellers across Kenya.
-    </p>
-
-    <p>
-      Sellers are independently responsible for product
-      quality, delivery, pricing, safety, and compliance
-      with Kenyan LPG regulations.
-    </p>
-
-    <p>
-      Customers are advised to inspect LPG cylinders,
-      regulators, and seals before use.
-    </p>
-
-    <p>
-      Adawe Gas shall not be held liable for damages,
-      misuse, leaks, accidents, or losses resulting from
-      LPG products supplied by third-party sellers.
-    </p>
-
-  </div>
-
-</section>
-<footer class="text-center">
-
-  <p>© 2026 Adawe Gas Network. All Rights Reserved.</p>
-
-  <div style="margin-top:10px;">
-    <a href="#privacy" style="margin:0 10px; color:white; text-decoration:underline;">
-      Privacy Policy
-    </a>
-
-    <a href="#terms" style="margin:0 10px; color:white; text-decoration:underline;">
-      Terms
-    </a>
-
-    <a href="#sellerPolicy" style="margin:0 10px; color:white; text-decoration:underline;">
-      Seller Policy
-    </a>
-  </div>
-
-</footer>
-
-<script type="module">
-
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
   getFirestore,
   collection,
   addDoc,
-  serverTimestamp,
-  query,
-  where,
-  getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  onSnapshot,
+  updateDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
 
@@ -509,298 +148,83 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
 
-/* PHONE FORMAT */
-function formatKenyaPhone(phone){
+// ===== REALTIME DATABASE =====
+window.placeOrder = async function(){
 
-  phone = phone.replace(/\s+/g,'');
+const order = {
+  name: document.getElementById('name').value,
+  phone: document.getElementById('phone').value,
+  location: document.getElementById('location').value,
+  gas: document.getElementById('gasType').value,
+  status: 'Pending',
+  seller: '',
+  createdAt: new Date().toISOString()
+};
 
-  if(phone.startsWith("+254")){
-
-    return phone;
-  }
-
-  if(phone.startsWith("0")){
-
-    return "+254" + phone.slice(1);
-  }
-
-  if(phone.startsWith("7") && phone.length === 9){
-
-    return "+254" + phone;
-  }
-
-  if(phone.startsWith("1") && phone.length === 9){
-
-    return "+254" + phone;
-  }
-
-  return phone;
+await addDoc(collection(db, 'orders'), order);
+alert('Order placed successfully!');
 }
 
-/* PHONE VALIDATION */
-function isValidKenyaPhone(phone){
+// ===== LIVE ORDERS =====
+const adminDiv = document.getElementById('orders');
+const sellerDiv = document.getElementById('sellerOrders');
 
-  return /^\+254(7|1)\d{8}$/.test(phone);
+onSnapshot(collection(db, 'orders'), (snapshot)=>{
+
+adminDiv.innerHTML = '';
+sellerDiv.innerHTML = '';
+
+snapshot.forEach((docSnap)=>{
+
+const o = docSnap.data();
+const id = docSnap.id;
+
+adminDiv.innerHTML += `
+<div class='card'>
+<b>${o.name}</b> - ${o.gas}<br>
+${o.location} | ${o.phone}<br>
+Status: ${o.status}<br>
+<select onchange="assignSeller('${id}', this.value)">
+<option>Select Seller</option>
+<option>Al Amin Gas</option>
+<option>Quick Gas</option>
+</select>
+</div>
+`;
+
+if(o.seller){
+sellerDiv.innerHTML += `
+<div class='card'>
+<b>${o.name}</b> - ${o.gas}<br>
+${o.location}<br>
+Seller: ${o.seller}<br>
+Status: ${o.status}<br>
+<button class='primary' onclick="markDelivered('${id}')">Delivered</button>
+</div>
+`;
 }
-
-/* TOAST */
-function showToast(message, success = true){
-
-  const toast = document.getElementById("toast");
-
-  toast.innerText = message;
-
-  toast.style.background = success
-  ? "#10b981"
-  : "#dc2626";
-
-  toast.style.display = "block";
-
-  setTimeout(()=>{
-
-    toast.style.display = "none";
-
-  },3000);
-}
-
-/* ORDER FORM */
-const orderForm = document.getElementById("orderForm");
-const orderButton = orderForm.querySelector("button[type='submit']");
-const originalBtnText = orderButton.innerText;
-
-orderForm.addEventListener("submit", async e=>{
-  e.preventDefault();
-
-  // 🟢 Loading state ON
-  orderButton.disabled = true;
-  orderButton.innerText = "Processing...";
-
-  const name = document.getElementById("name").value.trim();
-  const phone = formatKenyaPhone(
-    document.getElementById("phone").value.trim()
-  );
-  const location = document.getElementById("location").value.trim();
-  const quantity = document.getElementById("quantity").value;
-  const brand = document.getElementById("brand").value;
-
-  if(!name || !phone || !location || !quantity || !brand){
-    showToast("Please fill all order fields", false);
-
-    // 🔴 Re-enable
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
-    return;
-  }
-
-  if(!isValidKenyaPhone(phone)){
-    showToast("Enter valid Kenya phone number", false);
-
-    // 🔴 Re-enable
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
-    return;
-  }
-
-  try{
-    await addDoc(collection(db,"orders"),{
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
-      status:"Awaiting WhatsApp Confirmation",
-      whatsappSent:false,
-      createdAt:serverTimestamp()
-    });
-
-  }catch(err){
-    console.error(err);
-    showToast("Failed to save order", false);
-
-    // 🔴 Re-enable
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
-    return;
-  }
-
-  showToast("✅ Order saved successfully");
-
-  // 🟢 WhatsApp redirect (ad keydisaa)
-  const message = `Hello Adawe Gas New Order:
-
-Name: ${name}
-Phone: ${phone}
-Location: ${location}
-Quantity: ${quantity}
-Brand: ${brand}`;
-
-  const whatsappUrl =
-    https://wa.me/254727015434?text=${encodeURIComponent(message)};
-
-  window.open(whatsappUrl, "_blank");
-
-  // 🟢 Re-enable after redirect
-  orderButton.disabled = false;
-  orderButton.innerText = originalBtnText;
-});
-
-/* SELLER FORM */
-const registerBtn =
-document.getElementById("registerSellerBtn");
-
-const btnText =
-document.getElementById("btnText");
-
-const btnLoader =
-document.getElementById("btnLoader");
-
-registerBtn.addEventListener("click", async ()=>{
-
-  const name =
-  document.getElementById("sellerName").value.trim();
-
-  const phone =
-  formatKenyaPhone(
-    document.getElementById("sellerPhone").value.trim()
-  );
-
-  const location =
-  document.getElementById("sellerLocation").value.trim();
-
-  /* VALIDATION */
-
-  if(!name || !phone || !location){
-
-    showToast(
-      "Please fill all seller fields",
-      false
-    );
-
-    return;
-  }
-
-  if(!isValidKenyaPhone(phone)){
-
-    showToast(
-      "Enter valid Kenya phone number",
-      false
-    );
-
-    return;
-  }
-
-  /* PRICES */
-
-  const prices = {
-
-    "1kg": Number(document.getElementById("price1kg").value) || 0,
-    "3kg": Number(document.getElementById("price3kg").value) || 0,
-    "6kg": Number(document.getElementById("price6kg").value) || 0,
-    "13kg": Number(document.getElementById("price13kg").value) || 0,
-    "15kg": Number(document.getElementById("price15kg").value) || 0,
-    "22kg": Number(document.getElementById("price22kg").value) || 0,
-    "25kg": Number(document.getElementById("price25kg").value) || 0,
-    "35kg": Number(document.getElementById("price35kg").value) || 0,
-    "40kg": Number(document.getElementById("price40kg").value) || 0,
-    "45kg": Number(document.getElementById("price45kg").value) || 0,
-    "50kg": Number(document.getElementById("price50kg").value) || 0
-
-  };
-
-  /* AT LEAST ONE PRICE */
-
-  const hasPrice =
-  Object.values(prices).some(p => p > 0);
-
-  if(!hasPrice){
-
-    showToast(
-      "Enter at least one price",
-      false
-    );
-
-    return;
-  }
-
-  /* LOADING STATE */
-
-  btnText.style.display = "none";
-
-  btnLoader.style.display = "inline";
-
-  registerBtn.disabled = true;
-
-  try{
-
-    /* CHECK DUPLICATE PHONE */
-
-    const q = query(
-      collection(db,"sellers"),
-      where("phone","==",phone)
-    );
-
-    const existingSeller =
-    await getDocs(q);
-
-    if(!existingSeller.empty){
-
-      showToast(
-        "Seller with this phone already exists",
-        false
-      );
-
-      return;
-    }
-
-    /* SAVE SELLER */
-
-    await addDoc(collection(db,"sellers"),{
-
-      name,
-      phone,
-      location,
-      prices,
-      status:"pending",
-      createdAt:serverTimestamp()
-
-    });
-
-    /* RESET FORM */
-
-    document.getElementById("sellerForm").reset();
-
-    showToast(
-      "✅ Seller saved successfully!"
-    );
-
-  }catch(err){
-
-    console.error(err);
-
-    showToast(
-      "❌ Error saving seller",
-      false
-    );
-
-  }finally{
-
-    /* RESET BUTTON */
-
-    btnText.style.display = "inline";
-
-    btnLoader.style.display = "none";
-
-    registerBtn.disabled = false;
-
-  }
 
 });
-</script>
+});
 
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+// ===== ASSIGN SELLER =====
+window.assignSeller = async function(id, seller){
+const orderRef = doc(db, 'orders', id);
+await updateDoc(orderRef, {
+  seller: seller,
+  status: 'Assigned'
+});
+}
 
-</body>
+// ===== DELIVERED =====
+window.markDelivered = async function(id){
+const orderRef = doc(db, 'orders', id);
+await updateDoc(orderRef, {
+  status: 'Delivered'
+});
+}
+
+</script></body>
 </html>
