@@ -49,7 +49,7 @@ function save(){
  localStorage.setItem('orders', JSON.stringify(orders));
 }
 
-function showTab(tab){
+window.showTab = function(tab){
  document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));
  document.getElementById(tab).classList.remove('hidden');
  render();
