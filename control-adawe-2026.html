@@ -226,53 +226,62 @@ async function autoAssignSeller(order){
  if(!order.quantity) return;
 
  let bestSeller = null;
-
  let bestPrice = Infinity;
 
  sellersData.forEach(s=>{
 
-    if((s.status || "").toLowerCase() !== "approved") return;
+   // Approved sellers only
+   if((s.status || "").toLowerCase() !== "approved"){
+     return;
+   }
 
-    if(s.prices && s.prices[order.quantity]){
+   // Must have prices
+   if(!s.prices || !s.prices[order.quantity]){
+     return;
+   }
 
-      const p = s.prices[order.quantity];
+   const sellerPrice =
+   Number(s.prices[order.quantity]);
 
-      if(p > 0 && p < bestPrice){
+   // Skip invalid prices
+   if(sellerPrice <= 0){
+     return;
+   }
 
-        bestPrice = p;
+   // Find cheapest seller
+   if(sellerPrice < bestPrice){
 
-        bestSeller = s;
-      }
-    }
+     bestPrice = sellerPrice;
 
-    if(order.quantity === "6kg" && s.price6 && s.price6 < bestPrice){
-
-      bestPrice = s.price6;
-
-      bestSeller = s;
-    }
-
-    if(order.quantity === "13kg" && s.price13 && s.price13 < bestPrice){
-
-      bestPrice = s.price13;
-
-      bestSeller = s;
-    }
+     bestSeller = s;
+   }
 
  });
 
+ // Auto assign seller
  if(bestSeller){
 
-    await updateDoc(doc(db,"orders",order.id),{
+   await updateDoc(doc(db,"orders",order.id),{
 
-      sellerName:bestSeller.name,
-      sellerPhone:bestSeller.phone,
-      price:bestPrice,
-      status:"Processing"
+     sellerName: bestSeller.name,
 
-    });
+     sellerPhone: bestSeller.phone,
+
+     sellerLocation: bestSeller.location,
+
+     price: bestPrice,
+
+     status: "Processing",
+
+     assignedAt: new Date().toISOString()
+
+   });
+
+   console.log(
+     "Seller auto assigned:",
+     bestSeller.name
+   );
  }
-
 }
 
 function updateStatsAndChart(){
