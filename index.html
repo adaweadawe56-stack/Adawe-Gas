@@ -1,4 +1,4 @@
-[10:28, 5/18/2026] axmadcadawe1: <!DOCTYPE html><html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -653,9 +653,9 @@ Location: ${location}
 Quantity: ${quantity}
 Brand: ${brand}`;
 
-  const whatsappUrl =
-    https://wa.me/254727015434?text=${encodeURIComponent(message)};
-
+ const whatsappUrl =
+`https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
+  
   window.open(whatsappUrl, "_blank");
 
   // 🟢 Re-enable after redirect
