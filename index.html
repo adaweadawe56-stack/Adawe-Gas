@@ -216,17 +216,23 @@ Order Gas Now
 
 </section>
 
-<!-- ABOUT -->
-<section class="section text-center" id="about">
+<!-- HOW IT WORKS -->
+<section class="section text-center" id="howItWorks">
 
   <div class="container card-modern">
 
-    <h2>About Adawe Gas</h2>
+    <h2>How It Works</h2>
 
     <p>
-      <p>1. Customer places order online or via WhatsApp.</p>
-<p>2. We connect you to the nearest licensed gas partner.</p>
-<p>3. Fast and safe LPG delivery to your location.</p>
+      1. Customer places order online or via WhatsApp.
+    </p>
+
+    <p>
+      2. We connect you to the nearest licensed gas partner.
+    </p>
+
+    <p>
+      3. Fast and safe LPG delivery to your location.
     </p>
 
   </div>
@@ -637,9 +643,9 @@ Location: ${location}
 Quantity: ${quantity}
 Brand: ${brand}`;
 
-  const whatsappUrl =
-    https://wa.me/254727015434?text=${encodeURIComponent(message)};
-
+ const whatsappUrl =
+`https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
+  
   window.open(whatsappUrl, "_blank");
 
   // 🟢 Re-enable after redirect
