@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -67,6 +68,7 @@ nav button.active{
   margin-bottom:10px;
   border-radius:8px;
   animation:fadeIn 0.3s ease;
+  box-shadow:0 2px 6px rgba(0,0,0,0.1);
 }
 
 /* INPUTS */
@@ -75,6 +77,8 @@ input,select,button{
   margin:5px 0;
   width:100%;
   box-sizing:border-box;
+  border-radius:6px;
+  border:1px solid #ccc;
 }
 
 /* BUTTONS */
@@ -85,11 +89,35 @@ button.primary{
   cursor:pointer;
 }
 
+button.primary:hover{
+  background:#23913d;
+}
+
 button.danger{
   background:#c0392b;
   color:#fff;
   border:none;
   cursor:pointer;
+}
+
+button.danger:hover{
+  background:#962d22;
+}
+
+/* STATUS COLORS */
+.pending{
+  color:orange;
+  font-weight:bold;
+}
+
+.assigned{
+  color:blue;
+  font-weight:bold;
+}
+
+.delivered{
+  color:green;
+  font-weight:bold;
 }
 
 /* TABS */
@@ -118,6 +146,19 @@ button.danger{
     opacity:1;
     transform:translateY(0);
   }
+}
+
+/* MOBILE */
+@media(max-width:600px){
+
+nav{
+  flex-direction:column;
+}
+
+nav button{
+  width:100%;
+}
+
 }
 
 </style>
@@ -209,6 +250,7 @@ import {
   addDoc,
   onSnapshot,
   updateDoc,
+  deleteDoc,
   doc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
@@ -229,6 +271,7 @@ const firebaseConfig = {
 
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
+
 
 // ===== INIT =====
 
@@ -312,6 +355,7 @@ alert('Order placed successfully!');
 document.getElementById('name').value = '';
 document.getElementById('phone').value = '';
 document.getElementById('location').value = '';
+
 }
 
 // ===== LIVE ORDERS =====
@@ -332,6 +376,10 @@ const o = docSnap.data();
 
 const id = docSnap.id;
 
+// ===== STATUS CLASS =====
+
+const statusClass = o.status.toLowerCase();
+
 // ===== ADMIN VIEW =====
 
 adminDiv.innerHTML += `
@@ -342,7 +390,13 @@ adminDiv.innerHTML += `
 
 ${o.location} | ${o.phone}<br><br>
 
-Status: <b>${o.status}</b><br><br>
+Status:
+<span class="${statusClass}">
+${o.status}
+</span><br>
+
+Created:
+${new Date(o.createdAt).toLocaleString()}<br><br>
 
 <select onchange="assignSeller('${id}', this.value)">
 
@@ -362,6 +416,15 @@ ${s}
 
 </select>
 
+<br><br>
+
+<button class='danger'
+onclick="deleteOrder('${id}')">
+
+Delete
+
+</button>
+
 </div>
 `;
 
@@ -377,9 +440,26 @@ sellerDiv.innerHTML += `
 
 ${o.location}<br><br>
 
+Phone: ${o.phone}<br><br>
+
 Seller: <b>${o.seller}</b><br>
 
-Status: <b>${o.status}</b><br><br>
+Status:
+<span class="${statusClass}">
+${o.status}
+</span><br><br>
+
+<a
+href="https://wa.me/${o.phone}"
+target="_blank">
+
+<button class='primary'>
+WhatsApp Customer
+</button>
+
+</a>
+
+<br>
 
 <button class='primary'
 onclick="markDelivered('${id}')">
@@ -414,6 +494,7 @@ await updateDoc(orderRef, {
 alert('Seller Assigned');
 
 }
+
 // ===== DELIVERED =====
 
 window.markDelivered = async function(id){
@@ -425,9 +506,27 @@ await updateDoc(orderRef, {
   status: 'Delivered'
 });
 
+alert('Order Delivered');
+
+}
+
+// ===== DELETE ORDER =====
+
+window.deleteOrder = async function(id){
+
+const confirmDelete =
+confirm('Delete this order?');
+
+if(!confirmDelete) return;
+
+await deleteDoc(doc(db,'orders',id));
+
+alert('Order Deleted');
+
 }
 
 </script>
 
 </body>
 </html>
+```
