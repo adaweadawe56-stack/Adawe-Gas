@@ -43,7 +43,7 @@ input{
 
 <input id="sellerPassword" class="form-control" type="password" placeholder="Password">
 
-<button onclick="registerSeller()" class="btn btn-primary w-100">
+<button id="registerBtn" class="btn btn-primary w-100">
 Create Seller Account
 </button>
 
@@ -57,38 +57,28 @@ Create Seller Account
 
 <script type="module">
 
-import { initializeApp }
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getAuth,
   createUserWithEmailAndPassword
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   getFirestore,
-  collection,
-  onSnapshot,
   doc,
-  updateDoc,
   setDoc
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
 
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
-
   projectId: "adawe-gas-system-82187",
-
   storageBucket: "adawe-gas-system-82187.appspot.com",
-
   messagingSenderId: "644303663526",
-
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
+
 };
 
 const app = initializeApp(firebaseConfig);
@@ -97,41 +87,49 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
-console.log("Firebase Working");
+const btn = document.getElementById("registerBtn");
 
-const sellerOrders =
-document.getElementById("sellerOrders");
+btn.addEventListener("click", async ()=>{
 
-window.registerSeller = async function(){
+  const name =
+  document.getElementById("sellerName").value;
 
-  const name = document.getElementById("sellerName").value;
-  const email = document.getElementById("sellerEmail").value;
-  const password = document.getElementById("sellerPassword").value;
+  const email =
+  document.getElementById("sellerEmail").value;
 
-  try {
+  const password =
+  document.getElementById("sellerPassword").value;
+
+  try{
 
     const userCredential =
-    await createUserWithEmailAndPassword(auth,email,password);
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
     const user = userCredential.user;
 
-   await setDoc(doc(db,"sellers",user.uid),{
+    await setDoc(doc(db,"sellers",user.uid),{
+
       name:name,
       email:email,
-      sellerId:user.uid,
-      createdAt:new Date()
+      sellerId:user.uid
 
     });
 
-    alert("Seller account created successfully!");
+    alert("Seller Created!");
 
-  } catch(error){
+  }catch(error){
 
     alert(error.message);
 
+    console.log(error);
+
   }
 
-};
+});
 
 onSnapshot(collection(db,"orders"), snap=>{
 
