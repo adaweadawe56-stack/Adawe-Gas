@@ -611,16 +611,23 @@ orderForm.addEventListener("submit", async e=>{
   }
 
   try{
-    await addDoc(collection(db,"orders"),{
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
-      status:"Awaiting WhatsApp Confirmation",
-      whatsappSent:false,
-      createdAt:serverTimestamp()
-    });
+   await addDoc(collection(db,"orders"),{
+
+  name,
+  phone,
+  location,
+  quantity,
+  brand,
+
+  sellerId: sellerId,
+
+  status:"Pending",
+
+  whatsappSent:false,
+
+  createdAt:serverTimestamp()
+
+});
 
   }catch(err){
     console.error(err);
