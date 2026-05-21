@@ -600,10 +600,12 @@ orderForm.addEventListener("submit", async e=>{
   const quantity = document.getElementById("quantity").value;
   const brand = document.getElementById("brand").value;
 
-  if(!name || !phone || !location || !quantity || !brand){
+  // 🟢 Seller ID (waa muhiim!)
+  const sellerId = document.getElementById("sellerSelect").value;
+
+  if(!name || !phone || !location || !quantity || !brand || !sellerId){
     showToast("Please fill all order fields", false);
 
-    // 🔴 Re-enable
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
@@ -612,36 +614,30 @@ orderForm.addEventListener("submit", async e=>{
   if(!isValidKenyaPhone(phone)){
     showToast("Enter valid Kenya phone number", false);
 
-    // 🔴 Re-enable
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
   }
 
   try{
-   await addDoc(collection(db,"orders"),{
+    await addDoc(collection(db,"orders"),{
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
 
-  name,
-  phone,
-  location,
-  quantity,
-  brand,
+      sellerId: sellerId,   // 🟢 Halkan waa sax
 
-  sellerId: sellerId,
-
-  status:"Pending",
-
-  whatsappSent:false,
-
-  createdAt:serverTimestamp()
-
-});
+      status:"Pending",
+      whatsappSent:false,
+      createdAt:serverTimestamp()
+    });
 
   }catch(err){
     console.error(err);
     showToast("Failed to save order", false);
 
-    // 🔴 Re-enable
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
@@ -649,7 +645,6 @@ orderForm.addEventListener("submit", async e=>{
 
   showToast("✅ Order saved successfully");
 
-  // 🟢 WhatsApp redirect (ad keydisaa)
   const message = `Hello Adawe Gas New Order:
 
 Name: ${name}
@@ -658,12 +653,11 @@ Location: ${location}
 Quantity: ${quantity}
 Brand: ${brand}`;
 
- const whatsappUrl =
-`https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
+  const whatsappUrl =
+  `https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
   
   window.open(whatsappUrl, "_blank");
 
-  // 🟢 Re-enable after redirect
   orderButton.disabled = false;
   orderButton.innerText = originalBtnText;
 });
