@@ -97,6 +97,8 @@ const auth = getAuth(app);
 
 const db = getFirestore(app);
 
+console.log("Firebase Working");
+
 const sellerOrders =
 document.getElementById("sellerOrders");
 
@@ -113,8 +115,7 @@ window.registerSeller = async function(){
 
     const user = userCredential.user;
 
-    await setDoc(doc(db,"sellerAccounts",user.uid),{
-
+   await setDoc(doc(db,"sellers",user.uid),{
       name:name,
       email:email,
       sellerId:user.uid,
