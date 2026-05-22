@@ -1,193 +1,215 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Seller Dashboard</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <title>Seller Login - Adawe Gas</title>
 
-<style>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
 
-body{
-  background:#f4f4f4;
-  font-family:Arial;
-}
+  <style>
 
-.card{
-  background:white;
-  padding:20px;
-  border-radius:10px;
-  margin-bottom:15px;
-}
+    body{
+      margin:0;
+      min-height:100vh;
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      background:linear-gradient(135deg,#064e3b,#10b981);
+      font-family:Arial,sans-serif;
+    }
 
-input{
-  margin-bottom:10px;
-}
+    .login-card{
+      width:100%;
+      max-width:420px;
+      background:white;
+      padding:35px;
+      border-radius:20px;
+      box-shadow:0 10px 30px rgba(0,0,0,0.2);
+    }
 
-</style>
+    .login-card h2{
+      text-align:center;
+      color:#064e3b;
+      margin-bottom:25px;
+      font-weight:bold;
+    }
 
+    .btn-login{
+      background:#10b981;
+      color:white;
+      font-weight:600;
+      border:none;
+    }
+
+    .btn-login:hover{
+      background:#059669;
+      color:white;
+    }
+
+    #toast{
+      position:fixed;
+      top:20px;
+      right:20px;
+      padding:15px 25px;
+      border-radius:10px;
+      color:white;
+      font-weight:bold;
+      display:none;
+      z-index:9999;
+    }
+
+    .back-home{
+      text-align:center;
+      margin-top:15px;
+    }
+
+    .back-home a{
+      color:#064e3b;
+      text-decoration:none;
+      font-weight:600;
+    }
+
+  </style>
 </head>
 <body>
 
-<div class="container mt-4">
+<div class="login-card">
 
-<h2 class="mb-4">Seller Registration</h2>
+  <h2>Seller Login</h2>
 
-<div class="card">
+  <form id="loginForm">
 
-<input id="sellerName" class="form-control" placeholder="Business Name">
+    <input
+      type="email"
+      id="email"
+      class="form-control mb-3"
+      placeholder="Email Address"
+      required
+    >
 
-<input id="sellerEmail" class="form-control" type="email" placeholder="Email">
+    <input
+      type="password"
+      id="password"
+      class="form-control mb-3"
+      placeholder="Password"
+      required
+    >
 
-<input id="sellerPassword" class="form-control" type="password" placeholder="Password">
+    <button
+      type="submit"
+      class="btn btn-login w-100"
+      id="loginBtn"
+    >
+      Login
+    </button>
 
-<button id="registerBtn" class="btn btn-primary w-100">
-Create Seller Account
-</button>
+  </form>
+
+  <div class="back-home">
+    <a href="index.html">← Back to Home</a>
+  </div>
 
 </div>
 
-<h2>Seller Dashboard</h2>
-
-<div id="sellerOrders"></div>
-
-</div>
+<div id="toast"></div>
 
 <script type="module">
 
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+/* ---------------- FIREBASE ---------------- */
+
+import { initializeApp }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
   getAuth,
-  createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  signInWithEmailAndPassword
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
-import {
-  getFirestore,
-  doc,
-  setDoc,
-  collection,
-  onSnapshot,
-  updateDoc
-} 
-  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
   projectId: "adawe-gas-system-82187",
   storageBucket: "adawe-gas-system-82187.appspot.com",
   messagingSenderId: "644303663526",
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
-
 };
 
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 
-const db = getFirestore(app);
 
-const sellerOrders =
-document.getElementById("sellerOrders");
+/* ---------------- TOAST ---------------- */
 
-const btn =
-document.getElementById("registerBtn");
+function showToast(message, success = true){
 
-btn.addEventListener("click", async ()=>{
+  const toast = document.getElementById("toast");
 
-  const name =
-  document.getElementById("sellerName").value;
+  toast.innerText = message;
 
-  const email =
-  document.getElementById("sellerEmail").value;
+  toast.style.background = success ? "#10b981" : "#dc2626";
 
-  const password =
-  document.getElementById("sellerPassword").value;
+  toast.style.display = "block";
+
+  setTimeout(() => {
+    toast.style.display = "none";
+  },3000);
+}
+
+
+/* ---------------- LOGIN ---------------- */
+
+const loginForm = document.getElementById("loginForm");
+
+const loginBtn = document.getElementById("loginBtn");
+
+loginForm.addEventListener("submit", async(e)=>{
+
+  e.preventDefault();
+
+  const email = document.getElementById("email").value.trim();
+
+  const password = document.getElementById("password").value.trim();
+
+  if(!email || !password){
+    showToast("Fill all fields", false);
+    return;
+  }
+
+  loginBtn.disabled = true;
+
+  loginBtn.innerText = "Logging in...";
 
   try{
 
-    const userCredential =
-    await createUserWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+    await signInWithEmailAndPassword(auth,email,password);
 
-    const user = userCredential.user;
+    showToast("✅ Login successful");
 
-    await setDoc(doc(db,"sellers",user.uid),{
-
-      name:name,
-      email:email,
-      sellerId:user.uid
-
-    });
-
-    alert("Seller Created!");
+    setTimeout(()=>{
+      window.location.href = "seller-dashboard.html";
+    },1500);
 
   }catch(error){
 
-    alert(error.message);
+    console.error(error);
 
-    console.log(error);
+    showToast("❌ Invalid email or password", false);
 
+  }finally{
+
+    loginBtn.disabled = false;
+
+    loginBtn.innerText = "Login";
   }
 
 });
-
-onSnapshot(collection(db,"orders"), snap=>{
-
- sellerOrders.innerHTML = "";
-
- snap.forEach(docSnap=>{
-
-   const o = docSnap.data();
-
-   const id = docSnap.id;
-
-   if(!o.sellerName) return;
-
-   sellerOrders.innerHTML += `
-
-   <div class="card">
-
-   <h5>${o.name}</h5>
-
-   <p>${o.quantity}</p>
-
-   <p>${o.location}</p>
-
-   <p>Status: ${o.status}</p>
-
-   <button onclick="markDelivered('${id}')"
-   class="btn btn-success">
-
-   Delivered
-
-   </button>
-
-   </div>
-   `;
- });
-
-});
-
-window.markDelivered = async function(id){
-
- await updateDoc(doc(db,"orders",id),{
-
-   status:"Delivered"
-
- });
-
-};
 
 </script>
 
 </body>
 </html>
-```
