@@ -487,7 +487,7 @@ Chat on WhatsApp
 
 </footer>
 
-<script type="module">
+/* -------------------- FIREBASE INIT -------------------- */
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -497,151 +497,158 @@ import {
   collection,
   addDoc,
   serverTimestamp,
-  query,
-  where,
-  getDocs
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  onAuthStateChanged
-}
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  getDocs,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
-
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
-
   projectId: "adawe-gas-system-82187",
-
   storageBucket: "adawe-gas-system-82187.appspot.com",
-
   messagingSenderId: "644303663526",
-
   appId: "1:644303663526:web:bacf9e5db0d7787f705f67"
 };
 
 const app = initializeApp(firebaseConfig);
-
 const db = getFirestore(app);
-const auth = getAuth(app);
-/* PHONE FORMAT */
-function formatKenyaPhone(phone){
 
-  phone = phone.replace(/\s+/g,'');
 
-  if(phone.startsWith("+254")){
+/* -------------------- PHONE FORMATTER -------------------- */
+function formatKenyaPhone(phone) {
+  phone = phone.replace(/\s+/g, "");
 
-    return phone;
-  }
-
-  if(phone.startsWith("0")){
-
-    return "+254" + phone.slice(1);
-  }
-
-  if(phone.startsWith("7") && phone.length === 9){
-
-    return "+254" + phone;
-  }
-
-  if(phone.startsWith("1") && phone.length === 9){
-
-    return "+254" + phone;
-  }
+  if (phone.startsWith("+254")) return phone;
+  if (phone.startsWith("0")) return "+254" + phone.slice(1);
+  if (phone.startsWith("7") && phone.length === 9) return "+254" + phone;
+  if (phone.startsWith("1") && phone.length === 9) return "+254" + phone;
 
   return phone;
 }
 
-/* PHONE VALIDATION */
-function isValidKenyaPhone(phone){
-
+/* -------------------- PHONE VALIDATOR -------------------- */
+function isValidKenyaPhone(phone) {
   return /^\+254(7|1)\d{8}$/.test(phone);
 }
 
-/* TOAST */
-function showToast(message, success = true){
-
+/* -------------------- TOAST -------------------- */
+function showToast(message, success = true) {
   const toast = document.getElementById("toast");
-
   toast.innerText = message;
-
-  toast.style.background = success
-  ? "#10b981"
-  : "#dc2626";
-
+  toast.style.background = success ? "#10b981" : "#dc2626";
   toast.style.display = "block";
 
-  setTimeout(()=>{
-
+  setTimeout(() => {
     toast.style.display = "none";
-
-  },3000);
+  }, 3000);
 }
 
-/* ORDER FORM */
+
+/* -------------------- LOAD SELLERS -------------------- */
+async function loadSellers() {
+  const sellerSelect = document.getElementById("sellerSelect");
+
+  sellerSelect.innerHTML = `<option value="">Loading...</option>`;
+
+  try {
+    const snap = await getDocs(collection(db, "sellers"));
+
+    sellerSelect.innerHTML = `<option value="">-- Select Seller --</option>`;
+
+    snap.forEach(docSnap => {
+      const d = docSnap.data();
+
+      const option = document.createElement("option");
+      option.value = docSnap.id;
+      option.textContent = `${d.name} (${d.location})`; // WITH LOCATION
+
+      sellerSelect.appendChild(option);
+    });
+
+  } catch (error) {
+    console.error(error);
+    sellerSelect.innerHTML = `<option value="">Failed to load sellers</option>`;
+    showToast("❌ Could not load sellers", false);
+  }
+}
+
+loadSellers();
+
+
+/* -------------------- ORDER FORM -------------------- */
+
 const orderForm = document.getElementById("orderForm");
 const orderButton = orderForm.querySelector("button[type='submit']");
 const originalBtnText = orderButton.innerText;
 
-orderForm.addEventListener("submit", async e=>{
+orderForm.addEventListener("submit", async (e) => {
   e.preventDefault();
 
-  // 🟢 Loading state ON
   orderButton.disabled = true;
   orderButton.innerText = "Processing...";
 
   const name = document.getElementById("name").value.trim();
-  const phone = formatKenyaPhone(
-    document.getElementById("phone").value.trim()
-  );
+  const phone = formatKenyaPhone(document.getElementById("phone").value.trim());
   const location = document.getElementById("location").value.trim();
   const quantity = document.getElementById("quantity").value;
   const brand = document.getElementById("brand").value;
-
-  // 🟢 Seller ID (waa muhiim!)
   const sellerId = document.getElementById("sellerSelect").value;
 
-  if(!name || !phone || !location || !quantity || !brand || !sellerId){
+  // VALIDATION
+  if (!name || !phone || !location || !quantity || !brand || !sellerId) {
     showToast("Please fill all order fields", false);
-
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
   }
 
-  if(!isValidKenyaPhone(phone)){
+  if (!isValidKenyaPhone(phone)) {
     showToast("Enter valid Kenya phone number", false);
-
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
   }
 
-  try{
-    await addDoc(collection(db,"orders"),{
+  // GET SELLER WHATSAPP
+  let sellerWhatsapp = null;
+
+  try {
+    const sellerDoc = await getDoc(doc(db, "sellers", sellerId));
+
+    if (!sellerDoc.exists()) {
+      throw new Error("Seller not found");
+    }
+
+    sellerWhatsapp = sellerDoc.data().whatsapp;
+
+    if (!sellerWhatsapp) throw new Error("Seller missing WhatsApp number");
+
+  } catch (e) {
+    console.error(e);
+    showToast("Seller WhatsApp not found", false);
+    orderButton.disabled = false;
+    orderButton.innerText = originalBtnText;
+    return;
+  }
+
+  // SAVE ORDER
+  try {
+    await addDoc(collection(db, "orders"), {
       name,
       phone,
       location,
       quantity,
       brand,
-
-      sellerId: sellerId,   // 🟢 Halkan waa sax
-
-      status:"Pending",
-      whatsappSent:false,
-      createdAt:serverTimestamp()
+      sellerId,
+      status: "Pending",
+      whatsappSent: false,
+      createdAt: serverTimestamp()
     });
 
-  }catch(err){
+  } catch (err) {
     console.error(err);
     showToast("Failed to save order", false);
-
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
     return;
@@ -649,23 +656,20 @@ orderForm.addEventListener("submit", async e=>{
 
   showToast("✅ Order saved successfully");
 
-  const message = `Hello Adawe Gas New Order:
-
+  // WHATSAPP MESSAGE
+  const message = `🔥 New LPG Order:
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Quantity: ${quantity}
 Brand: ${brand}`;
 
-  const whatsappUrl =
-  `https://wa.me/254727015434?text=${encodeURIComponent(message)}`;
-  
-  window.open(whatsappUrl, "_blank");
+  window.open(`https://wa.me/${sellerWhatsapp}?text=${encodeURIComponent(message)}`, "_blank");
 
   orderButton.disabled = false;
   orderButton.innerText = originalBtnText;
 });
-
+  
 /* SELLER FORM */
 const registerBtn =
 document.getElementById("registerSellerBtn");
