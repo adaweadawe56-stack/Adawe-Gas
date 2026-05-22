@@ -472,10 +472,7 @@ Chat on WhatsApp
   <p>© 2026 Adawe Gas Network. All Rights Reserved.</p>
 
   <div style="margin-top:10px;">
-    <a href="#privacy" style="margin:0 10px; color:white; text-decoration:underline;">
-      Privacy Policy
-    </a>
-
+    
     <a href="#terms" style="margin:0 10px; color:white; text-decoration:underline;">
       Terms
     </a>
@@ -485,9 +482,9 @@ Chat on WhatsApp
     </a>
   </div>
 
-</footer>
-<script type="module" src="script.js"></script>
-/* -------------------- FIREBASE INIT -------------------- */
+</footer> 
+
+<script type="module">
 
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -499,7 +496,9 @@ import {
   serverTimestamp,
   getDocs,
   doc,
-  getDoc
+  getDoc,
+  query,
+  where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
@@ -561,7 +560,7 @@ async function loadSellers() {
 
       const option = document.createElement("option");
       option.value = docSnap.id;
-      option.textContent = `${d.name} (${d.location})`; // WITH LOCATION
+      option.textContent = `${d.name} (${d.location})`;
 
       sellerSelect.appendChild(option);
     });
@@ -595,7 +594,6 @@ orderForm.addEventListener("submit", async (e) => {
   const brand = document.getElementById("brand").value;
   const sellerId = document.getElementById("sellerSelect").value;
 
-  // VALIDATION
   if (!name || !phone || !location || !quantity || !brand || !sellerId) {
     showToast("Please fill all order fields", false);
     orderButton.disabled = false;
@@ -610,7 +608,6 @@ orderForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  // GET SELLER WHATSAPP
   let sellerWhatsapp = null;
 
   try {
@@ -620,7 +617,7 @@ orderForm.addEventListener("submit", async (e) => {
       throw new Error("Seller not found");
     }
 
-    sellerWhatsapp = sellerDoc.data().whatsapp;
+   sellerWhatsapp = sellerDoc.data().phone;
 
     if (!sellerWhatsapp) throw new Error("Seller missing WhatsApp number");
 
@@ -632,19 +629,18 @@ orderForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  // SAVE ORDER
   try {
     await addDoc(collection(db, "orders"), {
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
-      sellerId,
-      status: "Pending",
-      whatsappSent: false,
-      createdAt: serverTimestamp()
-    });
+  name,
+  phone,
+  location,
+  quantity,
+  brand,
+  sellerId,
+  status: "Pending",
+ whatsappSent: false,
+  createdAt: serverTimestamp()
+});
 
   } catch (err) {
     console.error(err);
@@ -655,8 +651,9 @@ orderForm.addEventListener("submit", async (e) => {
   }
 
   showToast("✅ Order saved successfully");
+  orderForm.reset();
+  
 
-  // WHATSAPP MESSAGE
   const message = `🔥 New LPG Order:
 Name: ${name}
 Phone: ${phone}
@@ -669,56 +666,30 @@ Brand: ${brand}`;
   orderButton.disabled = false;
   orderButton.innerText = originalBtnText;
 });
-  
+
+
 /* SELLER FORM */
-const registerBtn =
-document.getElementById("registerSellerBtn");
+const registerBtn = document.getElementById("registerSellerBtn");
+const btnText = document.getElementById("btnText");
+const btnLoader = document.getElementById("btnLoader");
 
-const btnText =
-document.getElementById("btnText");
+registerBtn.addEventListener("click", async () => {
 
-const btnLoader =
-document.getElementById("btnLoader");
+  const name = document.getElementById("sellerName").value.trim();
+  const phone = formatKenyaPhone(document.getElementById("sellerPhone").value.trim());
+  const location = document.getElementById("sellerLocation").value.trim();
 
-registerBtn.addEventListener("click", async ()=>{
-
-  const name =
-  document.getElementById("sellerName").value.trim();
-
-  const phone =
-  formatKenyaPhone(
-    document.getElementById("sellerPhone").value.trim()
-  );
-
-  const location =
-  document.getElementById("sellerLocation").value.trim();
-
-  /* VALIDATION */
-
-  if(!name || !phone || !location){
-
-    showToast(
-      "Please fill all seller fields",
-      false
-    );
-
+  if (!name || !phone || !location) {
+    showToast("Please fill all seller fields", false);
     return;
   }
 
-  if(!isValidKenyaPhone(phone)){
-
-    showToast(
-      "Enter valid Kenya phone number",
-      false
-    );
-
+  if (!isValidKenyaPhone(phone)) {
+    showToast("Enter valid Kenya phone number", false);
     return;
   }
-
-  /* PRICES */
 
   const prices = {
-
     "1kg": Number(document.getElementById("price1kg").value) || 0,
     "3kg": Number(document.getElementById("price3kg").value) || 0,
     "6kg": Number(document.getElementById("price6kg").value) || 0,
@@ -730,94 +701,48 @@ registerBtn.addEventListener("click", async ()=>{
     "40kg": Number(document.getElementById("price40kg").value) || 0,
     "45kg": Number(document.getElementById("price45kg").value) || 0,
     "50kg": Number(document.getElementById("price50kg").value) || 0
-
   };
 
-  /* AT LEAST ONE PRICE */
+  const hasPrice = Object.values(prices).some(p => p > 0);
 
-  const hasPrice =
-  Object.values(prices).some(p => p > 0);
-
-  if(!hasPrice){
-
-    showToast(
-      "Enter at least one price",
-      false
-    );
-
+  if (!hasPrice) {
+    showToast("Enter at least one price", false);
     return;
   }
 
-  /* LOADING STATE */
-
   btnText.style.display = "none";
-
   btnLoader.style.display = "inline";
-
   registerBtn.disabled = true;
 
-  try{
+  try {
+    const q = query(collection(db, "sellers"), where("phone", "==", phone));
+    const existingSeller = await getDocs(q);
 
-    /* CHECK DUPLICATE PHONE */
-
-    const q = query(
-      collection(db,"sellers"),
-      where("phone","==",phone)
-    );
-
-    const existingSeller =
-    await getDocs(q);
-
-    if(!existingSeller.empty){
-
-      showToast(
-        "Seller with this phone already exists",
-        false
-      );
-
+    if (!existingSeller.empty) {
+      showToast("Seller with this phone already exists", false);
       return;
     }
 
-    /* SAVE SELLER */
-
-    await addDoc(collection(db,"sellers"),{
-
+    await addDoc(collection(db, "sellers"), {
       name,
       phone,
       location,
       prices,
-      status:"pending",
-      createdAt:serverTimestamp()
-
+      status: "pending",
+      createdAt: serverTimestamp()
     });
 
-    /* RESET FORM */
-
     document.getElementById("sellerForm").reset();
+    showToast("✅ Seller saved successfully!");
 
-    showToast(
-      "✅ Seller saved successfully!"
-    );
-
-  }catch(err){
-
+  } catch (err) {
     console.error(err);
+    showToast("❌ Error saving seller", false);
 
-    showToast(
-      "❌ Error saving seller",
-      false
-    );
-
-  }finally{
-
-    /* RESET BUTTON */
-
+  } finally {
     btnText.style.display = "inline";
-
     btnLoader.style.display = "none";
-
     registerBtn.disabled = false;
-
   }
 
 });
