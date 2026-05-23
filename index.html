@@ -565,7 +565,9 @@ async function loadSellers() {
       where("status", "==", "approved")
     );
 
-    const snap = await getDocs(q);
+   const snap = await getDocs(q);
+
+console.log("Approved sellers:", snap.size);
 
     sellerSelect.innerHTML =
     `<option value="">-- Select Seller --</option>`;
