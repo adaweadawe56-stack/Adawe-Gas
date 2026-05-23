@@ -559,15 +559,9 @@ async function loadSellers() {
   `<option value="">Loading...</option>`;
 
   try {
-
-    const q = query(
-      collection(db, "sellers"),
-      where("status", "==", "approved")
-    );
-
-   const snap = await getDocs(q);
-
-console.log("Approved sellers:", snap.size);
+const snap = await getDocs(collection(db, "sellers"));
+    
+  console.log("Approved sellers:", snap.size);
 
     sellerSelect.innerHTML =
     `<option value="">-- Select Seller --</option>`;
