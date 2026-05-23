@@ -552,34 +552,53 @@ function showToast(message, success = true) {
 
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
+
   const sellerSelect = document.getElementById("sellerSelect");
 
-  sellerSelect.innerHTML = `<option value="">Loading...</option>`;
+  sellerSelect.innerHTML =
+  `<option value="">Loading...</option>`;
 
   try {
-    const snap = await getDocs(collection(db, "sellers"));
 
-    sellerSelect.innerHTML = `<option value="">-- Select Seller --</option>`;
+    const q = query(
+      collection(db, "sellers"),
+      where("status", "==", "approved")
+    );
+
+    const snap = await getDocs(q);
+
+    sellerSelect.innerHTML =
+    `<option value="">-- Select Seller --</option>`;
 
     snap.forEach(docSnap => {
+
       const d = docSnap.data();
 
       const option = document.createElement("option");
+
       option.value = docSnap.id;
-      option.textContent = `${d.name} (${d.location})`;
+
+      option.textContent =
+      `${d.name} (${d.location})`;
 
       sellerSelect.appendChild(option);
+
     });
 
   } catch (error) {
+
     console.error(error);
-    sellerSelect.innerHTML = `<option value="">Failed to load sellers</option>`;
+
+    sellerSelect.innerHTML =
+    `<option value="">Failed to load sellers</option>`;
+
     showToast("❌ Could not load sellers", false);
+
   }
+
 }
 
 loadSellers();
-
 
 /* -------------------- ORDER FORM -------------------- */
 
