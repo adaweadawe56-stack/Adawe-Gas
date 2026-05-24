@@ -436,20 +436,23 @@ function renderSellers(){
 
   <td>
 
-  <button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">
-  Prices
-  </button>
+<button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">
+Prices
+</button>
 
-  <button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">
-  Edit
-  </button>
+<button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">
+Edit
+</button>
 
-  <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">
-  Delete
-  </button>
+<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm mt-1">
+Approve
+</button>
 
-  </td>
+<button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">
+Delete
+</button>
 
+</td>
   </tr>`;
  });
 
