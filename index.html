@@ -610,79 +610,131 @@ const orderButton = orderForm.querySelector("button[type='submit']");
 const originalBtnText = orderButton.innerText;
 
 orderForm.addEventListener("submit", async (e) => {
+
   e.preventDefault();
 
   orderButton.disabled = true;
   orderButton.innerText = "Processing...";
 
-  const name = document.getElementById("name").value.trim();
-  const phone = formatKenyaPhone(document.getElementById("phone").value.trim());
-  const location = document.getElementById("location").value.trim();
-  const quantity = document.getElementById("quantity").value;
-  const brand = document.getElementById("brand").value;
-  const sellerId = document.getElementById("sellerSelect").value;
+  const name =
+  document.getElementById("name").value.trim();
 
-  if (!name || !phone || !location || !quantity || !brand || !sellerId) {
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("phone").value.trim()
+  );
+
+  const location =
+  document.getElementById("location").value.trim();
+
+  const quantity =
+  document.getElementById("quantity").value;
+
+  const brand =
+  document.getElementById("brand").value;
+
+  const sellerId =
+  document.getElementById("sellerSelect").value;
+
+  if (
+    !name ||
+    !phone ||
+    !location ||
+    !quantity ||
+    !brand ||
+    !sellerId
+  ) {
+
     showToast("Please fill all order fields", false);
+
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
+
     return;
+
   }
 
   if (!isValidKenyaPhone(phone)) {
+
     showToast("Enter valid Kenya phone number", false);
+
     orderButton.disabled = false;
     orderButton.innerText = originalBtnText;
-    return;
-  }
 
-  let sellerWhatsapp = null;
+    return;
+
+  }
 
   try {
-    const sellerDoc = await getDoc(doc(db, "sellers", sellerId));
+
+    // GET SELLER
+
+    const sellerDoc =
+    await getDoc(doc(db, "sellers", sellerId));
 
     if (!sellerDoc.exists()) {
+
       throw new Error("Seller not found");
+
     }
 
-   sellerWhatsapp = sellerDoc.data().phone;
+    const sellerData = sellerDoc.data();
 
-    if (!sellerWhatsapp) throw new Error("Seller missing WhatsApp number");
+    const sellerWhatsapp = sellerData.phone;
 
-  } catch (e) {
-    console.error(e);
-    showToast("Seller WhatsApp not found", false);
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
-    return;
-  }
+    // SAVE ORDER
 
- 
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to save order", false);
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
-    return;
-  }
+    await addDoc(collection(db, "orders"), {
 
-  showToast("✅ Order saved successfully");
-  orderForm.reset();
-  
+      customerName: name,
+      customerPhone: phone,
+      location,
+      quantity,
+      brand,
 
-  const message = `🔥 New LPG Order:
+      sellerId,
+      sellerName: sellerData.name,
+      sellerPhone: sellerWhatsapp,
+
+      status: "pending",
+
+      createdAt: serverTimestamp()
+
+    });
+
+    showToast("✅ Order saved successfully");
+
+    orderForm.reset();
+
+    // WHATSAPP MESSAGE
+
+    const message = `🔥 New LPG Order:
+
 Name: ${name}
 Phone: ${phone}
 Location: ${location}
 Quantity: ${quantity}
 Brand: ${brand}`;
 
-  window.open(`https://wa.me/${sellerWhatsapp}?text=${encodeURIComponent(message)}`, "_blank");
+    window.open(
+      `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
+      "_blank"
+    );
 
-  orderButton.disabled = false;
-  orderButton.innerText = originalBtnText;
+  } catch (err) {
+
+    console.error(err);
+
+    showToast("Failed to save order", false);
+
+  } finally {
+
+    orderButton.disabled = false;
+    orderButton.innerText = originalBtnText;
+
+  }
+
 });
-
 
 /* SELLER FORM */
 
