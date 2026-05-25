@@ -507,6 +507,11 @@ import {
   where
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+import {
+  getAuth,
+  createUserWithEmailAndPassword
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -517,8 +522,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
 
+const auth = getAuth(app);
 
 /* -------------------- PHONE FORMATTER -------------------- */
 function formatKenyaPhone(phone) {
@@ -650,19 +657,7 @@ orderForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  try {
-    await addDoc(collection(db, "orders"), {
-  name,
-  phone,
-  location,
-  quantity,
-  brand,
-  sellerId,
-  status: "Pending",
- whatsappSent: false,
-  createdAt: serverTimestamp()
-});
-
+ 
   } catch (err) {
     console.error(err);
     showToast("Failed to save order", false);
@@ -690,27 +685,50 @@ Brand: ${brand}`;
 
 
 /* SELLER FORM */
-const registerBtn = document.getElementById("registerSellerBtn");
-const btnText = document.getElementById("btnText");
-const btnLoader = document.getElementById("btnLoader");
+
+const registerBtn =
+document.getElementById("registerSellerBtn");
+
+const btnText =
+document.getElementById("btnText");
+
+const btnLoader =
+document.getElementById("btnLoader");
 
 registerBtn.addEventListener("click", async () => {
 
-  const name = document.getElementById("sellerName").value.trim();
-  const phone = formatKenyaPhone(document.getElementById("sellerPhone").value.trim());
-  const location = document.getElementById("sellerLocation").value.trim();
+  const name =
+  document.getElementById("sellerName").value.trim();
 
-  if (!name || !phone || !location) {
+  const phone = formatKenyaPhone(
+    document.getElementById("sellerPhone").value.trim()
+  );
+
+  const location =
+  document.getElementById("sellerLocation").value.trim();
+
+  const email =
+  document.getElementById("sellerEmail").value.trim();
+
+  const password =
+  document.getElementById("sellerPassword").value.trim();
+
+  if (!name || !phone || !location || !email || !password) {
+
     showToast("Please fill all seller fields", false);
+
     return;
   }
 
   if (!isValidKenyaPhone(phone)) {
+
     showToast("Enter valid Kenya phone number", false);
+
     return;
   }
 
   const prices = {
+
     "1kg": Number(document.getElementById("price1kg").value) || 0,
     "3kg": Number(document.getElementById("price3kg").value) || 0,
     "6kg": Number(document.getElementById("price6kg").value) || 0,
@@ -722,48 +740,90 @@ registerBtn.addEventListener("click", async () => {
     "40kg": Number(document.getElementById("price40kg").value) || 0,
     "45kg": Number(document.getElementById("price45kg").value) || 0,
     "50kg": Number(document.getElementById("price50kg").value) || 0
+
   };
 
-  const hasPrice = Object.values(prices).some(p => p > 0);
+  const hasPrice =
+  Object.values(prices).some(p => p > 0);
 
   if (!hasPrice) {
+
     showToast("Enter at least one price", false);
+
     return;
   }
 
   btnText.style.display = "none";
+
   btnLoader.style.display = "inline";
+
   registerBtn.disabled = true;
 
   try {
-    const q = query(collection(db, "sellers"), where("phone", "==", phone));
+
+    // CHECK EXISTING PHONE
+
+    const q = query(
+      collection(db, "sellers"),
+      where("phone", "==", phone)
+    );
+
     const existingSeller = await getDocs(q);
 
     if (!existingSeller.empty) {
-      showToast("Seller with this phone already exists", false);
+
+      showToast(
+        "Seller with this phone already exists",
+        false
+      );
+
       return;
     }
 
+    // CREATE FIREBASE AUTH ACCOUNT
+
+    const userCredential =
+    await createUserWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
+
+    const uid = userCredential.user.uid;
+
+    // SAVE SELLER TO FIRESTORE
+
     await addDoc(collection(db, "sellers"), {
+
+      uid,
       name,
+      email,
       phone,
       location,
       prices,
       status: "pending",
       createdAt: serverTimestamp()
+
     });
 
     document.getElementById("sellerForm").reset();
-    showToast("✅ Seller saved successfully!");
+
+    showToast("✅ Seller registered successfully!");
 
   } catch (err) {
+
     console.error(err);
-    showToast("❌ Error saving seller", false);
+
+    showToast(err.message, false);
 
   } finally {
+
     btnText.style.display = "inline";
+
     btnLoader.style.display = "none";
+
     registerBtn.disabled = false;
+
   }
 
 });
