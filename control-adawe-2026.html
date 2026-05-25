@@ -497,6 +497,16 @@ window.deleteOrder = id => deleteDoc(doc(db,"orders",id));
 
 window.deleteSeller = id => deleteDoc(doc(db,"sellers",id));
 
+window.approveSeller = async id => {
+
+ await updateDoc(doc(db,"sellers",id),{
+
+   status:"approved"
+
+ });
+
+};
+
 window.editSeller = async id => {
 
  const s = sellersData.find(x=>x.id==id);
