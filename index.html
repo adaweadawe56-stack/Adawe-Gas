@@ -366,6 +366,19 @@ Register Seller
        placeholder="Location"
        required>
 
+<input id="sellerEmail"
+       type="email"
+       class="form-control mb-3"
+       placeholder="Email Address"
+       required>
+
+<input id="sellerPassword"
+       type="password"
+       class="form-control mb-3"
+       placeholder="Password"
+       minlength="6"
+       required>
+
 <input id="price1kg" class="form-control mb-2" placeholder="1kg price" type="number" min="100" max="100000" step="1">
 <input id="price3kg" class="form-control mb-2" placeholder="3kg price" type="number" min="100" max="100000" step="1">
 <input id="price6kg" class="form-control mb-2" placeholder="6kg price" type="number" min="100" max="100000" step="1">
@@ -378,7 +391,7 @@ Register Seller
 <input id="price45kg" class="form-control mb-2" placeholder="45kg price" type="number" min="100" max="100000" step="1">
 <input id="price50kg" class="form-control mb-3" placeholder="50kg price" type="number" min="100" max="100000" step="1">
 
-<button type="button"
+<button type="submit"
         id="registerSellerBtn"
         class="btn btn-primary w-100">
 
