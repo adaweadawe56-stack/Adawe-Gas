@@ -1,26 +1,26 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Track Order</title>
+<meta charset="UTF-8">
+<title>Track Order</title>
 
-  <style>
-    body { font-family: Arial; padding: 20px; }
-    #result { margin-top: 20px; padding: 15px; background: #f3f3f3; border-radius: 8px; }
-  </style>
+<style>
+  body { font-family: Arial; padding: 20px; }
+  #result { margin-top: 20px; padding: 15px; background: #f3f3f3; border-radius: 8px; }
+</style>
 
 </head>
 <body>
 
-  <h2>Track Your Order</h2>
+<h2>Track Your Order</h2>
 
-  <input id="orderIdInput" type="text" placeholder="Enter Order ID">
-  <button onclick="trackOrder()">Track</button>
+<input id="orderIdInput" type="text" placeholder="Enter Order ID">
+<button id="trackBtn">Track</button>
 
-  <div id="result"></div>
+<div id="result"></div>
 
-  <!-- Xiriir: script file-ka dibadeed -->
-  <script src="orderTracking.js"></script>
+<!-- Xiriirinta JS (waa script module sax ah) -->
+<script type="module" src="orderTracking.js"></script>
 
 </body>
 </html>
