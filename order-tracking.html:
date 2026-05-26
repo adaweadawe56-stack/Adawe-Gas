@@ -1,35 +1,26 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Track Your Order</title>
+  <meta charset="UTF-8">
+  <title>Track Order</title>
+
   <style>
     body { font-family: Arial; padding: 20px; }
-    .card { 
-      max-width: 400px; 
-      margin: auto; 
-      padding: 20px; 
-      border-radius: 10px; 
-      background: #f7f7f7; 
-      box-shadow: 0 5px 20px rgba(0,0,0,0.1);
-    }
-    .status{
-      font-size: 20px;
-      margin-top: 10px;
-      font-weight: bold;
-    }
+    #result { margin-top: 20px; padding: 15px; background: #f3f3f3; border-radius: 8px; }
   </style>
+
 </head>
 <body>
 
-<div class="card">
-  <h2>Order Tracking</h2>
+  <h2>Track Your Order</h2>
 
-  <input id="orderIdInput" placeholder="Enter Order ID">
+  <input id="orderIdInput" type="text" placeholder="Enter Order ID">
   <button onclick="trackOrder()">Track</button>
 
   <div id="result"></div>
-</div>
 
-<script src="orderTracking.js"></script>
+  <!-- Xiriir: script file-ka dibadeed -->
+  <script src="orderTracking.js"></script>
+
 </body>
 </html>
