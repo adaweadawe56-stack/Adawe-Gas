@@ -591,100 +591,215 @@ async function loadSellers() {
 loadSellers();
 
 /* -------------------- ORDER FORM -------------------- */
+
 const orderForm = document.getElementById("orderForm");
-const orderButton = orderForm.querySelector("button[type='submit']");
-const originalBtnText = orderButton.innerText;
+
+const orderButton =
+orderForm.querySelector("button[type='submit']");
+
+const originalBtnText =
+orderButton.innerHTML;
+
+let submitting = false;
 
 orderForm.addEventListener("submit", async (e) => {
+
   e.preventDefault();
 
+  if (submitting) return;
+
+  submitting = true;
+
   orderButton.disabled = true;
-  orderButton.innerText = "Processing...";
 
-  const name = document.getElementById("name").value.trim();
-  const phone = formatKenyaPhone(document.getElementById("phone").value.trim());
-  const location = document.getElementById("location").value.trim();
-  const quantity = document.getElementById("quantity").value;
-  const brand = document.getElementById("brand").value;
-  const sellerId = document.getElementById("sellerSelect").value;
+  orderButton.innerHTML =
+  `<span class="spinner-border spinner-border-sm"></span> Processing...`;
 
-  if (!name || !phone || !location || !quantity || !brand || !sellerId) {
+  const name =
+  document.getElementById("name").value.trim();
+
+  const phone =
+  formatKenyaPhone(
+    document.getElementById("phone").value.trim()
+  );
+
+  const location =
+  document.getElementById("location").value.trim();
+
+  const quantity =
+  document.getElementById("quantity").value;
+
+  const brand =
+  document.getElementById("brand").value;
+
+  const sellerId =
+  document.getElementById("sellerSelect").value;
+
+  /* VALIDATION */
+
+  if (
+    !name ||
+    !phone ||
+    !location ||
+    !quantity ||
+    !brand ||
+    !sellerId
+  ) {
+
     showToast("Please fill all order fields", false);
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
+
+    resetButton();
+
     return;
   }
 
   if (!isValidKenyaPhone(phone)) {
+
     showToast("Enter valid Kenya phone number", false);
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
+
+    resetButton();
+
     return;
   }
 
   try {
-    const sellerDoc = await getDoc(doc(db, "sellers", sellerId));
-    if (!sellerDoc.exists()) throw new Error("Seller not found");
 
-    const sellerData = sellerDoc.data();
-    const sellerWhatsapp = sellerData.phone;
+    /* GET SELLER */
 
-const orderId = "AG-" + Date.now();
+    const sellerDoc =
+    await getDoc(doc(db, "sellers", sellerId));
 
-await addDoc(collection(db, "orders"), {
-  orderId,
-  name,
-  phone,
-  location,
-  quantity,
-  brand,
-  seller: sellerData.name,
-  sellerPhone: sellerData.phone,
-  status: "Pending",
-  createdAt: serverTimestamp()
-});
+    if (!sellerDoc.exists()) {
+      throw new Error("Seller not found");
+    }
 
+    const sellerData =
+    sellerDoc.data();
 
-// WhatsApp auto message
-sendWhatsApp(
-  phone,
-  `Hello ${name} 👋
+    const sellerWhatsapp =
+    sellerData.phone;
 
-Your gas order has been received successfully 🔥
+    if (!sellerWhatsapp) {
+      throw new Error("Seller phone missing");
+    }
+
+    /* ORDER ID */
+
+    const orderId =
+    "AG-" + Date.now();
+
+    /* SAVE ORDER */
+
+    await addDoc(collection(db, "orders"), {
+
+      orderId,
+
+      name,
+
+      phone,
+
+      location,
+
+      quantity,
+
+      brand,
+
+      seller: sellerData.name,
+
+      sellerPhone: sellerWhatsapp,
+
+      status: "Pending",
+
+      createdAt: serverTimestamp()
+
+    });
+
+    /* CUSTOMER WHATSAPP */
+
+    sendWhatsApp(
+      phone,
+
+`Hello ${name} 👋
+
+Your gas order (${orderId}) has been received successfully 🔥
 
 Seller: ${sellerData.name}
+
 Location: ${location}
+
+Quantity: ${quantity}
+
+Brand: ${brand}
+
+Status: Pending
 
 Thank you for using Adawe Gas Network ✅`
-);
-
-
-showToast("✅ Order saved successfully");
-
-orderForm.reset();
-
-    const message = `🔥 New LPG Order:
-
-Name: ${name}
-Phone: ${phone}
-Location: ${location}
-Quantity: ${quantity}
-Brand: ${brand}`;
-
-    window.open(
-      `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
-      "_blank"
     );
 
-  } catch (err) {
-    console.error(err);
-    showToast("Failed to save order", false);
+    /* SUCCESS */
 
-  } finally {
-    orderButton.disabled = false;
-    orderButton.innerText = originalBtnText;
+    showToast("✅ Order saved successfully");
+
+    orderForm.reset();
+
+    /* SELLER MESSAGE */
+
+    const message = `🔥 NEW LPG ORDER
+
+Order ID: ${orderId}
+
+Customer: ${name}
+
+Phone: ${phone}
+
+Location:
+${location}
+
+Gas Brand: ${brand}
+
+Quantity: ${quantity}
+
+Status: Pending`;
+
+    /* OPEN WHATSAPP */
+
+    window.open(
+
+      `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
+
+      "_blank"
+
+    );
+
   }
+
+  catch (err) {
+
+    console.error(err);
+
+    showToast(err.message || "Failed to save order", false);
+
+  }
+
+  finally {
+
+    resetButton();
+
+  }
+
 });
+
+/* RESET BUTTON */
+
+function resetButton() {
+
+  submitting = false;
+
+  orderButton.disabled = false;
+
+  orderButton.innerHTML = originalBtnText;
+
+}
 
 /* -------------------- SELLER REGISTRATION -------------------- */
 const sellerForm = document.getElementById("sellerForm");
