@@ -501,9 +501,6 @@ Chat on WhatsApp
     </a>
   </div>
 
-  <button onclick="testMessage()" class="btn btn-success mt-3">
-    Test WhatsApp
-  </button>
 </footer> 
 
 <script type="module">
@@ -558,17 +555,6 @@ window.sendWhatsApp = function(phone, message){
   window.open(url, "_blank");
 }
 
-
-/* -------------------- TEST -------------------- */
-
-window.testMessage = function(){
-
-sendWhatsApp(
-    "0727015434",
-    "Hello 👋 Your order is accepted ✅"
-  );
-
-}
 function showToast(message, success = true) {
   const toast = document.getElementById("toast");
   toast.innerText = message;
@@ -643,21 +629,37 @@ orderForm.addEventListener("submit", async (e) => {
     const sellerData = sellerDoc.data();
     const sellerWhatsapp = sellerData.phone;
 
-    await addDoc(collection(db, "orders"), {
-      customerName: name,
-      customerPhone: phone,
-      location,
-      quantity,
-      brand,
-      sellerId,
-      sellerName: sellerData.name,
-      sellerPhone: sellerWhatsapp,
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
+ await addDoc(collection(db, "orders"), {
+  customerName: name,
+  customerPhone: phone,
+  location,
+  quantity,
+  brand,
+  sellerId,
+  sellerName: sellerData.name,
+  sellerPhone: sellerWhatsapp,
+  status: "pending",
+  createdAt: serverTimestamp()
+});
 
-    showToast("✅ Order saved successfully");
-    orderForm.reset();
+
+// WhatsApp auto message
+sendWhatsApp(
+  phone,
+  `Hello ${name} 👋
+
+Your gas order has been received successfully 🔥
+
+Seller: ${sellerData.name}
+Location: ${location}
+
+Thank you for using Adawe Gas Network ✅`
+);
+
+
+showToast("✅ Order saved successfully");
+
+orderForm.reset();
 
     const message = `🔥 New LPG Order:
 
