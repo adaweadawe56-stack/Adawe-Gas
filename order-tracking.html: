@@ -1,14 +1,13 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Track Order</title>
+  <meta charset="UTF-8">
+  <title>Track Order</title>
 
-<style>
-  body { font-family: Arial; padding: 20px; }
-  #result { margin-top: 20px; padding: 15px; background: #f3f3f3; border-radius: 8px; }
-</style>
-
+  <style>
+    body { font-family: Arial; padding: 20px; }
+    #result { margin-top: 20px; padding: 15px; background: #f3f3f3; border-radius: 8px; }
+  </style>
 </head>
 <body>
 
@@ -19,7 +18,7 @@
 
 <div id="result"></div>
 
-<!-- Xiriirinta JS (waa script module sax ah) -->
+<!-- Script external -->
 <script type="module" src="orderTracking.js"></script>
 
 </body>
