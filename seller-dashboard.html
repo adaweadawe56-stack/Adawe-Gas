@@ -71,12 +71,6 @@ Login
 
 </div>
 
-<!-- DASHBOARD -->
-
-<div class="dashboard" id="dashboard">
-
-<div class="d-flex justify-content-between mb-4">
-
 <h2>
 Seller Dashboard
 </h2>
@@ -94,29 +88,8 @@ Logout
 My Orders
 </h4>
 
-<table class="table">
+<div id="ordersTable"></div>
 
-<thead>
-
-<tr>
-<th>Name</th>
-<th>Phone</th>
-<th>Qty</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-
-</thead>
-
-<tbody id="ordersTable">
-
-</tbody>
-
-</table>
-
-</div>
-
-</div>
 
 <script type="module">
 
@@ -205,26 +178,60 @@ function loadOrders(){
     where("sellerPhone","==",sellerPhone)
   );
 
-  onSnapshot(q,snap=>{
+  onSnapshot(q, snap => {
 
     ordersTable.innerHTML = "";
 
-    snap.forEach(docSnap=>{
+    snap.forEach(docSnap => {
 
       const o = docSnap.data();
 
       ordersTable.innerHTML += `
-      <tr>
 
-      <td>${o.name || ""}</td>
+      <div class="card p-3 mb-3">
 
-      <td>${o.phone || ""}</td>
+      <h5>${o.name || ""}</h5>
 
-      <td>${o.quantity || ""}</td>
+      <p>
+      <b>Phone:</b>
+      ${o.phone || ""}
+      </p>
 
-      <td>${o.status || ""}</td>
+      <p>
+      <b>Location:</b>
+      ${o.location || ""}
+      </p>
 
-      <td>
+      <p>
+      <b>Quantity:</b>
+      ${o.quantity || ""}
+      </p>
+
+      <p>
+
+      <span class="badge bg-primary">
+      ${o.status || "Pending"}
+      </span>
+
+      </p>
+
+      <div class="d-flex gap-2 flex-wrap">
+
+      <button
+      onclick="updateStatus('${docSnap.id}','Accepted')"
+      class="btn btn-primary btn-sm">
+
+      Accept
+
+      </button>
+
+      <button
+      onclick="updateStatus('${docSnap.id}','On The Way')"
+      class="btn btn-warning btn-sm">
+
+      On The Way
+
+      </button>
 
       <button
       onclick="updateStatus('${docSnap.id}','Delivered')"
@@ -234,9 +241,12 @@ function loadOrders(){
 
       </button>
 
-      </td>
+      </div>
 
-      </tr>`;
+      </div>
+
+      `;
+
     });
 
   });
