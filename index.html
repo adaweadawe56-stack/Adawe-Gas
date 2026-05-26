@@ -629,16 +629,18 @@ orderForm.addEventListener("submit", async (e) => {
     const sellerData = sellerDoc.data();
     const sellerWhatsapp = sellerData.phone;
 
- await addDoc(collection(db, "orders"), {
-  customerName: name,
-  customerPhone: phone,
+const orderId = "AG-" + Date.now();
+
+await addDoc(collection(db, "orders"), {
+  orderId,
+  name,
+  phone,
   location,
   quantity,
   brand,
-  sellerId,
-  sellerName: sellerData.name,
-  sellerPhone: sellerWhatsapp,
-  status: "pending",
+  seller: sellerData.name,
+  sellerPhone: sellerData.phone,
+  status: "Pending",
   createdAt: serverTimestamp()
 });
 
