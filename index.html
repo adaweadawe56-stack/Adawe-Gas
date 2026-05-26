@@ -501,6 +501,9 @@ Chat on WhatsApp
     </a>
   </div>
 
+  <button onclick="testMessage()" class="btn btn-success mt-3">
+    Test WhatsApp
+  </button>
 </footer> 
 
 <script type="module">
@@ -528,6 +531,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 /* -------------------- HELPERS -------------------- */
+
 function formatKenyaPhone(phone) {
   phone = phone.replace(/\s+/g, "");
   if (phone.startsWith("+254")) return phone;
@@ -541,6 +545,30 @@ function isValidKenyaPhone(phone) {
   return /^\+254(7|1)\d{8}$/.test(phone);
 }
 
+
+/* -------------------- WHATSAPP -------------------- */
+
+window.sendWhatsApp = function(phone, message){
+
+  phone = formatKenyaPhone(phone);
+
+  const url =
+   `https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(message)}`;
+
+  window.open(url, "_blank");
+}
+
+
+/* -------------------- TEST -------------------- */
+
+window.testMessage = function(){
+
+sendWhatsApp(
+    "0727015434",
+    "Hello 👋 Your order is accepted ✅"
+  );
+
+}
 function showToast(message, success = true) {
   const toast = document.getElementById("toast");
   toast.innerText = message;
