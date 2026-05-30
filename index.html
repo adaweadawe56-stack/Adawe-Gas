@@ -689,30 +689,25 @@ orderForm.addEventListener("submit", async (e) => {
     "AG-" + Date.now();
 
     /* SAVE ORDER */
+    console.log("sellerData =", sellerData);
+console.log("sellerWhatsapp =", sellerWhatsapp);
 
-    await addDoc(collection(db, "orders"), {
+await addDoc(collection(db, "orders"), {
 
-      orderId,
+  orderId,
+  name,
+  phone,
+  location,
+  quantity,
+  brand,
 
-      name,
+  seller: sellerData.name,
+  sellerPhone: sellerWhatsapp,
 
-      phone,
+  status: "Pending",
+  createdAt: serverTimestamp()
 
-      location,
-
-      quantity,
-
-      brand,
-
-      seller: sellerData.name,
-
-      sellerPhone: sellerWhatsapp,
-
-      status: "Pending",
-
-      createdAt: serverTimestamp()
-
-    });
+});
 
     /* CUSTOMER WHATSAPP */
 
