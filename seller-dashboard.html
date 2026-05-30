@@ -172,8 +172,10 @@ window.login = async function(){
 };
   
 /* LOAD ORDERS */
-
 function loadOrders(){
+
+  console.log("sellerPhone =", sellerPhone);
+
   const q = query(
     collection(db,"orders"),
     where("sellerPhone","==",sellerPhone)
@@ -181,66 +183,51 @@ function loadOrders(){
 
   onSnapshot(q, snap => {
 
+    console.log("Orders found:", snap.size);
+
     ordersTable.innerHTML = "";
 
     snap.forEach(docSnap => {
 
       const o = docSnap.data();
-      console.log("sellerPhone =", sellerPhone);
+
       ordersTable.innerHTML += `
 
       <div class="card p-3 mb-3">
 
       <h5>${o.name || ""}</h5>
 
-      <p>
-      <b>Phone:</b>
-      ${o.phone || ""}
-      </p>
+      <p><b>Phone:</b> ${o.phone || ""}</p>
+
+      <p><b>Location:</b> ${o.location || ""}</p>
+
+      <p><b>Quantity:</b> ${o.quantity || ""}</p>
 
       <p>
-      <b>Location:</b>
-      ${o.location || ""}
-      </p>
-
-      <p>
-      <b>Quantity:</b>
-      ${o.quantity || ""}
-      </p>
-
-      <p>
-
-      <span class="badge bg-primary">
-      ${o.status || "Pending"}
-      </span>
-
+        <span class="badge bg-primary">
+          ${o.status || "Pending"}
+        </span>
       </p>
 
       <div class="d-flex gap-2 flex-wrap">
 
-      <button
-      onclick="updateStatus('${docSnap.id}','Accepted')"
-      class="btn btn-primary btn-sm">
+        <button
+        onclick="updateStatus('${docSnap.id}','Accepted')"
+        class="btn btn-primary btn-sm">
+        Accept
+        </button>
 
-      Accept
+        <button
+        onclick="updateStatus('${docSnap.id}','On The Way')"
+        class="btn btn-warning btn-sm">
+        On The Way
+        </button>
 
-      </button>
-
-      <button
-      onclick="updateStatus('${docSnap.id}','On The Way')"
-      class="btn btn-warning btn-sm">
-
-      On The Way
-
-      </button>
-
-      <button
-      onclick="updateStatus('${docSnap.id}','Delivered')"
-      class="btn btn-success btn-sm">
-
-      Delivered
-
-      </button>
+        <button
+        onclick="updateStatus('${docSnap.id}','Delivered')"
+        class="btn btn-success btn-sm">
+        Delivered
+        </button>
 
       </div>
 
