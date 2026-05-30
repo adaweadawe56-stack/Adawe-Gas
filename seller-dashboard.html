@@ -174,7 +174,6 @@ window.login = async function(){
 /* LOAD ORDERS */
 
 function loadOrders(){
-
   const q = query(
     collection(db,"orders"),
     where("sellerPhone","==",sellerPhone)
@@ -187,7 +186,7 @@ function loadOrders(){
     snap.forEach(docSnap => {
 
       const o = docSnap.data();
-
+      console.log("sellerPhone =", sellerPhone);
       ordersTable.innerHTML += `
 
       <div class="card p-3 mb-3">
