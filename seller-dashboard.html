@@ -136,7 +136,8 @@ window.login = async function(){
   console.log("Login button clicked");
 
   try{
-     const email =
+
+    const email =
     document.getElementById("email").value;
 
     const password =
@@ -149,14 +150,14 @@ window.login = async function(){
       password
     );
 
-    console.log(
-      "Seller Phone:",
-      userCredential.user.phoneNumber
-    );
-
     document.getElementById("loginPage").style.display = "none";
 
     document.getElementById("dashboard").style.display = "block";
+
+    // Tijaabo
+    sellerPhone = "+254752632123";
+
+    console.log("sellerPhone =", sellerPhone);
 
     loadOrders();
 
