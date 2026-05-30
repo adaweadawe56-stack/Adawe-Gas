@@ -152,12 +152,14 @@ window.login = async function(){
       password
     );
 
-    sellerPhone =
-    userCredential.user.phoneNumber;
+    console.log(
+      "Seller Phone:",
+      userCredential.user.phoneNumber
+    );
 
-    loginPage.style.display = "none";
+    document.getElementById("loginPage").style.display = "none";
 
-    dashboard.style.display = "block";
+    document.getElementById("dashboard").style.display = "block";
 
     loadOrders();
 
@@ -165,12 +167,13 @@ window.login = async function(){
 
     console.error(err);
 
-    loginError.innerText =
+    document.getElementById("loginError").innerText =
     err.message;
+
   }
 
 };
-
+  
 /* LOAD ORDERS */
 
 function loadOrders(){
