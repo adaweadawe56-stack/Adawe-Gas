@@ -99,6 +99,7 @@ getFirestore,
 collection,
 query,
 where,
+getDocs,
 onSnapshot,
 doc,
 updateDoc
@@ -154,11 +155,28 @@ window.login = async function(){
 
     document.getElementById("dashboard").style.display = "block";
 
-    // Tijaabo
-    sellerPhone = "+254727015434";
-    console.log("sellerPhone =", sellerPhone);
+   const q = query(
+  collection(db, "sellers"),
+  where("email", "==", email)
+);
 
-    loadOrders();
+const snap = await getDocs(q);
+
+if (snap.empty) {
+
+  document.getElementById("loginError").innerText =
+  "Seller account not found";
+
+  return;
+}
+
+const sellerData = snap.docs[0].data();
+
+sellerPhone = sellerData.phone;
+
+console.log("sellerPhone =", sellerPhone);
+
+loadOrders();
 
   }catch(err){
 
