@@ -88,6 +88,30 @@ Login
 
   </div>
 
+  <div class="card-box">
+
+    <h4>My Gas Prices</h4>
+
+    <input id="price1kg" class="form-control mb-2" placeholder="1kg Price">
+    <input id="price3kg" class="form-control mb-2" placeholder="3kg Price">
+    <input id="price6kg" class="form-control mb-2" placeholder="6kg Price">
+    <input id="price13kg" class="form-control mb-2" placeholder="13kg Price">
+    <input id="price15kg" class="form-control mb-2" placeholder="15kg Price">
+    <input id="price22kg" class="form-control mb-2" placeholder="22kg Price">
+    <input id="price25kg" class="form-control mb-2" placeholder="25kg Price">
+    <input id="price35kg" class="form-control mb-2" placeholder="35kg Price">
+    <input id="price40kg" class="form-control mb-2" placeholder="40kg Price">
+    <input id="price45kg" class="form-control mb-2" placeholder="45kg Price">
+    <input id="price50kg" class="form-control mb-3" placeholder="50kg Price">
+
+    <button
+      onclick="savePrices()"
+      class="btn btn-success">
+      Save Prices
+    </button>
+
+  </div>
+
 </div>
 
 <script type="module">
@@ -128,6 +152,7 @@ const db = getFirestore(app);
 const auth = getAuth(app);
 
 let sellerPhone = null;
+let sellerDocId = null;
 
 /* LOGIN */
 
@@ -171,12 +196,27 @@ if (snap.empty) {
 
 const sellerData = snap.docs[0].data();
 
+sellerDocId = snap.docs[0].id;
 sellerPhone = sellerData.phone;
 
 console.log("sellerPhone =", sellerPhone);
+console.log("sellerDocId =", sellerDocId);
+
+const prices = sellerData.prices || {};
+
+document.getElementById("price1kg").value = prices["1kg"] || "";
+document.getElementById("price3kg").value = prices["3kg"] || "";
+document.getElementById("price6kg").value = prices["6kg"] || "";
+document.getElementById("price13kg").value = prices["13kg"] || "";
+document.getElementById("price15kg").value = prices["15kg"] || "";
+document.getElementById("price22kg").value = prices["22kg"] || "";
+document.getElementById("price25kg").value = prices["25kg"] || "";
+document.getElementById("price35kg").value = prices["35kg"] || "";
+document.getElementById("price40kg").value = prices["40kg"] || "";
+document.getElementById("price45kg").value = prices["45kg"] || "";
+document.getElementById("price50kg").value = prices["50kg"] || "";
 
 loadOrders();
-
   }catch(err){
 
     console.error(err);
@@ -275,6 +315,40 @@ window.logout = async function(){
   await signOut(auth);
 
   location.reload();
+
+};
+
+/* SAVE PRICES */
+
+window.savePrices = async function(){
+
+  if(!sellerDocId){
+    alert("Seller not loaded");
+    return;
+  }
+
+  const prices = {
+
+    "1kg": Number(document.getElementById("price1kg").value || 0),
+    "3kg": Number(document.getElementById("price3kg").value || 0),
+    "6kg": Number(document.getElementById("price6kg").value || 0),
+    "13kg": Number(document.getElementById("price13kg").value || 0),
+    "15kg": Number(document.getElementById("price15kg").value || 0),
+    "22kg": Number(document.getElementById("price22kg").value || 0),
+    "25kg": Number(document.getElementById("price25kg").value || 0),
+    "35kg": Number(document.getElementById("price35kg").value || 0),
+    "40kg": Number(document.getElementById("price40kg").value || 0),
+    "45kg": Number(document.getElementById("price45kg").value || 0),
+    "50kg": Number(document.getElementById("price50kg").value || 0)
+
+  };
+
+  await updateDoc(
+    doc(db,"sellers",sellerDocId),
+    { prices }
+  );
+
+  alert("✅ Prices updated successfully");
 
 };
 
