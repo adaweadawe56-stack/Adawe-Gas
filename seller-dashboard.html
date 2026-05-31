@@ -285,29 +285,32 @@ function loadOrders(){
 
   let firstLoad = true;
 
-  onSnapshot(q, snap => {
+ onSnapshot(q, snap => {
 
-    // Notification
-    if (!firstLoad) {
+  if (!firstLoad) {
 
-      snap.docChanges().forEach(change => {
+    snap.docChanges().forEach(change => {
 
-        if (change.type === "added") {
+      if (change.type === "added") {
 
-          if (Notification.permission === "granted") {
+        console.log(
+          "NEW ORDER DETECTED",
+          change.doc.data()
+        );
 
-            new Notification("Adawe Gas", {
-              body: "🔔 New LPG Order Received"
-            });
+        if (Notification.permission === "granted") {
 
-          }
+          new Notification("Adawe Gas", {
+            body: "🔔 New LPG Order Received"
+          });
 
         }
 
-      });
+      }
 
-    }
+    });
 
+  }
     firstLoad = false;
 
     ordersTable.innerHTML = "";
