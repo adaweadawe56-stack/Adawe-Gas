@@ -48,5 +48,15 @@ if (snap.empty) {
 
 const data = snap.docs[0].data();
 
-orderStatus.innerText = `Order Status: ${data.status}`;                
+orderStatus.innerHTML = `
+  <div class="card p-3 mt-3">
+    <h4>Order Details</h4>
+    <p><strong>Name:</strong> ${data.name}</p>
+    <p><strong>Phone:</strong> ${data.phone}</p>
+    <p><strong>Brand:</strong> ${data.brand}</p>
+    <p><strong>Quantity:</strong> ${data.quantity}</p>
+    <p><strong>Location:</strong> ${data.location}</p>
+    <p><strong>Status:</strong> ${data.status}</p>
+  </div>
+`;            
 });
