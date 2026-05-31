@@ -34,13 +34,19 @@ trackBtn.addEventListener("click", async () => {
     return;
   }
 
-  const orderRef = doc(db, "orders", orderId);
-  const orderSnap = await getDoc(orderRef);
+  const q = query(
+  collection(db, "orders"),
+  where("orderId", "==", orderId)
+);
 
-  if (orderSnap.exists()) {
-    const data = orderSnap.data();
-    orderStatus.innerText = `Order Status: ${data.status}`;
-  } else {
-    orderStatus.innerText = "Order ID-kan lama helin!";
-  }
+const snap = await getDocs(q);
+
+if (snap.empty) {
+  orderStatus.innerText = "Order ID-kan lama helin!";
+  return;
+}
+
+const data = snap.docs[0].data();
+
+orderStatus.innerText = `Order Status: ${data.status}`;                          
 });
