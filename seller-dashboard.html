@@ -200,10 +200,29 @@ window.login = async function(){
       password
     );
 
-    document.getElementById("loginPage").style.display = "none";
+  document.getElementById("loginPage").style.display = "none";
 
-    document.getElementById("dashboard").style.display = "block";
+document.getElementById("dashboard").style.display = "block";
 
+if ("Notification" in window) {
+
+  const permission =
+  await Notification.requestPermission();
+
+  console.log(
+    "Notification permission:",
+    permission
+  );
+
+  if(permission === "granted"){
+
+    new Notification("Adawe Gas", {
+      body: "✅ Notifications Enabled"
+    });
+
+  }
+
+}
    const q = query(
   collection(db, "sellers"),
   where("email", "==", email)
@@ -252,7 +271,8 @@ loadOrders();
   }
 
 };
-  
+ 
+
 /* LOAD ORDERS */
 function loadOrders(){
 
@@ -263,7 +283,32 @@ function loadOrders(){
     where("sellerPhone","==",sellerPhone)
   );
 
+  let firstLoad = true;
+
   onSnapshot(q, snap => {
+
+    // Notification
+    if (!firstLoad) {
+
+      snap.docChanges().forEach(change => {
+
+        if (change.type === "added") {
+
+          if (Notification.permission === "granted") {
+
+            new Notification("Adawe Gas", {
+              body: "🔔 New LPG Order Received"
+            });
+
+          }
+
+        }
+
+      });
+
+    }
+
+    firstLoad = false;
 
     ordersTable.innerHTML = "";
 
@@ -286,7 +331,6 @@ function loadOrders(){
       }
 
       ordersTable.innerHTML += `
-
       <div class="card p-3 mb-3">
 
         <h5>${o.name || ""}</h5>
@@ -303,7 +347,7 @@ function loadOrders(){
           </span>
         </p>
 
-        <div class="d-flex gap-2 flex-wrap">
+            <div class="d-flex gap-2 flex-wrap">
 
           <button
           onclick="updateStatus('${docSnap.id}','Accepted')"
