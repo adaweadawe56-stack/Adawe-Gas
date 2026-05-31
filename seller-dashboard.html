@@ -80,17 +80,42 @@ Login
     Logout
   </button>
 
-  <div class="card-box">
+ <div class="row mb-3">
 
-    <h4>My Orders</h4>
-
-    <div id="ordersTable"></div>
-
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="totalOrders">0</h3>
+      <p>Total Orders</p>
+    </div>
   </div>
 
-  <div class="card-box">
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="pendingOrders">0</h3>
+      <p>Pending Orders</p>
+    </div>
+  </div>
 
-    <h4>My Gas Prices</h4>
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="deliveredOrders">0</h3>
+      <p>Delivered Orders</p>
+    </div>
+  </div>
+
+</div>
+
+<div class="card-box">
+
+  <h4>My Orders</h4>
+
+  <div id="ordersTable"></div>
+
+</div>
+
+<div class="card-box">
+
+  <h4>My Gas Prices</h4>
 
     <input id="price1kg" class="form-control mb-2" placeholder="1kg Price">
     <input id="price3kg" class="form-control mb-2" placeholder="3kg Price">
@@ -240,59 +265,74 @@ function loadOrders(){
 
   onSnapshot(q, snap => {
 
-    console.log("Orders found:", snap.size);
-
     ordersTable.innerHTML = "";
+
+    let total = 0;
+    let pending = 0;
+    let delivered = 0;
 
     snap.forEach(docSnap => {
 
       const o = docSnap.data();
 
+      total++;
+
+      if(o.status === "Pending"){
+        pending++;
+      }
+
+      if(o.status === "Delivered"){
+        delivered++;
+      }
+
       ordersTable.innerHTML += `
 
       <div class="card p-3 mb-3">
 
-      <h5>${o.name || ""}</h5>
+        <h5>${o.name || ""}</h5>
 
-      <p><b>Phone:</b> ${o.phone || ""}</p>
+        <p><b>Phone:</b> ${o.phone || ""}</p>
 
-      <p><b>Location:</b> ${o.location || ""}</p>
+        <p><b>Location:</b> ${o.location || ""}</p>
 
-      <p><b>Quantity:</b> ${o.quantity || ""}</p>
+        <p><b>Quantity:</b> ${o.quantity || ""}</p>
 
-      <p>
-        <span class="badge bg-primary">
-          ${o.status || "Pending"}
-        </span>
-      </p>
+        <p>
+          <span class="badge bg-primary">
+            ${o.status || "Pending"}
+          </span>
+        </p>
 
-      <div class="d-flex gap-2 flex-wrap">
+        <div class="d-flex gap-2 flex-wrap">
 
-        <button
-        onclick="updateStatus('${docSnap.id}','Accepted')"
-        class="btn btn-primary btn-sm">
-        Accept
-        </button>
+          <button
+          onclick="updateStatus('${docSnap.id}','Accepted')"
+          class="btn btn-primary btn-sm">
+          Accept
+          </button>
 
-        <button
-        onclick="updateStatus('${docSnap.id}','On The Way')"
-        class="btn btn-warning btn-sm">
-        On The Way
-        </button>
+          <button
+          onclick="updateStatus('${docSnap.id}','On The Way')"
+          class="btn btn-warning btn-sm">
+          On The Way
+          </button>
 
-        <button
-        onclick="updateStatus('${docSnap.id}','Delivered')"
-        class="btn btn-success btn-sm">
-        Delivered
-        </button>
+          <button
+          onclick="updateStatus('${docSnap.id}','Delivered')"
+          class="btn btn-success btn-sm">
+          Delivered
+          </button>
 
-      </div>
+        </div>
 
       </div>
 
       `;
-
     });
+
+    document.getElementById("totalOrders").innerText = total;
+    document.getElementById("pendingOrders").innerText = pending;
+    document.getElementById("deliveredOrders").innerText = delivered;
 
   });
 
