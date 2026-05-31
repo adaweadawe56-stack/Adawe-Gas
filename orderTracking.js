@@ -48,5 +48,5 @@ if (snap.empty) {
 
 const data = snap.docs[0].data();
 
-orderStatus.innerText = `Order Status: ${data.status}`;                          
+orderStatus.innerText = `Order Status: ${data.status}`;                
 });
