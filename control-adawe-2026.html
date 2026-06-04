@@ -434,7 +434,7 @@ function renderSellers(){
 
   <td>${formatDate(s.createdAt)}</td>
 
-  <td>
+ <td>
 
 <button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">
 Prices
@@ -446,6 +446,10 @@ Edit
 
 <button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm mt-1">
 Approve
+</button>
+
+<button onclick="rejectSeller('${s.id}')" class="btn btn-warning btn-sm mt-1">
+Reject
 </button>
 
 <button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">
@@ -536,65 +540,111 @@ window.approveSeller = async id => {
 
   if (!confirm("Approve this seller?")) return;
 
-  await updateDoc(doc(db,"sellers",id),{
-    status:"approved"
-  });
+  try {
 
-  alert("Seller approved successfully");
+    await updateDoc(doc(db,"sellers",id),{
+      status:"approved"
+    });
+
+    alert("Seller approved successfully");
+
+  } catch(error) {
+
+    console.error(error);
+
+    alert("Failed to approve seller");
+
+  }
+
+};
+
+window.rejectSeller = async id => {
+
+  if (!confirm("Reject this seller?")) return;
+
+  try {
+
+    await updateDoc(doc(db,"sellers",id),{
+      status:"rejected"
+    });
+
+    alert("Seller rejected successfully");
+
+  } catch(error) {
+
+    console.error(error);
+
+    alert("Failed to reject seller");
+
+  }
 
 };
 
 window.editSeller = async id => {
 
- const s = sellersData.find(x=>x.id==id);
- const prices = {};
+  const s = sellersData.find(x=>x.id==id);
 
- [
- "1kg",
- "3kg",
- "6kg",
- "13kg",
- "15kg",
- "22kg",
- "25kg",
- "35kg",
- "40kg",
- "45kg",
- "50kg"
- ].forEach(size=>{
+  const prices = {};
 
-  prices[size] = parseInt(
-    prompt(size,s.prices?.[size] || 0)
-  ) || 0;
+  [
+   "1kg",
+   "3kg",
+   "6kg",
+   "13kg",
+   "15kg",
+   "22kg",
+   "25kg",
+   "35kg",
+   "40kg",
+   "45kg",
+   "50kg"
+  ].forEach(size=>{
 
- });
+    prices[size] = parseInt(
+      prompt(size, s.prices?.[size] || 0)
+    ) || 0;
 
- await updateDoc(doc(db,"sellers",id),{
+  });
 
-  prices,
+  await updateDoc(doc(db,"sellers",id),{
 
-  price6:prices["6kg"],
+    prices,
 
-  price13:prices["13kg"]
+    price6: prices["6kg"],
 
- });
+    price13: prices["13kg"]
+
+  });
+
+  alert("Seller updated successfully");
 
 };
 
 window.editOrder = async id => {
 
- const o = ordersData.find(x=>x.id==id);
+  const o = ordersData.find(x => x.id == id);
 
- const name = prompt("Name",o.name);
+  const name = prompt("Name", o.name);
 
- await updateDoc(doc(db,"orders",id),{
+  if (!name) return;
 
-  name
+  try {
 
- });
+    await updateDoc(doc(db,"orders",id),{
+      name
+    });
+
+    alert("Order updated successfully");
+
+  } catch(error) {
+
+    console.error(error);
+
+    alert("Failed to update order");
+
+  }
 
 };
-
 </script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
