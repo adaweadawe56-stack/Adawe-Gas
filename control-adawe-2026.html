@@ -493,24 +493,60 @@ window.showPrices = function(id){
 
 };
 
-window.deleteOrder = id => deleteDoc(doc(db,"orders",id));
+window.deleteOrder = async id => {
 
-window.deleteSeller = id => deleteDoc(doc(db,"sellers",id));
+  if (!confirm("Delete this order?")) return;
 
+  try {
+
+    await deleteDoc(doc(db,"orders",id));
+
+    alert("Order deleted successfully");
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to delete order");
+
+  }
+
+};
+
+window.deleteSeller = async id => {
+
+  if (!confirm("Delete this seller?")) return;
+
+  try {
+
+    await deleteDoc(doc(db,"sellers",id));
+
+    alert("Seller deleted successfully");
+
+  } catch (error) {
+
+    console.error(error);
+
+    alert("Failed to delete seller");
+
+  }
+
+};
 window.approveSeller = async id => {
 
- await updateDoc(doc(db,"sellers",id),{
+  if (!confirm("Approve this seller?")) return;
 
-   status:"approved"
+  await updateDoc(doc(db,"sellers",id),{
+    status:"approved"
+  });
 
- });
+  alert("Seller approved successfully");
 
 };
 
 window.editSeller = async id => {
 
  const s = sellersData.find(x=>x.id==id);
-
  const prices = {};
 
  [
