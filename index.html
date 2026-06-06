@@ -51,28 +51,36 @@ html{
   color:#064e3b;
   box-shadow:0 10px 25px rgba(0,0,0,0.2);
 }
-
 .hero{
-  min-height:90vh;
+  min-height:100vh;
   display:flex;
   align-items:center;
+  padding:80px 0;
   background:linear-gradient(
     135deg,
-    rgba(6,78,59,0.95),
-    rgba(16,185,129,0.85)
+    #064e3b,
+    #10b981
   );
 }
-  
+
+.hero img{
+  width:100%;
+  max-width:900px;
+  border-radius:20px;
+}
+
 .hero h1{
-  font-size:60px;
+  font-size:4rem;
   font-weight:800;
-  line-height:1.1;
 }
 
 .hero .lead{
-  font-size:22px;
-  max-width:650px;
+  font-size:1.3rem;
+  margin:25px 0;
 }
+
+
+
 
 .hero img{
   max-height:500px;
@@ -207,33 +215,39 @@ select{
 
 </nav>
 
-<!-- HERO -->
-<section class="hero" id="home">
+<!-- HERO 
+  --><section class="hero" id="home">
 
   <div class="container">
 
     <div class="row align-items-center">
 
-      <div class="col-lg-6">
+      <div class="col-lg-5">
 
-        <h1>Fast LPG Gas Delivery</h1>
+        <h1>
+          Find Trusted LPG Sellers Near You
+        </h1>
 
         <p class="lead">
-          Reliable • Fast • Anywhere in Kenya
+          Adawe Gas connects customers with LPG suppliers across Kenya for fast and reliable delivery.
         </p>
 
-        <a href="#order" class="btn btn-light btn-lg">
-          Order Gas Now
+        <a href="#order" class="btn btn-warning btn-lg me-2">
+          Order Gas
+        </a>
+
+        <a href="#track" class="btn btn-outline-light btn-lg">
+          Track Order
         </a>
 
       </div>
 
-      <div class="col-lg-6 text-center">
+      <div class="col-lg-7 text-center">
 
         <img
-          src="https://images.unsplash.com/photo-1606791405792-1004f1718d0c?w=1200"
+          src="images/adawe-hero.png"
           class="img-fluid"
-          alt="Gas Cylinder">
+          alt="Adawe Gas Marketplace">
 
       </div>
 
