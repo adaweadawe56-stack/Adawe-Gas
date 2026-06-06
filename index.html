@@ -63,70 +63,31 @@ html{
   );
 }
 
-.hero img{
-  width:100%;
-  max-width:900px;
-  border-radius:20px;
-}
-
-.hero h1{
-  font-size:4rem;
+.hero-title{
+  font-size:4.5rem;
   font-weight:800;
+  line-height:1.05;
 }
 
-.hero .lead{
+.hero-subtitle{
   font-size:1.3rem;
-  margin:25px 0;
+  margin-top:20px;
+  max-width:600px;
 }
 
-
-
-
-.hero img{
-  max-height:500px;
-  object-fit:cover;
-  border-radius:24px;
-  box-shadow:0 20px 50px rgba(0,0,0,0.3);
-}
-#toast{
-  position:fixed;
-  top:20px;
-  right:20px;
-  background:#10b981;
-  color:white;
-  padding:15px 25px;
-  border-radius:10px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.3);
-  display:none;
-  z-index:2000;
-  font-weight:bold;
-}
-
-a{
-  color:#064e3b;
-}
-
-footer{
-  padding:20px;
-}
-
-input,
-select{
-  color:#064e3b !important;
+.hero-image{
+  width:100%;
+  max-width:850px;
 }
 
 @media(max-width:768px){
 
-  .hero{
-    text-align:center;
+  .hero-title{
+    font-size:2.5rem;
   }
 
-  .hero h1{
-    font-size:38px;
-  }
-
-  .hero .lead{
-    font-size:18px;
+  .hero-subtitle{
+    font-size:1rem;
   }
 
   .section{
@@ -222,41 +183,89 @@ select{
 
     <div class="row align-items-center">
 
-      <div class="col-lg-5">
+    <div class="col-lg-5">
 
-        <h1>
-          Find Trusted LPG Sellers Near You
-        </h1>
+  <h1 class="hero-title">
+    Find Trusted LPG Sellers Near You
+  </h1>
 
-        <p class="lead">
-          Adawe Gas connects customers with LPG suppliers across Kenya for fast and reliable delivery.
-        </p>
+  <p class="hero-subtitle">
+    Adawe Gas connects customers with independent LPG suppliers across Kenya for fast, safe and reliable gas delivery.
+  </p>
 
-        <a href="#order" class="btn btn-warning btn-lg me-2">
-          Order Gas
-        </a>
+  <!-- FEATURES -->
+  <div class="row mt-4">
 
-        <a href="#track" class="btn btn-outline-light btn-lg">
-          Track Order
-        </a>
+    <div class="col-4">
+      👥 Compare Sellers
+    </div>
 
-      </div>
+    <div class="col-4">
+      ⚡ Fast Delivery
+    </div>
+
+    <div class="col-4">
+      📍 Kenya Wide
+    </div>
+
+  </div>
+
+  <!-- BUTTONS -->
+  <div class="d-flex flex-wrap gap-3 mt-4">
+
+    <a href="#order" class="btn btn-warning btn-lg">
+      Order Gas
+    </a>
+
+    <a href="order-tracking.html" class="btn btn-outline-light btn-lg">
+      Track Order
+    </a>
+
+  </div>
+
+</div>
 
       <div class="col-lg-7 text-center">
 
-       <img
-  src="images/adawe-hero.png"
-  class="img-fluid"
-  alt="Adawe Gas Marketplace">
+  <img
+    src="images/adawe-hero.png"
+    class="img-fluid hero-image"
+    alt="Adawe Gas Marketplace">
 
-      </div>
+</div>
 
     </div>
 
   </div>
 
 </section>
+<section class="py-4 bg-dark">
 
+<div class="container">
+
+<div class="row text-center">
+
+<div class="col-md-4">
+  <h5>🛡️ Trusted Marketplace</h5>
+  <p>Verified LPG sellers only</p>
+</div>
+
+<div class="col-md-4">
+  <h5>⭐ Safe & Reliable</h5>
+  <p>Your safety is our priority</p>
+</div>
+
+<div class="col-md-4">
+  <h5>🎧 24/7 Support</h5>
+  <p>We're here to help anytime</p>
+</div>
+
+</div>
+
+</div>
+
+</section>
+  
 <!-- SERVICES -->
 <section class="section text-center" id="services">
 
