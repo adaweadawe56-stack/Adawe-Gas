@@ -1059,29 +1059,7 @@ await addDoc(collection(db, "orders"), {
 
 });
 
-    /* CUSTOMER WHATSAPP */
-
-    sendWhatsApp(
-      phone,
-
-`Hello ${name} 👋
-
-Your gas order (${orderId}) has been received successfully 🔥
-
-Seller: ${sellerData.name}
-
-Location: ${location}
-
-Quantity: ${quantity}
-
-Brand: ${brand}
-
-Status: Pending
-
-Thank you for using Adawe Gas Network ✅`
-    );
-
-    /* SUCCESS */
+ /* SUCCESS */
 
     showToast("✅ Order saved successfully");
 
