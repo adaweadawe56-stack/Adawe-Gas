@@ -838,26 +838,88 @@ function showToast(message, success = true) {
 
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
-  const sellerSelect = document.getElementById("sellerSelect");
-  sellerSelect.innerHTML = `<option value="">Loading...</option>`;
+
+  const sellerSelect =
+    document.getElementById("sellerSelect");
+
+  const recommendedSellerDiv =
+    document.getElementById("recommendedSeller");
+
+  sellerSelect.innerHTML =
+    `<option value="">Loading...</option>`;
 
   try {
-    const q = query(collection(db, "sellers"), where("status", "==", "approved"));
+
+    const q = query(
+      collection(db, "sellers"),
+      where("status", "==", "approved")
+    );
+
     const snap = await getDocs(q);
 
-    sellerSelect.innerHTML = `<option value="">-- Select Seller --</option>`;
+    sellerSelect.innerHTML =
+      `<option value="">-- Select Seller --</option>`;
+
+    const sellers = [];
 
     snap.forEach(docSnap => {
+
       const d = docSnap.data();
-      const option = document.createElement("option");
+
+      sellers.push({
+        id: docSnap.id,
+        ...d
+      });
+
+      const option =
+        document.createElement("option");
+
       option.value = docSnap.id;
-      option.textContent = `${d.name} (${d.location})`;
+
+      option.textContent =
+        `${d.name} (${d.location})`;
+
       sellerSelect.appendChild(option);
+
     });
 
+    /* -------- Recommended Seller -------- */
+
+    const sellersWithPrice =
+      sellers.filter(
+        s => s.prices && s.prices["13kg"]
+      );
+
+    if (sellersWithPrice.length > 0) {
+
+      sellersWithPrice.sort(
+        (a, b) =>
+          Number(a.prices["13kg"]) -
+          Number(b.prices["13kg"])
+      );
+
+      const recommended =
+        sellersWithPrice[0];
+
+      recommendedSellerDiv.style.display =
+        "block";
+
+      recommendedSellerDiv.innerHTML = `
+        ⭐ <strong>Recommended Seller</strong><br>
+        ${recommended.name}<br>
+        📍 ${recommended.location}<br>
+        13kg = KES ${recommended.prices["13kg"]}
+      `;
+    }
+
   } catch (error) {
+
     console.error(error);
-    showToast("❌ Could not load sellers", false);
+
+    showToast(
+      "❌ Could not load sellers",
+      false
+    );
   }
 }
 
