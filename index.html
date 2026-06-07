@@ -110,6 +110,10 @@ html{
   margin:0;
   opacity:.9;
 }
+  #about img{
+  max-height:400px;
+  object-fit:cover;
+}
 @media(max-width:768px){
 
   .hero-title{
@@ -296,32 +300,92 @@ html{
 </section>
   
 <!-- SERVICES -->
-<section class="section text-center" id="services">
+<section class="section" id="services">
 
-  <div class="container card-modern">
+  <div class="container">
 
-    <h2>Our Services</h2>
+    <h2 class="text-center fw-bold mb-3">
+      Our Services
+    </h2>
 
-    <p>
-      Fast & Reliable LPG Delivery Across Nairobi
+    <p class="text-center mb-5">
+      Reliable LPG solutions for homes and businesses
     </p>
-<a href="#order" class="btn btn-light btn-lg mt-3">
-Order Gas Now
-</a>
+
+    <div class="row g-4">
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-icon">🔥</div>
+          <h4>LPG Delivery</h4>
+          <p>
+            Fast and reliable LPG delivery from trusted suppliers.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-icon">📍</div>
+          <h4>Nearby Suppliers</h4>
+          <p>
+            Find LPG sellers closest to your location.
+          </p>
+        </div>
+      </div>
+
+      <div class="col-md-4">
+        <div class="step-card">
+          <div class="step-icon">🛡️</div>
+          <h4>Trusted Partners</h4>
+          <p>
+            Connect with verified and reliable LPG businesses.
+          </p>
+        </div>
+      </div>
+
+    </div>
+
   </div>
 
 </section>
 
 <!-- ABOUT -->
-<section class="section text-center" id="about">
+<section class="section" id="about">
 
-  <div class="container card-modern">
+  <div class="container">
 
-    <h2>About Adawe Gas</h2>
+    <div class="row align-items-center">
 
-    <p>
-      Reliable LPG gas delivery across Kenya.
-    </p>
+     <div class="col-lg-6">
+
+  <img
+    src="images/about-gas.png"
+    class="img-fluid rounded-4 shadow"
+    alt="About Adawe Gas">
+
+</div>
+      <div class="col-lg-6">
+
+        <h2 class="fw-bold mb-3">
+          About Adawe Gas
+        </h2>
+
+        <p class="lead">
+          Adawe Gas is a digital marketplace connecting customers with trusted LPG suppliers across Kenya.
+        </p>
+
+        <p>
+          Our mission is to make LPG ordering simple, safe and convenient while helping customers find reliable gas suppliers near them.
+        </p>
+
+        <a href="#order" class="btn btn-success">
+          Order Gas Now
+        </a>
+
+      </div>
+
+    </div>
 
   </div>
 
