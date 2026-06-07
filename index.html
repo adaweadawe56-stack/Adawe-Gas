@@ -201,11 +201,7 @@ html{
 </style>
   
 </head>
-<script>
-window.addEventListener("load", () => {
-  document.getElementById("loader").style.display = "none";
-});
-</script>
+
 <body>
 
 <div id="loader">
@@ -1165,6 +1161,12 @@ sellerForm.addEventListener("submit", async (e) => {
 <script>
 document.getElementById("year").textContent =
 new Date().getFullYear();
+</script>
+
+<script>
+window.addEventListener("load", () => {
+  document.getElementById("loader").style.display = "none";
+});
 </script>
 
 </body>
