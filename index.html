@@ -562,6 +562,13 @@ Place Order
   <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
+<!-- RECOMMENDED SELLER -->
+<div
+  id="recommendedSeller"
+  class="alert alert-success mb-3"
+  style="display:none;">
+</div>
+
 <!-- SELLERS HERE -->
 <select id="sellerSelect" class="form-select mb-3" required>
   <option value="">Select Seller</option>
@@ -823,7 +830,7 @@ window.sendWhatsApp = function(phone, message){
   phone = formatKenyaPhone(phone);
 
   const url =
-   `https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(message)}`;
+   https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(message)};
 
   window.open(url, "_blank");
 }
@@ -846,7 +853,7 @@ async function loadSellers() {
     document.getElementById("recommendedSeller");
 
   sellerSelect.innerHTML =
-    `<option value="">Loading...</option>`;
+    <option value="">Loading...</option>;
 
   try {
 
@@ -858,7 +865,7 @@ async function loadSellers() {
     const snap = await getDocs(q);
 
     sellerSelect.innerHTML =
-      `<option value="">-- Select Seller --</option>`;
+      <option value="">-- Select Seller --</option>;
 
     const sellers = [];
 
@@ -877,7 +884,7 @@ async function loadSellers() {
       option.value = docSnap.id;
 
       option.textContent =
-        `${d.name} (${d.location})`;
+        ${d.name} (${d.location});
 
       sellerSelect.appendChild(option);
 
@@ -948,7 +955,7 @@ orderForm.addEventListener("submit", async (e) => {
   orderButton.disabled = true;
 
   orderButton.innerHTML =
-  `<span class="spinner-border spinner-border-sm"></span> Processing...`;
+  <span class="spinner-border spinner-border-sm"></span> Processing...;
 
   const name =
   document.getElementById("name").value.trim();
@@ -1095,7 +1102,7 @@ Status: Pending`;
 
     window.open(
 
-      `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
+      https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)},
 
       "_blank"
 
