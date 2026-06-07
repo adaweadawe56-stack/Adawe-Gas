@@ -963,7 +963,7 @@ orderForm.addEventListener("submit", async (e) => {
   orderButton.disabled = true;
 
   orderButton.innerHTML =
-  <span class="spinner-border spinner-border-sm"></span> Processing...;
+`<span class="spinner-border spinner-border-sm"></span> Processing...`;
 
   const name =
   document.getElementById("name").value.trim();
@@ -1109,14 +1109,9 @@ Status: Pending`;
     /* OPEN WHATSAPP */
 
     window.open(
-
-      https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)},
-
-      "_blank"
-
-    );
-
-  }
+  `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
+  "_blank"
+);
 
   catch (err) {
 
