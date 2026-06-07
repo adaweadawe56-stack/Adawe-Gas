@@ -564,8 +564,8 @@ Place Order
 
 <div
   id="recommendedSeller"
-  class="alert alert-success mb-3">
-TEST
+  class="alert alert-success mb-3"
+  style="display:none;">
 </div>
 
 <!-- SELLERS HERE -->
@@ -829,7 +829,7 @@ window.sendWhatsApp = function(phone, message){
   phone = formatKenyaPhone(phone);
 
   const url =
-   https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(message)};
+    `https://wa.me/${phone.replace("+","")}?text=${encodeURIComponent(message)}`;
 
   window.open(url, "_blank");
 }
