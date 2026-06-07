@@ -562,11 +562,10 @@ Place Order
   <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
-<!-- RECOMMENDED SELLER -->
 <div
   id="recommendedSeller"
-  class="alert alert-success mb-3"
-  style="display:none;">
+  class="alert alert-success mb-3">
+TEST
 </div>
 
 <!-- SELLERS HERE -->
@@ -845,6 +844,7 @@ function showToast(message, success = true) {
 
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
+  console.log("loadSellers running...");
 
   const sellerSelect =
     document.getElementById("sellerSelect");
@@ -868,7 +868,7 @@ async function loadSellers() {
       <option value="">-- Select Seller --</option>;
 
     const sellers = [];
-
+    console.log("Sellers found:", snap.size);
     snap.forEach(docSnap => {
 
       const d = docSnap.data();
