@@ -146,6 +146,18 @@ html{
   max-height:400px;
   object-fit:cover;
 }
+  #toast{
+  position:fixed;
+  top:20px;
+  right:20px;
+  padding:12px 20px;
+  border-radius:10px;
+  color:white;
+  font-weight:600;
+  display:none;
+  z-index:9999;
+  box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
 @media(max-width:768px){
 
   .hero-title{
@@ -706,9 +718,29 @@ Chat on WhatsApp
   </div>
 
 </section>
+  <section class="section text-center" id="sellerPolicy">
+
+<div class="container card-modern">
+
+<h2>Seller Policy</h2>
+
+<p>
+All sellers must comply with Kenyan LPG regulations.
+</p>
+
+<p>
+Sellers are responsible for pricing, delivery,
+customer support and product quality.
+</p>
+
+</div>
+
+</section>
 <footer class="text-center">
 
-  <p>© 2026 Adawe Gas Network. All Rights Reserved.</p>
+<p>
+© <span id="year"></span> Adawe Gas Network
+</p> All Rights Reserved.</p>
 
   <div style="margin-top:10px;">
     
