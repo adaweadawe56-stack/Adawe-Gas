@@ -1108,26 +1108,22 @@ Status: Pending`;
 
     /* OPEN WHATSAPP */
 
-    window.open(
+  window.open(
   `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
   "_blank"
 );
 
-  catch (err) {
+} catch (err) {
 
-    console.error(err);
+  console.error(err);
 
-    showToast(err.message || "Failed to save order", false);
+  showToast(err.message || "Failed to save order", false);
 
-  }
+} finally {
 
-  finally {
+  resetButton();
 
-    resetButton();
-
-  }
-
-});
+}
 
 /* RESET BUTTON */
 
