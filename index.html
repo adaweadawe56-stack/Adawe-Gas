@@ -1062,7 +1062,13 @@ await addDoc(collection(db, "orders"), {
  /* SUCCESS */
 
     showToast("✅ Order saved successfully");
+alert(
+  `Order Saved Successfully
 
+Track Order:
+
+track.html?id=${orderId}`
+);
     orderForm.reset();
 
     /* SELLER MESSAGE */
