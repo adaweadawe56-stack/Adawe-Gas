@@ -20,13 +20,13 @@ import {
 // Init Firebase
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
 // Elements
 const orderIdInput = document.getElementById("orderIdInput");
 const trackBtn = document.getElementById("trackBtn");
 const orderStatus = document.getElementById("orderStatus");
 
-// Button Click
+let unsubscribe = null;
+
 trackBtn.addEventListener("click", async () => {
 
   const orderId = orderIdInput.value.trim();
@@ -36,12 +36,16 @@ trackBtn.addEventListener("click", async () => {
     return;
   }
 
+  if (unsubscribe) {
+    unsubscribe();
+  }
+
   const q = query(
     collection(db, "orders"),
     where("orderId", "==", orderId)
   );
 
-  onSnapshot(q, (snap) => {
+  unsubscribe = onSnapshot(q, (snap) => {
 
     if (snap.empty) {
       orderStatus.innerText = "Order ID-kan lama helin!";
@@ -101,11 +105,9 @@ trackBtn.addEventListener("click", async () => {
   });
 
 });
-const params =
-new URLSearchParams(window.location.search);
+const params = new URLSearchParams(window.location.search);
 
-const id =
-params.get("id");
+const id = params.get("id");
 
 if(id){
   orderIdInput.value = id;
