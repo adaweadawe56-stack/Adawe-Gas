@@ -322,7 +322,14 @@ function loadOrders(){
     snap.forEach(docSnap => {
 
       const o = docSnap.data();
-
+      const badgeColor =
+  o.status === "Pending" ? "bg-secondary" :
+  o.status === "Accepted" ? "bg-primary" :
+  o.status === "On The Way" ? "bg-warning" :
+  o.status === "Delivered" ? "bg-success" :
+  o.status === "Rejected" ? "bg-danger" :
+  "bg-secondary";
+ <p>
       total++;
 
       if(
@@ -336,66 +343,53 @@ function loadOrders(){
       if(o.status === "Delivered"){
         delivered++;
       }
-
-      ordersTable.innerHTML += `
-      <div class="card p-3 mb-3">
-
-        <h5>${o.name || ""}</h5>
-
-        <p><b>Phone:</b> ${o.phone || ""}</p>
-
-        <p><b>Location:</b> ${o.location || ""}</p>
-
-        <p><b>Quantity:</b> ${o.quantity || ""}</p>
-
-        const badgeColor =
-  o.status === "Pending" ? "bg-secondary" :
-  o.status === "Accepted" ? "bg-primary" :
-  o.status === "On The Way" ? "bg-warning" :
-  o.status === "Delivered" ? "bg-success" :
-  o.status === "Rejected" ? "bg-danger" :
-  "bg-secondary";
-
 ordersTable.innerHTML += `
 <div class="card p-3 mb-3">
 
-  ...
+  <h5>${o.name || ""}</h5>
+
+  <p><b>Phone:</b> ${o.phone || ""}</p>
+
+  <p><b>Location:</b> ${o.location || ""}</p>
+
+  <p><b>Quantity:</b> ${o.quantity || ""}</p>
 
   <p>
     <span class="badge ${badgeColor}">
       ${o.status || "Pending"}
     </span>
   </p>
+
+  <div class="d-flex gap-2 flex-wrap">
+
+    <button
+    onclick="updateStatus('${docSnap.id}','Accepted')"
+    class="btn btn-primary btn-sm">
+    Accept
+    </button>
+
+    <button
+    onclick="updateStatus('${docSnap.id}','On The Way')"
+    class="btn btn-warning btn-sm">
+    On The Way
+    </button>
+
+    <button
+    onclick="updateStatus('${docSnap.id}','Delivered')"
+    class="btn btn-success btn-sm">
+    Delivered
+    </button>
+
+    <button
+    onclick="updateStatus('${docSnap.id}','Rejected')"
+    class="btn btn-danger btn-sm">
+    Reject
+    </button>
+
+  </div>
+
+</div>
 `;
-<div class="d-flex gap-2 flex-wrap">
-
-  <button
-  onclick="updateStatus('${docSnap.id}','Accepted')"
-  class="btn btn-primary btn-sm">
-  Accept
-  </button>
-
-  <button
-  onclick="updateStatus('${docSnap.id}','On The Way')"
-  class="btn btn-warning btn-sm">
-  On The Way
-  </button>
-
-  <button
-  onclick="updateStatus('${docSnap.id}','Delivered')"
-  class="btn btn-success btn-sm">
-  Delivered
-  </button>
-
-  <button
-  onclick="updateStatus('${docSnap.id}','Rejected')"
-  class="btn btn-danger btn-sm">
-  Reject
-  </button>
-
-</div>
-
-</div>
 
       `;
     });
