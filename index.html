@@ -1062,6 +1062,12 @@ await addDoc(collection(db, "orders"), {
  /* SUCCESS */
 
     showToast("✅ Order saved successfully");
+    document.getElementById("trackingLink").innerHTML = `
+<a href="track.html?id=${orderId}"
+class="btn btn-primary mt-3">
+Track Your Order
+</a>
+`;
 alert(
 `Order Saved Successfully
 
