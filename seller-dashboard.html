@@ -376,12 +376,6 @@ ordersTable.innerHTML += `
   </button>
 
   <button
-  onclick="updateStatus('${docSnap.id}','Rejected')"
-  class="btn btn-danger btn-sm">
-  Reject
-  </button>
-
-  <button
   onclick="updateStatus('${docSnap.id}','On The Way')"
   class="btn btn-warning btn-sm">
   On The Way
@@ -391,6 +385,12 @@ ordersTable.innerHTML += `
   onclick="updateStatus('${docSnap.id}','Delivered')"
   class="btn btn-success btn-sm">
   Delivered
+  </button>
+
+  <button
+  onclick="updateStatus('${docSnap.id}','Rejected')"
+  class="btn btn-danger btn-sm">
+  Reject
   </button>
 
 </div>
