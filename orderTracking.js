@@ -5,7 +5,8 @@ import {
   collection,
   query,
   where,
-  getDocs
+  onSnapshot
+
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
  const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
@@ -27,6 +28,7 @@ const orderStatus = document.getElementById("orderStatus");
 
 // Button Click
 trackBtn.addEventListener("click", async () => {
+
   const orderId = orderIdInput.value.trim();
 
   if (!orderId) {
@@ -35,28 +37,77 @@ trackBtn.addEventListener("click", async () => {
   }
 
   const q = query(
-  collection(db, "orders"),
-  where("orderId", "==", orderId)
-);
+    collection(db, "orders"),
+    where("orderId", "==", orderId)
+  );
 
-const snap = await getDocs(q);
+  onSnapshot(q, (snap) => {
 
-if (snap.empty) {
-  orderStatus.innerText = "Order ID-kan lama helin!";
-  return;
-}
+    if (snap.empty) {
+      orderStatus.innerText = "Order ID-kan lama helin!";
+      return;
+    }
 
-const data = snap.docs[0].data();
+    const data = snap.docs[0].data();
 
-orderStatus.innerHTML = `
-  <div class="card p-3 mt-3">
-    <h4>Order Details</h4>
-    <p><strong>Name:</strong> ${data.name}</p>
-    <p><strong>Phone:</strong> ${data.phone}</p>
-    <p><strong>Brand:</strong> ${data.brand}</p>
-    <p><strong>Quantity:</strong> ${data.quantity}</p>
-    <p><strong>Location:</strong> ${data.location}</p>
-    <p><strong>Status:</strong> ${data.status}</p>
-  </div>
-`;            
+    let badgeColor = "#6c757d";
+
+    if(data.status === "Accepted")
+      badgeColor = "#0d6efd";
+
+    if(data.status === "On The Way")
+      badgeColor = "#ffc107";
+
+    if(data.status === "Delivered")
+      badgeColor = "#198754";
+
+    if(data.status === "Rejected")
+      badgeColor = "#dc3545";
+
+    orderStatus.innerHTML = `
+      <div class="card p-3 mt-3">
+
+        <h4>Order Details</h4>
+
+        <p><strong>Seller:</strong> ${data.seller || "-"}</p>
+
+        <p><strong>Name:</strong> ${data.name}</p>
+
+        <p><strong>Phone:</strong> ${data.phone}</p>
+
+        <p><strong>Brand:</strong> ${data.brand}</p>
+
+        <p><strong>Quantity:</strong> ${data.quantity}</p>
+
+        <p><strong>Location:</strong> ${data.location}</p>
+
+        <p>
+          <strong>Status:</strong>
+
+          <span style="
+            background:${badgeColor};
+            color:white;
+            padding:5px 10px;
+            border-radius:20px;
+          ">
+            ${data.status}
+          </span>
+
+        </p>
+
+      </div>
+    `;
+
+  });
+
 });
+const params =
+new URLSearchParams(window.location.search);
+
+const id =
+params.get("id");
+
+if(id){
+  orderIdInput.value = id;
+  trackBtn.click();
+}
