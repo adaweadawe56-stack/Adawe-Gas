@@ -325,9 +325,13 @@ function loadOrders(){
 
       total++;
 
-      if(o.status === "Pending"){
-        pending++;
-      }
+      if(
+  o.status === "Pending" ||
+  o.status === "Accepted" ||
+  o.status === "On The Way"
+){
+  pending++;
+}
 
       if(o.status === "Delivered"){
         delivered++;
@@ -344,35 +348,54 @@ function loadOrders(){
 
         <p><b>Quantity:</b> ${o.quantity || ""}</p>
 
-        <p>
-          <span class="badge bg-primary">
-            ${o.status || "Pending"}
-          </span>
-        </p>
+        const badgeColor =
+  o.status === "Pending" ? "bg-secondary" :
+  o.status === "Accepted" ? "bg-primary" :
+  o.status === "On The Way" ? "bg-warning" :
+  o.status === "Delivered" ? "bg-success" :
+  o.status === "Rejected" ? "bg-danger" :
+  "bg-secondary";
 
-            <div class="d-flex gap-2 flex-wrap">
+ordersTable.innerHTML += `
+<div class="card p-3 mb-3">
 
-          <button
-          onclick="updateStatus('${docSnap.id}','Accepted')"
-          class="btn btn-primary btn-sm">
-          Accept
-          </button>
+  ...
 
-          <button
-          onclick="updateStatus('${docSnap.id}','On The Way')"
-          class="btn btn-warning btn-sm">
-          On The Way
-          </button>
+  <p>
+    <span class="badge ${badgeColor}">
+      ${o.status || "Pending"}
+    </span>
+  </p>
+`;
+<div class="d-flex gap-2 flex-wrap">
 
-          <button
-          onclick="updateStatus('${docSnap.id}','Delivered')"
-          class="btn btn-success btn-sm">
-          Delivered
-          </button>
+  <button
+  onclick="updateStatus('${docSnap.id}','Accepted')"
+  class="btn btn-primary btn-sm">
+  Accept
+  </button>
 
-        </div>
+  <button
+  onclick="updateStatus('${docSnap.id}','Rejected')"
+  class="btn btn-danger btn-sm">
+  Reject
+  </button>
 
-      </div>
+  <button
+  onclick="updateStatus('${docSnap.id}','On The Way')"
+  class="btn btn-warning btn-sm">
+  On The Way
+  </button>
+
+  <button
+  onclick="updateStatus('${docSnap.id}','Delivered')"
+  class="btn btn-success btn-sm">
+  Delivered
+  </button>
+
+</div>
+
+</div>
 
       `;
     });
