@@ -322,14 +322,13 @@ function loadOrders(){
     snap.forEach(docSnap => {
 
       const o = docSnap.data();
-      const badgeColor =
+     const badgeColor =
   o.status === "Pending" ? "bg-secondary" :
   o.status === "Accepted" ? "bg-primary" :
   o.status === "On The Way" ? "bg-warning" :
   o.status === "Delivered" ? "bg-success" :
   o.status === "Rejected" ? "bg-danger" :
   "bg-secondary";
- <p>
       total++;
 
       if(
@@ -389,8 +388,6 @@ ordersTable.innerHTML += `
   </div>
 
 </div>
-`;
-
       `;
     });
 
