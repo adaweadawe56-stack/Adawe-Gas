@@ -92,7 +92,7 @@ Login
   <div class="col-md-4">
     <div class="card-box text-center">
       <h3 id="pendingOrders">0</h3>
-      <p>Pending Orders</p>
+     <p>Active Orders</p>
     </div>
   </div>
 
@@ -109,10 +109,21 @@ Login
 
   <h4>My Orders</h4>
 
+  <select id="statusFilter"
+          class="form-select mb-3">
+
+    <option value="All">All Orders</option>
+    <option value="Pending">Pending</option>
+    <option value="Accepted">Accepted</option>
+    <option value="On The Way">On The Way</option>
+    <option value="Delivered">Delivered</option>
+    <option value="Rejected">Rejected</option>
+
+  </select>
+
   <div id="ordersTable"></div>
 
 </div>
-
 <div class="card-box">
 
   <h4>My Gas Prices</h4>
