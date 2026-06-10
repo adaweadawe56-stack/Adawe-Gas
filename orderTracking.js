@@ -69,6 +69,59 @@ trackBtn.addEventListener("click", async () => {
 
    const data = snap.docs[0].data();
 
+    let progressHtml = `
+<div style="display:flex;
+justify-content:space-between;
+margin:20px 0;
+font-size:14px;
+font-weight:bold;">
+
+<span style="
+color:${
+["Pending","Accepted","On The Way","Delivered"]
+.includes(data.status)
+? "green"
+: "gray"
+}">
+Pending
+</span>
+
+<span style="
+color:${
+["Accepted","On The Way","Delivered"]
+.includes(data.status)
+? "green"
+: "gray"
+}">
+Accepted
+</span>
+
+<span style="
+color:${
+["On The Way","Delivered"]
+.includes(data.status)
+? "green"
+: "gray"
+}">
+On The Way
+</span>
+
+<span style="
+color:${
+data.status === "Delivered"
+? "green"
+: "gray"
+}">
+Delivered
+</span>
+
+</div>
+`;
+
+document.getElementById(
+"progressTracker"
+).innerHTML = progressHtml;
+
 historyPhone.value = data.phone || "";
 historyBtn.click();
 
