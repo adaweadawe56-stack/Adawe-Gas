@@ -5,9 +5,10 @@ import {
   collection,
   query,
   where,
-  onSnapshot
-
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  onSnapshot,
+  getDocs
+}
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
  const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -21,9 +22,23 @@ import {
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
 // Elements
-const orderIdInput = document.getElementById("orderIdInput");
-const trackBtn = document.getElementById("trackBtn");
-const orderStatus = document.getElementById("orderStatus");
+const orderIdInput =
+document.getElementById("orderIdInput");
+
+const trackBtn =
+document.getElementById("trackBtn");
+
+const orderStatus =
+document.getElementById("orderStatus");
+
+const historyBtn =
+document.getElementById("historyBtn");
+
+const historyPhone =
+document.getElementById("historyPhone");
+
+const historyResults =
+document.getElementById("historyResults");
 
 let unsubscribe = null;
 
@@ -112,4 +127,58 @@ const id = params.get("id");
 if(id){
   orderIdInput.value = id;
   trackBtn.click();
+  }
+  historyBtn.addEventListener(
+"click",
+async () => {
+
+  const phone =
+  historyPhone.value.trim();
+
+  if(!phone){
+    alert("Enter phone number");
+    return;
+  }
+
+  const q = query(
+    collection(db,"orders"),
+    where("phone","==",phone)
+  );
+
+  const snap =
+  await getDocs(q);
+
+  if(snap.empty){
+
+    historyResults.innerHTML =
+    "<p>No orders found</p>";
+
+    return;
+  }
+
+  let html = "";
+
+  snap.forEach(docSnap => {
+
+    const o = docSnap.data();
+
+    html += `
+    <div class="card p-3 mt-2">
+
+      <b>${o.orderId}</b>
+
+      <p>${o.brand}</p>
+
+      <p>${o.quantity}</p>
+
+      <p>${o.status}</p>
+
+    </div>
+    `;
+
+  });
+
+  historyResults.innerHTML = html;
+
+});
 }
