@@ -67,9 +67,12 @@ trackBtn.addEventListener("click", async () => {
       return;
     }
 
-    const data = snap.docs[0].data();
+   const data = snap.docs[0].data();
 
-    let badgeColor = "#6c757d";
+historyPhone.value = data.phone || "";
+historyBtn.click();
+
+let badgeColor = "#6c757d";
 
     if(data.status === "Accepted")
       badgeColor = "#0d6efd";
@@ -158,7 +161,9 @@ async () => {
 
   let html = "";
 
-  snap.forEach(docSnap => {
+ const docs = snap.docs.reverse();
+
+docs.forEach(docSnap => {
 
     const o = docSnap.data();
 
@@ -188,6 +193,15 @@ html += `
   <p><strong>Quantity:</strong> ${o.quantity}</p>
 
   <p>
+  <strong>Date:</strong>
+  ${
+    o.createdAt
+    ? o.createdAt.toDate().toLocaleString()
+    : "-"
+  }
+  </p>
+
+  <p>
     <span style="
       background:${badgeColor};
       color:white;
@@ -200,7 +214,7 @@ html += `
 
 </div>
 `;
-
+});
   historyResults.innerHTML = html;
 
 });
