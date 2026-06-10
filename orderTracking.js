@@ -172,7 +172,33 @@ let badgeColor = "#6c757d";
 
       </div>
     `;
+receiptBox.innerHTML = `
+<div class="card p-3 mt-3">
 
+  <h4>Receipt</h4>
+
+  <p><strong>Order ID:</strong> ${data.orderId}</p>
+
+  <p><strong>Customer:</strong> ${data.name}</p>
+
+  <p><strong>Seller:</strong> ${data.seller || "-"}</p>
+
+  <p><strong>Brand:</strong> ${data.brand}</p>
+
+  <p><strong>Quantity:</strong> ${data.quantity}</p>
+
+  <p><strong>Status:</strong> ${data.status}</p>
+
+  <p><strong>Date:</strong>
+  ${
+    data.createdAt
+    ? data.createdAt.toDate().toLocaleString()
+    : "-"
+  }
+  </p>
+
+</div>
+`;
   });
 
 });
