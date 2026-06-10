@@ -325,5 +325,3 @@ async () => {
   historyResults.innerHTML = html;
 
 });
-
-});
