@@ -162,21 +162,44 @@ async () => {
 
     const o = docSnap.data();
 
-    html += `
-    <div class="card p-3 mt-2">
+    let badgeColor = "#6c757d";
 
-      <b>${o.orderId}</b>
+if(o.status === "Accepted")
+  badgeColor = "#0d6efd";
 
-      <p>${o.brand}</p>
+if(o.status === "On The Way")
+  badgeColor = "#ffc107";
 
-      <p>${o.quantity}</p>
+if(o.status === "Delivered")
+  badgeColor = "#198754";
 
-      <p>${o.status}</p>
+if(o.status === "Rejected")
+  badgeColor = "#dc3545";
 
-    </div>
-    `;
+html += `
+<div class="card p-3 mt-2">
 
-  });
+  <b>${o.orderId}</b>
+
+  <p><strong>Seller:</strong> ${o.seller || "-"}</p>
+
+  <p><strong>Brand:</strong> ${o.brand}</p>
+
+  <p><strong>Quantity:</strong> ${o.quantity}</p>
+
+  <p>
+    <span style="
+      background:${badgeColor};
+      color:white;
+      padding:5px 10px;
+      border-radius:20px;
+    ">
+      ${o.status}
+    </span>
+  </p>
+
+</div>
+`;
 
   historyResults.innerHTML = html;
 
