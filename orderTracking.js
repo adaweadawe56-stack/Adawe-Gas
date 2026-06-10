@@ -40,6 +40,9 @@ document.getElementById("historyPhone");
 const historyResults =
 document.getElementById("historyResults");
 
+const receiptBox =
+document.getElementById("receiptBox");
+
 let unsubscribe = null;
 
 trackBtn.addEventListener("click", async () => {
@@ -172,33 +175,47 @@ let badgeColor = "#6c757d";
 
       </div>
     `;
-receiptBox.innerHTML = `
-<div class="card p-3 mt-3">
+if(data.status === "Delivered"){
 
-  <h4>Receipt</h4>
+  receiptBox.innerHTML = `
+  <div class="card p-3 mt-3">
 
-  <p><strong>Order ID:</strong> ${data.orderId}</p>
+    <h4>Delivery Receipt</h4>
 
-  <p><strong>Customer:</strong> ${data.name}</p>
+    <p><strong>Order ID:</strong> ${data.orderId}</p>
 
-  <p><strong>Seller:</strong> ${data.seller || "-"}</p>
+    <p><strong>Customer:</strong> ${data.name}</p>
 
-  <p><strong>Brand:</strong> ${data.brand}</p>
+    <p><strong>Seller:</strong> ${data.seller || "-"}</p>
 
-  <p><strong>Quantity:</strong> ${data.quantity}</p>
+    <p><strong>Brand:</strong> ${data.brand}</p>
 
-  <p><strong>Status:</strong> ${data.status}</p>
+    <p><strong>Quantity:</strong> ${data.quantity}</p>
 
-  <p><strong>Date:</strong>
-  ${
-    data.createdAt
-    ? data.createdAt.toDate().toLocaleString()
-    : "-"
-  }
-  </p>
+    <p><strong>Status:</strong> Delivered</p>
 
-</div>
-`;
+    <p><strong>Date:</strong>
+    ${
+      data.createdAt
+      ? data.createdAt.toDate().toLocaleString()
+      : "-"
+    }
+    </p>
+
+    <button
+      onclick="window.print()"
+      class="btn btn-success mt-2">
+      Print Receipt
+    </button>
+
+  </div>
+  `;
+
+}else{
+
+  receiptBox.innerHTML = "";
+
+}
   });
 
 });
