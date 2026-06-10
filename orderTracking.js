@@ -65,10 +65,19 @@ trackBtn.addEventListener("click", async () => {
 
   unsubscribe = onSnapshot(q, (snap) => {
 
-    if (snap.empty) {
-      orderStatus.innerText = "Order ID-kan lama helin!";
-      return;
-    }
+   if (snap.empty) {
+
+  orderStatus.innerText =
+  "Order ID-kan lama helin!";
+
+  receiptBox.innerHTML = "";
+
+  document.getElementById(
+    "progressTracker"
+  ).innerHTML = "";
+
+  return;
+}
 
    const data = snap.docs[0].data();
 
@@ -314,5 +323,7 @@ async () => {
   });
 
   historyResults.innerHTML = html;
+
+});
 
 });
