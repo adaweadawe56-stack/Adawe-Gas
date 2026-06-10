@@ -161,61 +161,62 @@ async () => {
 
   let html = "";
 
- const docs = snap.docs.reverse();
+  const docs = snap.docs.reverse();
 
-docs.forEach(docSnap => {
+  docs.forEach(docSnap => {
 
     const o = docSnap.data();
 
     let badgeColor = "#6c757d";
 
-if(o.status === "Accepted")
-  badgeColor = "#0d6efd";
+    if(o.status === "Accepted")
+      badgeColor = "#0d6efd";
 
-if(o.status === "On The Way")
-  badgeColor = "#ffc107";
+    if(o.status === "On The Way")
+      badgeColor = "#ffc107";
 
-if(o.status === "Delivered")
-  badgeColor = "#198754";
+    if(o.status === "Delivered")
+      badgeColor = "#198754";
 
-if(o.status === "Rejected")
-  badgeColor = "#dc3545";
+    if(o.status === "Rejected")
+      badgeColor = "#dc3545";
 
-html += `
-<div class="card p-3 mt-2">
+    html += `
+    <div class="card p-3 mt-2">
 
-  <b>${o.orderId}</b>
+      <b>${o.orderId}</b>
 
-  <p><strong>Seller:</strong> ${o.seller || "-"}</p>
+      <p><strong>Seller:</strong> ${o.seller || "-"}</p>
 
-  <p><strong>Brand:</strong> ${o.brand}</p>
+      <p><strong>Brand:</strong> ${o.brand}</p>
 
-  <p><strong>Quantity:</strong> ${o.quantity}</p>
+      <p><strong>Quantity:</strong> ${o.quantity}</p>
 
-  <p>
-  <strong>Date:</strong>
-  ${
-    o.createdAt
-    ? o.createdAt.toDate().toLocaleString()
-    : "-"
-  }
-  </p>
+      <p>
+        <strong>Date:</strong>
+        ${
+          o.createdAt
+          ? o.createdAt.toDate().toLocaleString()
+          : "-"
+        }
+      </p>
 
-  <p>
-    <span style="
-      background:${badgeColor};
-      color:white;
-      padding:5px 10px;
-      border-radius:20px;
-    ">
-      ${o.status}
-    </span>
-  </p>
+      <p>
+        <span style="
+          background:${badgeColor};
+          color:white;
+          padding:5px 10px;
+          border-radius:20px;
+        ">
+          ${o.status}
+        </span>
+      </p>
 
-</div>
-`;
-});
+    </div>
+    `;
+
+  });
+
   historyResults.innerHTML = html;
 
 });
-}
