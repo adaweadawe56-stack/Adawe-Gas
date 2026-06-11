@@ -218,6 +218,9 @@ const auth = getAuth(app);
 let sellerPhone = null;
 let sellerDocId = null;
 
+const statusFilter =
+document.getElementById("statusFilter");
+  
 /* LOGIN */
 
 window.login = async function(){
@@ -373,6 +376,7 @@ function loadOrders(){
     return;
   }
 
+ const badgeColor =
   o.status === "Pending" ? "bg-secondary" :
   o.status === "Accepted" ? "bg-primary" :
   o.status === "On The Way" ? "bg-warning" :
