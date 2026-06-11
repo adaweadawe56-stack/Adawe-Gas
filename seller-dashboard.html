@@ -102,8 +102,36 @@ Login
       <p>Delivered Orders</p>
     </div>
   </div>
+  </div>
+<div class="row mb-3">
+
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="totalRevenue">KES 0</h3>
+      <p>Total Revenue</p>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="deliveryRate">0%</h3>
+      <p>Delivery Rate</p>
+    </div>
+  </div>
+
+  <div class="col-md-4">
+    <div class="card-box text-center">
+      <h3 id="averageRating">0.0 ⭐</h3>
+      <p>Average Rating</p>
+
+      <small id="totalReviews">
+        0 Reviews
+      </small>
+    </div>
+  </div>
 
 </div>
+
 
 <div class="card-box">
 
@@ -333,8 +361,19 @@ function loadOrders(){
 
     snap.forEach(docSnap => {
 
-      const o = docSnap.data();
-     const badgeColor =
+  const o = docSnap.data();
+
+  const selectedStatus =
+  statusFilter.value;
+
+  if(
+    selectedStatus !== "All" &&
+    o.status !== selectedStatus
+  ){
+    return;
+  }
+
+  });
   o.status === "Pending" ? "bg-secondary" :
   o.status === "Accepted" ? "bg-primary" :
   o.status === "On The Way" ? "bg-warning" :
