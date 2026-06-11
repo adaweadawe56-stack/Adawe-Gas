@@ -50,7 +50,7 @@ trackBtn.addEventListener("click", async () => {
   const orderId = orderIdInput.value.trim();
 
   if (!orderId) {
-    orderStatus.innerText = "Fadlan geli Order ID.";
+    orderStatus.innerText = "Please Enter Order ID.";
     return;
   }
 
