@@ -329,6 +329,7 @@ function loadOrders(){
     let total = 0;
     let pending = 0;
     let delivered = 0;
+    let totalRevenue = 0;
 
     snap.forEach(docSnap => {
 
@@ -350,9 +351,15 @@ function loadOrders(){
   pending++;
 }
 
-      if(o.status === "Delivered"){
-        delivered++;
-      }
+     if(o.status === "Delivered"){
+
+  delivered++;
+
+  if(o.price){
+    totalRevenue += Number(o.price);
+  }
+
+}
 ordersTable.innerHTML += `
 <div class="card p-3 mb-3">
 
@@ -405,7 +412,16 @@ ordersTable.innerHTML += `
     document.getElementById("totalOrders").innerText = total;
     document.getElementById("pendingOrders").innerText = pending;
     document.getElementById("deliveredOrders").innerText = delivered;
+    document.getElementById("totalRevenue").innerText =
+"KES " + totalRevenue.toLocaleString();
 
+const deliveryRate =
+total > 0
+? Math.round((delivered / total) * 100)
+: 0;
+
+document.getElementById("deliveryRate").innerText =
+deliveryRate + "%";
   });
 
 }
