@@ -315,8 +315,19 @@ loadOrders();
  
 
 /* LOAD ORDERS */
-onSnapshot(q, snap => {
+function loadOrders(){
 
+  console.log("sellerPhone =", sellerPhone);
+
+  const q = query(
+    collection(db,"orders"),
+    where("sellerPhone","==",sellerPhone)
+  );
+
+  let firstLoad = true;
+
+  onSnapshot(q, snap => {
+  
   console.log("SNAPSHOT RUNNING");
   console.log("Orders Found =", snap.size);
 
