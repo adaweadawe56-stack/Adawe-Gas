@@ -840,6 +840,8 @@ function showToast(message, success = true) {
   toast.style.display = "block";
   setTimeout(() => (toast.style.display = "none"), 3000);
 }
+ 
+  let allSellers = [];
 
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
