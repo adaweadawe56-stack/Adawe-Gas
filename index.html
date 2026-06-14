@@ -852,10 +852,7 @@ async function loadSellers() {
   const sellerSelect =
     document.getElementById("sellerSelect");
 
-  const recommendedSellerDiv =
-    document.getElementById("recommendedSeller");
-
-  sellerSelect.innerHTML =
+    sellerSelect.innerHTML =
     `<option value="">Loading...</option>`;
 
   try {
@@ -895,9 +892,8 @@ snap.forEach(docSnap => {
 
 });
 
-updateRecommendedSeller();
 updateSellerPrices();
-
+    
   } catch (error) {
 
     console.error("LOAD SELLERS ERROR:", error);
@@ -925,9 +921,6 @@ function updateRecommendedSeller() {
         s.prices &&
         s.prices[quantity]
     );
-
-  ...
-}
 
   if (sellersWithPrice.length === 0) {
 
