@@ -942,6 +942,7 @@ if (sellersWithPrice.length > 0) {
 }
 
 loadSellers();
+  
    function updateSellerPrices() {
 
   const quantity =
@@ -954,6 +955,51 @@ loadSellers();
     `<option value="">Select Seller</option>`;
 
   allSellers.forEach(seller => {
+
+    function updateRecommendedSeller() {
+
+  const quantity =
+    document.getElementById("quantity").value;
+
+  const recommendedSellerDiv =
+    document.getElementById("recommendedSeller");
+
+  const sellersWithPrice =
+    allSellers.filter(
+      s =>
+        s.prices &&
+        s.prices[quantity]
+    );
+
+  if (sellersWithPrice.length === 0) {
+
+    recommendedSellerDiv.style.display =
+      "none";
+
+    return;
+  }
+
+  sellersWithPrice.sort(
+    (a, b) =>
+      Number(a.prices[quantity]) -
+      Number(b.prices[quantity])
+  );
+
+  const recommended =
+    sellersWithPrice[0];
+
+  recommendedSellerDiv.style.display =
+    "block";
+
+  recommendedSellerDiv.innerHTML = `
+    ⭐ <strong>Recommended Seller</strong><br>
+    ${recommended.name}<br>
+    📍 ${recommended.location}<br>
+    ${quantity} = KES ${Number(
+      recommended.prices[quantity]
+    ).toLocaleString()}
+  `;
+}
 
     let price = "N/A";
 
