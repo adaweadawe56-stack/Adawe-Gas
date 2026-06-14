@@ -822,7 +822,8 @@ function isValidKenyaPhone(phone) {
 }
 
 
-/* -------------------- WHATSAPP -------------------- */
+
+   * -------------------- WHATSAPP -------------------- */
 
 window.sendWhatsApp = function(phone, message){
 
@@ -871,16 +872,16 @@ async function loadSellers() {
     sellerSelect.innerHTML =
       `<option value="">-- Select Seller --</option>`;
 
-    const sellers = [];
+ allSellers = [];
 
-    snap.forEach(docSnap => {
+snap.forEach(docSnap => {
 
-      const d = docSnap.data();
+  const d = docSnap.data();
 
-      sellers.push({
-        id: docSnap.id,
-        ...d
-      });
+  allSellers.push({
+    id: docSnap.id,
+    ...d
+  });
 
       const option =
         document.createElement("option");
@@ -896,11 +897,9 @@ async function loadSellers() {
 
     /* -------- Recommended Seller -------- */
 
-    const sellersWithPrice =
-      sellers.filter(
-        s => s.prices && s.prices["13kg"]
-      );
-
+   const sellersWithPrice =
+  allSellers.filter(
+    
     if (sellersWithPrice.length > 0) {
 
       sellersWithPrice.sort(
@@ -932,7 +931,8 @@ async function loadSellers() {
   } catch (error) {
 
     console.error("LOAD SELLERS ERROR:", error);
-
+    
+   
     showToast(
       "❌ Could not load sellers",
       false
@@ -941,6 +941,52 @@ async function loadSellers() {
 }
 
 loadSellers();
+   function updateSellerPrices() {
+
+  const quantity =
+    document.getElementById("quantity").value;
+
+  const sellerSelect =
+    document.getElementById("sellerSelect");
+
+  sellerSelect.innerHTML =
+    `<option value="">Select Seller</option>`;
+
+  allSellers.forEach(seller => {
+
+    let price = "N/A";
+
+    if (
+      seller.prices &&
+      seller.prices[quantity]
+    ) {
+      price =
+        "KES " +
+        Number(
+          seller.prices[quantity]
+        ).toLocaleString();
+    }
+
+    const option =
+      document.createElement("option");
+
+    option.value =
+      seller.id;
+
+    option.textContent =
+      `${seller.name} - ${seller.location} - ${price}`;
+
+    sellerSelect.appendChild(option);
+
+  });
+
+}
+    document
+  .getElementById("quantity")
+  .addEventListener(
+    "change",
+    updateSellerPrices
+  );
 
 /* -------------------- ORDER FORM -------------------- */
 
