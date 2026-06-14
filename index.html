@@ -894,40 +894,6 @@ snap.forEach(docSnap => {
       sellerSelect.appendChild(option);
 
     });
-/* -------- Recommended Seller -------- */
-
-const sellersWithPrice =
-  allSellers.filter(
-    s => s.prices && s.prices["13kg"]
-  );
-
-if (sellersWithPrice.length > 0) {
-
-  sellersWithPrice.sort(
-    (a, b) =>
-      Number(a.prices["13kg"]) -
-      Number(b.prices["13kg"])
-  );
-
-  const recommended =
-    sellersWithPrice[0];
-
-  recommendedSellerDiv.style.display =
-    "block";
-
-  recommendedSellerDiv.innerHTML = `
-    ⭐ <strong>Recommended Seller</strong><br>
-    ${recommended.name}<br>
-    📍 ${recommended.location}<br>
-    13kg = KES ${recommended.prices["13kg"]}
-  `;
-
-} else {
-
-  recommendedSellerDiv.style.display =
-    "none";
-
-}
 
   } catch (error) {
 
@@ -942,21 +908,8 @@ if (sellersWithPrice.length > 0) {
 }
 
 loadSellers();
-  
-   function updateSellerPrices() {
 
-  const quantity =
-    document.getElementById("quantity").value;
-
-  const sellerSelect =
-    document.getElementById("sellerSelect");
-
-  sellerSelect.innerHTML =
-    `<option value="">Select Seller</option>`;
-
-  allSellers.forEach(seller => {
-
-    function updateRecommendedSeller() {
+  function updateRecommendedSeller() {
 
   const quantity =
     document.getElementById("quantity").value;
@@ -1000,6 +953,19 @@ loadSellers();
     ).toLocaleString()}
   `;
 }
+  
+function updateSellerPrices() {
+
+  const quantity =
+    document.getElementById("quantity").value;
+
+  const sellerSelect =
+    document.getElementById("sellerSelect");
+
+  sellerSelect.innerHTML =
+    `<option value="">Select Seller</option>`;
+
+  allSellers.forEach(seller => {
 
     let price = "N/A";
 
@@ -1027,13 +993,8 @@ loadSellers();
 
   });
 
+  updateRecommendedSeller();
 }
-    document
-  .getElementById("quantity")
-  .addEventListener(
-    "change",
-    updateSellerPrices
-  );
 
 /* -------------------- ORDER FORM -------------------- */
 
