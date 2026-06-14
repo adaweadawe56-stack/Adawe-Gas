@@ -915,6 +915,12 @@ function updateRecommendedSeller() {
   const recommendedSellerDiv =
     document.getElementById("recommendedSeller");
 
+  if (!quantity) {
+    recommendedSellerDiv.style.display =
+      "none";
+    return;
+  }
+
   const sellersWithPrice =
     allSellers.filter(
       s =>
