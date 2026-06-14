@@ -823,7 +823,7 @@ function isValidKenyaPhone(phone) {
 
 
 
-   * -------------------- WHATSAPP -------------------- */
+  /* -------------------- WHATSAPP -------------------- */
 
 window.sendWhatsApp = function(phone, message){
 
@@ -894,39 +894,40 @@ snap.forEach(docSnap => {
       sellerSelect.appendChild(option);
 
     });
+/* -------- Recommended Seller -------- */
 
-    /* -------- Recommended Seller -------- */
-
-   const sellersWithPrice =
+const sellersWithPrice =
   allSellers.filter(
-    
-    if (sellersWithPrice.length > 0) {
+    s => s.prices && s.prices["13kg"]
+  );
 
-      sellersWithPrice.sort(
-        (a, b) =>
-          Number(a.prices["13kg"]) -
-          Number(b.prices["13kg"])
-      );
+if (sellersWithPrice.length > 0) {
 
-      const recommended =
-        sellersWithPrice[0];
+  sellersWithPrice.sort(
+    (a, b) =>
+      Number(a.prices["13kg"]) -
+      Number(b.prices["13kg"])
+  );
 
-      recommendedSellerDiv.style.display =
-        "block";
+  const recommended =
+    sellersWithPrice[0];
 
-      recommendedSellerDiv.innerHTML = `
-        ⭐ <strong>Recommended Seller</strong><br>
-        ${recommended.name}<br>
-        📍 ${recommended.location}<br>
-        13kg = KES ${recommended.prices["13kg"]}
-      `;
-    } else {
+  recommendedSellerDiv.style.display =
+    "block";
 
-      recommendedSellerDiv.style.display =
-        "none";
+  recommendedSellerDiv.innerHTML = `
+    ⭐ <strong>Recommended Seller</strong><br>
+    ${recommended.name}<br>
+    📍 ${recommended.location}<br>
+    13kg = KES ${recommended.prices["13kg"]}
+  `;
 
-      console.log("No seller with 13kg price found");
-    }
+} else {
+
+  recommendedSellerDiv.style.display =
+    "none";
+
+}
 
   } catch (error) {
 
