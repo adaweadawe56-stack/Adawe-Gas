@@ -911,8 +911,7 @@ updateSellerPrices();
 }
 
 loadSellers();
-
-  function updateRecommendedSeller() {
+function updateRecommendedSeller() {
 
   const quantity =
     document.getElementById("quantity").value;
@@ -926,6 +925,9 @@ loadSellers();
         s.prices &&
         s.prices[quantity]
     );
+
+  ...
+}
 
   if (sellersWithPrice.length === 0) {
 
