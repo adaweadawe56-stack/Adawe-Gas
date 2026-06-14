@@ -883,17 +883,20 @@ snap.forEach(docSnap => {
     ...d
   });
 
-      const option =
-        document.createElement("option");
+  const option =
+    document.createElement("option");
 
-      option.value = docSnap.id;
+  option.value = docSnap.id;
 
-      option.textContent =
-        `${d.name} (${d.location})`;
+  option.textContent =
+    `${d.name} (${d.location})`;
 
-      sellerSelect.appendChild(option);
+  sellerSelect.appendChild(option);
 
-    });
+});
+
+updateRecommendedSeller();
+updateSellerPrices();
 
   } catch (error) {
 
@@ -995,6 +998,12 @@ function updateSellerPrices() {
 
   updateRecommendedSeller();
 }
+  document
+  .getElementById("quantity")
+  .addEventListener(
+    "change",
+    updateSellerPrices
+  );
 
 /* -------------------- ORDER FORM -------------------- */
 
