@@ -1255,16 +1255,21 @@ sellerForm.addEventListener("submit", async (e) => {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
 
-    await addDoc(collection(db, "sellers"), {
-      uid,
-      name,
-      email,
-      phone,
-      location,
-      prices,
-      status: "pending",
-      createdAt: serverTimestamp()
-    });
+   await addDoc(collection(db, "sellers"), {
+  uid,
+  name,
+  email,
+  phone,
+  location,
+  prices,
+
+  averageRating: 0,
+  totalRatings: 0,
+  completedOrders: 0,
+
+  status: "pending",
+  createdAt: serverTimestamp()
+});
 
     sellerForm.reset();
     showToast("✅ Seller registered successfully!");
