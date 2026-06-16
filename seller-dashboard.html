@@ -479,14 +479,20 @@ deliveryRate + "%";
 
 window.updateStatus = async function(id,status){
 
-  await updateDoc(
-    doc(db,"orders",id),
-    {
-      status
-    }
-  );
+  const orderRef = doc(db,"orders",id);
 
-  if(status === "Delivered"){
+  const orderSnap = await getDoc(orderRef);
+
+  const oldStatus = orderSnap.data().status;
+
+  await updateDoc(orderRef,{
+    status
+  });
+
+  if(
+    oldStatus !== "Delivered" &&
+    status === "Delivered"
+  ){
 
     await updateDoc(
       doc(db,"sellers",sellerDocId),
