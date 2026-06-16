@@ -291,8 +291,8 @@ sellerDocId = snap.docs[0].id;
 sellerPhone = sellerData.phone;
 
 document.getElementById("averageRating").textContent =
-  `${sellerData.averageRating || 0} ⭐`;
-
+  `${Number(sellerData.averageRating || 0).toFixed(1)} ⭐`;
+    
 document.getElementById("totalReviews").textContent =
   `${sellerData.totalRatings || 0} Reviews`;
 
