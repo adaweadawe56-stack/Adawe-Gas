@@ -346,8 +346,11 @@ async () => {
 });
 window.rateSeller = async function(rating){
 
-  try{
+  console.log("Rating clicked:", rating);
+  console.log("Current Order:", currentOrder);
 
+  try{
+    
     await addDoc(
       collection(db,"ratings"),
       {
