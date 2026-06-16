@@ -6,9 +6,14 @@ import {
   query,
   where,
   onSnapshot,
-  getDocs
+  getDocs,
+  addDoc,
+  serverTimestamp,
+  updateDoc,
+  doc
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
  const firebaseConfig = {
   apiKey: "AIzaSyBVhASqIXG5OaVk1nr8c3hZ-_liTg1UIsw",
   authDomain: "adawe-gas-system-82187.firebaseapp.com",
@@ -44,6 +49,7 @@ const receiptBox =
 document.getElementById("receiptBox");
 
 let unsubscribe = null;
+let currentOrder = null;
 
 trackBtn.addEventListener("click", async () => {
 
@@ -79,7 +85,9 @@ trackBtn.addEventListener("click", async () => {
   return;
 }
 
-   const data = snap.docs[0].data();
+  const data = snap.docs[0].data();
+
+currentOrder = data;
 
     let progressHtml = `
 <div style="display:flex;
@@ -216,7 +224,17 @@ if(data.status === "Delivered"){
       class="btn btn-success mt-2">
       Print Receipt
     </button>
+    <hr>
 
+<h4>Rate Seller</h4>
+
+<button onclick="rateSeller(1)">⭐</button>
+<button onclick="rateSeller(2)">⭐⭐</button>
+<button onclick="rateSeller(3)">⭐⭐⭐</button>
+<button onclick="rateSeller(4)">⭐⭐⭐⭐</button>
+<button onclick="rateSeller(5)">⭐⭐⭐⭐⭐</button>
+
+<div id="ratingMessage"></div>
   </div>
   `;
 
@@ -228,6 +246,7 @@ if(data.status === "Delivered"){
   });
 
 });
+
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
@@ -325,3 +344,64 @@ async () => {
   historyResults.innerHTML = html;
 
 });
+window.rateSeller = async function(rating){
+
+  try{
+
+    await addDoc(
+      collection(db,"ratings"),
+      {
+        sellerPhone: currentOrder.sellerPhone,
+        orderId: currentOrder.orderId,
+        rating,
+        createdAt: serverTimestamp()
+      }
+    );
+
+    const sellerQ = query(
+      collection(db,"sellers"),
+      where("phone","==",currentOrder.sellerPhone)
+    );
+
+    const sellerSnap = await getDocs(sellerQ);
+
+    if(!sellerSnap.empty){
+
+      const sellerDoc = sellerSnap.docs[0];
+
+      const sellerData = sellerDoc.data();
+
+      const totalRatings =
+      (sellerData.totalRatings || 0) + 1;
+
+      const averageRating =
+      (
+        (
+          (sellerData.averageRating || 0) *
+          (sellerData.totalRatings || 0)
+        ) + rating
+      ) / totalRatings;
+
+      await updateDoc(
+        doc(db,"sellers",sellerDoc.id),
+        {
+          totalRatings,
+          averageRating:
+          Number(averageRating.toFixed(1))
+        }
+      );
+
+    }
+
+    document.getElementById(
+      "ratingMessage"
+    ).innerHTML =
+    "✅ Thanks for your rating!";
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+};
