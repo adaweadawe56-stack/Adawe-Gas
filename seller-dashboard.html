@@ -290,6 +290,12 @@ const sellerData = snap.docs[0].data();
 sellerDocId = snap.docs[0].id;
 sellerPhone = sellerData.phone;
 
+document.getElementById("averageRating").textContent =
+  `${sellerData.averageRating || 0} ⭐`;
+
+document.getElementById("totalReviews").textContent =
+  `${sellerData.totalRatings || 0} Reviews`;
+
 console.log("sellerPhone =", sellerPhone);
 console.log("sellerDocId =", sellerDocId);
 
