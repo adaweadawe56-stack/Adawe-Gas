@@ -351,15 +351,19 @@ window.rateSeller = async function(rating){
 
   try{
     
-    await addDoc(
-      collection(db,"ratings"),
-      {
-        sellerPhone: currentOrder.sellerPhone,
-        orderId: currentOrder.orderId,
-        rating,
-        createdAt: serverTimestamp()
-      }
-    );
+    console.log("Trying to save rating...");
+
+await addDoc(
+  collection(db,"ratings"),
+  {
+    sellerPhone: currentOrder.sellerPhone,
+    orderId: currentOrder.orderId,
+    rating,
+    createdAt: serverTimestamp()
+  }
+);
+
+console.log("Rating saved successfully");
 
     const sellerQ = query(
       collection(db,"sellers"),
