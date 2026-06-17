@@ -913,6 +913,9 @@ function updateRecommendedSeller() {
   const quantity =
     document.getElementById("quantity").value;
 
+  console.log("Quantity:", quantity);
+  console.log("allSellers:", allSellers);
+
   const recommendedSellerDiv =
     document.getElementById("recommendedSeller");
 
@@ -928,6 +931,11 @@ function updateRecommendedSeller() {
         s.prices &&
         s.prices[quantity]
     );
+
+  console.log(
+    "sellersWithPrice:",
+    sellersWithPrice
+  );
 
   if (sellersWithPrice.length === 0) {
 
