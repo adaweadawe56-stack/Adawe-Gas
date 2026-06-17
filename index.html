@@ -946,25 +946,32 @@ function updateRecommendedSeller() {
   }
 
   sellersWithPrice.sort(
-    (a, b) =>
-      Number(a.prices[quantity]) -
-      Number(b.prices[quantity])
-  );
+  (a, b) =>
+    Number(a.prices[quantity]) -
+    Number(b.prices[quantity])
+);
 
-  const recommended =
-    sellersWithPrice[0];
+const recommended =
+  sellersWithPrice[0];
 
-  recommendedSellerDiv.style.display =
-    "block";
+console.log("Recommended:", recommended);
 
-  recommendedSellerDiv.innerHTML = `
-    ⭐ <strong>Recommended Seller</strong><br>
-    ${recommended.name}<br>
-    📍 ${recommended.location}<br>
-    ${quantity} = KES ${Number(
-      recommended.prices[quantity]
-    ).toLocaleString()}
-  `;
+recommendedSellerDiv.style.display =
+  "block";
+
+console.log(
+  "recommendedSellerDiv:",
+  recommendedSellerDiv
+);
+
+recommendedSellerDiv.innerHTML = `
+  ⭐ <strong>Recommended Seller</strong><br>
+  ${recommended.name}<br>
+  📍 ${recommended.location}<br>
+  ${quantity} = KES ${Number(
+    recommended.prices[quantity]
+  ).toLocaleString()}
+`;
 }
   
 function updateSellerPrices() {
