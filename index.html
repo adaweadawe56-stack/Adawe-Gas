@@ -932,18 +932,20 @@ function updateRecommendedSeller() {
         s.prices[quantity]
     );
 
-  console.log(
-    "sellersWithPrice:",
-    sellersWithPrice
-  );
+ console.log(
+  "sellersWithPrice:",
+  sellersWithPrice
+);
 
-  if (sellersWithPrice.length === 0) {
+console.log("AFTER FILTER");
 
-    recommendedSellerDiv.style.display =
-      "none";
+if (sellersWithPrice.length === 0) {
 
-    return;
-  }
+  recommendedSellerDiv.style.display =
+    "none";
+
+  return;
+}
 
   sellersWithPrice.sort(
   (a, b) =>
