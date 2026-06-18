@@ -957,25 +957,19 @@ if (sellersWithPrice.length === 0) {
 const recommended =
   sellersWithPrice[0];
 
-console.log("Recommended:", recommended);
-
 recommendedSellerDiv.style.display =
   "block";
 
-console.log(
-  "recommendedSellerDiv:",
-  recommendedSellerDiv
-);
+recommendedSellerDiv.className =
+  "alert alert-success mb-3";
 
 recommendedSellerDiv.innerHTML = `
-<div>
-  <strong>🏆 Best Price Available</strong><br>
-  Seller: ${recommended.name}<br>
-  Location: ${recommended.location}<br>
-  Price: KES ${Number(
-    recommended.prices[quantity]
-  ).toLocaleString()}
-</div>
+🏆 <strong>Best Price Available</strong><br>
+Seller: ${recommended.name}<br>
+Location: ${recommended.location}<br>
+Price: KES ${Number(
+  recommended.prices[quantity]
+).toLocaleString()}
 `;
 }
   
