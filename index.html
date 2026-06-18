@@ -967,20 +967,16 @@ console.log(
   recommendedSellerDiv
 );
 
-alert("RECOMMENDED SELLER FOUND");
-
-recommendedSellerDiv.textContent =
-  "TEST RECOMMENDED SELLER";
-
-recommendedSellerDiv.style.background =
-  "red";
-
-recommendedSellerDiv.style.color =
-  "white";
-
-recommendedSellerDiv.style.fontSize =
-  "30px";
-
+recommendedSellerDiv.innerHTML = `
+<div>
+  <strong>🏆 Best Price Available</strong><br>
+  Seller: ${recommended.name}<br>
+  Location: ${recommended.location}<br>
+  Price: KES ${Number(
+    recommended.prices[quantity]
+  ).toLocaleString()}
+</div>
+`;
 }
   
 function updateSellerPrices() {
