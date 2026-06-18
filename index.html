@@ -967,20 +967,19 @@ console.log(
   recommendedSellerDiv
 );
 
-recommendedSellerDiv.innerHTML = `
-<div style="
-position:fixed;
-top:100px;
-left:20px;
-z-index:99999;
-background:red;
-color:white;
-padding:20px;
-font-size:30px;
-">
-TEST RECOMMENDED SELLER
-</div>
-`;
+alert("RECOMMENDED SELLER FOUND");
+
+recommendedSellerDiv.textContent =
+  "TEST RECOMMENDED SELLER";
+
+recommendedSellerDiv.style.background =
+  "red";
+
+recommendedSellerDiv.style.color =
+  "white";
+
+recommendedSellerDiv.style.fontSize =
+  "30px";
 
 }
   
