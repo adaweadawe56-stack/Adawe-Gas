@@ -957,6 +957,10 @@ if (sellersWithPrice.length === 0) {
 const recommended =
   sellersWithPrice[0];
 
+  document.getElementById(
+  "sellerSelect"
+).value = recommended.id;
+
 recommendedSellerDiv.style.display =
   "block";
 
@@ -984,7 +988,22 @@ function updateSellerPrices() {
   sellerSelect.innerHTML =
     `<option value="">Select Seller</option>`;
 
-  allSellers.forEach(seller => {
+  const sortedSellers =
+  [...allSellers].sort((a, b) => {
+
+    const priceA =
+      a.prices?.[quantity] || 999999;
+
+    const priceB =
+      b.prices?.[quantity] || 999999;
+
+    return priceA - priceB;
+  });
+
+const recommendedId =
+  sortedSellers[0]?.id;
+
+sortedSellers.forEach(seller => {
 
     let price = "N/A";
 
@@ -1005,8 +1024,13 @@ function updateSellerPrices() {
     option.value =
       seller.id;
 
+    const badge =
+      seller.id === recommendedId
+        ? " ⭐ BEST PRICE"
+        : "";
+
     option.textContent =
-      `${seller.name} - ${seller.location} - ${price}`;
+      `${seller.name} - ${seller.location} - ${price}${badge}`;
 
     sellerSelect.appendChild(option);
 
