@@ -1128,16 +1128,20 @@ orderForm.addEventListener("submit", async (e) => {
       throw new Error("Seller not found");
     }
 
-    const sellerData =
-    sellerDoc.data();
+   const sellerData =
+sellerDoc.data();
 
-    const sellerWhatsapp =
-    sellerData.phone;
+const sellerWhatsapp =
+sellerData.phone;
 
-    if (!sellerWhatsapp) {
-      throw new Error("Seller phone missing");
-    }
+const orderPrice =
+sellerData.prices?.[quantity] || 0;
 
+console.log("orderPrice =", orderPrice);
+
+if (!sellerWhatsapp) {
+  throw new Error("Seller phone missing");
+}
     /* ORDER ID */
 
     const orderId =
