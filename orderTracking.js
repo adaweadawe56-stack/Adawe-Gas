@@ -164,7 +164,7 @@ let badgeColor = "#6c757d";
 
         <h4>Order Details</h4>
 
-        <p><strong>Seller:</strong> ${data.seller || "-"}</p>
+        <p><strong>Seller:</strong> ${data.sellerName || data.seller || "-"}</p>
 
         <p><strong>Name:</strong> ${data.name}</p>
 
@@ -203,7 +203,7 @@ if(data.status === "Delivered"){
 
     <p><strong>Customer:</strong> ${data.name}</p>
 
-    <p><strong>Seller:</strong> ${data.seller || "-"}</p>
+    <p><strong>Seller:</strong> ${data.sellerName || data.seller || "-"}</p>
 
     <p><strong>Brand:</strong> ${data.brand}</p>
 
@@ -241,7 +241,9 @@ style="width:100%;margin-top:10px;"
 ></textarea>
 
 <div id="ratingMessage"></div>
-  `;
+
+</div>
+`;
 
 }else{
 
@@ -315,8 +317,7 @@ async () => {
 
       <b>${o.orderId}</b>
 
-      <p><strong>Seller:</strong> ${o.seller || "-"}</p>
-
+      <p><strong>Seller:</strong> ${o.sellerName || o.seller || "-"}</p>
       <p><strong>Brand:</strong> ${o.brand}</p>
 
       <p><strong>Quantity:</strong> ${o.quantity}</p>
@@ -355,20 +356,44 @@ window.rateSeller = async function(rating){
   console.log("Current Order:", currentOrder);
 
   try{
-    
-    console.log("Trying to save rating...");
 
+    const review =
+    document.getElementById("reviewText")?.value || "";
+
+    console.log("Trying to save rating...");
+    
 await addDoc(
   collection(db,"ratings"),
   {
     sellerPhone: currentOrder.sellerPhone,
     orderId: currentOrder.orderId,
     rating,
+    review,
     createdAt: serverTimestamp()
   }
 );
 
-console.log("Rating saved successfully");
+const orderQ = query(
+  collection(db,"orders"),
+  where("orderId","==",currentOrder.orderId)
+);
+
+const orderSnap =
+await getDocs(orderQ);
+
+if(!orderSnap.empty){
+
+  await updateDoc(
+    orderSnap.docs[0].ref,
+    {
+      rating,
+      review
+    }
+  );
+
+}
+
+    console.log("Rating saved successfully");
 
     const sellerQ = query(
       collection(db,"sellers"),
