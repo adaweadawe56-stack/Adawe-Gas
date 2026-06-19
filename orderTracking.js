@@ -352,6 +352,11 @@ async () => {
 });
 window.rateSeller = async function(rating){
 
+  if(currentOrder.rating){
+    alert("You already rated this order");
+    return;
+  }
+
   console.log("Rating clicked:", rating);
   console.log("Current Order:", currentOrder);
 
