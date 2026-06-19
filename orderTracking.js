@@ -234,8 +234,13 @@ if(data.status === "Delivered"){
 <button onclick="rateSeller(4)">⭐⭐⭐⭐</button>
 <button onclick="rateSeller(5)">⭐⭐⭐⭐⭐</button>
 
+<textarea
+id="reviewText"
+placeholder="Write your review..."
+style="width:100%;margin-top:10px;"
+></textarea>
+
 <div id="ratingMessage"></div>
-  </div>
   `;
 
 }else{
