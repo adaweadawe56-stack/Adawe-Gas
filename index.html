@@ -1156,14 +1156,20 @@ await addDoc(collection(db, "orders"), {
   quantity,
   brand,
 
-  seller: sellerData.name,
+  sellerId: sellerId,
+  sellerName: sellerData.name,
   sellerPhone: sellerWhatsapp,
+  sellerLocation: sellerData.location || "",
 
   status: "Pending",
-  createdAt: serverTimestamp()
+
+  createdAt: serverTimestamp(),
+  assignedAt: new Date().toISOString(),
+
+  rating: null,
+  review: null
 
 });
-
  /* SUCCESS */
 
     showToast("✅ Order saved successfully");
