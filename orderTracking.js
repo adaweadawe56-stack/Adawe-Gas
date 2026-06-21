@@ -388,6 +388,16 @@ await getDocs(orderQ);
 
 if(!orderSnap.empty){
 
+  console.log(
+    "Order docs found:",
+    orderSnap.size
+  );
+
+  console.log(
+    "Updating order:",
+    currentOrder.orderId
+  );
+
   await updateDoc(
     orderSnap.docs[0].ref,
     {
@@ -442,8 +452,11 @@ if(!orderSnap.empty){
 
   }catch(err){
 
-    console.error(err);
+  console.error("Rating Error:", err);
 
-  }
+  alert(
+    "Rating Error: " +
+    err.message
+  );
 
-};
+}
