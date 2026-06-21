@@ -364,22 +364,60 @@ async function loadReviews(phone){
     return;
   }
 
-  let html = "";
+  let reviews = [];
 
   snap.forEach(docSnap => {
 
-    const r = docSnap.data();
+    reviews.push(docSnap.data());
+
+  });
+
+  reviews.sort((a,b)=>{
+
+    const da =
+      a.createdAt?.seconds || 0;
+
+    const dbb =
+      b.createdAt?.seconds || 0;
+
+    return dbb - da;
+
+  });
+
+  let html = "";
+
+  reviews.forEach(r => {
 
     const stars =
     "⭐".repeat(r.rating || 0);
 
+    const date =
+    r.createdAt
+    ? r.createdAt.toDate()
+      .toLocaleDateString()
+    : "";
+
     html += `
 
-      <div class="card mb-2 p-2">
+      <div class="card mb-2 p-3">
 
-        <div>${stars}</div>
+        <div class="d-flex justify-content-between">
 
-        <div>
+          <strong>
+            ${r.customerName || "Customer"}
+          </strong>
+
+          <small>
+            ${date}
+          </small>
+
+        </div>
+
+        <div class="mt-1">
+          ${stars}
+        </div>
+
+        <div class="mt-2">
           ${r.review || "No comment"}
         </div>
 
