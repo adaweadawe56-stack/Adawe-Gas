@@ -450,7 +450,7 @@ if(!orderSnap.empty){
     ).innerHTML =
     "✅ Thanks for your rating!";
 
-  }catch(err){
+  }}catch(err){
 
   console.error("Rating Error:", err);
 
@@ -460,3 +460,5 @@ if(!orderSnap.empty){
   );
 
 }
+
+};
