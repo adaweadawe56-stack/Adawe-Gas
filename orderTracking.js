@@ -370,16 +370,17 @@ window.rateSeller = async function(rating){
     const review =
     document.getElementById("reviewText")?.value || "";
 
-    await addDoc(
-      collection(db,"ratings"),
-      {
-        sellerPhone: currentOrder.sellerPhone,
-        orderId: currentOrder.orderId,
-        rating,
-        review,
-        createdAt: serverTimestamp()
-      }
-    );
+   await addDoc(
+  collection(db,"ratings"),
+  {
+    sellerPhone: currentOrder.sellerPhone,
+    customerName: currentOrder.name,
+    orderId: currentOrder.orderId,
+    rating,
+    review,
+    createdAt: serverTimestamp()
+  }
+);
 
     const sellerQ = query(
       collection(db,"sellers"),
