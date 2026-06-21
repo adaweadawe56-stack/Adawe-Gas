@@ -352,76 +352,50 @@ async () => {
 });
 window.rateSeller = async function(rating){
 
-  if(currentOrder.rating){
+  const ratingQ = query(
+    collection(db,"ratings"),
+    where("orderId","==",currentOrder.orderId)
+  );
+
+  const ratingSnap =
+  await getDocs(ratingQ);
+
+  if(!ratingSnap.empty){
     alert("You already rated this order");
     return;
   }
-
-  console.log("Rating clicked:", rating);
-  console.log("Current Order:", currentOrder);
 
   try{
 
     const review =
     document.getElementById("reviewText")?.value || "";
 
-    console.log("Trying to save rating...");
-    
-await addDoc(
-  collection(db,"ratings"),
-  {
-    sellerPhone: currentOrder.sellerPhone,
-    orderId: currentOrder.orderId,
-    rating,
-    review,
-    createdAt: serverTimestamp()
-  }
-);
-
-const orderQ = query(
-  collection(db,"orders"),
-  where("orderId","==",currentOrder.orderId)
-);
-
-const orderSnap =
-await getDocs(orderQ);
-
-if(!orderSnap.empty){
-
-  console.log(
-    "Order docs found:",
-    orderSnap.size
-  );
-
-  console.log(
-    "Updating order:",
-    currentOrder.orderId
-  );
-
-  await updateDoc(
-    orderSnap.docs[0].ref,
-    {
-      rating,
-      review
-    }
-  );
-
-}
-
-    console.log("Rating saved successfully");
+    await addDoc(
+      collection(db,"ratings"),
+      {
+        sellerPhone: currentOrder.sellerPhone,
+        orderId: currentOrder.orderId,
+        rating,
+        review,
+        createdAt: serverTimestamp()
+      }
+    );
 
     const sellerQ = query(
       collection(db,"sellers"),
       where("phone","==",currentOrder.sellerPhone)
     );
 
-    const sellerSnap = await getDocs(sellerQ);
+    const sellerSnap =
+    await getDocs(sellerQ);
 
     if(!sellerSnap.empty){
 
-      const sellerDoc = sellerSnap.docs[0];
+      const sellerDoc =
+      sellerSnap.docs[0];
 
-      const sellerData = sellerDoc.data();
+      const sellerData =
+      sellerDoc.data();
 
       const totalRatings =
       (sellerData.totalRatings || 0) + 1;
@@ -442,25 +416,29 @@ if(!orderSnap.empty){
           Number(averageRating.toFixed(1))
         }
       );
-
     }
 
-    document.getElementById(
-      "ratingMessage"
-    ).innerHTML =
-    "✅ Thanks for your rating!";
+   document.getElementById("ratingMessage").innerHTML =
+"✅ Thanks for your rating!";
 
-    }
+document.querySelectorAll(
+  'button[onclick^="rateSeller"]'
+).forEach(btn => {
+  btn.disabled = true;
+});
 
-  catch(err){
+  }catch(err){
 
-  console.error("Rating Error:", err);
+    console.error(
+      "Rating Error:",
+      err
+    );
 
-  alert(
-    "Rating Error: " +
-    err.message
-  );
+    alert(
+      "Rating Error: " +
+      err.message
+    );
 
-}
+  }
 
 };
