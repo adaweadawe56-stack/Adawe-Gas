@@ -152,6 +152,18 @@ Login
   <div id="ordersTable"></div>
 
 </div>
+  <div class="card-box">
+
+  <h4>Customer Reviews</h4>
+
+  <div id="reviewsContainer">
+
+    No reviews yet
+
+  </div>
+
+</div>
+  
 <div class="card-box">
 
   <h4>My Gas Prices</h4>
@@ -192,7 +204,8 @@ getDoc,
 onSnapshot,
 doc,
 updateDoc,
-increment
+increment,
+orderBy
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
@@ -324,7 +337,57 @@ loadOrders();
 
 };
  
+async function loadReviews(phone){
 
+  const q = query(
+    collection(db,"ratings"),
+    where("sellerPhone","==",phone)
+  );
+
+  const snap = await getDocs(q);
+
+  const container =
+  document.getElementById(
+    "reviewsContainer"
+  );
+
+  if(snap.empty){
+
+    container.innerHTML =
+    "<p>No reviews yet</p>";
+
+    return;
+  }
+
+  let html = "";
+
+  snap.forEach(docSnap => {
+
+    const r = docSnap.data();
+
+    const stars =
+    "⭐".repeat(r.rating || 0);
+
+    html += `
+
+      <div class="card mb-2 p-2">
+
+        <div>${stars}</div>
+
+        <div>
+          ${r.review || "No comment"}
+        </div>
+
+      </div>
+
+    `;
+
+  });
+
+  container.innerHTML = html;
+
+}
+  
 /* LOAD ORDERS */
 function loadOrders(){
 
