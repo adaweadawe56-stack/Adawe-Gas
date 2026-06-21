@@ -916,7 +916,14 @@ function updateRecommendedSeller() {
     document.getElementById("quantity").value;
 
   console.log("Quantity:", quantity);
-  console.log("allSellers:", allSellers);
+  console.log("allSellers =", allSellers);
+
+  allSellers.forEach(seller => {
+    console.log(
+      seller.name,
+      seller.prices
+    );
+  });
 
   const recommendedSellerDiv =
     document.getElementById("recommendedSeller");
@@ -1041,10 +1048,16 @@ sortedSellers.forEach(seller => {
 }
   document
   .getElementById("quantity")
-  .addEventListener(
-    "change",
-    updateSellerPrices
-  );
+  .addEventListener("change", e => {
+
+    console.log(
+      "SELECTED SIZE =",
+      e.target.value
+    );
+
+    updateSellerPrices();
+
+  });
 
 /* -------------------- ORDER FORM -------------------- */
 
