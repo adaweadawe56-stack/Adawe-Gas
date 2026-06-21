@@ -370,7 +370,7 @@ window.rateSeller = async function(rating){
     const review =
     document.getElementById("reviewText")?.value || "";
 
-   await addDoc(
+  await addDoc(
   collection(db,"ratings"),
   {
     sellerPhone: currentOrder.sellerPhone,
@@ -378,6 +378,8 @@ window.rateSeller = async function(rating){
     orderId: currentOrder.orderId,
     rating,
     review,
+    brand: currentOrder.brand,
+    quantity: currentOrder.quantity,
     createdAt: serverTimestamp()
   }
 );
