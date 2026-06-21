@@ -326,6 +326,11 @@ document.getElementById("price40kg").value = prices["40kg"] ?? "";
 document.getElementById("price45kg").value = prices["45kg"] ?? "";
 document.getElementById("price50kg").value = prices["50kg"] ?? "";
 loadOrders();
+
+loadReviews(
+  sellerData.phone
+);
+    
   }catch(err){
 
     console.error(err);
@@ -573,6 +578,7 @@ window.updateStatus = async function(id,status){
   }
 
 };
+  
 /* LOGOUT */
 
 window.logout = async function(){
