@@ -998,7 +998,11 @@ Seller: ${recommended.name}<br>
 Location: ${recommended.location}<br>
 Price: KES ${Number(recommended.prices[quantity]).toLocaleString()}
 `;
-  }
+
+console.log(
+  "DIV HTML:",
+  recommendedSellerDiv.innerHTML
+);
   
 function updateSellerPrices() {
 
