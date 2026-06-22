@@ -1302,12 +1302,27 @@ function addPriceRow() {
     .getElementById("priceRows")
     .appendChild(row);
 
-  row
-    .querySelector(".remove-row")
-    .addEventListener("click", () => {
-      row.remove();
-    });
-}
+ row
+  .querySelector(".remove-row")
+  .addEventListener("click", () => {
+
+    const rows =
+      document.querySelectorAll("#priceRows .row");
+
+    if (rows.length === 1) {
+
+      showToast(
+        "At least one gas size is required",
+        false
+      );
+
+      return;
+    }
+
+    row.remove();
+
+  });
+  window.addPriceRow = addPriceRow;
 
 addPriceRow();
   
