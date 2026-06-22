@@ -964,12 +964,30 @@ sellersWithPrice.sort(
 const recommended =
   sellersWithPrice[0];
 
+console.log(
+  "Recommended seller:",
+  recommended
+);
+
+console.log(
+  "sellerSelect element:",
+  document.getElementById("sellerSelect")
+);
+
 document.getElementById(
   "sellerSelect"
 ).value = recommended.id;
 
+console.log(
+  "sellerSelect updated"
+);
+
 recommendedSellerDiv.style.display =
   "block";
+
+console.log(
+  "recommendedSellerDiv shown"
+);
 
 recommendedSellerDiv.className =
   "alert alert-success mb-3";
@@ -982,7 +1000,6 @@ Price: KES ${Number(
   recommended.prices[quantity]
 ).toLocaleString()}
 `;
-}
   
 function updateSellerPrices() {
 
