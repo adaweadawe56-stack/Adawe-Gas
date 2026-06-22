@@ -1389,9 +1389,13 @@ document
   createdAt: serverTimestamp()
 });
 
-    sellerForm.reset();
-    showToast("✅ Seller registered successfully!");
+sellerForm.reset();
 
+document.getElementById("priceRows").innerHTML = "";
+
+addPriceRow();
+
+showToast("✅ Seller registered successfully!");
   } catch (err) {
     if (err.message !== "Duplicate seller") console.error(err);
     showToast(err.message, false);
