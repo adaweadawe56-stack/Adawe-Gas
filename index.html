@@ -919,9 +919,9 @@ function updateRecommendedSeller() {
 
   allSellers.forEach(seller => {
     console.log(
-      seller.name,
-      seller.prices
-    );
+  seller.name,
+  JSON.stringify(seller.prices)
+);
   });
 
   const recommendedSellerDiv =
@@ -955,7 +955,7 @@ if (sellersWithPrice.length === 0) {
   return;
 }
 
-  sellersWithPrice.sort(
+sellersWithPrice.sort(
   (a, b) =>
     Number(a.prices[quantity]) -
     Number(b.prices[quantity])
@@ -964,7 +964,7 @@ if (sellersWithPrice.length === 0) {
 const recommended =
   sellersWithPrice[0];
 
-  document.getElementById(
+document.getElementById(
   "sellerSelect"
 ).value = recommended.id;
 
@@ -1272,22 +1272,14 @@ function addPriceRow() {
 
   row.innerHTML = `
     <div class="col-5">
-      const usedSizes = Array.from(
-  document.querySelectorAll(".gas-size")
-)
-.map(s => s.value)
-.filter(Boolean);
+      <select class="form-select gas-size">
+        <option value="">Select Size</option>
 
-<select class="form-select gas-size">
-  <option value="">Select Size</option>
+        ${gasSizes.map(size =>
+          `<option value="${size}">${size}</option>`
+        ).join("")}
 
-  ${gasSizes
-    .filter(size => !usedSizes.includes(size))
-    .map(size =>
-      `<option value="${size}">${size}</option>`
-    )
-    .join("")}
-</select>
+      </select>
     </div>
 
     <div class="col-5">
