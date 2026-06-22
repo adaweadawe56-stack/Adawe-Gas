@@ -566,8 +566,8 @@ Place Order
 
 <div
   id="recommendedSeller"
-  class="alert alert-danger mb-3">
-TEST RECOMMENDED SELLER
+  class="alert alert-success mb-3"
+  style="display:none;">
 </div>
   
 <!-- SELLERS HERE -->
@@ -989,14 +989,12 @@ console.log(
   "recommendedSellerDiv shown"
 );
 
-recommendedSellerDiv.className =
-  "alert alert-success mb-3";
-
-recommendedSellerDiv.innerHTML = `
-🏆 <strong>Best Price Available</strong><br>
-Seller: ${recommended.name}<br>
-Location: ${recommended.location}<br>
-Price: KES ${Number(recommended.prices[quantity]).toLocaleString()}
+recommendedSellerDiv.innerHTML =
+  "🏆 Best Price Available<br>" +
+  "Seller: " + recommended.name + "<br>" +
+  "Location: " + recommended.location + "<br>" +
+  "Price: KES " +
+  Number(recommended.prices[quantity]).toLocaleString();
 `;
 
 console.log(
