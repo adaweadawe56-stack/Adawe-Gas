@@ -996,10 +996,9 @@ recommendedSellerDiv.innerHTML = `
 🏆 <strong>Best Price Available</strong><br>
 Seller: ${recommended.name}<br>
 Location: ${recommended.location}<br>
-Price: KES ${Number(
-  recommended.prices[quantity]
-).toLocaleString()}
+Price: KES ${Number(recommended.prices[quantity]).toLocaleString()}
 `;
+  }
   
 function updateSellerPrices() {
 
