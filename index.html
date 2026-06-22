@@ -1272,12 +1272,22 @@ function addPriceRow() {
 
   row.innerHTML = `
     <div class="col-5">
-      <select class="form-select gas-size">
-        <option value="">Select Size</option>
-        ${gasSizes.map(size =>
-          `<option value="${size}">${size}</option>`
-        ).join("")}
-      </select>
+      const usedSizes = Array.from(
+  document.querySelectorAll(".gas-size")
+)
+.map(s => s.value)
+.filter(Boolean);
+
+<select class="form-select gas-size">
+  <option value="">Select Size</option>
+
+  ${gasSizes
+    .filter(size => !usedSizes.includes(size))
+    .map(size =>
+      `<option value="${size}">${size}</option>`
+    )
+    .join("")}
+</select>
     </div>
 
     <div class="col-5">
@@ -1351,11 +1361,33 @@ document
 
   });
 
-  if (!Object.values(prices).some(p => p > 0)) {
-    showToast("Enter at least one price", false);
+const sizes = [];
+
+for (const row of document.querySelectorAll("#priceRows .row")) {
+
+  const size =
+    row.querySelector(".gas-size").value;
+
+  if (!size) continue;
+
+  if (sizes.includes(size)) {
+
+    showToast(
+      `${size} already added`,
+      false
+    );
+
     return;
   }
 
+  sizes.push(size);
+}
+
+if (!Object.values(prices).some(p => p > 0)) {
+  showToast("Enter at least one price", false);
+  return;
+}
+ 
   // UI State
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
