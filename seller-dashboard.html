@@ -296,12 +296,13 @@ if ("Notification" in window) {
 const snap = await getDocs(q);
 
 if (snap.empty) {
-
   document.getElementById("loginError").innerText =
   "Seller account not found";
-
   return;
 }
+
+document.getElementById("loginPage").style.display = "none";
+document.getElementById("dashboard").style.display = "block";
 
 const sellerData = snap.docs[0].data();
 
@@ -435,9 +436,10 @@ function loadOrders(){
 
   console.log("sellerUid =", sellerUid);
 
-  const q = query(
+ const q = query(
   collection(db,"orders"),
-  where("sellerUid","==",sellerUid)
+  where("sellerUid","==",sellerUid),
+  orderBy("createdAt","desc")
 );
   
   let firstLoad = true;
