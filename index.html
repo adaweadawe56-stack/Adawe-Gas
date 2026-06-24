@@ -1453,6 +1453,8 @@ if (!Object.values(prices).some(p => p > 0)) {
   location,
   prices,
 
+  profileImage: "images/seller-logo.png",
+
   averageRating: 0,
   totalRatings: 0,
   completedOrders: 0,
@@ -1460,7 +1462,7 @@ if (!Object.values(prices).some(p => p > 0)) {
   status: "pending",
   createdAt: serverTimestamp()
 });
-
+    
 sellerForm.reset();
 
 document.getElementById("priceRows").innerHTML = "";
