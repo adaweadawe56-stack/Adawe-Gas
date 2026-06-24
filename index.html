@@ -1193,8 +1193,9 @@ if (!sellerWhatsapp) {
     "AG-" + Date.now();
 
     /* SAVE ORDER */
-    console.log("sellerData =", sellerData);
+   console.log("sellerData =", sellerData);
 console.log("sellerWhatsapp =", sellerWhatsapp);
+console.log("sellerUid =", sellerData.uid);
 
 await addDoc(collection(db, "orders"), {
 
@@ -1208,6 +1209,8 @@ await addDoc(collection(db, "orders"), {
   price: orderPrice,
 
   sellerId: sellerId,
+  sellerUid: sellerData.uid,
+
   sellerName: sellerData.name,
   sellerPhone: sellerWhatsapp,
   sellerLocation: sellerData.location || "",
