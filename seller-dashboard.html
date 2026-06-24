@@ -437,10 +437,10 @@ function loadOrders(){
   console.log("sellerPhone =", sellerPhone);
 
   const q = query(
-    collection(db,"orders"),
-    where("sellerPhone","==",sellerPhone)
-  );
-
+  collection(db,"orders"),
+  where("sellerUid","==",sellerUid)
+);
+  
   let firstLoad = true;
 
   onSnapshot(q, snap => {
