@@ -205,7 +205,6 @@ onSnapshot,
 doc,
 updateDoc,
 increment,
-orderBy
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
@@ -232,7 +231,8 @@ const auth = getAuth(app);
 
 let sellerPhone = null;
 let sellerDocId = null;
-
+let sellerUid = null;
+  
 const statusFilter =
 document.getElementById("statusFilter");
 
@@ -254,11 +254,16 @@ window.login = async function(){
     document.getElementById("password").value;
 
     const userCredential =
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+await signInWithEmailAndPassword(
+  auth,
+  email,
+  password
+);
+
+sellerUid = userCredential.user.uid;
+
+console.log("sellerUid =", sellerUid);
+    
 
   document.getElementById("loginPage").style.display = "none";
 
@@ -283,9 +288,9 @@ if ("Notification" in window) {
   }
 
 }
-   const q = query(
+  const q = query(
   collection(db, "sellers"),
-  where("email", "==", email)
+  where("uid", "==", sellerUid)
 );
 
 const snap = await getDocs(q);
@@ -303,14 +308,8 @@ const sellerData = snap.docs[0].data();
 sellerDocId = snap.docs[0].id;
 sellerPhone = sellerData.phone;
 
-document.getElementById("averageRating").textContent =
-  `${Number(sellerData.averageRating || 0).toFixed(1)} ⭐`;
-    
-document.getElementById("totalReviews").textContent =
-  `${sellerData.totalRatings || 0} Reviews`;
-
-console.log("sellerPhone =", sellerPhone);
-console.log("sellerDocId =", sellerDocId);
+console.log("Firebase UID =", sellerUid);
+console.log("Seller Document UID =", sellerData.uid);
 
 const prices = sellerData.prices || {};
 
@@ -434,7 +433,7 @@ async function loadReviews(phone){
 /* LOAD ORDERS */
 function loadOrders(){
 
-  console.log("sellerPhone =", sellerPhone);
+  console.log("sellerUid =", sellerUid);
 
   const q = query(
   collection(db,"orders"),
@@ -596,7 +595,12 @@ window.updateStatus = async function(id,status){
   const orderSnap = await getDoc(orderRef);
 
   const oldStatus = orderSnap.data().status;
+const data = orderSnap.data();
 
+if(data.sellerUid !== sellerUid){
+  alert("Unauthorized");
+  return;
+}
   await updateDoc(orderRef,{
     status
   });
