@@ -461,9 +461,9 @@ function loadOrders(){
 
         if (Notification.permission === "granted") {
 
-          new Notification("Adawe Gas", {
-            body: "🔔 New LPG Order Received"
-          });
+         new Notification("Adawe Gas", {
+  body: `${change.doc.data().quantity} order from ${change.doc.data().location}`
+});
 
         }
 
