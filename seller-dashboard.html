@@ -382,7 +382,25 @@ async function loadReviews(phone){
     `;
 
   });
+let totalReviews = reviews.length;
 
+let averageRating = 0;
+
+reviews.forEach(r => {
+  averageRating += Number(r.rating || 0);
+});
+
+averageRating =
+totalReviews > 0
+? (averageRating / totalReviews).toFixed(1)
+: "0.0";
+
+document.getElementById("averageRating").innerText =
+averageRating + " ⭐";
+
+document.getElementById("totalReviews").innerText =
+totalReviews + " Reviews";
+  
  container.innerHTML = html;
 
 console.log("Reviews Rendered");
