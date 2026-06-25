@@ -294,9 +294,9 @@ window.login = async function(){
 console.log("sellerUid =", sellerUid);
 console.log("sellerPhone =", sellerPhone);
 console.log("sellerDocId =", sellerDocId);
-    
-    loadOrders();
-    loadReviews(sellerPhone);
+
+loadOrders();
+loadReviews(sellerUid);
 
   }catch(err){
 
