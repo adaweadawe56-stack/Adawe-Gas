@@ -199,17 +199,18 @@ import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-getFirestore,
-collection,
-query,
-where,
-getDocs,
-getDoc,
-onSnapshot,
-doc,
-updateDoc,
-increment
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  onSnapshot,
+  doc,
+  updateDoc,
+  increment
 }
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
 getAuth,
@@ -315,22 +316,87 @@ async function loadReviews(phone){
     where("sellerPhone","==",phone)
   );
 
-  const snap = await getDocs(q);
-
-  console.log("Ratings Found =", snap.size);
+  onSnapshot(q, snap => {
 
   const container =
   document.getElementById("reviewsContainer");
-
-  console.log("Container =", container);
 
   if(snap.empty){
 
     container.innerHTML =
     "<p>No reviews yet</p>";
 
+    document.getElementById("averageRating").innerText =
+    "0.0 ⭐";
+
+    document.getElementById("totalReviews").innerText =
+    "0 Reviews";
+
     return;
   }
+
+  let reviews = [];
+
+  snap.forEach(docSnap => {
+    reviews.push(docSnap.data());
+  });
+
+  reviews.sort((a,b)=>{
+    const da = a.createdAt?.seconds || 0;
+    const db = b.createdAt?.seconds || 0;
+    return db - da;
+  });
+
+  let html = "";
+
+  reviews.forEach(r => {
+
+    const stars =
+    "⭐".repeat(r.rating || 0);
+
+    const date =
+    r.createdAt
+    ? r.createdAt.toDate().toLocaleDateString()
+    : "";
+
+    html += `
+      <div class="card mb-2 p-3">
+        <div class="d-flex justify-content-between">
+          <strong>${r.customerName || "Customer"}</strong>
+          <small>${date}</small>
+        </div>
+
+        <div>${stars}</div>
+
+        <div>
+          ${r.review || "No comment"}
+        </div>
+      </div>
+    `;
+  });
+
+  const totalReviews = reviews.length;
+
+  let averageRating = 0;
+
+  reviews.forEach(r=>{
+    averageRating += Number(r.rating || 0);
+  });
+
+  averageRating =
+  totalReviews > 0
+  ? (averageRating / totalReviews).toFixed(1)
+  : "0.0";
+
+  document.getElementById("averageRating").innerText =
+  averageRating + " ⭐";
+
+  document.getElementById("totalReviews").innerText =
+  totalReviews + " Reviews";
+
+  container.innerHTML = html;
+
+});
 
   let reviews = [];
 
