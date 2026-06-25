@@ -36,6 +36,10 @@ body{
   box-shadow:0 5px 15px rgba(0,0,0,0.08);
   margin-bottom:20px;
 }
+  #reviewsContainer .card{
+  border-radius:12px;
+  box-shadow:0 2px 10px rgba(0,0,0,0.08);
+}
 
 </style>
 
@@ -361,7 +365,7 @@ async function loadReviews(phone){
     : "";
 
     html += `
-      <div class="card mb-2 p-3">
+      <div class="card mb-2 p-3 shadow-sm">
 
         <div class="d-flex justify-content-between">
           <strong>${r.customerName || "Customer"}</strong>
