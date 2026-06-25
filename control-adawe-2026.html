@@ -178,7 +178,8 @@ window.login = async function(){
 function startRealtime(){
 
  onSnapshot(collection(db,"orders"), snap=>{
-
+console.log("Orders Found:", snap.size);
+   
   ordersData = [];
 
   snap.forEach(d=>{
