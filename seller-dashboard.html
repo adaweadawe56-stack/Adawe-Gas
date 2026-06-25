@@ -309,15 +309,15 @@ console.log("sellerDocId =", sellerDocId);
   }
 
 };
-  async function loadReviews(phone){
+ async function loadReviews(uid){
 
   const q = query(
     collection(db,"ratings"),
-    where("sellerPhone","==",phone)
+    where("sellerUid","==",uid)
   );
 
   onSnapshot(q, snap => {
-
+    
     const container =
     document.getElementById("reviewsContainer");
 
