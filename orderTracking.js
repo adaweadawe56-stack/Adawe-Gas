@@ -369,17 +369,24 @@ window.rateSeller = async function(rating){
 
     const review =
     document.getElementById("reviewText")?.value || "";
-
-  await addDoc(
+    
+console.log("sellerUid =", currentOrder.sellerUid);
+    
+ await addDoc(
   collection(db,"ratings"),
   {
+    sellerUid: currentOrder.sellerUid,
     sellerPhone: currentOrder.sellerPhone,
+
     customerName: currentOrder.name,
     orderId: currentOrder.orderId,
+
     rating,
     review,
+
     brand: currentOrder.brand,
     quantity: currentOrder.quantity,
+
     createdAt: serverTimestamp()
   }
 );
