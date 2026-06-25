@@ -262,21 +262,23 @@ async function autoAssignSeller(order){
  // Auto assign seller
  if(bestSeller){
 
-   await updateDoc(doc(db,"orders",order.id),{
+await updateDoc(doc(db,"orders",order.id),{
 
-     sellerName: bestSeller.name,
+  sellerUid: bestSeller.uid,
 
-     sellerPhone: bestSeller.phone,
+  sellerName: bestSeller.name,
 
-     sellerLocation: bestSeller.location,
+  sellerPhone: bestSeller.phone,
 
-     price: bestPrice,
+  sellerLocation: bestSeller.location,
 
-     status: "Processing",
+  price: bestPrice,
 
-     assignedAt: new Date().toISOString()
+  status: "Processing",
 
-   });
+  assignedAt: new Date().toISOString()
+
+});
 
    console.log(
      "Seller auto assigned:",
