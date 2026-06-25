@@ -211,7 +211,6 @@ import {
   increment
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
 getAuth,
 signInWithEmailAndPassword,
@@ -306,10 +305,7 @@ window.login = async function(){
   }
 
 };
-  
-async function loadReviews(phone){
-
-  console.log("sellerPhone =", phone);
+  async function loadReviews(phone){
 
   const q = query(
     collection(db,"ratings"),
@@ -318,121 +314,48 @@ async function loadReviews(phone){
 
   onSnapshot(q, snap => {
 
-  const container =
-  document.getElementById("reviewsContainer");
+    const container =
+    document.getElementById("reviewsContainer");
 
-  if(snap.empty){
+    if(snap.empty){
 
-    container.innerHTML =
-    "<p>No reviews yet</p>";
+      container.innerHTML =
+      "<p>No reviews yet</p>";
 
-    document.getElementById("averageRating").innerText =
-    "0.0 ⭐";
+      document.getElementById("averageRating").innerText =
+      "0.0 ⭐";
 
-    document.getElementById("totalReviews").innerText =
-    "0 Reviews";
+      document.getElementById("totalReviews").innerText =
+      "0 Reviews";
 
-    return;
-  });
+      return;
+    }
 
-}
+    let reviews = [];
 
-  let reviews = [];
+    snap.forEach(docSnap => {
+      reviews.push(docSnap.data());
+    });
 
-  snap.forEach(docSnap => {
-    reviews.push(docSnap.data());
-  });
+    reviews.sort((a,b)=>{
+      const da = a.createdAt?.seconds || 0;
+      const db = b.createdAt?.seconds || 0;
+      return db - da;
+    });
 
-  reviews.sort((a,b)=>{
-    const da = a.createdAt?.seconds || 0;
-    const db = b.createdAt?.seconds || 0;
-    return db - da;
-  });
+    let html = "";
 
-  let html = "";
+    reviews.forEach(r => {
 
-  reviews.forEach(r => {
+      const stars =
+      "⭐".repeat(r.rating || 0);
 
-    const stars =
-    "⭐".repeat(r.rating || 0);
+      const date =
+      r.createdAt
+      ? r.createdAt.toDate().toLocaleDateString()
+      : "";
 
-    const date =
-    r.createdAt
-    ? r.createdAt.toDate().toLocaleDateString()
-    : "";
-
-    html += `
-      <div class="card mb-2 p-3">
-        <div class="d-flex justify-content-between">
-          <strong>${r.customerName || "Customer"}</strong>
-          <small>${date}</small>
-        </div>
-
-        <div>${stars}</div>
-
-        <div>
-          ${r.review || "No comment"}
-        </div>
-      </div>
-    `;
-  });
-
-  const totalReviews = reviews.length;
-
-  let averageRating = 0;
-
-  reviews.forEach(r=>{
-    averageRating += Number(r.rating || 0);
-  });
-
-  averageRating =
-  totalReviews > 0
-  ? (averageRating / totalReviews).toFixed(1)
-  : "0.0";
-
-  document.getElementById("averageRating").innerText =
-  averageRating + " ⭐";
-
-  document.getElementById("totalReviews").innerText =
-  totalReviews + " Reviews";
-
-  container.innerHTML = html;
-
-});
-
-  let reviews = [];
-
-  snap.forEach(docSnap => {
-
-    reviews.push(docSnap.data());
-
-  });
-
-  reviews.sort((a,b)=>{
-
-    const da =
-      a.createdAt?.seconds || 0;
-
-    const dbb =
-      b.createdAt?.seconds || 0;
-
-    return dbb - da;
-
-  });
-
-  let html = "";
-
-  reviews.forEach(r => {
-
-    const stars =
-    "⭐".repeat(r.rating || 0);
-
-    const date =
-    r.createdAt
-    ? r.createdAt.toDate().toLocaleDateString()
-    : "";
-
-    html += `
+      html += `
       <div class="card mb-2 p-3 shadow-sm">
 
         <div class="d-flex justify-content-between">
@@ -447,32 +370,32 @@ async function loadReviews(phone){
         </div>
 
       </div>
-    `;
+      `;
+    });
+
+    const totalReviews = reviews.length;
+
+    let averageRating = 0;
+
+    reviews.forEach(r=>{
+      averageRating += Number(r.rating || 0);
+    });
+
+    averageRating =
+    totalReviews > 0
+    ? (averageRating / totalReviews).toFixed(1)
+    : "0.0";
+
+    document.getElementById("averageRating").innerText =
+    averageRating + " ⭐";
+
+    document.getElementById("totalReviews").innerText =
+    totalReviews + " Reviews";
+
+    container.innerHTML = html;
 
   });
-let totalReviews = reviews.length;
 
-let averageRating = 0;
-
-reviews.forEach(r => {
-  averageRating += Number(r.rating || 0);
-});
-
-averageRating =
-totalReviews > 0
-? (averageRating / totalReviews).toFixed(1)
-: "0.0";
-
-document.getElementById("averageRating").innerText =
-averageRating + " ⭐";
-
-document.getElementById("totalReviews").innerText =
-totalReviews + " Reviews";
-  
- container.innerHTML = html;
-
-console.log("Reviews Rendered");
-console.log(container.innerHTML);
 }
   
 /* LOAD ORDERS */
