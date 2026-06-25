@@ -247,8 +247,6 @@ statusFilter.addEventListener("change", () => {
 
 window.login = async function(){
 
-  console.log("Login button clicked");
-
   try{
 
     const email =
@@ -258,95 +256,53 @@ window.login = async function(){
     document.getElementById("password").value;
 
     const userCredential =
-await signInWithEmailAndPassword(
-  auth,
-  email,
-  password
-);
+    await signInWithEmailAndPassword(
+      auth,
+      email,
+      password
+    );
 
-sellerUid = userCredential.user.uid;
+    sellerUid = userCredential.user.uid;
 
-console.log("sellerUid =", sellerUid);
-    
+    const sellerQ = query(
+      collection(db,"sellers"),
+      where("uid","==",sellerUid)
+    );
 
-  document.getElementById("loginPage").style.display = "none";
+    const sellerSnap =
+    await getDocs(sellerQ);
 
-document.getElementById("dashboard").style.display = "block";
+    if(!sellerSnap.empty){
 
-if ("Notification" in window) {
+      const sellerData =
+      sellerSnap.docs[0].data();
 
-  const permission =
-  await Notification.requestPermission();
+      sellerPhone =
+      sellerData.phone;
 
-  console.log(
-    "Notification permission:",
-    permission
-  );
+    }
 
-  if(permission === "granted"){
+    document.getElementById("loginPage").style.display = "none";
+    document.getElementById("dashboard").style.display = "block";
 
-    new Notification("Adawe Gas", {
-      body: "✅ Notifications Enabled"
-    });
+    loadOrders();
+    loadReviews(sellerPhone);
 
-  }
-
-}
-  const q = query(
-  collection(db, "sellers"),
-  where("uid", "==", sellerUid)
-);
-
-const snap = await getDocs(q);
-
-if (snap.empty) {
-  document.getElementById("loginError").innerText =
-  "Seller account not found";
-  return;
-}
-
-document.getElementById("loginPage").style.display = "none";
-document.getElementById("dashboard").style.display = "block";
-
-const sellerData = snap.docs[0].data();
-
-sellerDocId = snap.docs[0].id;
-sellerPhone = sellerData.phone;
-
-console.log("Firebase UID =", sellerUid);
-console.log("Seller Document UID =", sellerData.uid);
-
-const prices = sellerData.prices || {};
-
-document.getElementById("price1kg").value = prices["1kg"] ?? "";
-document.getElementById("price3kg").value = prices["3kg"] ?? "";
-document.getElementById("price6kg").value = prices["6kg"] ?? "";
-document.getElementById("price13kg").value = prices["13kg"] ?? "";
-document.getElementById("price15kg").value = prices["15kg"] ?? "";
-document.getElementById("price22kg").value = prices["22kg"] ?? "";
-document.getElementById("price25kg").value = prices["25kg"] ?? "";
-document.getElementById("price35kg").value = prices["35kg"] ?? "";
-document.getElementById("price40kg").value = prices["40kg"] ?? "";
-document.getElementById("price45kg").value = prices["45kg"] ?? "";
-document.getElementById("price50kg").value = prices["50kg"] ?? "";
-loadOrders();
-
-loadReviews(
-  sellerData.phone
-);
-    
   }catch(err){
 
     console.error(err);
 
-    document.getElementById("loginError").innerText =
-    err.message;
+  document.getElementById(
+      "loginError"
+    ).innerText = err.message;
 
   }
 
 };
- 
+  
 async function loadReviews(phone){
+
+  console.log("sellerPhone =", phone);
 
   const q = query(
     collection(db,"ratings"),
@@ -355,10 +311,12 @@ async function loadReviews(phone){
 
   const snap = await getDocs(q);
 
+  console.log("Ratings Found =", snap.size);
+
   const container =
-  document.getElementById(
-    "reviewsContainer"
-  );
+  document.getElementById("reviewsContainer");
+
+  console.log("Container =", container);
 
   if(snap.empty){
 
@@ -397,36 +355,24 @@ async function loadReviews(phone){
 
     const date =
     r.createdAt
-    ? r.createdAt.toDate()
-      .toLocaleDateString()
+    ? r.createdAt.toDate().toLocaleDateString()
     : "";
 
     html += `
-
       <div class="card mb-2 p-3">
 
         <div class="d-flex justify-content-between">
-
-          <strong>
-            ${r.customerName || "Customer"}
-          </strong>
-
-          <small>
-            ${date}
-          </small>
-
+          <strong>${r.customerName || "Customer"}</strong>
+          <small>${date}</small>
         </div>
 
-        <div class="mt-1">
-          ${stars}
-        </div>
+        <div class="mt-1">${stars}</div>
 
         <div class="mt-2">
           ${r.review || "No comment"}
         </div>
 
       </div>
-
     `;
 
   });
