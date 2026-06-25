@@ -177,50 +177,83 @@ window.login = async function(){
 
 function startRealtime(){
 
- onSnapshot(collection(db,"orders"), snap=>{
-console.log("Orders Found:", snap.size);
-   
-  ordersData = [];
+onSnapshot(
 
-  snap.forEach(d=>{
+  collection(db,"orders"),
 
-    const order = {
-      id:d.id,
-      ...d.data()
-    };
+  snap => {
 
-    ordersData.push(order);
+    console.log("Orders Found:", snap.size);
 
-    if(!order.sellerName){
+    ordersData = [];
 
-      autoAssignSeller(order);
-    }
-  });
+    snap.forEach(d=>{
 
-  renderOrders();
+      const order = {
+        id:d.id,
+        ...d.data()
+      };
 
-  updateStatsAndChart();
+      ordersData.push(order);
 
- });
+      if(!order.sellerName){
 
- onSnapshot(collection(db,"sellers"), snap=>{
+        autoAssignSeller(order);
 
-  sellersData = [];
+      }
 
-  snap.forEach(d=>{
-
-    sellersData.push({
-      id:d.id,
-      ...d.data()
     });
 
-  });
+    renderOrders();
 
-  renderSellers();
+    updateStatsAndChart();
 
- });
+  },
 
-}
+  error => {
+
+    console.error(
+      "Orders Error:",
+      error.code,
+      error.message
+    );
+
+  }
+
+);
+
+onSnapshot(
+
+  collection(db,"sellers"),
+
+  snap => {
+
+    sellersData = [];
+
+    snap.forEach(d=>{
+
+      sellersData.push({
+        id:d.id,
+        ...d.data()
+      });
+
+    });
+
+    renderSellers();
+
+  },
+
+  error => {
+
+    console.error(
+      "Sellers Error:",
+      error.code,
+      error.message
+    );
+
+  }
+
+);
 
 async function autoAssignSeller(order){
 
