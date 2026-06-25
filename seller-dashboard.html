@@ -272,16 +272,18 @@ window.login = async function(){
     const sellerSnap =
     await getDocs(sellerQ);
 
-    if(!sellerSnap.empty){
+   if(!sellerSnap.empty){
 
-      const sellerData =
-      sellerSnap.docs[0].data();
+  const sellerData =
+  sellerSnap.docs[0].data();
 
-      sellerPhone =
-      sellerData.phone;
+  sellerPhone =
+  sellerData.phone;
 
-    }
+  sellerDocId =
+  sellerSnap.docs[0].id;
 
+}
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
 
