@@ -195,17 +195,16 @@ import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
 import {
-  getFirestore,
-  collection,
-  query,
-  where,
-  getDocs,
-  getDoc,
-  onSnapshot,
-  doc,
-  updateDoc,
-  increment,
-  orderBy
+getFirestore,
+collection,
+query,
+where,
+getDocs,
+getDoc,
+onSnapshot,
+doc,
+updateDoc,
+increment
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 import {
@@ -439,12 +438,11 @@ function loadOrders(){
 
  const q = query(
   collection(db,"orders"),
-  where("sellerUid","==",sellerUid),
-  orderBy("createdAt","desc")
+  where("sellerUid","==",sellerUid)
 );
-  
-  let firstLoad = true;
 
+  let firstLoad = true;
+  
   onSnapshot(q, snap => {
   
   console.log("SNAPSHOT RUNNING");
