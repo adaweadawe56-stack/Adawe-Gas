@@ -232,13 +232,17 @@ const auth = getAuth(app);
 let sellerPhone = null;
 let sellerDocId = null;
 let sellerUid = null;
-  
+
 const statusFilter =
 document.getElementById("statusFilter");
 
 const ordersTable =
 document.getElementById("ordersTable");
-  
+
+statusFilter.addEventListener("change", () => {
+  loadOrders();
+});
+
 /* LOGIN */
 
 window.login = async function(){
@@ -444,7 +448,7 @@ function loadOrders(){
   let firstLoad = true;
   
   onSnapshot(q, snap => {
-  
+    
   console.log("SNAPSHOT RUNNING");
   console.log("Orders Found =", snap.size);
 
