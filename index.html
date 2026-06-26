@@ -1197,33 +1197,39 @@ if (!sellerWhatsapp) {
 console.log("sellerWhatsapp =", sellerWhatsapp);
 console.log("sellerUid =", sellerData.uid);
 
-await addDoc(collection(db, "orders"), {
+console.log("Saving order...");
 
-  orderId,
-  name,
-  phone,
-  location,
-  quantity,
-  brand,
+await addDoc(
+  collection(db, "orders"),
+  {
+    orderId,
+    name,
+    phone,
+    location,
+    quantity,
+    brand,
 
-  price: orderPrice,
+    price: orderPrice,
 
-  sellerId: sellerId,
-  sellerUid: sellerData.uid,
+    sellerId,
+    sellerUid: sellerData.uid,
 
-  sellerName: sellerData.name,
-  sellerPhone: sellerWhatsapp,
-  sellerLocation: sellerData.location || "",
+    sellerName: sellerData.name,
+    sellerPhone: sellerWhatsapp,
+    sellerLocation: sellerData.location || "",
 
-  status: "Pending",
+    status: "Pending",
 
-  createdAt: serverTimestamp(),
-  assignedAt: new Date().toISOString(),
+    createdAt: serverTimestamp(),
+    assignedAt: new Date().toISOString(),
 
-  rating: null,
-  review: null
+    rating: null,
+    review: null
+  }
+);
 
-});
+console.log("Order saved successfully");
+    
  /* SUCCESS */
 
     showToast("✅ Order saved successfully");
