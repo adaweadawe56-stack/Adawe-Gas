@@ -371,7 +371,40 @@ window.rateSeller = async function(rating){
     document.getElementById("reviewText")?.value || "";
     
 console.log("sellerUid =", currentOrder.sellerUid);
-    
+    if(!sellerSnap.empty){
+
+  const sellerDoc =
+  sellerSnap.docs[0];
+
+  const sellerData =
+  sellerDoc.data();
+
+  const totalRatings =
+  (sellerData.totalRatings || 0) + 1;
+
+  const averageRating =
+  (
+    (
+      (sellerData.averageRating || 0) *
+      (sellerData.totalRatings || 0)
+    ) + rating
+  ) / totalRatings;
+
+  console.log("Seller found:", sellerSnap.size);
+  console.log("Updating seller doc:", sellerDoc.id);
+  console.log("Current seller data:", sellerData);
+
+  await updateDoc(
+    doc(db,"sellers",sellerDoc.id),
+    {
+      totalRatings,
+      averageRating:
+      Number(averageRating.toFixed(1))
+    }
+  );
+
+  console.log("Seller rating updated");
+}
  await addDoc(
   collection(db,"ratings"),
   {
@@ -390,44 +423,7 @@ console.log("sellerUid =", currentOrder.sellerUid);
     createdAt: serverTimestamp()
   }
 );
-
-    const sellerQ = query(
-      collection(db,"sellers"),
-      where("phone","==",currentOrder.sellerPhone)
-    );
-
-    const sellerSnap =
-    await getDocs(sellerQ);
-
-    if(!sellerSnap.empty){
-
-      const sellerDoc =
-      sellerSnap.docs[0];
-
-      const sellerData =
-      sellerDoc.data();
-
-      const totalRatings =
-      (sellerData.totalRatings || 0) + 1;
-
-      const averageRating =
-      (
-        (
-          (sellerData.averageRating || 0) *
-          (sellerData.totalRatings || 0)
-        ) + rating
-      ) / totalRatings;
-
-      await updateDoc(
-        doc(db,"sellers",sellerDoc.id),
-        {
-          totalRatings,
-          averageRating:
-          Number(averageRating.toFixed(1))
-        }
-      );
-    }
-
+  
    document.getElementById("ratingMessage").innerHTML =
 "✅ Thanks for your rating!";
 
