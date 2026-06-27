@@ -560,21 +560,21 @@ deliveryRate + "%";
 
 /* UPDATE STATUS */
 
-window.updateStatus = async function(id,status){
+window.updateStatus = async function(id, status){
 
- // if(status === "Accepted"){
+  if(status === "Accepted"){
 
-  const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
-  const seller = sellerSnap.data();
+    const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
+    const seller = sellerSnap.data();
 
-  console.log("Delivery Count:", seller.deliveryCount);
-  console.log("Delivery Limit:", seller.deliveryLimit);
+    console.log("Delivery Count:", seller.deliveryCount);
+    console.log("Delivery Limit:", seller.deliveryLimit);
 
-  if(seller.deliveryCount >= seller.deliveryLimit){
-    alert("Please pay your commission before accepting new orders.");
-    return;
+    if(seller.deliveryCount >= seller.deliveryLimit){
+      alert("Please pay your commission before accepting new orders.");
+      return;
+    }
   }
-}
 
   const orderRef = doc(db,"orders",id);
 
@@ -601,7 +601,10 @@ window.updateStatus = async function(id,status){
         deliveryCount: increment(1)
       }
     );
+
   }
+
+};
   
 /* LOGOUT */
 
