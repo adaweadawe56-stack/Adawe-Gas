@@ -444,7 +444,13 @@ function loadOrders(){
 
   }
       firstLoad = false;
+    
+const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
+const seller = sellerSnap.data();
 
+const limitReached =
+seller.deliveryCount >= seller.deliveryLimit;
+    
     ordersTable.innerHTML = "";
 
     let total = 0;
@@ -512,10 +518,11 @@ ordersTable.innerHTML += `
   <div class="d-flex gap-2 flex-wrap">
 
     <button
-    onclick="updateStatus('${docSnap.id}','Accepted')"
-    class="btn btn-primary btn-sm">
-    Accept
-    </button>
+onclick="updateStatus('${docSnap.id}','Accepted')"
+class="btn btn-primary btn-sm"
+${limitReached ? "disabled" : ""}>
+Accept
+</button>
 
     <button
     onclick="updateStatus('${docSnap.id}','On The Way')"
@@ -565,14 +572,16 @@ window.updateStatus = async function(id, status){
   if(status === "Accepted"){
 
     const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
-    const seller = sellerSnap.data();
+const seller = sellerSnap.data();
 
-    console.log("Delivery Count:", seller.deliveryCount);
-    console.log("Delivery Limit:", seller.deliveryLimit);
+alert(
+  "Count: " + seller.deliveryCount +
+  "\nLimit: " + seller.deliveryLimit
+);
 
-    if(seller.deliveryCount >= seller.deliveryLimit){
-      alert("Please pay your commission before accepting new orders.");
-      return;
+if(seller.deliveryCount >= seller.deliveryLimit){
+  alert("Please pay your commission before accepting new orders.");
+  return;
     }
   }
 
