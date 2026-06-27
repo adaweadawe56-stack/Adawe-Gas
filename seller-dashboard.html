@@ -583,11 +583,12 @@ if(data.sellerUid !== sellerUid){
   ){
 
     await updateDoc(
-      doc(db,"sellers",sellerDocId),
-      {
-        completedOrders: increment(1)
-      }
-    );
+  doc(db,"sellers",sellerDocId),
+  {
+    completedOrders: increment(1),
+    deliveryCount: increment(1)
+  }
+);
 
   }
 
