@@ -369,81 +369,38 @@ window.rateSeller = async function(rating){
 
     const review =
     document.getElementById("reviewText")?.value || "";
-    
-console.log("sellerUid =", currentOrder.sellerUid);
-    if(!sellerSnap.empty){
 
-  const sellerDoc =
-  sellerSnap.docs[0];
+    console.log("sellerUid =", currentOrder.sellerUid);
 
-  const sellerData =
-  sellerDoc.data();
+    await addDoc(
+      collection(db,"ratings"),
+      {
+        sellerUid: currentOrder.sellerUid,
+        sellerPhone: currentOrder.sellerPhone,
+        customerName: currentOrder.name,
+        orderId: currentOrder.orderId,
+        rating,
+        review,
+        brand: currentOrder.brand,
+        quantity: currentOrder.quantity,
+        createdAt: serverTimestamp()
+      }
+    );
 
-  const totalRatings =
-  (sellerData.totalRatings || 0) + 1;
+    document.getElementById("ratingMessage").innerHTML =
+    "✅ Thanks for your rating!";
 
-  const averageRating =
-  (
-    (
-      (sellerData.averageRating || 0) *
-      (sellerData.totalRatings || 0)
-    ) + rating
-  ) / totalRatings;
-
-  console.log("Seller found:", sellerSnap.size);
-  console.log("Updating seller doc:", sellerDoc.id);
-  console.log("Current seller data:", sellerData);
-
-  await updateDoc(
-    doc(db,"sellers",sellerDoc.id),
-    {
-      totalRatings,
-      averageRating:
-      Number(averageRating.toFixed(1))
-    }
-  );
-
-  console.log("Seller rating updated");
-}
- await addDoc(
-  collection(db,"ratings"),
-  {
-    sellerUid: currentOrder.sellerUid,
-    sellerPhone: currentOrder.sellerPhone,
-
-    customerName: currentOrder.name,
-    orderId: currentOrder.orderId,
-
-    rating,
-    review,
-
-    brand: currentOrder.brand,
-    quantity: currentOrder.quantity,
-
-    createdAt: serverTimestamp()
-  }
-);
-  
-   document.getElementById("ratingMessage").innerHTML =
-"✅ Thanks for your rating!";
-
-document.querySelectorAll(
-  'button[onclick^="rateSeller"]'
-).forEach(btn => {
-  btn.disabled = true;
-});
+    document.querySelectorAll(
+      'button[onclick^="rateSeller"]'
+    ).forEach(btn => {
+      btn.disabled = true;
+    });
 
   }catch(err){
 
-    console.error(
-      "Rating Error:",
-      err
-    );
+    console.error("Rating Error:", err);
 
-    alert(
-      "Rating Error: " +
-      err.message
-    );
+    alert("Rating Error: " + err.message);
 
   }
 
