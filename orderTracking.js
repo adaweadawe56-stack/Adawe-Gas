@@ -372,21 +372,61 @@ window.rateSeller = async function(rating){
 
     console.log("sellerUid =", currentOrder.sellerUid);
 
-    await addDoc(
-      collection(db,"ratings"),
-      {
-        sellerUid: currentOrder.sellerUid,
-        sellerPhone: currentOrder.sellerPhone,
-        customerName: currentOrder.name,
-        orderId: currentOrder.orderId,
-        rating,
-        review,
-        brand: currentOrder.brand,
-        quantity: currentOrder.quantity,
-        createdAt: serverTimestamp()
-      }
-    );
+await addDoc(
+  collection(db,"ratings"),
+  {
+    sellerUid: currentOrder.sellerUid,
+    sellerPhone: currentOrder.sellerPhone,
+    customerName: currentOrder.name,
+    orderId: currentOrder.orderId,
+    rating,
+    review,
+    brand: currentOrder.brand,
+    quantity: currentOrder.quantity,
+    createdAt: serverTimestamp()
+  }
+);
 
+const sellerQ = query(
+  collection(db, "sellers"),
+  where("uid", "==", currentOrder.sellerUid)
+);
+
+const sellerSnap = await getDocs(sellerQ);
+
+if (!sellerSnap.empty) {
+
+  const sellerDoc = sellerSnap.docs[0];
+  const sellerData = sellerDoc.data();
+
+  console.log("Seller found:", sellerSnap.size);
+  console.log("Updating seller:", sellerDoc.id);
+  console.log("Current ratings:", sellerData.totalRatings);
+  console.log("Current average:", sellerData.averageRating);
+  console.log("New rating:", rating);
+
+  const totalRatings =
+    (sellerData.totalRatings || 0) + 1;
+
+  const averageRating =
+    (
+      (
+        (sellerData.averageRating || 0) *
+        (sellerData.totalRatings || 0)
+      ) + rating
+    ) / totalRatings;
+
+  await updateDoc(
+    doc(db, "sellers", sellerDoc.id),
+    {
+      totalRatings,
+      averageRating: Number(averageRating.toFixed(1))
+    }
+  );
+
+  console.log("Seller updated successfully");
+}
+    
     document.getElementById("ratingMessage").innerHTML =
     "✅ Thanks for your rating!";
 
@@ -398,10 +438,12 @@ window.rateSeller = async function(rating){
 
   }catch(err){
 
-    console.error("Rating Error:", err);
+  console.error("Rating Error:", err);
+  console.error("Error code:", err.code);
+  console.error("Error message:", err.message);
 
-    alert("Rating Error: " + err.message);
+  alert("Rating Error: " + err.message);
 
-  }
+}
 
 };
