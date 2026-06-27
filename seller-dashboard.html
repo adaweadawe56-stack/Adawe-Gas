@@ -562,17 +562,19 @@ deliveryRate + "%";
 
 window.updateStatus = async function(id,status){
 
-  // Haddii uu doonayo inuu ACCEPT sameeyo
-  if(status === "Accepted"){
+ // if(status === "Accepted"){
 
-    const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
-    const seller = sellerSnap.data();
+  const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
+  const seller = sellerSnap.data();
 
-    if(seller.deliveryCount >= seller.deliveryLimit){
-      alert("Please pay your commission before accepting new orders.");
-      return;
-    }
+  console.log("Delivery Count:", seller.deliveryCount);
+  console.log("Delivery Limit:", seller.deliveryLimit);
+
+  if(seller.deliveryCount >= seller.deliveryLimit){
+    alert("Please pay your commission before accepting new orders.");
+    return;
   }
+}
 
   const orderRef = doc(db,"orders",id);
 
