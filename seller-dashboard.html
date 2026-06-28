@@ -176,13 +176,56 @@ Login
   <div id="ordersTable"></div>
 
 </div>
+  
   <div class="card-box">
 
-  <h4>Customer Reviews</h4>
+  <div class="d-flex justify-content-between align-items-center">
 
-  <div id="reviewsContainer">
+    <h4>Customer Reviews</h4>
 
-    No reviews yet
+    <button
+      class="btn btn-primary btn-sm"
+      data-bs-toggle="modal"
+      data-bs-target="#reviewsModal">
+      View Reviews
+    </button>
+
+  </div>
+
+ </div>
+  
+  <!-- Reviews Modal -->
+<div class="modal fade" id="reviewsModal" tabindex="-1">
+
+  <div class="modal-dialog modal-lg">
+
+    <div class="modal-content">
+
+      <div class="modal-header">
+
+        <h5 class="modal-title">
+          Customer Reviews
+        </h5>
+
+        <button
+          type="button"
+          class="btn-close"
+          data-bs-dismiss="modal">
+        </button>
+
+      </div>
+
+      <div class="modal-body">
+
+        <div id="reviewsContainer">
+
+          No reviews yet
+
+        </div>
+
+      </div>
+
+    </div>
 
   </div>
 
