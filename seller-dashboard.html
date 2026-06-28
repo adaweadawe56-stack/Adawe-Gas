@@ -786,42 +786,53 @@ window.updateStatus = async function(id, status){
 
 };
   
- window.payCommission = async function(){
+window.payCommission = async function(){
 
-  if(!confirm("Confirm commission payment?")){
-    return;
+  try{
+
+    if(!confirm("Confirm commission payment?")){
+      return;
+    }
+
+    const sellerSnap = await getDoc(
+      doc(db,"sellers",sellerDocId)
+    );
+
+    const seller = sellerSnap.data();
+
+    alert("Saving history...");
+
+    await addDoc(
+      collection(db,"commissionHistory"),
+      {
+        sellerUid: sellerUid,
+        sellerId: sellerDocId,
+        sellerName: seller.name,
+        amount: seller.deliveryLimit * seller.commissionPerOrder,
+        paymentMethod: "Manual",
+        status: "Paid",
+        createdAt: serverTimestamp()
+      }
+    );
+
+    alert("History Saved");
+
+    await updateDoc(
+      doc(db,"sellers",sellerDocId),
+      {
+        deliveryCount: 0,
+        paymentStatus: "Paid"
+      }
+    );
+
+    alert("Done");
+
+  }catch(err){
+
+    console.error(err);
+    alert(err.message);
+
   }
-
-  const sellerSnap = await getDoc(
-    doc(db,"sellers",sellerDocId)
-  );
-
-  const seller = sellerSnap.data();
-
-  // Save payment history
-  await addDoc(
-    collection(db,"commissionHistory"),
-    {
-      sellerUid: sellerUid,
-      sellerId: sellerDocId,
-      sellerName: seller.name,
-      amount: seller.deliveryLimit * seller.commissionPerOrder,
-      paymentMethod: "Manual",
-      status: "Paid",
-      createdAt: serverTimestamp()
-    }
-  );
-
-  // Reset seller
-  await updateDoc(
-    doc(db,"sellers",sellerDocId),
-    {
-      deliveryCount: 0,
-      paymentStatus: "Paid"
-    }
-  );
-
-  alert("✅ Commission marked as paid.");
 
 };
   
