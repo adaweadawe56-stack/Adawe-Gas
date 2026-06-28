@@ -518,7 +518,8 @@ ordersTable.innerHTML += `
 
     <button
 onclick="updateStatus('${docSnap.id}','Accepted')"
-class="btn btn-primary btn-sm">
+class="btn btn-primary btn-sm"
+${limitReached ? "disabled" : ""}>
 Accept
 </button>
 
