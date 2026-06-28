@@ -310,7 +310,8 @@ Update your LPG prices. Customers will see these prices in the app.
   <span class="input-group-text">KES</span>
 </div>
 
-    <button
+   <button
+  id="savePricesBtn"
   onclick="savePrices()"
   class="btn btn-success w-100">
   💾 Save Prices
@@ -818,7 +819,10 @@ window.savePrices = async function(){
     alert("Seller not loaded");
     return;
   }
+const btn = document.getElementById("savePricesBtn");
 
+btn.disabled = true;
+btn.innerHTML = "⏳ Saving...";
   const prices = {
 
     "1kg": Number(document.getElementById("price1kg").value || 0),
@@ -840,7 +844,14 @@ window.savePrices = async function(){
     { prices }
   );
 
-  alert("✅ Prices updated successfully");
+  btn.innerHTML = "✅ Prices Saved";
+
+setTimeout(() => {
+
+  btn.disabled = false;
+  btn.innerHTML = "💾 Save Prices";
+
+},2000);
 
 };
 
