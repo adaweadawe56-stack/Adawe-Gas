@@ -512,7 +512,7 @@ ordersTable.innerHTML += `
   <div class="d-flex gap-2 flex-wrap">
 
     <button
-onclick="alert('Accept button clicked')"
+onclick="updateStatus('${docSnap.id}','Accepted')"
 class="btn btn-primary btn-sm">
 Accept
 </button>
