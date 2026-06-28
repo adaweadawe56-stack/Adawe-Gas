@@ -136,7 +136,27 @@ Login
 
 </div>
 
+<div class="card-box" id="commissionCard" style="display:none;">
 
+  <h4>💳 Commission Due</h4>
+
+  <p>
+    You have reached your delivery limit.
+  </p>
+
+  <p>
+    <b>Commission:</b>
+    <span id="commissionAmount">KES 0</span>
+  </p>
+
+  <button
+    onclick="payCommission()"
+    class="btn btn-danger">
+    Pay with M-Pesa
+  </button>
+
+</div>
+  
 <div class="card-box">
 
   <h4>My Orders</h4>
@@ -444,11 +464,32 @@ function loadOrders(){
 
   }
       firstLoad = false;
-        const sellerSnap = await getDoc(doc(db, "sellers", sellerDocId));
+    
+       const sellerSnap = await getDoc(doc(db, "sellers", sellerDocId));
 const seller = sellerSnap.data();
 
 const limitReached =
   seller.deliveryCount >= seller.deliveryLimit;
+
+const commissionCard =
+document.getElementById("commissionCard");
+
+const commissionAmount =
+document.getElementById("commissionAmount");
+
+if(limitReached){
+
+  commissionCard.style.display = "block";
+
+  commissionAmount.innerText =
+    "KES " + (seller.deliveryLimit * seller.commissionPerOrder);
+
+}else{
+
+  commissionCard.style.display = "none";
+
+}
+    
     
     ordersTable.innerHTML = "";
 
