@@ -40,6 +40,10 @@ body{
   border-radius:12px;
   box-shadow:0 2px 10px rgba(0,0,0,0.08);
 }
+  .modal-body{
+  max-height:70vh;
+  overflow-y:auto;
+}
 
 </style>
 
@@ -236,23 +240,81 @@ Login
 
   <h4>My Gas Prices</h4>
 
-    <input id="price1kg" class="form-control mb-2" placeholder="1kg Price">
-    <input id="price3kg" class="form-control mb-2" placeholder="3kg Price">
-    <input id="price6kg" class="form-control mb-2" placeholder="6kg Price">
-    <input id="price13kg" class="form-control mb-2" placeholder="13kg Price">
-    <input id="price15kg" class="form-control mb-2" placeholder="15kg Price">
-    <input id="price22kg" class="form-control mb-2" placeholder="22kg Price">
-    <input id="price25kg" class="form-control mb-2" placeholder="25kg Price">
-    <input id="price35kg" class="form-control mb-2" placeholder="35kg Price">
-    <input id="price40kg" class="form-control mb-2" placeholder="40kg Price">
-    <input id="price45kg" class="form-control mb-2" placeholder="45kg Price">
-    <input id="price50kg" class="form-control mb-3" placeholder="50kg Price">
+  <p class="text-muted mb-3">
+Update your LPG prices. Customers will see these prices in the app.
+</p>
+
+    <div class="input-group mb-2">
+  <span class="input-group-text">1kg</span>
+  <input id="price1kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">3kg</span>
+  <input id="price3kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">6kg</span>
+  <input id="price6kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">13kg</span>
+  <input id="price13kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">15kg</span>
+  <input id="price15kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">22kg</span>
+  <input id="price22kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">25kg</span>
+  <input id="price25kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">35kg</span>
+  <input id="price35kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">40kg</span>
+  <input id="price40kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-2">
+  <span class="input-group-text">45kg</span>
+  <input id="price45kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
+
+<div class="input-group mb-3">
+  <span class="input-group-text">50kg</span>
+  <input id="price50kg" type="number" class="form-control" placeholder="Price">
+  <span class="input-group-text">KES</span>
+</div>
 
     <button
-      onclick="savePrices()"
-      class="btn btn-success">
-      Save Prices
-    </button>
+  onclick="savePrices()"
+  class="btn btn-success w-100">
+  💾 Save Prices
+</button>
 
   </div>
 
