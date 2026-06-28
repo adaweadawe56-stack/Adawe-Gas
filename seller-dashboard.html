@@ -307,7 +307,6 @@ window.login = async function(){
   sellerDocId =
   sellerSnap.docs[0].id;
 
-}
     const prices = sellerData.prices || {};
 
 document.getElementById("price1kg").value = prices["1kg"] || "";
@@ -321,7 +320,9 @@ document.getElementById("price35kg").value = prices["35kg"] || "";
 document.getElementById("price40kg").value = prices["40kg"] || "";
 document.getElementById("price45kg").value = prices["45kg"] || "";
 document.getElementById("price50kg").value = prices["50kg"] || "";
-    
+     
+    }
+        
     document.getElementById("loginPage").style.display = "none";
     document.getElementById("dashboard").style.display = "block";
     
