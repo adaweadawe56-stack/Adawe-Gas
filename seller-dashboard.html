@@ -335,9 +335,12 @@ import {
   onSnapshot,
   doc,
   updateDoc,
-  increment
+  increment,
+  addDoc,
+  serverTimestamp
 }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
 import {
 getAuth,
 signInWithEmailAndPassword,
@@ -783,12 +786,33 @@ window.updateStatus = async function(id, status){
 
 };
   
-  window.payCommission = async function(){
+ window.payCommission = async function(){
 
   if(!confirm("Confirm commission payment?")){
     return;
   }
 
+  const sellerSnap = await getDoc(
+    doc(db,"sellers",sellerDocId)
+  );
+
+  const seller = sellerSnap.data();
+
+  // Save payment history
+  await addDoc(
+    collection(db,"commissionHistory"),
+    {
+      sellerUid: sellerUid,
+      sellerId: sellerDocId,
+      sellerName: seller.name,
+      amount: seller.deliveryLimit * seller.commissionPerOrder,
+      paymentMethod: "Manual",
+      status: "Paid",
+      createdAt: serverTimestamp()
+    }
+  );
+
+  // Reset seller
   await updateDoc(
     doc(db,"sellers",sellerDocId),
     {
