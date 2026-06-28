@@ -562,6 +562,8 @@ deliveryRate + "%";
 
 window.updateStatus = async function(id, status){
 
+  alert("updateStatus works");
+
   if(status === "Accepted"){
 
     const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
