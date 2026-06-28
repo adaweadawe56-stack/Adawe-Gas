@@ -578,17 +578,6 @@ window.updateStatus = async function(id, status){
       alert("Please pay your commission before accepting new orders.");
       return;
     }
-}
-
-alert(
-  "Count: " + seller.deliveryCount +
-  "\nLimit: " + seller.deliveryLimit
-);
-
-if(seller.deliveryCount >= seller.deliveryLimit){
-  alert("Please pay your commission before accepting new orders.");
-  return;
-    }
   }
 
   const orderRef = doc(db,"orders",id);
