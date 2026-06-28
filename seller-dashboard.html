@@ -557,30 +557,33 @@ ordersTable.innerHTML += `
 
   <div class="d-flex gap-2 flex-wrap">
 
-   <button
+  <button
 onclick="updateStatus('${docSnap.id}','Accepted')"
 class="btn btn-primary btn-sm"
 ${limitReached ? "disabled" : ""}>
 Accept
 </button>
 
-    <button
-    onclick="updateStatus('${docSnap.id}','On The Way')"
-    class="btn btn-warning btn-sm">
-    On The Way
-    </button>
+<button
+onclick="updateStatus('${docSnap.id}','On The Way')"
+class="btn btn-warning btn-sm"
+${limitReached ? "disabled" : ""}>
+On The Way
+</button>
 
-    <button
-    onclick="updateStatus('${docSnap.id}','Delivered')"
-    class="btn btn-success btn-sm">
-    Delivered
-    </button>
+<button
+onclick="updateStatus('${docSnap.id}','Delivered')"
+class="btn btn-success btn-sm"
+${limitReached ? "disabled" : ""}>
+Delivered
+</button>
 
-    <button
-    onclick="updateStatus('${docSnap.id}','Rejected')"
-    class="btn btn-danger btn-sm">
-    Reject
-    </button>
+<button
+onclick="updateStatus('${docSnap.id}','Rejected')"
+class="btn btn-danger btn-sm"
+${limitReached ? "disabled" : ""}>
+Reject
+</button>
 
   </div>
 
