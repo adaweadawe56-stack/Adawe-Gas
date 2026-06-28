@@ -414,13 +414,13 @@ function loadOrders(){
 
   let firstLoad = true;
   
-  onSnapshot(q, snap => {
+  onSnapshot(q, async snap => {
     
   console.log("SNAPSHOT RUNNING");
   console.log("Orders Found =", snap.size);
 
   if (!firstLoad) {
-
+    
     snap.docChanges().forEach(change => {
 
       if (change.type === "added") {
@@ -444,7 +444,12 @@ function loadOrders(){
 
   }
       firstLoad = false;
-        
+        const sellerSnap = await getDoc(doc(db, "sellers", sellerDocId));
+const seller = sellerSnap.data();
+
+const limitReached =
+  seller.deliveryCount >= seller.deliveryLimit;
+    
     ordersTable.innerHTML = "";
 
     let total = 0;
