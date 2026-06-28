@@ -661,6 +661,24 @@ window.updateStatus = async function(id, status){
 
 };
   
+  window.payCommission = async function(){
+
+  if(!confirm("Confirm commission payment?")){
+    return;
+  }
+
+  await updateDoc(
+    doc(db,"sellers",sellerDocId),
+    {
+      deliveryCount: 0,
+      paymentStatus: "Paid"
+    }
+  );
+
+  alert("✅ Commission marked as paid.");
+
+};
+  
 /* LOGOUT */
 
 window.logout = async function(){
