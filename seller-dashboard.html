@@ -496,6 +496,7 @@ console.log("sellerDocId =", sellerDocId);
 
 loadOrders();
 loadReviews(sellerUid);
+loadCommissionHistory();
 
   }catch(err){
 
@@ -839,7 +840,66 @@ window.updateStatus = async function(id, status){
   }
 
 };
-  
+  async function loadCommissionHistory() {
+
+  const q = query(
+    collection(db, "commissionHistory"),
+    where("sellerUid", "==", sellerUid),
+    orderBy("createdAt", "desc")
+  );
+
+  onSnapshot(q, snap => {
+
+    const container =
+      document.getElementById("commissionHistory");
+
+    if (snap.empty) {
+
+      container.innerHTML =
+        "<p>No commission records yet.</p>";
+
+      return;
+
+    }
+
+    let html = "";
+
+    snap.forEach(docSnap => {
+
+      const h = docSnap.data();
+
+      let date = "";
+
+      if (h.createdAt) {
+
+        date =
+          h.createdAt.toDate().toLocaleDateString();
+
+      }
+
+      html += `
+      <div class="card p-3 mb-2">
+
+        <h6>KES ${h.amount}</h6>
+
+        <p class="mb-1">
+          ${date}
+        </p>
+
+        <span class="badge bg-success">
+          ${h.status}
+        </span>
+
+      </div>
+      `;
+
+    });
+
+    container.innerHTML = html;
+
+  });
+
+}
 window.payCommission = async function(){
 
   try{
