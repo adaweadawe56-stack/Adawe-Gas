@@ -557,19 +557,12 @@ ordersTable.innerHTML += `
 
   <div class="d-flex gap-2 flex-wrap">
 
-    ${limitReached ? `
-<button
-class="btn btn-danger btn-sm"
-onclick="payCommission()">
-💳 Pay Commission
-</button>
-` : `
-<button
+   <button
 onclick="updateStatus('${docSnap.id}','Accepted')"
-class="btn btn-primary btn-sm">
+class="btn btn-primary btn-sm"
+${limitReached ? "disabled" : ""}>
 Accept
 </button>
-`}
 
     <button
     onclick="updateStatus('${docSnap.id}','On The Way')"
