@@ -567,7 +567,18 @@ window.updateStatus = async function(id, status){
   if(status === "Accepted"){
 
     const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
-const seller = sellerSnap.data();
+    const seller = sellerSnap.data();
+
+    alert(
+      "Count = " + seller.deliveryCount +
+      "\nLimit = " + seller.deliveryLimit
+    );
+
+    if(seller.deliveryCount >= seller.deliveryLimit){
+      alert("Please pay your commission before accepting new orders.");
+      return;
+    }
+}
 
 alert(
   "Count: " + seller.deliveryCount +
