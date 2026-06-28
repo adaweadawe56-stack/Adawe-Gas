@@ -501,6 +501,11 @@ if(limitReached){
     snap.forEach(docSnap => {
 
   const o = docSnap.data();
+      
+      const canEdit =
+  !limitReached ||
+  o.status === "Accepted" ||
+  o.status === "On The Way";
 
   const selectedStatus =
   statusFilter.value;
@@ -557,35 +562,37 @@ ordersTable.innerHTML += `
 
   <div class="d-flex gap-2 flex-wrap">
 
+ <div class="d-flex gap-2 flex-wrap">
+
   <button
-onclick="updateStatus('${docSnap.id}','Accepted')"
-class="btn btn-primary btn-sm"
-${limitReached ? "disabled" : ""}>
-Accept
-</button>
+    onclick="updateStatus('${docSnap.id}','Accepted')"
+    class="btn btn-primary btn-sm"
+    ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
+    Accept
+  </button>
 
-<button
-onclick="updateStatus('${docSnap.id}','On The Way')"
-class="btn btn-warning btn-sm"
-${limitReached ? "disabled" : ""}>
-On The Way
-</button>
+  <button
+    onclick="updateStatus('${docSnap.id}','On The Way')"
+    class="btn btn-warning btn-sm"
+    ${o.status !== "Accepted" ? "disabled" : ""}>
+    On The Way
+  </button>
 
-<button
-onclick="updateStatus('${docSnap.id}','Delivered')"
-class="btn btn-success btn-sm"
-${limitReached ? "disabled" : ""}>
-Delivered
-</button>
+  <button
+    onclick="updateStatus('${docSnap.id}','Delivered')"
+    class="btn btn-success btn-sm"
+    ${o.status !== "On The Way" ? "disabled" : ""}>
+    Delivered
+  </button>
 
-<button
-onclick="updateStatus('${docSnap.id}','Rejected')"
-class="btn btn-danger btn-sm"
-${limitReached ? "disabled" : ""}>
-Reject
-</button>
+  <button
+    onclick="updateStatus('${docSnap.id}','Rejected')"
+    class="btn btn-danger btn-sm"
+    ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
+    Reject
+  </button>
 
-  </div>
+</div>
 
 </div>
       `;
