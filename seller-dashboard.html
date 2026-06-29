@@ -1115,6 +1115,114 @@ doc.line(130,210,190,210);
 doc.save(receiptNo + ".pdf");
 
 };
+  window.printReceipt = function(
+
+receiptNo,
+sellerName,
+amount,
+paymentMethod,
+date
+
+){
+
+const printWindow = window.open("", "_blank");
+
+printWindow.document.write(`
+<html>
+
+<head>
+
+<title>${receiptNo}</title>
+
+<style>
+
+body{
+font-family:Arial,sans-serif;
+padding:40px;
+}
+
+h2{
+color:#198754;
+}
+
+table{
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+}
+
+td{
+padding:10px;
+border:1px solid #ddd;
+}
+
+.footer{
+margin-top:40px;
+text-align:center;
+font-size:14px;
+color:#777;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h2>ADAWE GAS NETWORK</h2>
+
+<h3>Commission Receipt</h3>
+
+<table>
+
+<tr>
+<td><b>Receipt No</b></td>
+<td>${receiptNo}</td>
+</tr>
+
+<tr>
+<td><b>Seller</b></td>
+<td>${sellerName}</td>
+</tr>
+
+<tr>
+<td><b>Amount</b></td>
+<td>KES ${amount}</td>
+</tr>
+
+<tr>
+<td><b>Payment Method</b></td>
+<td>${paymentMethod}</td>
+</tr>
+
+<tr>
+<td><b>Status</b></td>
+<td>PAID</td>
+</tr>
+
+<tr>
+<td><b>Date</b></td>
+<td>${date}</td>
+</tr>
+
+</table>
+
+<div class="footer">
+
+Thank you for choosing Adawe Gas Network.
+
+</div>
+
+</body>
+
+</html>
+`);
+
+printWindow.document.close();
+
+printWindow.print();
+
+};
 window.payCommission = async function(){
 
   try{
