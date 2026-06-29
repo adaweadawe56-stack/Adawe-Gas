@@ -288,6 +288,51 @@ Login
 
   </div>
 
+<div class="card shadow-sm mb-3">
+
+  <div class="card-body">
+
+    <div class="row">
+
+      <div class="col-md-6">
+
+        <input
+          type="text"
+          id="commissionSearch"
+          class="form-control"
+          placeholder="🔍 Search Receipt, Invoice, Seller or Payment Method">
+
+      </div>
+
+      <div class="col-md-3 mt-2 mt-md-0">
+
+        <input
+          type="date"
+          id="commissionDate"
+          class="form-control">
+
+      </div>
+
+      <div class="col-md-3 mt-2 mt-md-0">
+
+        <button
+          class="btn btn-success w-100"
+          onclick="loadCommissionHistory()">
+
+          🔄 Refresh
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+
+<div id="commissionHistory"></div>
+  
   <div id="commissionHistory">
 
     No commission records yet.
@@ -877,11 +922,34 @@ window.updateStatus = async function(id, status){
     }
 
    let html = "";
+    
+    const search =
+document.getElementById("commissionSearch")
+.value
+.toLowerCase();
+
+const filterDate =
+document.getElementById("commissionDate").value;
+    
 
 let totalAmount = 0;
 let totalPayments = 0;
 
     snap.forEach(docSnap => {
+
+      const h = docSnap.data();
+
+const receipt =
+(h.receiptNo || "").toLowerCase();
+
+const invoice =
+(h.invoiceNo || "").toLowerCase();
+
+const seller =
+(h.sellerName || "").toLowerCase();
+
+const payment =
+(h.paymentMethod || "").toLowerCase();
 
      const h = docSnap.data();
 
@@ -896,6 +964,35 @@ totalPayments++;
           h.createdAt.toDate().toLocaleDateString();
 
       }
+
+      if(
+
+search &&
+!receipt.includes(search) &&
+!invoice.includes(search) &&
+!seller.includes(search) &&
+!payment.includes(search)
+
+){
+
+return;
+
+}
+
+if(filterDate){
+
+const recordDate =
+h.createdAt
+? h.createdAt.toDate().toISOString().slice(0,10)
+: "";
+
+if(recordDate !== filterDate){
+
+return;
+
+}
+
+}
 
      html += `
 <div class="card shadow-sm mb-3 border-0">
