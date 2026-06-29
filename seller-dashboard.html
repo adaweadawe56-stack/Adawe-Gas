@@ -1237,9 +1237,18 @@ window.payCommission = async function(){
 
     const seller = sellerSnap.data();
 
+const previousPayments =
+  seller.totalCommissionPayments || 0;
+
+const totalPaid =
+  (previousPayments + 1) *
+  (seller.deliveryLimit * seller.commissionPerOrder);
+
+const outstandingBalance = 0;
+
 const receiptNo =
   "COM-" +
-  String((seller.totalCommissionPayments || 0) + 1).padStart(4, "0");
+  String((seller.totalCommissionPayments || 0) + 1).padStart(4,"0");
 
 const invoiceNo =
   "INV-" +
@@ -1248,26 +1257,33 @@ const invoiceNo =
 alert("Saving history...");
 
    
-    await addDoc(
+   await addDoc(
   collection(db,"commissionHistory"),
   {
-    sellerUid: sellerUid,
+
+    sellerUid,
     sellerId: sellerDocId,
     sellerName: seller.name,
+    sellerPhone: seller.phone,
 
-    amount: seller.deliveryLimit * seller.commissionPerOrder,
+    amount,
 
     paymentMethod: "Manual",
 
     status: "Paid",
 
-   receiptNo,
+    receiptNo,
 
-invoiceNo,
+    invoiceNo,
 
-sellerPhone: seller.phone,
+    previousPayments,
 
-createdAt: serverTimestamp()
+    totalPaid,
+
+    outstandingBalance,
+
+    createdAt: serverTimestamp()
+
   }
 );
 
