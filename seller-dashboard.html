@@ -951,9 +951,9 @@ totalPayments++;
     Receipt Number
   </small><br>
 
-  <strong class="text-primary">
-    ${h.receiptNo}
-  </strong>
+ <strong class="text-primary">
+  ${h.receiptNo || "N/A"}
+</strong>
 
     </div>
     </div>
@@ -988,6 +988,12 @@ window.payCommission = async function(){
 
     const seller = sellerSnap.data();
 
+const receiptNo =
+  "COM-" +
+  String((seller.totalCommissionPayments || 0) + 1).padStart(4, "0");
+
+alert("Saving history...");
+
     alert("Saving history...");
 
     await addDoc(
@@ -1003,8 +1009,7 @@ window.payCommission = async function(){
 
     status: "Paid",
 
-    receiptNo:
-      "COM-" + Date.now(),
+   receiptNo,
 
     createdAt: serverTimestamp()
   }
@@ -1012,13 +1017,14 @@ window.payCommission = async function(){
 
     alert("History Saved");
 
-    await updateDoc(
-      doc(db,"sellers",sellerDocId),
-      {
-        deliveryCount: 0,
-        paymentStatus: "Paid"
-      }
-    );
+   await updateDoc(
+  doc(db,"sellers",sellerDocId),
+  {
+    deliveryCount: 0,
+    paymentStatus: "Paid",
+    totalCommissionPayments: increment(1)
+  }
+);
 
     alert("Done");
 
