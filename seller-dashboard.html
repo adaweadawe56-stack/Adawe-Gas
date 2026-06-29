@@ -555,7 +555,27 @@ loadOrders();
 loadReviews(sellerUid);
 loadCommissionHistory();
 
-  }catch(err){
+const commissionSearch =
+document.getElementById("commissionSearch");
+
+const commissionDate =
+document.getElementById("commissionDate");
+
+if (commissionSearch) {
+  commissionSearch.addEventListener(
+    "input",
+    loadCommissionHistory
+  );
+}
+
+if (commissionDate) {
+  commissionDate.addEventListener(
+    "change",
+    loadCommissionHistory
+  );
+}
+
+}catch(err){
 
     console.error(err);
 
