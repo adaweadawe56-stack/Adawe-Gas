@@ -330,9 +330,7 @@ Login
   </div>
 
 </div>
-
-<div id="commissionHistory"></div>
-  
+ 
   <div id="commissionHistory">
 
     No commission records yet.
@@ -936,9 +934,7 @@ let totalAmount = 0;
 let totalPayments = 0;
 
     snap.forEach(docSnap => {
-
-      const h = docSnap.data();
-
+      
 const receipt =
 (h.receiptNo || "").toLowerCase();
 
@@ -964,7 +960,7 @@ totalPayments++;
           h.createdAt.toDate().toLocaleDateString();
 
       }
-
+     
       if(
 
 search &&
