@@ -925,51 +925,61 @@ totalPayments++;
 
     <div class="row">
 
-      <div class="col-6">
-        <small class="text-muted">
-          Payment Method
-        </small><br>
+  <div class="col-6">
 
-        <strong>
-          ${h.paymentMethod}
-        </strong>
-      </div>
+    <small class="text-muted">
+      Payment Method
+    </small><br>
 
-      <div class="col-6 text-end">
-        <small class="text-muted">
-          Seller
-        </small><br>
+    <strong>
+      ${h.paymentMethod}
+    </strong>
 
-        <strong>
-          ${h.sellerName}
-        </strong>
-      </div>
-      
+  </div>
+
+  <div class="col-6 text-end">
+
+    <small class="text-muted">
+      Seller
+    </small><br>
+
+    <strong>
+      ${h.sellerName}
+    </strong>
+
+  </div>
+
+</div>
+
+<hr>
+
 <div class="mt-3">
 
   <small class="text-muted">
     Receipt Number
   </small><br>
 
- <strong class="text-primary">
-  ${h.receiptNo || "N/A"}
-</strong>
-    </div>
-    <div class="mt-3 text-end">
+  <strong class="text-primary">
+    ${h.receiptNo || "N/A"}
+  </strong>
 
-<button
-class="btn btn-outline-primary btn-sm"
-onclick='downloadReceipt(
-"${h.receiptNo}",
-"${h.sellerName}",
-"${h.amount}",
-"${h.paymentMethod}",
-"${date}"
-)'>
-📄 Download Receipt
-</button>
+</div>
 
-    </div>
+<div class="mt-3 text-end">
+
+  <button
+    class="btn btn-outline-primary btn-sm"
+    onclick='downloadReceipt(
+      "${h.receiptNo}",
+      "${h.sellerName}",
+      "${h.amount}",
+      "${h.paymentMethod}",
+      "${date}"
+    )'>
+    📄 Download Receipt
+  </button>
+
+     </div>
     </div>
   </div>
 </div>
