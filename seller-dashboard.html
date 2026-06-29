@@ -272,7 +272,19 @@ Login
         </button>
 
       </div>
+      
+<div class="alert alert-success mb-3">
 
+  <h5 id="totalCommissionPaid">
+    Total Paid: KES 0
+  </h5>
+
+  <small id="totalPayments">
+    0 Payments
+  </small>
+
+</div> 
+      
       <div class="modal-body">
 
         <div id="commissionHistory">
@@ -862,11 +874,17 @@ window.updateStatus = async function(id, status){
 
     }
 
-    let html = "";
+   let html = "";
+
+let totalAmount = 0;
+let totalPayments = 0;
 
     snap.forEach(docSnap => {
 
-      const h = docSnap.data();
+     const h = docSnap.data();
+
+totalAmount += Number(h.amount || 0);
+totalPayments++;
 
       let date = "";
 
@@ -895,7 +913,13 @@ window.updateStatus = async function(id, status){
 
     });
 
-    container.innerHTML = html;
+   document.getElementById("totalCommissionPaid").innerText =
+"Total Paid: KES " + totalAmount;
+
+document.getElementById("totalPayments").innerText =
+totalPayments + " Payments";
+
+container.innerHTML = html;
 
   });
 
