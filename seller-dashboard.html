@@ -896,24 +896,73 @@ totalPayments++;
 
       }
 
-      html += `
-      <div class="card p-3 mb-2">
+     html += `
+<div class="card shadow-sm mb-3 border-0">
 
-        <h6>KES ${h.amount}</h6>
+  <div class="card-body">
 
-        <p class="mb-1">
-          ${date}
-        </p>
+    <div class="d-flex justify-content-between align-items-center">
 
-        <span class="badge bg-success">
-          ${h.status}
-        </span>
+      <div>
+
+        <h5 class="mb-1 text-success">
+          💰 KES ${Number(h.amount).toLocaleString()}
+        </h5>
+
+        <small class="text-muted">
+          📅 ${date}
+        </small>
 
       </div>
-      `;
 
-    });
+      <span class="badge bg-success">
+        ✅ ${h.status}
+      </span>
 
+    </div>
+
+    <hr>
+
+    <div class="row">
+
+      <div class="col-6">
+        <small class="text-muted">
+          Payment Method
+        </small><br>
+
+        <strong>
+          ${h.paymentMethod}
+        </strong>
+      </div>
+
+      <div class="col-6 text-end">
+        <small class="text-muted">
+          Seller
+        </small><br>
+
+        <strong>
+          ${h.sellerName}
+        </strong>
+      </div>
+      
+<div class="mt-3">
+
+  <small class="text-muted">
+    Receipt Number
+  </small><br>
+
+  <strong class="text-primary">
+    ${h.receiptNo}
+  </strong>
+
+    </div>
+    </div>
+
+  </div>
+
+</div>
+`;
+});
    document.getElementById("totalCommissionPaid").innerText =
 "Total Paid: KES " + totalAmount;
 
@@ -942,17 +991,24 @@ window.payCommission = async function(){
     alert("Saving history...");
 
     await addDoc(
-      collection(db,"commissionHistory"),
-      {
-        sellerUid: sellerUid,
-        sellerId: sellerDocId,
-        sellerName: seller.name,
-        amount: seller.deliveryLimit * seller.commissionPerOrder,
-        paymentMethod: "Manual",
-        status: "Paid",
-        createdAt: serverTimestamp()
-      }
-    );
+  collection(db,"commissionHistory"),
+  {
+    sellerUid: sellerUid,
+    sellerId: sellerDocId,
+    sellerName: seller.name,
+
+    amount: seller.deliveryLimit * seller.commissionPerOrder,
+
+    paymentMethod: "Manual",
+
+    status: "Paid",
+
+    receiptNo:
+      "COM-" + Date.now(),
+
+    createdAt: serverTimestamp()
+  }
+);
 
     alert("History Saved");
 
