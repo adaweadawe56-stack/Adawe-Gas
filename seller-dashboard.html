@@ -933,62 +933,63 @@ document.getElementById("commissionDate").value;
 let totalAmount = 0;
 let totalPayments = 0;
 
-    snap.forEach(docSnap => {
-      
-const receipt =
-(h.receiptNo || "").toLowerCase();
+   snap.forEach(docSnap => {
 
-const invoice =
-(h.invoiceNo || "").toLowerCase();
+    const h = docSnap.data();
 
-const seller =
-(h.sellerName || "").toLowerCase();
+    const receipt =
+    (h.receiptNo || "").toLowerCase();
 
-const payment =
-(h.paymentMethod || "").toLowerCase();
+    const invoice =
+    (h.invoiceNo || "").toLowerCase();
 
-     const h = docSnap.data();
+    const seller =
+    (h.sellerName || "").toLowerCase();
 
-totalAmount += Number(h.amount || 0);
-totalPayments++;
+    const payment =
+    (h.paymentMethod || "").toLowerCase();
 
-      let date = "";
+    totalAmount += Number(h.amount || 0);
+    totalPayments++;
 
-      if (h.createdAt) {
+    let date = "";
+
+    if (h.createdAt) {
 
         date =
-          h.createdAt.toDate().toLocaleDateString();
+        h.createdAt.toDate().toLocaleDateString();
 
-      }
-     
-      if(
+    }
 
-search &&
-!receipt.includes(search) &&
-!invoice.includes(search) &&
-!seller.includes(search) &&
-!payment.includes(search)
+    if (
 
-){
+        search &&
+        !receipt.includes(search) &&
+        !invoice.includes(search) &&
+        !seller.includes(search) &&
+        !payment.includes(search)
 
-return;
+    ) {
 
-}
+        return;
 
-if(filterDate){
+    }
 
-const recordDate =
-h.createdAt
-? h.createdAt.toDate().toISOString().slice(0,10)
-: "";
+    if (filterDate) {
 
-if(recordDate !== filterDate){
+        const recordDate =
+        h.createdAt
+            ? h.createdAt.toDate().toISOString().slice(0,10)
+            : "";
 
-return;
+        if (recordDate !== filterDate) {
 
-}
+            return;
 
-}
+        }
+
+    }
+ 
 
      html += `
 <div class="card shadow-sm mb-3 border-0">
