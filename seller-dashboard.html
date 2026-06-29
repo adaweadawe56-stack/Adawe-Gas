@@ -386,7 +386,8 @@ Update your LPG prices. Customers will see these prices in the app.
   </div>
 
 </div>
-
+ <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  
 <script type="module">
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -997,46 +998,96 @@ container.innerHTML = html;
 
 }
   window.downloadReceipt = function(
-
 receiptNo,
 sellerName,
 amount,
 paymentMethod,
 date
-
 ){
 
 const { jsPDF } = window.jspdf;
 
 const doc = new jsPDF();
 
-doc.setFontSize(20);
-doc.text("Adawe Gas",20,20);
 
-doc.setFontSize(15);
-doc.text("Commission Receipt",20,35);
+// HEADER
+doc.setFillColor(25,135,84);
+doc.rect(0,0,210,35,"F");
 
+doc.setTextColor(255,255,255);
+doc.setFontSize(22);
+doc.text("ADAWE GAS NETWORK",20,18);
+
+doc.setFontSize(11);
+doc.text("Official Commission Receipt",20,28);
+
+
+// BODY
+doc.setTextColor(0,0,0);
+
+doc.setFontSize(18);
+doc.text("PAYMENT RECEIPT",20,50);
+
+doc.setDrawColor(200);
+doc.line(20,55,190,55);
+
+
+// Receipt Details
 doc.setFontSize(12);
 
-doc.text("Receipt No: " + receiptNo,20,55);
+doc.text("Receipt No:",20,70);
+doc.text(receiptNo,80,70);
 
-doc.text("Seller: " + sellerName,20,70);
+doc.text("Seller:",20,82);
+doc.text(sellerName,80,82);
 
-doc.text("Amount: KES " + amount,20,85);
+doc.text("Amount:",20,94);
+doc.text("KES " + amount,80,94);
 
-doc.text("Payment Method: " + paymentMethod,20,100);
+doc.text("Payment Method:",20,106);
+doc.text(paymentMethod,80,106);
 
-doc.text("Status: PAID",20,115);
+doc.text("Status:",20,118);
+doc.setTextColor(25,135,84);
+doc.text("PAID",80,118);
 
-doc.text("Date: " + date,20,130);
+doc.setTextColor(0,0,0);
 
-doc.line(20,140,190,140);
+doc.text("Date:",20,130);
+doc.text(date,80,130);
+
+
+// Box
+doc.roundedRect(15,60,180,80,3,3);
+
+
+// Footer
+doc.setDrawColor(180);
+doc.line(20,165,190,165);
+
+doc.setFontSize(11);
 
 doc.text(
-"Thank you for using Adawe Gas Network.",
+"Thank you for choosing Adawe Gas Network.",
 20,
-155
+178
 );
+
+doc.text(
+"This receipt is computer generated.",
+20,
+186
+);
+
+
+// Signature
+doc.text(
+"Authorized Signature",
+135,
+215
+);
+
+doc.line(130,210,190,210);
 
 doc.save(receiptNo + ".pdf");
 
@@ -1161,7 +1212,6 @@ setTimeout(() => {
   
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
   
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-  
+ 
 </body>
 </html>
