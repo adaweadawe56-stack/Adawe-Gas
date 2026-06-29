@@ -1235,24 +1235,26 @@ window.payCommission = async function(){
       doc(db,"sellers",sellerDocId)
     );
 
-    const seller = sellerSnap.data();
+   const seller = sellerSnap.data();
+
+const amount =
+  seller.deliveryLimit * seller.commissionPerOrder;
 
 const previousPayments =
   seller.totalCommissionPayments || 0;
 
 const totalPaid =
-  (previousPayments + 1) *
-  (seller.deliveryLimit * seller.commissionPerOrder);
+  (previousPayments + 1) * amount;
 
 const outstandingBalance = 0;
 
 const receiptNo =
   "COM-" +
-  String((seller.totalCommissionPayments || 0) + 1).padStart(4,"0");
+  String(previousPayments + 1).padStart(4,"0");
 
 const invoiceNo =
   "INV-" +
-  String((seller.totalCommissionPayments || 0) + 1).padStart(4, "0");
+  String(previousPayments + 1).padStart(4,"0");
     
 alert("Saving history...");
 
