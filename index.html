@@ -175,6 +175,35 @@ html{
 
 }
 
+  .review-card{
+
+  background:#fff;
+  color:#064e3b;
+  border-radius:18px;
+  padding:25px;
+  height:100%;
+  box-shadow:0 10px 25px rgba(0,0,0,.08);
+
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    opacity .6s ease,
+    translate .6s ease;
+
+  opacity:0;
+
+  transform:translateY(40px);
+
+} 
+
+  .review-card.show{
+
+  opacity:1;
+
+  transform:translateY(0);
+
+}
+
 .review-avatar{
 
   width:60px;
@@ -1557,6 +1586,8 @@ async function loadCustomerReviews(){
       reviewsContainer.innerHTML =
       "<div class='text-center'>No customer reviews yet.</div>";
 
+animateReviews();
+      
       document.getElementById("averageRating").innerText =
       "0.0 ⭐";
 
@@ -1590,6 +1621,34 @@ async function loadCustomerReviews(){
 }
 
 loadCustomerReviews();
+
+  function animateReviews(){
+
+  const cards =
+    document.querySelectorAll(".review-card");
+
+  const observer =
+    new IntersectionObserver(entries=>{
+
+      entries.forEach(entry=>{
+
+        if(entry.isIntersecting){
+
+          entry.target.classList.add("show");
+
+        }
+
+      });
+
+    },{
+
+      threshold:0.15
+
+    });
+
+  cards.forEach(card=>observer.observe(card));
+
+}
   
 /* -------------------- ORDER FORM -------------------- */
 
