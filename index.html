@@ -1343,7 +1343,7 @@ async function loadCustomerReviews(){
 
             <div class="review-avatar">
 
-              ${d.name.charAt(0).toUpperCase()}
+             ${(d.name || "?").charAt(0).toUpperCase()}
 
             </div>
 
@@ -1388,6 +1388,19 @@ async function loadCustomerReviews(){
     });
 
     document.getElementById("reviewsContainer").innerHTML=html;
+
+    if(totalReviews === 0){
+
+  reviewsContainer.innerHTML =
+  "<div class='text-center'>No customer reviews yet.</div>";
+
+  document.getElementById("averageRating").innerText="0.0 ⭐";
+  document.getElementById("totalReviews").innerText="0";
+  document.getElementById("fiveStarReviews").innerText="0";
+
+  return;
+
+}
 
     document.getElementById("totalReviews").innerText=
     totalReviews;
