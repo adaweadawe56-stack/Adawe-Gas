@@ -293,6 +293,32 @@ html{
   border:1px solid #86efac;
 
 }
+
+  .seller-badge{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  margin-top:12px;
+
+  padding:6px 12px;
+
+  border-radius:30px;
+
+  background:#ecfdf5;
+
+  color:#065f46;
+
+  border:1px solid #6ee7b7;
+
+  font-size:14px;
+
+  font-weight:700;
+
+}
   
 #about img{
   max-height:400px;
@@ -1473,12 +1499,11 @@ async function loadCustomerReviews(){
   "${d.review}"
 
 </p>
-          <div class="review-seller">
+          <div class="seller-badge">
 
-            Seller: ${sellerName}
+  🏪 ${sellerName}
 
-          </div>
-
+</div>
           <div class="review-date">
 
             ${date}
