@@ -1290,89 +1290,103 @@ async function loadCustomerReviews(){
 
   try{
 
-   const q = query(
-  collection(db,"ratings")
-);
+    const q = query(
+      collection(db,"ratings")
+    );
 
-const snap = await getDocs(q);
+    const snap = await getDocs(q);
 
-  if(snap.empty){
-
+    if(snap.empty){
 
       reviewsContainer.innerHTML =
-      "<div class='text-center'>No reviews yet.</div>";
+      "<div class='text-center'>No customer reviews yet.</div>";
 
       return;
 
     }
 
-    let html="";
+    let html = "";
 
-    let totalRating=0;
-    let totalReviews=0;
-    let fiveStars=0;
+    let totalRating = 0;
+    let totalReviews = 0;
+    let fiveStars = 0;
 
-   for (const docSnap of snap.docs) {
+    for(const docSnap of snap.docs){
 
-  const d = docSnap.data();
+      const d = docSnap.data();
 
-  const sellerDoc = await getDoc(
-    doc(db, "sellers", d.sellerUid)
-  );
+      if(!d.rating || !d.review) continue;
 
-  const sellerName =
-    sellerDoc.exists()
-    ? sellerDoc.data().name
-    : "Unknown Seller";
+      /* ---------- LOAD SELLER ---------- */
 
-     if (!d.rating || !d.review) continue;
+      let sellerName = "Unknown Seller";
+
+      if(d.sellerUid){
+
+        const sellerQuery = query(
+          collection(db,"sellers"),
+          where("uid","==",d.sellerUid)
+        );
+
+        const sellerSnap =
+          await getDocs(sellerQuery);
+
+        if(!sellerSnap.empty){
+
+          sellerName =
+            sellerSnap.docs[0].data().name;
+
+        }
+
+      }
 
       totalReviews++;
 
       totalRating += Number(d.rating);
 
-      if(Number(d.rating)===5){
+      if(Number(d.rating) === 5){
         fiveStars++;
       }
 
       const stars =
-      "⭐".repeat(Number(d.rating));
+        "⭐".repeat(Number(d.rating));
 
       const date =
-      d.createdAt
-      ? d.createdAt.toDate().toLocaleDateString()
-      : "";
+        d.createdAt
+        ? d.createdAt.toDate().toLocaleDateString()
+        : "";
 
       html += `
+
       <div class="col-md-4">
 
         <div class="review-card">
 
-         <div class="d-flex align-items-center">
+          <div class="d-flex align-items-center">
 
-  <div class="review-avatar">
+            <div class="review-avatar">
 
-    ${(d.customerName || "?").charAt(0).toUpperCase()}
+              ${(d.customerName || "?").charAt(0).toUpperCase()}
 
-  </div>
+            </div>
 
-  <div class="ms-3">
+            <div class="ms-3">
 
-    <p class="review-name">
+              <p class="review-name">
 
-      ${d.customerName || "Anonymous Customer"}
+                ${d.customerName || "Anonymous Customer"}
 
-    </p>
+              </p>
 
-    <div class="review-stars">
+              <div class="review-stars">
 
-      ${stars}
+                ${stars}
 
-    </div>
+              </div>
 
-  </div>
+            </div>
 
-</div>
+          </div>
 
           <p class="review-text">
 
@@ -1382,11 +1396,10 @@ const snap = await getDocs(q);
 
           <div class="review-seller">
 
-          Seller:
-          ${sellerName}
+            Seller: ${sellerName}
 
           </div>
-          
+
           <div class="review-date">
 
             ${date}
@@ -1396,39 +1409,40 @@ const snap = await getDocs(q);
         </div>
 
       </div>
+
       `;
 
-   }
+    }
 
-   
-if(totalReviews === 0){
+    if(totalReviews === 0){
 
-  reviewsContainer.innerHTML =
-  "<div class='text-center'>No customer reviews yet.</div>";
+      reviewsContainer.innerHTML =
+      "<div class='text-center'>No customer reviews yet.</div>";
 
-  document.getElementById("averageRating").innerText =
-  "0.0 ⭐";
+      document.getElementById("averageRating").innerText =
+      "0.0 ⭐";
 
-  document.getElementById("totalReviews").innerText =
-  "0";
+      document.getElementById("totalReviews").innerText =
+      "0";
 
-  document.getElementById("fiveStarReviews").innerText =
-  "0";
+      document.getElementById("fiveStarReviews").innerText =
+      "0";
 
-  return;
+      return;
 
-}
+    }
 
-reviewsContainer.innerHTML = html;
+    reviewsContainer.innerHTML = html;
 
-document.getElementById("totalReviews").innerText =
-totalReviews;
+    document.getElementById("totalReviews").innerText =
+    totalReviews;
 
-document.getElementById("fiveStarReviews").innerText =
-fiveStars;
+    document.getElementById("fiveStarReviews").innerText =
+    fiveStars;
 
-document.getElementById("averageRating").innerText =
-(totalRating / totalReviews).toFixed(1) + " ⭐";
+    document.getElementById("averageRating").innerText =
+    (totalRating / totalReviews).toFixed(1) + " ⭐";
+
   }catch(err){
 
     console.error(err);
