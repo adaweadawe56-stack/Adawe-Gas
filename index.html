@@ -1291,13 +1291,14 @@ async function loadCustomerReviews(){
   try{
 
     const q = query(
-      collection(db,"orders"),
-      where("status","==","Delivered")
-    );
+  collection(db,"orders"),
+  where("status","==","Delivered")
+);
 
-    const snap = await getDocs(q);
+const snap = await getDocs(q);
 
-    if(snap.empty){
+  if(snap.empty){
+
 
       reviewsContainer.innerHTML =
       "<div class='text-center'>No reviews yet.</div>";
