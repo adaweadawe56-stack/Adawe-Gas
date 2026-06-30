@@ -156,14 +156,19 @@ html{
   color:#064e3b;
 
   border-radius:18px;
-
   padding:25px;
-
   height:100%;
 
   box-shadow:0 10px 25px rgba(0,0,0,.08);
 
-  transition:.3s;
+  transition:
+    transform .4s ease,
+    box-shadow .4s ease,
+    opacity .6s ease;
+
+  opacity:0;
+
+  transform:translateY(40px);
 
 }
 
@@ -172,27 +177,6 @@ html{
   transform:translateY(-8px);
 
   box-shadow:0 18px 35px rgba(0,0,0,.12);
-
-}
-
-  .review-card{
-
-  background:#fff;
-  color:#064e3b;
-  border-radius:18px;
-  padding:25px;
-  height:100%;
-  box-shadow:0 10px 25px rgba(0,0,0,.08);
-
-  transition:
-    transform .4s ease,
-    box-shadow .4s ease,
-    opacity .6s ease,
-    translate .6s ease;
-
-  opacity:0;
-
-  transform:translateY(40px);
 
 } 
 
@@ -1581,36 +1565,36 @@ async function loadCustomerReviews(){
 
     }
 
-    if(totalReviews === 0){
+if(totalReviews === 0){
 
-      reviewsContainer.innerHTML =
-      "<div class='text-center'>No customer reviews yet.</div>";
+  reviewsContainer.innerHTML =
+  "<div class='text-center'>No customer reviews yet.</div>";
+
+  document.getElementById("averageRating").innerText =
+  "0.0 ⭐";
+
+  document.getElementById("totalReviews").innerText =
+  "0";
+
+  document.getElementById("fiveStarReviews").innerText =
+  "0";
+
+  return;
+
+}
+
+reviewsContainer.innerHTML = html;
 
 animateReviews();
-      
-      document.getElementById("averageRating").innerText =
-      "0.0 ⭐";
 
-      document.getElementById("totalReviews").innerText =
-      "0";
+document.getElementById("totalReviews").innerText =
+totalReviews;
 
-      document.getElementById("fiveStarReviews").innerText =
-      "0";
+document.getElementById("fiveStarReviews").innerText =
+fiveStars;
 
-      return;
-
-    }
-
-    reviewsContainer.innerHTML = html;
-
-    document.getElementById("totalReviews").innerText =
-    totalReviews;
-
-    document.getElementById("fiveStarReviews").innerText =
-    fiveStars;
-
-    document.getElementById("averageRating").innerText =
-    (totalRating / totalReviews).toFixed(1) + " ⭐";
+document.getElementById("averageRating").innerText =
+(totalRating / totalReviews).toFixed(1) + " ⭐";
 
   }catch(err){
 
