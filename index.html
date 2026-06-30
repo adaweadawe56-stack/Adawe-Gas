@@ -1279,6 +1279,137 @@ sortedSellers.forEach(seller => {
 
   });
 
+  /* ==========================
+   CUSTOMER REVIEWS
+========================== */
+
+async function loadCustomerReviews(){
+
+  const reviewsContainer =
+    document.getElementById("reviewsContainer");
+
+  try{
+
+    const q = query(
+      collection(db,"orders"),
+      where("status","==","Delivered")
+    );
+
+    const snap = await getDocs(q);
+
+    if(snap.empty){
+
+      reviewsContainer.innerHTML =
+      "<div class='text-center'>No reviews yet.</div>";
+
+      return;
+
+    }
+
+    let html="";
+
+    let totalRating=0;
+    let totalReviews=0;
+    let fiveStars=0;
+
+    snap.forEach(docSnap=>{
+
+      const d=docSnap.data();
+
+      if(!d.rating || !d.review) return;
+
+      totalReviews++;
+
+      totalRating += Number(d.rating);
+
+      if(Number(d.rating)===5){
+        fiveStars++;
+      }
+
+      const stars =
+      "⭐".repeat(Number(d.rating));
+
+      const date =
+      d.createdAt
+      ? d.createdAt.toDate().toLocaleDateString()
+      : "";
+
+      html += `
+      <div class="col-md-4">
+
+        <div class="review-card">
+
+          <div class="d-flex align-items-center">
+
+            <div class="review-avatar">
+
+              ${d.name.charAt(0).toUpperCase()}
+
+            </div>
+
+            <div class="ms-3">
+
+              <p class="review-name">
+                ${d.name}
+              </p>
+
+              <div class="review-stars">
+                ${stars}
+              </div>
+
+            </div>
+
+          </div>
+
+          <p class="review-text">
+
+            "${d.review}"
+
+          </p>
+
+          <div class="review-seller">
+
+            Seller:
+            ${d.sellerName}
+
+          </div>
+
+          <div class="review-date">
+
+            ${date}
+
+          </div>
+
+        </div>
+
+      </div>
+      `;
+
+    });
+
+    document.getElementById("reviewsContainer").innerHTML=html;
+
+    document.getElementById("totalReviews").innerText=
+    totalReviews;
+
+    document.getElementById("fiveStarReviews").innerText=
+    fiveStars;
+
+    document.getElementById("averageRating").innerText=
+    totalReviews
+      ? (totalRating/totalReviews).toFixed(1)+" ⭐"
+      : "0.0 ⭐";
+
+  }catch(err){
+
+    console.error(err);
+
+  }
+
+}
+
+loadCustomerReviews();
+  
 /* -------------------- ORDER FORM -------------------- */
 
 const orderForm = document.getElementById("orderForm");
