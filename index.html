@@ -1348,10 +1348,9 @@ async function loadCustomerReviews(){
             </div>
 
             <div class="ms-3">
-
-              <p class="review-name">
-                ${d.name}
-              </p>
+<p class="review-name">
+  ${d.name || "Anonymous Customer"}
+</p>
 
               <div class="review-stars">
                 ${stars}
@@ -1389,29 +1388,34 @@ async function loadCustomerReviews(){
 
     document.getElementById("reviewsContainer").innerHTML=html;
 
-    if(totalReviews === 0){
+   if(totalReviews === 0){
 
   reviewsContainer.innerHTML =
   "<div class='text-center'>No customer reviews yet.</div>";
 
-  document.getElementById("averageRating").innerText="0.0 ⭐";
-  document.getElementById("totalReviews").innerText="0";
-  document.getElementById("fiveStarReviews").innerText="0";
+  document.getElementById("averageRating").innerText =
+  "0.0 ⭐";
+
+  document.getElementById("totalReviews").innerText =
+  "0";
+
+  document.getElementById("fiveStarReviews").innerText =
+  "0";
 
   return;
 
 }
 
-    document.getElementById("totalReviews").innerText=
-    totalReviews;
+reviewsContainer.innerHTML = html;
 
-    document.getElementById("fiveStarReviews").innerText=
-    fiveStars;
+document.getElementById("totalReviews").innerText =
+totalReviews;
 
-    document.getElementById("averageRating").innerText=
-    totalReviews
-      ? (totalRating/totalReviews).toFixed(1)+" ⭐"
-      : "0.0 ⭐";
+document.getElementById("fiveStarReviews").innerText =
+fiveStars;
+
+document.getElementById("averageRating").innerText =
+(totalRating / totalReviews).toFixed(1) + " ⭐";
 
   }catch(err){
 
