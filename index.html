@@ -1339,26 +1339,31 @@ async function loadCustomerReviews(){
 
         <div class="review-card">
 
-          <div class="d-flex align-items-center">
+         <div class="d-flex align-items-center">
 
-            <div class="review-avatar">
+  <div class="review-avatar">
 
-             ${(d.name || "?").charAt(0).toUpperCase()}
+    ${(d.name || "?").charAt(0).toUpperCase()}
 
-            </div>
+  </div>
 
-            <div class="ms-3">
-<p class="review-name">
-  ${d.name || "Anonymous Customer"}
-</p>
+  <div class="ms-3">
 
-              <div class="review-stars">
-                ${stars}
-              </div>
+    <p class="review-name">
 
-            </div>
+      ${d.name || "Anonymous Customer"}
 
-          </div>
+    </p>
+
+    <div class="review-stars">
+
+      ${stars}
+
+    </div>
+
+  </div>
+
+</div>
 
           <p class="review-text">
 
@@ -1386,9 +1391,8 @@ async function loadCustomerReviews(){
 
     });
 
-    document.getElementById("reviewsContainer").innerHTML=html;
-
-   if(totalReviews === 0){
+   
+if(totalReviews === 0){
 
   reviewsContainer.innerHTML =
   "<div class='text-center'>No customer reviews yet.</div>";
@@ -1416,7 +1420,6 @@ fiveStars;
 
 document.getElementById("averageRating").innerText =
 (totalRating / totalReviews).toFixed(1) + " ⭐";
-
   }catch(err){
 
     console.error(err);
