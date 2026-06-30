@@ -269,6 +269,31 @@ html{
   font-size:15px;
 
 }
+
+.review-badge{
+
+  display:inline-block;
+
+  margin-top:10px;
+
+  margin-bottom:12px;
+
+  padding:5px 12px;
+
+  border-radius:30px;
+
+  background:#dcfce7;
+
+  color:#15803d;
+
+  font-size:13px;
+
+  font-weight:700;
+
+  border:1px solid #86efac;
+
+}
+  
 #about img{
   max-height:400px;
   object-fit:cover;
@@ -1427,22 +1452,27 @@ async function loadCustomerReviews(){
 
               </p>
 
-              <div class="review-stars">
+             <div class="review-stars">
 
-                ${stars}
+  ${stars}
 
-              </div>
+</div>
 
-            </div>
+<div class="review-badge">
 
-          </div>
+  ✔ Verified Customer
 
-          <p class="review-text">
+</div>
 
-            "${d.review}"
+</div>
 
-          </p>
+</div>
 
+<p class="review-text">
+
+  "${d.review}"
+
+</p>
           <div class="review-seller">
 
             Seller: ${sellerName}
