@@ -1312,19 +1312,20 @@ const snap = await getDocs(q);
     let totalReviews=0;
     let fiveStars=0;
 
-    snap.forEach(docSnap=>{
+   for (const docSnap of snap.docs) {
 
-     const d = docSnap.data();
+  const d = docSnap.data();
 
-const sellerDoc = await getDoc(
-  doc(db, "sellers", d.sellerUid)
-);
+  const sellerDoc = await getDoc(
+    doc(db, "sellers", d.sellerUid)
+  );
 
-const sellerName = sellerDoc.exists()
-  ? sellerDoc.data().name
-  : "Unknown Seller";
+  const sellerName =
+    sellerDoc.exists()
+    ? sellerDoc.data().name
+    : "Unknown Seller";
 
-      if(!d.rating || !d.review) return;
+     if (!d.rating || !d.review) continue;
 
       totalReviews++;
 
