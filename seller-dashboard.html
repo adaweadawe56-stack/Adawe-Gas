@@ -297,20 +297,20 @@ Login
       <div class="col-md-6">
 
         <input
-          type="text"
-          id="commissionSearch"
-          class="form-control"
-          placeholder="🔍 Search Receipt, Invoice, Seller or Payment Method">
-
+  type="text"
+  id="commissionSearch"
+  class="form-control"
+  placeholder="🔍 Search Receipt, Invoice, Seller or Payment Method"
+  oninput="loadCommissionHistory()">
       </div>
 
       <div class="col-md-3 mt-2 mt-md-0">
 
         <input
-          type="date"
-          id="commissionDate"
-          class="form-control">
-
+  type="date"
+  id="commissionDate"
+  class="form-control"
+  onchange="loadCommissionHistory()">
       </div>
 
       <div class="col-md-3 mt-2 mt-md-0">
