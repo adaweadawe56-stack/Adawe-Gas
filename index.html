@@ -1311,45 +1311,64 @@ async function loadCustomerReviews(){
     let totalReviews = 0;
     let fiveStars = 0;
 
-    for(const docSnap of snap.docs){
+ for (const docSnap of snap.docs) {
 
-      const d = docSnap.data();
+  const d = docSnap.data();
 
-      if(!d.rating || !d.review) continue;
+  if (!d.rating || !d.review) continue;
 
-      /* ---------- LOAD SELLER ---------- */
+  /* ---------- LOAD SELLER ---------- */
 
-      let sellerName = "Unknown Seller";
+  let sellerName = "Unknown Seller";
 
-      if(d.sellerUid){
+  if (d.sellerUid) {
 
-        const sellerQuery = query(
-          collection(db,"sellers"),
-          where("uid","==",d.sellerUid)
-        );
+if (d.sellerUid) {
 
-        const sellerSnap =
-          await getDocs(sellerQuery);
+  console.log("Looking for seller UID:", d.sellerUid);
 
-        if(!sellerSnap.empty){
+  const sellerQuery = query(
+    collection(db, "sellers"),
+    where("uid", "==", d.sellerUid)
+  );
 
-          sellerName =
-            sellerSnap.docs[0].data().name;
+  const sellerSnap = await getDocs(sellerQuery);
 
-        }
+  console.log("Seller documents found:", sellerSnap.size);
 
-      }
+  if (!sellerSnap.empty) {
 
-      totalReviews++;
+    sellerName = sellerSnap.docs[0].data().name;
 
-      totalRating += Number(d.rating);
+    console.log("Seller name:", sellerName);
 
-      if(Number(d.rating) === 5){
-        fiveStars++;
-      }
+  }
 
-      const stars =
-        "⭐".repeat(Number(d.rating));
+}
+    
+    const sellerQuery = query(
+      collection(db, "sellers"),
+      where("uid", "==", d.sellerUid)
+    );
+
+    const sellerSnap = await getDocs(sellerQuery);
+
+    if (!sellerSnap.empty) {
+      sellerName = sellerSnap.docs[0].data().name;
+    }
+
+  }
+
+  totalReviews++;
+
+  totalRating += Number(d.rating);
+
+  if (Number(d.rating) === 5) {
+    fiveStars++;
+  }
+
+  const stars = "⭐".repeat(Number(d.rating));
+
 
       const date =
         d.createdAt
