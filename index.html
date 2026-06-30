@@ -319,6 +319,32 @@ html{
   font-weight:700;
 
 }
+
+  .review-product{
+
+  display:inline-flex;
+
+  align-items:center;
+
+  gap:6px;
+
+  margin-top:10px;
+
+  padding:6px 12px;
+
+  border-radius:30px;
+
+  background:#f3f4f6;
+
+  color:#374151;
+
+  border:1px solid #d1d5db;
+
+  font-size:13px;
+
+  font-weight:600;
+
+}
   
 #about img{
   max-height:400px;
@@ -1505,13 +1531,20 @@ async function loadCustomerReviews(){
 
 </div>
 
+
+<div class="review-product">
+
+  🛢️ ${d.brand || "Gas"} • ⚖️ ${d.quantity || "-"}
+
+</div>
+
 <div class="review-date">
 
   🕒 ${date}
 
-         </div>
+      </div>
 
-        </div>
+     </div>
 
       </div>
 
