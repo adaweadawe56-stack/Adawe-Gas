@@ -1290,9 +1290,8 @@ async function loadCustomerReviews(){
 
   try{
 
-    const q = query(
-  collection(db,"orders"),
-  where("status","==","Delivered")
+   const q = query(
+  collection(db,"ratings")
 );
 
 const snap = await getDocs(q);
@@ -1315,7 +1314,15 @@ const snap = await getDocs(q);
 
     snap.forEach(docSnap=>{
 
-      const d=docSnap.data();
+     const d = docSnap.data();
+
+const sellerDoc = await getDoc(
+  doc(db, "sellers", d.sellerUid)
+);
+
+const sellerName = sellerDoc.exists()
+  ? sellerDoc.data().name
+  : "Unknown Seller";
 
       if(!d.rating || !d.review) return;
 
@@ -1344,7 +1351,7 @@ const snap = await getDocs(q);
 
   <div class="review-avatar">
 
-    ${(d.name || "?").charAt(0).toUpperCase()}
+    ${(d.customerName || "?").charAt(0).toUpperCase()}
 
   </div>
 
@@ -1352,7 +1359,7 @@ const snap = await getDocs(q);
 
     <p class="review-name">
 
-      ${d.name || "Anonymous Customer"}
+      ${d.customerName || "Anonymous Customer"}
 
     </p>
 
@@ -1374,11 +1381,11 @@ const snap = await getDocs(q);
 
           <div class="review-seller">
 
-            Seller:
-            ${d.sellerName}
+          Seller:
+          ${sellerName}
 
           </div>
-
+          
           <div class="review-date">
 
             ${date}
