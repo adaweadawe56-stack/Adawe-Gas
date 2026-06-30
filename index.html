@@ -1317,35 +1317,12 @@ async function loadCustomerReviews(){
 
   if (!d.rating || !d.review) continue;
 
-  /* ---------- LOAD SELLER ---------- */
-
   let sellerName = "Unknown Seller";
 
   if (d.sellerUid) {
 
-if (d.sellerUid) {
+    console.log("Looking for seller UID:", d.sellerUid);
 
-  console.log("Looking for seller UID:", d.sellerUid);
-
-  const sellerQuery = query(
-    collection(db, "sellers"),
-    where("uid", "==", d.sellerUid)
-  );
-
-  const sellerSnap = await getDocs(sellerQuery);
-
-  console.log("Seller documents found:", sellerSnap.size);
-
-  if (!sellerSnap.empty) {
-
-    sellerName = sellerSnap.docs[0].data().name;
-
-    console.log("Seller name:", sellerName);
-
-  }
-
-}
-    
     const sellerQuery = query(
       collection(db, "sellers"),
       where("uid", "==", d.sellerUid)
@@ -1353,12 +1330,18 @@ if (d.sellerUid) {
 
     const sellerSnap = await getDocs(sellerQuery);
 
+    console.log("Seller documents found:", sellerSnap.size);
+
     if (!sellerSnap.empty) {
+
       sellerName = sellerSnap.docs[0].data().name;
+
+      console.log("Seller name:", sellerName);
+
     }
 
   }
-
+   
   totalReviews++;
 
   totalRating += Number(d.rating);
