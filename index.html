@@ -1303,7 +1303,9 @@ function timeAgo(timestamp){
     return "Just now";
 
   if(minutes < 60)
-    return minutes + " min ago";
+    return minutes + " minute" +
+      (minutes > 1 ? "s" : "") +
+      " ago";
 
   if(hours < 24)
     return hours + " hour" +
