@@ -1080,9 +1080,18 @@ customer support and product quality.
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getFirestore, collection, addDoc, serverTimestamp,
-  getDocs, doc, getDoc, query, where
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp,
+  getDocs,
+  doc,
+  getDoc,
+  query,
+  where,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+  
 import {
   getAuth, createUserWithEmailAndPassword
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -1433,7 +1442,7 @@ async function loadCustomerReviews(){
       collection(db,"ratings")
     );
 
-    const snap = await getDocs(q);
+  onSnapshot(q, async (snap) => {
 
     if(snap.empty){
 
