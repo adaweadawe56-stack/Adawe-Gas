@@ -388,18 +388,17 @@ await addDoc(
 );
 
 const sellerRef =
-doc(db, "sellers", currentOrder.sellerId);
+  doc(db, "sellers", currentOrder.sellerId);
 
 const sellerSnap =
-await getDoc(sellerRef);
+  await getDoc(sellerRef);
 
-if (!sellerSnap.empty) {
+if (sellerSnap.exists()) {
 
-  const sellerDoc = sellerSnap.docs[0];
-  const sellerData = sellerDoc.data();
+  const sellerData = sellerSnap.data();
 
-  console.log("Seller found:", sellerSnap.size);
-  console.log("Updating seller:", sellerDoc.id);
+  console.log("Seller found:", sellerSnap.id);
+  console.log("Updating seller:", sellerSnap.id);
   console.log("Current ratings:", sellerData.totalRatings);
   console.log("Current average:", sellerData.averageRating);
   console.log("New rating:", rating);
@@ -409,19 +408,15 @@ if (!sellerSnap.empty) {
 
   const averageRating =
     (
-      (
-        (sellerData.averageRating || 0) *
-        (sellerData.totalRatings || 0)
-      ) + rating
+      ((sellerData.averageRating || 0) *
+      (sellerData.totalRatings || 0))
+      + rating
     ) / totalRatings;
 
-  await updateDoc(
-    doc(db, "sellers", sellerDoc.id),
-    {
-      totalRatings,
-      averageRating: Number(averageRating.toFixed(1))
-    }
-  );
+  await updateDoc(sellerRef, {
+    totalRatings,
+    averageRating: Number(averageRating.toFixed(1))
+  });
 
   console.log("Seller updated successfully");
 }
