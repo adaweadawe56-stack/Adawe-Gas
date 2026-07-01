@@ -1486,7 +1486,11 @@ function timeAgo(timestamp){
 
 }
 
+let allSellers = [];
+const sellerCache = {};
+
 let currentFilter = "all";
+let allReviews = [];
   
   /* ==========================
    CUSTOMER REVIEWS
@@ -1515,18 +1519,20 @@ async function loadCustomerReviews(){
 
     }
 
-    let html = "";
+   let html = "";
 
-    let totalRating = 0;
-    let totalReviews = 0;
-    let fiveStars = 0;
+let totalRating = 0;
+let totalReviews = 0;
+let fiveStars = 0;
 
-const reviews = snap.docs
+allReviews = snap.docs
   .map(doc => ({
     id: doc.id,
     ...doc.data()
   }))
   .filter(d => d.rating && d.review);
+
+const reviews = allReviews;
 
 for (const d of reviews) {
 
