@@ -1089,7 +1089,8 @@ import {
   getDoc,
   query,
   where,
-  onSnapshot
+  onSnapshot,
+  orderBy
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   
 import {
@@ -1446,9 +1447,10 @@ async function loadCustomerReviews(){
 
   try{
 
-    const q = query(
-      collection(db,"ratings")
-    );
+   const q = query(
+  collection(db, "ratings"),
+  orderBy("createdAt", "desc")
+);
 
   onSnapshot(q, (snap) => {
 
