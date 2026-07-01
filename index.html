@@ -1316,7 +1316,7 @@ function updateSellerPrices() {
     `<option value="">Select Seller</option>`;
 
   const sortedSellers =
-  [...allSellers].sort((a, b) => {
+  [allSellers].sort((a, b) => {
 
     const priceA =
       a.prices?.[quantity] || 999999;
