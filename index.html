@@ -1450,7 +1450,7 @@ async function loadCustomerReviews(){
       collection(db,"ratings")
     );
 
-  onSnapshot(q, async (snap) => {
+  onSnapshot(q, (snap) => {
 
     if(snap.empty){
 
@@ -1606,31 +1606,32 @@ document.getElementById("averageRating").innerText =
 
 loadCustomerReviews();
 
-  function animateReviews(){
+let reviewObserver = null;
 
-  const cards =
-    document.querySelectorAll(".review-card");
+function animateReviews(){
 
-  const observer =
-    new IntersectionObserver(entries=>{
+  if(!reviewObserver){
+
+    reviewObserver = new IntersectionObserver(entries=>{
 
       entries.forEach(entry=>{
 
         if(entry.isIntersecting){
 
           entry.target.classList.add("show");
-
         }
 
       });
 
     },{
-
       threshold:0.15
-
     });
 
-  cards.forEach(card=>observer.observe(card));
+  }
+
+  document
+    .querySelectorAll(".review-card")
+    .forEach(card=>reviewObserver.observe(card));
 
 }
   
