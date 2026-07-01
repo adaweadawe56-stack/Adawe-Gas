@@ -1521,30 +1521,28 @@ async function loadCustomerReviews(){
     let totalReviews = 0;
     let fiveStars = 0;
 
- const reviews = snap.docs
-  .map(doc => doc.data())
+const reviews = snap.docs
+  .map(doc => ({
+    id: doc.id,
+    ...doc.data()
+  }))
   .filter(d => d.rating && d.review);
 
 for (const d of reviews) {
 
-  if(
+  if (
     currentFilter !== "all" &&
     Number(d.rating) !== Number(currentFilter)
-  ){
+  ) {
     continue;
   }
 
   const seller =
     sellerCache[d.sellerUid];
-  
-  if (!d.rating || !d.review) continue;
 
-const seller =
-  sellerCache[d.sellerUid];
+  const sellerName =
+    seller?.name || "Unknown Seller";
 
-const sellerName =
-  seller?.name || "Unknown Seller";
-   
   totalReviews++;
 
   totalRating += Number(d.rating);
@@ -1553,11 +1551,11 @@ const sellerName =
     fiveStars++;
   }
 
-  const stars = "⭐".repeat(Number(d.rating));
+  const stars =
+    "⭐".repeat(Number(d.rating));
 
-
-     const date =
-  timeAgo(d.createdAt);
+  const date =
+    timeAgo(d.createdAt);
 
       html += `
 
