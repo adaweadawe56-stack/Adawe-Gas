@@ -387,12 +387,11 @@ await addDoc(
   }
 );
 
-const sellerQ = query(
-  collection(db, "sellers"),
-  where("uid", "==", currentOrder.sellerUid)
-);
+const sellerRef =
+doc(db, "sellers", currentOrder.sellerId);
 
-const sellerSnap = await getDocs(sellerQ);
+const sellerSnap =
+await getDoc(sellerRef);
 
 if (!sellerSnap.empty) {
 
