@@ -1485,6 +1485,8 @@ function timeAgo(timestamp){
   return date.toLocaleDateString();
 
 }
+
+let currentFilter = "all";
   
   /* ==========================
    CUSTOMER REVIEWS
@@ -1519,10 +1521,22 @@ async function loadCustomerReviews(){
     let totalReviews = 0;
     let fiveStars = 0;
 
- for (const docSnap of snap.docs) {
+ const reviews = snap.docs
+  .map(doc => doc.data())
+  .filter(d => d.rating && d.review);
 
-  const d = docSnap.data();
+for (const d of reviews) {
 
+  if(
+    currentFilter !== "all" &&
+    Number(d.rating) !== Number(currentFilter)
+  ){
+    continue;
+  }
+
+  const seller =
+    sellerCache[d.sellerUid];
+  
   if (!d.rating || !d.review) continue;
 
 const seller =
