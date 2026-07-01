@@ -1147,6 +1147,7 @@ function showToast(message, success = true) {
 }
  
   let allSellers = [];
+const sellerCache = {};
 
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
@@ -1180,10 +1181,17 @@ snap.forEach(docSnap => {
   const d = docSnap.data();
 
   allSellers.push({
-    id: docSnap.id,
-    ...d
-  });
+  id: docSnap.id,
+  ...d
+});
 
+sellerCache[d.uid] = {
+  name: d.name,
+  location: d.location,
+  phone: d.phone,
+  prices: d.prices
+};
+  
   const option =
     document.createElement("option");
 
@@ -1465,30 +1473,11 @@ async function loadCustomerReviews(){
 
   if (!d.rating || !d.review) continue;
 
-  let sellerName = "Unknown Seller";
+const seller =
+  sellerCache[d.sellerUid];
 
-  if (d.sellerUid) {
-
-    console.log("Looking for seller UID:", d.sellerUid);
-
-    const sellerQuery = query(
-      collection(db, "sellers"),
-      where("uid", "==", d.sellerUid)
-    );
-
-    const sellerSnap = await getDocs(sellerQuery);
-
-    console.log("Seller documents found:", sellerSnap.size);
-
-    if (!sellerSnap.empty) {
-
-      sellerName = sellerSnap.docs[0].data().name;
-
-      console.log("Seller name:", sellerName);
-
-    }
-
-  }
+const sellerName =
+  seller?.name || "Unknown Seller";
    
   totalReviews++;
 
