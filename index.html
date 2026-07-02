@@ -793,6 +793,20 @@ See what customers say about Adawe Gas sellers.
 
 </div>
 
+  <div class="row mb-4">
+
+  <div class="col-md-6 mx-auto">
+
+    <input
+      type="text"
+      id="reviewSearch"
+      class="form-control"
+      placeholder="🔍 Search seller, customer, location...">
+
+  </div>
+
+</div>
+
 <!-- FILTER -->
 
 <div class="text-center mb-4">
@@ -1197,9 +1211,7 @@ function showToast(message, success = true) {
   setTimeout(() => (toast.style.display = "none"), 3000);
 }
  
-  let allSellers = [];
-const sellerCache = {};
-
+  
 /* -------------------- LOAD SELLERS -------------------- */
 async function loadSellers() {
 
@@ -1491,6 +1503,7 @@ const sellerCache = {};
 
 let currentFilter = "all";
 let allReviews = [];
+let searchText = "";
 
   function renderReviews() {
 
@@ -1513,14 +1526,36 @@ let allReviews = [];
     }
 
     const seller =
-      sellerCache[d.sellerUid];
+  sellerCache[d.sellerUid];
 
-    const sellerName =
-      seller?.name || "Unknown Seller";
+const sellerName =
+  seller?.name || "Unknown Seller";
 
-    totalReviews++;
+const customer =
+  d.customerName || "";
 
-    totalRating += Number(d.rating);
+const location =
+  seller?.location || "";
+
+const searchString =
+(
+  sellerName +
+  customer +
+  location +
+  (d.brand || "") +
+  (d.quantity || "")
+).toLowerCase();
+
+if(
+  searchText &&
+  !searchString.includes(searchText)
+){
+  continue;
+}
+
+totalReviews++;
+
+ totalRating += Number(d.rating);
 
     if (Number(d.rating) === 5) {
       fiveStars++;
@@ -1667,28 +1702,39 @@ onSnapshot(q, (snap) => {
 
 loadCustomerReviews();
 
-  document
-  .querySelectorAll(".review-filter")
-  .forEach(btn => {
+document
+.getElementById("reviewSearch")
+.addEventListener("input", e => {
 
-    btn.addEventListener("click", () => {
+  searchText =
+    e.target.value
+      .trim()
+      .toLowerCase();
 
-      document
-        .querySelectorAll(".review-filter")
-        .forEach(b =>
-          b.classList.remove("active")
-        );
+  renderReviews();
 
-      btn.classList.add("active");
+});
 
-      currentFilter =
-        btn.dataset.rating;
+document
+.querySelectorAll(".review-filter")
+.forEach(btn => {
 
-      renderReviews();
+  btn.addEventListener("click", () => {
 
-    });
+    document
+      .querySelectorAll(".review-filter")
+      .forEach(b => b.classList.remove("active"));
 
-    });
+    btn.classList.add("active");
+
+    currentFilter =
+      btn.dataset.rating;
+
+    renderReviews();
+
+  });
+
+});
  
 let reviewObserver = null;
 
