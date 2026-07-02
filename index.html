@@ -1281,7 +1281,6 @@ updateSellerPrices();
   }
 }
 
-loadSellers();
 function updateRecommendedSeller() {
   console.log("updateRecommendedSeller running");
 
@@ -1446,7 +1445,8 @@ sortedSellers.forEach(seller => {
     );
 
     updateSellerPrices();
-
+    
+loadSellers();
   });
 
 function timeAgo(timestamp){
