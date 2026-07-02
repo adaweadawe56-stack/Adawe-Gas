@@ -1375,7 +1375,7 @@ function updateSellerPrices() {
     `<option value="">Select Seller</option>`;
 
   const sortedSellers =
-  [allSellers].sort((a, b) => {
+  [...allSellers].sort((a, b) => {
 
     const priceA =
       a.prices?.[quantity] || 999999;
@@ -1491,6 +1491,131 @@ const sellerCache = {};
 
 let currentFilter = "all";
 let allReviews = [];
+
+  function renderReviews() {
+
+  const reviewsContainer =
+    document.getElementById("reviewsContainer");
+
+  let html = "";
+
+  let totalRating = 0;
+  let totalReviews = 0;
+  let fiveStars = 0;
+
+  for (const d of allReviews) {
+
+    if (
+      currentFilter !== "all" &&
+      Number(d.rating) !== Number(currentFilter)
+    ) {
+      continue;
+    }
+
+    const seller =
+      sellerCache[d.sellerUid];
+
+    const sellerName =
+      seller?.name || "Unknown Seller";
+
+    totalReviews++;
+
+    totalRating += Number(d.rating);
+
+    if (Number(d.rating) === 5) {
+      fiveStars++;
+    }
+
+    const stars =
+      "⭐".repeat(Number(d.rating));
+
+    const date =
+      timeAgo(d.createdAt);
+
+  html += `
+
+<div class="col-md-4">
+
+  <div class="review-card">
+
+    <div class="d-flex align-items-center">
+
+      <div class="review-avatar">
+        ${(d.customerName || "?").charAt(0).toUpperCase()}
+      </div>
+
+      <div class="ms-3">
+
+        <p class="review-name">
+          ${d.customerName || "Anonymous Customer"}
+        </p>
+
+        <div class="review-stars">
+          ${stars}
+        </div>
+
+        <div class="review-badge">
+          ✔ Verified Customer
+        </div>
+
+      </div>
+
+    </div>
+
+    <p class="review-text">
+      "${d.review}"
+    </p>
+
+    <div class="seller-badge">
+      🏪 ${sellerName}
+    </div>
+
+    <div class="review-product">
+      🛢️ ${d.brand || "Gas"} • ⚖️ ${d.quantity || "-"}
+    </div>
+
+    <div class="review-date">
+      🕒 ${date}
+    </div>
+
+  </div>
+
+</div>
+
+`;
+    
+  if (totalReviews === 0) {
+
+    }
+
+    reviewsContainer.innerHTML =
+      "<div class='text-center'>No customer reviews yet.</div>";
+
+    document.getElementById("averageRating").innerText =
+      "0.0 ⭐";
+
+    document.getElementById("totalReviews").innerText =
+      "0";
+
+    document.getElementById("fiveStarReviews").innerText =
+      "0";
+
+    return;
+  }
+
+  reviewsContainer.innerHTML = html;
+
+  animateReviews();
+
+  document.getElementById("totalReviews").innerText =
+    totalReviews;
+
+  document.getElementById("fiveStarReviews").innerText =
+    fiveStars;
+
+  document.getElementById("averageRating").innerText =
+    (totalRating / totalReviews).toFixed(1) + " ⭐";
+}    
   
   /* ==========================
    CUSTOMER REVIEWS
@@ -1498,10 +1623,7 @@ let allReviews = [];
 
 async function loadCustomerReviews(){
 
-  const reviewsContainer =
-    document.getElementById("reviewsContainer");
-
-  try{
+    try{
 
    const q = query(
   collection(db, "ratings"),
@@ -1510,162 +1632,25 @@ async function loadCustomerReviews(){
 
   onSnapshot(q, (snap) => {
 
-    if(snap.empty){
+  if (snap.empty) {
 
-      reviewsContainer.innerHTML =
+    reviewsContainer.innerHTML =
       "<div class='text-center'>No customer reviews yet.</div>";
 
-      return;
-
-    }
-
-   let html = "";
-
-let totalRating = 0;
-let totalReviews = 0;
-let fiveStars = 0;
-
-allReviews = snap.docs
-  .map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  }))
-  .filter(d => d.rating && d.review);
-
-const reviews = allReviews;
-
-for (const d of reviews) {
-
-  if (
-    currentFilter !== "all" &&
-    Number(d.rating) !== Number(currentFilter)
-  ) {
-    continue;
+    return;
   }
 
-  const seller =
-    sellerCache[d.sellerUid];
+  allReviews = snap.docs
+    .map(doc => ({
+      id: doc.id,
+      ...doc.data()
+    }))
+    .filter(d => d.rating && d.review);
 
-  const sellerName =
-    seller?.name || "Unknown Seller";
-
-  totalReviews++;
-
-  totalRating += Number(d.rating);
-
-  if (Number(d.rating) === 5) {
-    fiveStars++;
-  }
-
-  const stars =
-    "⭐".repeat(Number(d.rating));
-
-  const date =
-    timeAgo(d.createdAt);
-
-      html += `
-
-      <div class="col-md-4">
-
-        <div class="review-card">
-
-          <div class="d-flex align-items-center">
-
-            <div class="review-avatar">
-
-              ${(d.customerName || "?").charAt(0).toUpperCase()}
-
-            </div>
-
-            <div class="ms-3">
-
-              <p class="review-name">
-
-                ${d.customerName || "Anonymous Customer"}
-
-              </p>
-
-             <div class="review-stars">
-
-  ${stars}
-
-</div>
-
-<div class="review-badge">
-
-  ✔ Verified Customer
-
-</div>
-
-</div>
-
-</div>
-
-<p class="review-text">
-
-  "${d.review}"
-
-</p>
-          <div class="seller-badge">
-
-  🏪 ${sellerName}
-
-</div>
-
-
-<div class="review-product">
-
-  🛢️ ${d.brand || "Gas"} • ⚖️ ${d.quantity || "-"}
-
-</div>
-
-<div class="review-date">
-
-  🕒 ${date}
-
-      </div>
-
-     </div>
-
-      </div>
-
-      `;
-
-    }
-
-if(totalReviews === 0){
-
-  reviewsContainer.innerHTML =
-  "<div class='text-center'>No customer reviews yet.</div>";
-
-  document.getElementById("averageRating").innerText =
-  "0.0 ⭐";
-
-  document.getElementById("totalReviews").innerText =
-  "0";
-
-  document.getElementById("fiveStarReviews").innerText =
-  "0";
-
-  return;
-
-}
-
-reviewsContainer.innerHTML = html;
-
-animateReviews();
-
-document.getElementById("totalReviews").innerText =
-totalReviews;
-
-document.getElementById("fiveStarReviews").innerText =
-fiveStars;
-
-document.getElementById("averageRating").innerText =
-(totalRating / totalReviews).toFixed(1) + " ⭐";
+  renderReviews();
 
 });
-    
+     
   }catch(err){
 
     console.error(err);
@@ -1676,6 +1661,29 @@ document.getElementById("averageRating").innerText =
 
 loadCustomerReviews();
 
+  document
+  .querySelectorAll(".review-filter")
+  .forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      document
+        .querySelectorAll(".review-filter")
+        .forEach(b =>
+          b.classList.remove("active")
+        );
+
+      btn.classList.add("active");
+
+      currentFilter =
+        btn.dataset.rating;
+
+      renderReviews();
+
+    });
+
+    });
+ 
 let reviewObserver = null;
 
 function animateReviews(){
