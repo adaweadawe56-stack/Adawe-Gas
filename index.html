@@ -1584,24 +1584,25 @@ let allReviews = [];
 
 `;
     
+} 
+
+   
   if (totalReviews === 0) {
 
-    }
+  reviewsContainer.innerHTML =
+    "<div class='text-center'>No customer reviews yet.</div>";
 
-    reviewsContainer.innerHTML =
-      "<div class='text-center'>No customer reviews yet.</div>";
+  document.getElementById("averageRating").innerText =
+    "0.0 ⭐";
 
-    document.getElementById("averageRating").innerText =
-      "0.0 ⭐";
+  document.getElementById("totalReviews").innerText =
+    "0";
 
-    document.getElementById("totalReviews").innerText =
-      "0";
+  document.getElementById("fiveStarReviews").innerText =
+    "0";
 
-    document.getElementById("fiveStarReviews").innerText =
-      "0";
-
-    return;
-  }
+  return;
+}
 
   reviewsContainer.innerHTML = html;
 
@@ -1622,6 +1623,10 @@ let allReviews = [];
 ========================== */
 
 async function loadCustomerReviews(){
+
+   const reviewsContainer =
+    document.getElementById("reviewsContainer");
+
 
     try{
 
