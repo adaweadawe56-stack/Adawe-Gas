@@ -1630,17 +1630,18 @@ async function loadCustomerReviews(){
 
     try{
 
-   const q = query(
+  const q = query(
   collection(db, "ratings"),
   orderBy("createdAt", "desc")
 );
 
-  onSnapshot(q, (snap) => {
+onSnapshot(q, (snap) => {
 
   if (snap.empty) {
 
-    reviewsContainer.innerHTML =
-      "<div class='text-center'>No customer reviews yet.</div>";
+    allReviews = [];
+
+    renderReviews();
 
     return;
   }
