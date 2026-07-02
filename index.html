@@ -1497,10 +1497,15 @@ function timeAgo(timestamp){
   return date.toLocaleDateString();
 
 }
+ 
+let allSellers = [];
+const sellerCache = {};
 
 let currentFilter = "all";
 let allReviews = [];
-let searchText = "";
+let searchText = ""; 
+
+
 
   function renderReviews() {
 
