@@ -1435,6 +1435,8 @@ sortedSellers.forEach(seller => {
 
   updateRecommendedSeller();
 }
+  loadSellers();
+  
   document
   .getElementById("quantity")
   .addEventListener("change", e => {
@@ -1446,7 +1448,7 @@ sortedSellers.forEach(seller => {
 
     updateSellerPrices();
     
-loadSellers();
+
   });
 
 function timeAgo(timestamp){
