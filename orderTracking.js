@@ -7,6 +7,7 @@ import {
   where,
   onSnapshot,
   getDocs,
+  getDoc,
   addDoc,
   serverTimestamp,
   updateDoc,
@@ -262,12 +263,14 @@ if(id){
   orderIdInput.value = id;
   trackBtn.click();
   }
-  historyBtn.addEventListener(
+ historyBtn.addEventListener(
 "click",
 async () => {
 
-  const phone =
-  historyPhone.value.trim();
+  let phone =
+    historyPhone.value.trim();
+
+  phone = formatKenyaPhone(phone);
 
   if(!phone){
     alert("Enter phone number");
