@@ -418,7 +418,7 @@ if (sellerSnap.exists()) {
 
   await updateDoc(sellerRef, {
     totalRatings,
-    averageRating: Number(averageRating.toFixed(1))
+    averageRating: Number(averageRating.toFixed(2))
   });
 
   console.log("Seller updated successfully");
