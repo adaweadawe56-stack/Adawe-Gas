@@ -1289,6 +1289,7 @@ sellerCache[d.uid] = {
 });
 
 updateSellerPrices();
+loadFeaturedSellers();
     
   } catch (error) {
 
@@ -1300,6 +1301,81 @@ updateSellerPrices();
       false
     );
   }
+}
+
+  async function loadFeaturedSellers() {
+
+  const container =
+    document.getElementById("featuredSellers");
+
+  if (!container) return;
+
+  const sellers = [...allSellers]
+    .filter(s => s.status === "approved")
+    .sort((a, b) =>
+      (b.averageRating || 0) -
+      (a.averageRating || 0)
+    )
+    .slice(0, 6);
+
+  let html = "";
+
+  sellers.forEach(seller => {
+
+    html += `
+
+<div class="col-md-4">
+
+  <div class="seller-card">
+
+    <img
+      src="${seller.profileImage || "images/seller-logo.png"}"
+      class="seller-logo">
+
+    <div class="seller-name">
+      ${seller.name}
+    </div>
+
+    <div class="seller-location">
+      📍 ${seller.location}
+    </div>
+
+    <div class="seller-rating">
+      ⭐ ${seller.averageRating || 0}
+    </div>
+
+    <div class="seller-stats">
+
+      <div>
+        <strong>${seller.totalRatings || 0}</strong><br>
+        Reviews
+      </div>
+
+      <div>
+        <strong>${seller.completedOrders || 0}</strong><br>
+        Orders
+      </div>
+
+    </div>
+
+    <button
+      class="btn btn-success view-profile-btn"
+      onclick="showSellerProfile('${seller.id}')">
+
+      View Profile
+
+    </button>
+
+  </div>
+
+</div>
+
+`;
+
+  });
+
+  container.innerHTML = html;
+
 }
 
 function updateRecommendedSeller() {
