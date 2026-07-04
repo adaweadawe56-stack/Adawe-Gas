@@ -1418,6 +1418,115 @@ loadFeaturedSellers();
 
 }
 
+  window.showSellerProfile = async function(id){
+
+  const sellerRef = doc(db, "sellers", id);
+
+  const sellerSnap = await getDoc(sellerRef);
+
+  if(!sellerSnap.exists()){
+    alert("Seller not found");
+    return;
+  }
+
+  const seller = sellerSnap.data();
+
+  let prices = "";
+
+  Object.entries(seller.prices || {}).forEach(([size, price])=>{
+
+    if(Number(price) > 0){
+
+      prices += `
+      <tr>
+        <td>${size}</td>
+        <td>KES ${Number(price).toLocaleString()}</td>
+      </tr>
+      `;
+
+    }
+
+  });
+
+  document.getElementById("sellerProfileContent").innerHTML = `
+
+<div class="profile-header">
+
+<img
+src="${seller.profileImage || 'images/seller-logo.png'}"
+class="profile-logo">
+
+<div class="profile-name">
+${seller.name}
+</div>
+
+<div class="profile-location">
+📍 ${seller.location}
+</div>
+
+<div class="profile-rating">
+⭐ ${seller.averageRating || 0}
+</div>
+
+</div>
+
+<div class="profile-stats">
+
+<div>
+<h4>${seller.totalRatings || 0}</h4>
+Reviews
+</div>
+
+<div>
+<h4>${seller.completedOrders || 0}</h4>
+Orders
+</div>
+
+</div>
+
+<h5>Gas Prices</h5>
+
+<table class="table profile-price-table">
+
+<tbody>
+
+${prices}
+
+</tbody>
+
+</table>
+
+<div class="profile-actions">
+
+<a
+href="tel:${seller.phone}"
+class="btn btn-primary">
+
+📞 Call
+
+</a>
+
+<a
+href="https://wa.me/${seller.phone.replace('+','')}"
+target="_blank"
+class="btn btn-success">
+
+💬 WhatsApp
+
+</a>
+
+</div>
+
+`;
+
+  const modal = new bootstrap.Modal(
+    document.getElementById("sellerProfileModal")
+  );
+
+  modal.show();
+
+}
+
 function updateRecommendedSeller() {
   console.log("updateRecommendedSeller running");
 
