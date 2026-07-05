@@ -1362,7 +1362,12 @@ loadFeaturedSellers();
 
   sellers.forEach(seller => {
 
-    html += `
+  console.log(
+    seller.name,
+    seller.profileImage
+  );
+
+  html += `
 
 <div class="col-md-4">
 
