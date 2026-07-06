@@ -191,6 +191,35 @@ let badgeColor = "#6c757d";
 
         </p>
 
+${data.status === "Accepted" ||
+data.status === "On The Way" ||
+data.status === "Delivered"
+? `
+<hr>
+
+<div class="d-flex gap-2 flex-wrap">
+
+  <a
+    href="tel:${data.sellerPhone}"
+    class="btn btn-primary">
+
+    📞 Call Seller
+
+  </a>
+
+  <a
+    href="https://wa.me/${data.sellerPhone.replace('+','')}"
+    target="_blank"
+    class="btn btn-success">
+
+    💬 WhatsApp Seller
+
+  </a>
+
+</div>
+`
+: ""}
+
       </div>
     `;
 if(data.status === "Delivered"){
