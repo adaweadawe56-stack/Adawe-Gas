@@ -1456,9 +1456,9 @@ loadFeaturedSellers();
 
 <div class="col-md-4">
 
-  <div class="seller-card">
+ <div class="seller-card">
 
-    <img
+   <img
 src="images/logo.png"
 class="seller-logo">
 
@@ -1477,13 +1477,13 @@ class="seller-logo">
     <div class="seller-stats">
 
       <div>
-        <strong>${seller.totalRatings || 0}</strong><br>
-        Reviews
+        <h5>${seller.totalRatings || 0}</h5>
+        <span>Reviews</span>
       </div>
 
       <div>
-        <strong>${seller.completedOrders || 0}</strong><br>
-        Orders
+        <h5>${seller.completedOrders || 0}</h5>
+        <span>Orders</span>
       </div>
 
     </div>
@@ -1491,10 +1491,9 @@ class="seller-logo">
     <button
       class="btn btn-success view-profile-btn"
       onclick="showSellerProfile('${seller.id}')">
-
       View Profile
-
     </button>
+
 
   </div>
 
