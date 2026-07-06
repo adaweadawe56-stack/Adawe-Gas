@@ -901,8 +901,9 @@ window.updateStatus = async function(id, status){
   }
 
   await updateDoc(orderRef,{
-    status
-  });
+  status,
+  acceptedAt: serverTimestamp()
+});
 
   if(oldStatus !== "Delivered" && status === "Delivered"){
 
