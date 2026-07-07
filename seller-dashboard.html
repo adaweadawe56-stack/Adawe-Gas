@@ -689,6 +689,7 @@ function loadOrders(){
   where("sellerUid","==",sellerUid)
 );
 
+  let watchId = null;
   let firstLoad = true;
   
   onSnapshot(q, async snap => {
