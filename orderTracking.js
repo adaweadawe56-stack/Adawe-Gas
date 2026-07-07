@@ -422,6 +422,23 @@ async () => {
   historyResults.innerHTML = html;
 
 });
+
+function formatKenyaPhone(phone){
+
+  phone = phone.replace(/\s+/g,"");
+
+  if(phone.startsWith("0")){
+    return "+254" + phone.substring(1);
+  }
+
+  if(phone.startsWith("254")){
+    return "+" + phone;
+  }
+
+  return phone;
+
+}
+
 window.rateSeller = async function(rating){
 
   const ratingQ = query(
