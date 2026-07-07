@@ -242,26 +242,23 @@ data.status === "Delivered"
   <a
     href="tel:${data.sellerPhone}"
     class="btn btn-primary">
-
     📞 Call Seller
-
   </a>
 
   <a
     href="https://wa.me/${data.sellerPhone.replace('+','')}"
     target="_blank"
     class="btn btn-success">
-
     💬 WhatsApp Seller
-
   </a>
 
 </div>
 `
 : ""}
 
-      </div>
-    `;
+</div>
+`;
+    
 if(data.status === "Delivered"){
 
   receiptBox.innerHTML = `
