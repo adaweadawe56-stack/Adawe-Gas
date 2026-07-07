@@ -92,7 +92,8 @@ trackBtn.addEventListener("click", async () => {
   const data = snap.docs[0].data();
 
 currentOrder = data;
-    if(
+
+if(
   data.status === "On The Way" &&
   data.sellerLatitude &&
   data.sellerLongitude
@@ -100,10 +101,6 @@ currentOrder = data;
 
   document.getElementById("liveMap").style.display = "block";
 
-setTimeout(() => {
-  map?.invalidateSize();
-}, 100);
-      
   if(!map){
 
     map = L.map("liveMap").setView(
@@ -122,6 +119,10 @@ setTimeout(() => {
       data.sellerLatitude,
       data.sellerLongitude
     ]).addTo(map);
+
+    setTimeout(() => {
+      map.invalidateSize();
+    }, 100);
 
   }else{
 
