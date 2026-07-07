@@ -829,11 +829,11 @@ ordersTable.innerHTML += `
   </button>
 
   <button
-    onclick="updateStatus('${docSnap.id}','On The Way')"
-    class="btn btn-warning btn-sm"
-    ${o.status !== "Accepted" ? "disabled" : ""}>
-    On The Way
-  </button>
+  onclick="shareLocation('${docSnap.id}')"
+  class="btn btn-warning btn-sm"
+  ${o.status !== "Accepted" ? "disabled" : ""}>
+  On The Way
+</button>
 
   <button
     onclick="updateStatus('${docSnap.id}','Delivered')"
@@ -1475,6 +1475,58 @@ alert("Saving history...");
     alert(err.message);
 
   }
+
+};
+
+  window.shareLocation = async function(orderId){
+
+  if(!navigator.geolocation){
+    alert("Geolocation is not supported.");
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+
+    async(position)=>{
+
+      try{
+
+        const latitude = position.coords.latitude;
+        const longitude = position.coords.longitude;
+
+        await updateDoc(
+          doc(db,"orders",orderId),
+          {
+            sellerLatitude: latitude,
+            sellerLongitude: longitude,
+            locationUpdatedAt: serverTimestamp()
+          }
+        );
+
+        await updateStatus(orderId,"On The Way");
+
+        alert("✅ Location shared successfully.");
+
+      }catch(err){
+
+        console.error(err);
+        alert(err.message);
+
+      }
+
+    },
+
+    ()=>{
+
+      alert("Location permission denied.");
+
+    },
+
+    {
+      enableHighAccuracy:true
+    }
+
+  );
 
 };
   
