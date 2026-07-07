@@ -941,6 +941,14 @@ try{
 
   console.log("After updateDoc");
 
+  if(status === "Delivered" && watchId){
+
+  navigator.geolocation.clearWatch(watchId);
+
+  watchId = null;
+
+}
+
 }catch(err){
 
   console.error("UPDATE ERROR:", err);
