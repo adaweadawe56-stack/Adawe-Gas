@@ -876,12 +876,15 @@ deliveryRate + "%";
 
 window.updateStatus = async function(id, status){
 
- if (status === "Accepted") {
+if (status === "Accepted") {
 
-  const sellerSnap = await getDoc(doc(db, "sellers", sellerDocId));
+  const sellerSnap = await getDoc(doc(db,"sellers",sellerDocId));
   const seller = sellerSnap.data();
 
-  if (seller.deliveryCount >= seller.deliveryLimit) {
+  const deliveryCount = seller.deliveryCount || 0;
+  const deliveryLimit = seller.deliveryLimit || 999999;
+
+  if (deliveryCount >= deliveryLimit) {
     alert("Please pay your commission before accepting new orders.");
     return;
   }
