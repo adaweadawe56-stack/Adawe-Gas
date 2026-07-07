@@ -160,6 +160,44 @@ let badgeColor = "#6c757d";
     if(data.status === "Rejected")
       badgeColor = "#dc3545";
 
+    let statusMessage = "";
+
+if (data.status === "Pending") {
+  statusMessage = `
+  <div class="alert alert-secondary mt-3">
+    ⏳ <strong>Waiting for seller acceptance...</strong><br>
+    Your order has been sent to the seller.
+  </div>`;
+}
+
+if (data.status === "Accepted") {
+  statusMessage = `
+  <div class="alert alert-primary mt-3">
+    ✅ <strong>Your order has been accepted.</strong>
+  </div>`;
+}
+
+if (data.status === "On The Way") {
+  statusMessage = `
+  <div class="alert alert-warning mt-3">
+    🚚 <strong>Your gas is on the way.</strong>
+  </div>`;
+}
+
+if (data.status === "Delivered") {
+  statusMessage = `
+  <div class="alert alert-success mt-3">
+    🎉 <strong>Order Delivered Successfully.</strong>
+  </div>`;
+}
+
+if (data.status === "Rejected") {
+  statusMessage = `
+  <div class="alert alert-danger mt-3">
+    ❌ <strong>Order Rejected.</strong>
+  </div>`;
+}
+
     orderStatus.innerHTML = `
       <div class="card p-3 mt-3">
 
@@ -177,19 +215,21 @@ let badgeColor = "#6c757d";
 
         <p><strong>Location:</strong> ${data.location}</p>
 
-        <p>
-          <strong>Status:</strong>
+       <p>
+  <strong>Status:</strong>
 
-          <span style="
-            background:${badgeColor};
-            color:white;
-            padding:5px 10px;
-            border-radius:20px;
-          ">
-            ${data.status}
-          </span>
+  <span style="
+    background:${badgeColor};
+    color:white;
+    padding:5px 10px;
+    border-radius:20px;
+  ">
+    ${data.status}
+  </span>
 
-        </p>
+</p>
+
+${statusMessage}
 
 ${data.status === "Accepted" ||
 data.status === "On The Way" ||
