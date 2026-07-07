@@ -52,6 +52,9 @@ document.getElementById("receiptBox");
 let unsubscribe = null;
 let currentOrder = null;
 
+let map = null;
+let sellerMarker = null;
+
 trackBtn.addEventListener("click", async () => {
 
   const orderId = orderIdInput.value.trim();
