@@ -1527,7 +1527,7 @@ alert("Saving history...");
     return;
   }
 
-  navigator.geolocation.getCurrentPosition(
+  watchId = navigator.geolocation.watchPosition(
 
     async(position)=>{
 
@@ -1545,14 +1545,9 @@ alert("Saving history...");
           }
         );
 
-        await updateStatus(orderId,"On The Way");
-
-        alert("✅ Location shared successfully.");
-
       }catch(err){
 
         console.error(err);
-        alert(err.message);
 
       }
 
@@ -1569,6 +1564,10 @@ alert("Saving history...");
     }
 
   );
+
+  await updateStatus(orderId,"On The Way");
+
+  alert("🚚 Live tracking started.");
 
 };
   
