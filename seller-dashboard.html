@@ -886,7 +886,10 @@ if (status === "Accepted") {
   const deliveryLimit = seller.deliveryLimit || 999999;
 
   if (deliveryCount >= deliveryLimit) {
-    alert("Please pay your commission before accepting new orders.");
+   showToast(
+  "Please pay your commission before accepting new orders.",
+  "#dc3545"
+);
     return;
   }
 
@@ -902,13 +905,16 @@ const oldStatus = orderSnap.data().status;
 const data = orderSnap.data();
 
 if(data.sellerUid !== sellerUid){
-  alert("Unauthorized");
+  showToast("Unauthorized","#dc3545");
   return;
 }
 
 try{
 
-  console.log("Before updateDoc");
+  showToast(
+  "✅ Status updated to " + status,
+  "#198754"
+);
 
   if(status === "Accepted"){
 
@@ -1563,7 +1569,10 @@ alert("Saving history...");
 
     ()=>{
 
-      alert("Location permission denied.");
+     showToast(
+  "Location permission denied.",
+  "#dc3545"
+);
 
     },
 
@@ -1575,7 +1584,10 @@ alert("Saving history...");
 
   await updateStatus(orderId,"On The Way");
 
-  alert("🚚 Live tracking started.");
+ showToast(
+  "🚚 Live tracking started.",
+  "#198754"
+);
 
 };
   
