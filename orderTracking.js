@@ -92,6 +92,56 @@ trackBtn.addEventListener("click", async () => {
   const data = snap.docs[0].data();
 
 currentOrder = data;
+    if(
+  data.status === "On The Way" &&
+  data.sellerLatitude &&
+  data.sellerLongitude
+){
+
+  document.getElementById("liveMap").style.display = "block";
+
+setTimeout(() => {
+  map?.invalidateSize();
+}, 100);
+      
+  if(!map){
+
+    map = L.map("liveMap").setView(
+      [data.sellerLatitude, data.sellerLongitude],
+      15
+    );
+
+    L.tileLayer(
+      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+      {
+        attribution:"© OpenStreetMap"
+      }
+    ).addTo(map);
+
+    sellerMarker = L.marker([
+      data.sellerLatitude,
+      data.sellerLongitude
+    ]).addTo(map);
+
+  }else{
+
+    sellerMarker.setLatLng([
+      data.sellerLatitude,
+      data.sellerLongitude
+    ]);
+
+    map.setView([
+      data.sellerLatitude,
+      data.sellerLongitude
+    ],15);
+
+  }
+
+}else{
+
+  document.getElementById("liveMap").style.display = "none";
+
+}
 
     let progressHtml = `
 <div style="display:flex;
