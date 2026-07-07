@@ -891,6 +891,8 @@ if (status === "Accepted") {
 
 }
 
+  console.log("Continuing update...");
+
   const orderRef = doc(db,"orders",id);
 
   const orderSnap = await getDoc(orderRef);
