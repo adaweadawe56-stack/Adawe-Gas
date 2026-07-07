@@ -893,45 +893,70 @@ if (status === "Accepted") {
 
   console.log("Continuing update...");
 
-  const orderRef = doc(db,"orders",id);
+ const orderRef = doc(db,"orders",id);
 
-  const orderSnap = await getDoc(orderRef);
+const orderSnap = await getDoc(orderRef);
 
-  const oldStatus = orderSnap.data().status;
-  const data = orderSnap.data();
+const oldStatus = orderSnap.data().status;
+const data = orderSnap.data();
 
-  if(data.sellerUid !== sellerUid){
-    alert("Unauthorized");
-    return;
-  }
+if(data.sellerUid !== sellerUid){
+  alert("Unauthorized");
+  return;
+}
 
-  try{
+try{
 
   console.log("Before updateDoc");
+
+  if(status === "Accepted"){
 
   await updateDoc(orderRef,{
     status,
     acceptedAt: serverTimestamp()
   });
 
+}else if(status === "On The Way"){
+
+  await updateDoc(orderRef,{
+    status,
+    onTheWayAt: serverTimestamp()
+  });
+
+}else if(status === "Delivered"){
+
+  await updateDoc(orderRef,{
+    status,
+    deliveredAt: serverTimestamp()
+  });
+
+}else{
+
+  await updateDoc(orderRef,{
+    status
+  });
+
+}
+
   console.log("After updateDoc");
 
 }catch(err){
 
   console.error("UPDATE ERROR:", err);
+
 }
 
-  if(oldStatus !== "Delivered" && status === "Delivered"){
+if(oldStatus !== "Delivered" && status === "Delivered"){
 
-    await updateDoc(
-      doc(db,"sellers",sellerDocId),
-      {
-        completedOrders: increment(1),
-        deliveryCount: increment(1)
-      }
-    );
+  await updateDoc(
+    doc(db,"sellers",sellerDocId),
+    {
+      completedOrders: increment(1),
+      deliveryCount: increment(1)
+    }
+  );
 
-  }
+}
 
 };
   async function loadCommissionHistory() {
