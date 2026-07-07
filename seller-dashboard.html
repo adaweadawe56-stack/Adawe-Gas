@@ -905,10 +905,21 @@ if (status === "Accepted") {
     return;
   }
 
+  try{
+
+  console.log("Before updateDoc");
+
   await updateDoc(orderRef,{
-  status,
-  acceptedAt: serverTimestamp()
-});
+    status,
+    acceptedAt: serverTimestamp()
+  });
+
+  console.log("After updateDoc");
+
+}catch(err){
+
+  console.error("UPDATE ERROR:", err);
+}
 
   if(oldStatus !== "Delivered" && status === "Delivered"){
 
