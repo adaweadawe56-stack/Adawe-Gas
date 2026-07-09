@@ -2198,44 +2198,76 @@ if (!sellerWhatsapp) {
     "AG-" + Date.now();
 
     /* SAVE ORDER */
-   console.log("sellerData =", sellerData);
+
+console.log("sellerData =", sellerData);
 console.log("sellerWhatsapp =", sellerWhatsapp);
 console.log("sellerUid =", sellerData.uid);
 
 try {
 
-  console.log("Saving order...");
+let customerLatitude = null;
+let customerLongitude = null;
 
-  await addDoc(
-    collection(db, "orders"),
-    {
-      orderId,
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
+try{
 
-      price: orderPrice,
+  const position = await new Promise((resolve,reject)=>{
 
-      sellerId,
-      sellerUid: sellerData.uid,
+    navigator.geolocation.getCurrentPosition(
+      resolve,
+      reject,
+      {
+        enableHighAccuracy:true,
+        timeout:10000,
+        maximumAge:0
+      }
+    );
 
-      sellerName: sellerData.name,
-      sellerPhone: sellerWhatsapp,
-      sellerLocation: sellerData.location || "",
+  });
 
-      status: "Pending",
+  customerLatitude = position.coords.latitude;
+  customerLongitude = position.coords.longitude;
 
-      createdAt: serverTimestamp(),
-      assignedAt: new Date().toISOString(),
+}catch(err){
 
-      rating: null,
-      review: null
-    }
-  );
+  console.log("GPS not available:", err);
 
-  console.log("Order saved successfully");
+}
+
+console.log("Saving order...");
+
+await addDoc(
+  collection(db,"orders"),
+  {
+    orderId,
+    name,
+    phone,
+    location,
+    quantity,
+    brand,
+
+    price: orderPrice,
+
+    sellerId,
+    sellerUid: sellerData.uid,
+
+    sellerName: sellerData.name,
+    sellerPhone: sellerWhatsapp,
+    sellerLocation: sellerData.location || "",
+
+    customerLatitude,
+    customerLongitude,
+
+    status:"Pending",
+
+    createdAt: serverTimestamp(),
+    assignedAt: new Date().toISOString(),
+
+    rating:null,
+    review:null
+  }
+);
+
+console.log("Order saved successfully");
 
 } catch (err) {
 
@@ -2245,21 +2277,13 @@ try {
     
  /* SUCCESS */
 
-    showToast("✅ Order saved successfully");
-    document.getElementById("trackingLink").innerHTML = `
-<a href="track.html?id=${orderId}"
-class="btn btn-primary mt-3">
-Track Your Order
-</a>
-`;
-alert(
-`Order Saved Successfully
+showToast("✅ Order saved successfully");
 
-Track Order:
+orderForm.reset();
 
-track.html?id=${orderId}`
-);
-    orderForm.reset();
+setTimeout(() => {
+  window.location.href = `track.html?id=${orderId}`;
+}, 1500);
 
     /* SELLER MESSAGE */
 
