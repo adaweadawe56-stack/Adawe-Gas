@@ -2169,123 +2169,86 @@ orderForm.addEventListener("submit", async (e) => {
 
   try {
 
-    /* GET SELLER */
+  /* GET SELLER */
 
-    const sellerDoc =
-    await getDoc(doc(db, "sellers", sellerId));
+  const sellerDoc = await getDoc(doc(db, "sellers", sellerId));
 
-    if (!sellerDoc.exists()) {
-      throw new Error("Seller not found");
-    }
-
-   const sellerData =
-sellerDoc.data();
-
-const sellerWhatsapp =
-sellerData.phone;
-
-const orderPrice =
-sellerData.prices?.[quantity] || 0;
-
-console.log("orderPrice =", orderPrice);
-
-if (!sellerWhatsapp) {
-  throw new Error("Seller phone missing");
-}
-    /* ORDER ID */
-
-    const orderId =
-    "AG-" + Date.now();
-
-    /* SAVE ORDER */
-
-console.log("sellerData =", sellerData);
-console.log("sellerWhatsapp =", sellerWhatsapp);
-console.log("sellerUid =", sellerData.uid);
-
-try {
-
-let customerLatitude = null;
-let customerLongitude = null;
-
-try{
-
-  const position = await new Promise((resolve,reject)=>{
-
-    navigator.geolocation.getCurrentPosition(
-      resolve,
-      reject,
-      {
-        enableHighAccuracy:true,
-        timeout:10000,
-        maximumAge:0
-      }
-    );
-
-  });
-
-  customerLatitude = position.coords.latitude;
-  customerLongitude = position.coords.longitude;
-
-}catch(err){
-
-  console.log("GPS not available:", err);
-
-}
-
-console.log("Saving order...");
-
-await addDoc(
-  collection(db,"orders"),
-  {
-    orderId,
-    name,
-    phone,
-    location,
-    quantity,
-    brand,
-
-    price: orderPrice,
-
-    sellerId,
-    sellerUid: sellerData.uid,
-
-    sellerName: sellerData.name,
-    sellerPhone: sellerWhatsapp,
-    sellerLocation: sellerData.location || "",
-
-    customerLatitude,
-    customerLongitude,
-
-    status:"Pending",
-
-    createdAt: serverTimestamp(),
-    assignedAt: new Date().toISOString(),
-
-    rating:null,
-    review:null
+  if (!sellerDoc.exists()) {
+    throw new Error("Seller not found");
   }
-);
 
-console.log("Order saved successfully");
+  const sellerData = sellerDoc.data();
 
-} catch (err) {
+  const sellerWhatsapp = sellerData.phone;
 
-  console.error("SAVE ORDER ERROR:", err);
+  const orderPrice =
+    sellerData.prices?.[quantity] || 0;
 
-}
-    
- /* SUCCESS */
+  if (!sellerWhatsapp) {
+    throw new Error("Seller phone missing");
+  }
 
-showToast("✅ Order saved successfully");
+  const orderId = "AG-" + Date.now();
 
-orderForm.reset();
+  let customerLatitude = null;
+  let customerLongitude = null;
 
-setTimeout(() => {
-  window.location.href = `track.html?id=${orderId}`;
-}, 1500);
+  try {
 
-    /* SELLER MESSAGE */
+    const position = await new Promise((resolve,reject)=>{
+
+      navigator.geolocation.getCurrentPosition(
+        resolve,
+        reject,
+        {
+          enableHighAccuracy:true,
+          timeout:10000,
+          maximumAge:0
+        }
+      );
+
+    });
+
+    customerLatitude = position.coords.latitude;
+    customerLongitude = position.coords.longitude;
+
+  } catch(err){
+
+    console.log("GPS not available:", err);
+
+  }
+
+  await addDoc(
+    collection(db,"orders"),
+    {
+      orderId,
+      name,
+      phone,
+      location,
+      quantity,
+      brand,
+
+      price: orderPrice,
+
+      sellerId,
+      sellerUid: sellerData.uid,
+
+      sellerName: sellerData.name,
+      sellerPhone: sellerWhatsapp,
+      sellerLocation: sellerData.location || "",
+
+      customerLatitude,
+      customerLongitude,
+
+      status:"Pending",
+
+      createdAt: serverTimestamp(),
+      assignedAt: new Date().toISOString(),
+
+      rating:null,
+      review:null
+    }
+  );
 
     const message = `🔥 NEW LPG ORDER
 
@@ -2304,24 +2267,32 @@ Quantity: ${quantity}
 
 Status: Pending`;
 
-    /* OPEN WHATSAPP */
+  showToast("✅ Order saved successfully");
+
+  orderForm.reset();
 
   window.open(
-  `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`,
-  "_blank"
-);
+    `https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`,
+    "_blank"
+  );
 
-} catch (err) {
+  setTimeout(()=>{
+    window.location.href=`track.html?id=${orderId}`;
+  },1500);
+
+} catch(err){
 
   console.error(err);
 
   showToast(err.message || "Failed to save order", false);
 
-} finally {
+} finally{
 
   resetButton();
 
-} 
+}
+    
+ 
 });
 
 /* RESET BUTTON */
