@@ -2182,8 +2182,8 @@ orderForm.addEventListener("submit", async (e) => {
     const sellerWhatsapp = sellerData.phone?.trim();
 
 const orderPrice =
-  sellerData.prices?.[quantity] || 0;
-
+  Number(sellerData.prices?.[quantity] || 0);
+    
 if (!sellerData.uid) {
   throw new Error("Seller UID missing");
 }
