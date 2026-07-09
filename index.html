@@ -2179,14 +2179,18 @@ orderForm.addEventListener("submit", async (e) => {
 
   const sellerData = sellerDoc.data();
 
-  const sellerWhatsapp = sellerData.phone;
+    const sellerWhatsapp = sellerData.phone?.trim();
 
-  const orderPrice =
-    sellerData.prices?.[quantity] || 0;
+const orderPrice =
+  sellerData.prices?.[quantity] || 0;
 
-  if (!sellerWhatsapp) {
-    throw new Error("Seller phone missing");
-  }
+if (!sellerData.uid) {
+  throw new Error("Seller UID missing");
+}
+
+if (!sellerWhatsapp) {
+  throw new Error("Seller phone missing");
+}
 
   const orderId = "AG-" + Date.now();
 
@@ -2271,15 +2275,19 @@ Status: Pending`;
 
   orderForm.reset();
 
+  try{
   window.open(
     `https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`,
     "_blank"
   );
+}catch(e){
+  console.log("WhatsApp window blocked");
+}
 
-  setTimeout(()=>{
-    window.location.href=`track.html?id=${orderId}`;
-  },1500);
-
+setTimeout(()=>{
+  window.location.href = `track.html?id=${orderId}`;
+},1500);
+    
 } catch(err){
 
   console.error(err);
