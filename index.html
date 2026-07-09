@@ -992,12 +992,17 @@ Place Order
        pattern="^(07|01)\d{8}$"
        required>
 
-<!-- LOCATION -->
-<input id="location"
-       type="text"
-       class="form-control mb-3"
-       placeholder="Delivery Location"
-       required>
+<label class="form-label">
+Delivery Address
+</label>
+
+<input
+    id="location"
+    type="text"
+    class="form-control mb-3"
+    placeholder="Street / Estate / House No."
+    autocomplete="street-address"
+    required>
 
 <!-- GAS SIZE -->
 <select id="quantity" class="form-select mb-3" required>
