@@ -55,6 +55,26 @@ let currentOrder = null;
 let map = null;
 let sellerMarker = null;
 
+function calculateDistance(lat1, lon1, lat2, lon2){
+
+  const R = 6371;
+
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) *
+    Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
+
+  return R * c;
+
+}
+
 trackBtn.addEventListener("click", async () => {
 
   const orderId = orderIdInput.value.trim();
@@ -92,6 +112,27 @@ trackBtn.addEventListener("click", async () => {
   const data = snap.docs[0].data();
 
 currentOrder = data;
+
+    if(
+  data.customerLatitude &&
+  data.customerLongitude &&
+  data.sellerLatitude &&
+  data.sellerLongitude
+){
+
+  const distance = calculateDistance(
+    data.customerLatitude,
+    data.customerLongitude,
+    data.sellerLatitude,
+    data.sellerLongitude
+  );
+
+  const eta = Math.ceil((distance / 30) * 60);
+
+  document.getElementById("eta").innerHTML =
+    `🚚 ${distance.toFixed(1)} km away • ETA ${eta} min`;
+
+}
 
 if(
   data.status === "On The Way" &&
