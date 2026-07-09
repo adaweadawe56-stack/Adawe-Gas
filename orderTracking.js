@@ -136,55 +136,31 @@ currentOrder = data;
 
 if(
   data.status === "On The Way" &&
+  data.customerLatitude &&
+  data.customerLongitude &&
   data.sellerLatitude &&
   data.sellerLongitude
 ){
 
-  document.getElementById("liveMap").style.display = "block";
+  const distance = calculateDistance(
+    data.customerLatitude,
+    data.customerLongitude,
+    data.sellerLatitude,
+    data.sellerLongitude
+  );
 
-  if(!map){
+  const eta = Math.ceil((distance / 30) * 60);
 
-    map = L.map("liveMap").setView(
-      [data.sellerLatitude, data.sellerLongitude],
-      15
-    );
+  document.getElementById("eta").style.display = "block";
 
-    L.tileLayer(
-      "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-      {
-        attribution:"© OpenStreetMap"
-      }
-    ).addTo(map);
-
-    sellerMarker = L.marker([
-      data.sellerLatitude,
-      data.sellerLongitude
-    ]).addTo(map);
-
-    setTimeout(() => {
-      map.invalidateSize();
-    }, 100);
-
-  }else{
-
-    sellerMarker.setLatLng([
-      data.sellerLatitude,
-      data.sellerLongitude
-    ]);
-
-    map.setView([
-      data.sellerLatitude,
-      data.sellerLongitude
-    ],15);
-
-  }
+  document.getElementById("eta").innerHTML =
+  `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
 
 }else{
 
-  document.getElementById("liveMap").style.display = "none";
+  document.getElementById("eta").style.display = "none";
 
 }
-
     let progressHtml = `
 <div style="display:flex;
 justify-content:space-between;
