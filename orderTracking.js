@@ -113,52 +113,78 @@ trackBtn.addEventListener("click", async () => {
 
 currentOrder = data;
 
-    if(
-  data.customerLatitude &&
-  data.customerLongitude &&
-  data.sellerLatitude &&
-  data.sellerLongitude
-){
+    
+if (
+    data.status === "On The Way" &&
+    data.customerLatitude &&
+    data.customerLongitude &&
+    data.sellerLatitude &&
+    data.sellerLongitude
+) {
 
-  const distance = calculateDistance(
-    data.customerLatitude,
-    data.customerLongitude,
+    // ETA
+    const distance = calculateDistance(
+        data.customerLatitude,
+        data.customerLongitude,
+        data.sellerLatitude,
+        data.sellerLongitude
+    );
+
+    const eta = Math.ceil((distance / 30) * 60);
+
+    document.getElementById("eta").style.display = "block";
+
+    document.getElementById("eta").innerHTML =
+        `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
+
+    // LIVE MAP
+    document.getElementById("liveMap").style.display = "block";
+
+    if (!map) {
+
+        map = L.map("liveMap").setView(
+            [data.sellerLatitude, data.sellerLongitude],
+            15
+        );
+
+        L.tileLayer(
+            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+            {
+                attribution: "© OpenStreetMap"
+            }
+        ).addTo(map);
+
+        sellerMarker = L.marker([
     data.sellerLatitude,
     data.sellerLongitude
-  );
+]).addTo(map);
 
-  const eta = Math.ceil((distance / 30) * 60);
+setTimeout(() => {
+    map.invalidateSize();
+}, 100);
 
-  document.getElementById("eta").innerHTML =
-    `🚚 ${distance.toFixed(1)} km away • ETA ${eta} min`;
+    } else {
 
-}
+        sellerMarker.setLatLng([
+            data.sellerLatitude,
+            data.sellerLongitude
+        ]);
 
-if(
-  data.status === "On The Way" &&
-  data.customerLatitude &&
-  data.customerLongitude &&
-  data.sellerLatitude &&
-  data.sellerLongitude
-){
+        map.setView([
+            data.sellerLatitude,
+            data.sellerLongitude
+        ], 15);
 
-  const distance = calculateDistance(
-    data.customerLatitude,
-    data.customerLongitude,
-    data.sellerLatitude,
-    data.sellerLongitude
-  );
+    }
 
-  const eta = Math.ceil((distance / 30) * 60);
+} else {
 
-  document.getElementById("eta").style.display = "block";
+    document.getElementById("eta").style.display = "block";
 
-  document.getElementById("eta").innerHTML =
-  `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
+    document.getElementById("eta").innerHTML =
+    "🚚 ETA will appear when the seller starts delivery.";
 
-}else{
-
-  document.getElementById("eta").style.display = "none";
+    document.getElementById("liveMap").style.display = "none";
 
 }
     let progressHtml = `
