@@ -959,19 +959,20 @@ try{
     acceptedAt: serverTimestamp()
   });
 
-}else if(status === "On The Way"){
-
-  await updateDoc(orderRef,{
-    status,
-    onTheWayAt: serverTimestamp()
-  });
-
 }else if(status === "Delivered"){
 
   await updateDoc(orderRef,{
     status,
     deliveredAt: serverTimestamp()
   });
+
+  if(watchId){
+
+    navigator.geolocation.clearWatch(watchId);
+
+    watchId = null;
+
+  }
 
 }else{
 
@@ -982,15 +983,7 @@ try{
 }
 
   console.log("After updateDoc");
-
-  if(status === "Delivered" && watchId){
-
-  navigator.geolocation.clearWatch(watchId);
-
-  watchId = null;
-
-}
-
+  
 }catch(err){
 
   console.error("UPDATE ERROR:", err);
