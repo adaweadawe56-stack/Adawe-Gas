@@ -2155,7 +2155,7 @@ function animateReviews(){
 
 }
 
-  async function getBestSeller(quantity) {
+  async function getBestSeller(quantity, brand) {
 
   const q = query(
     collection(db, "sellers"),
@@ -2174,18 +2174,17 @@ function animateReviews(){
 
     const s = docSnap.data();
 
-    // Seller must have a price for this gas size
-    if (!s.prices?.[quantity]) return;
+   const s = docSnap.data();
 
-    // Seller commission must be paid
-    if (s.paymentStatus !== "Paid") return;
+// Seller must have a price for this gas size
+if (!s.prices?.[quantity]) return;
 
-    // Seller must not exceed delivery limit
-    if (
-      (s.deliveryCount || 0) >=
-      (s.deliveryLimit || 999)
-    ) return;
-
+// Seller must sell the selected brand
+if (
+  s.brands &&
+  Array.isArray(s.brands) &&
+  !s.brands.includes(brand)
+) return;
     // Pick the cheapest seller
     if (
       !bestSeller ||
