@@ -2226,6 +2226,13 @@ if (!sellerWhatsapp) {
     console.log("GPS not available:", err);
 
   }
+    console.log("Customer Latitude:", customerLatitude);
+console.log("Customer Longitude:", customerLongitude);
+
+console.log({
+  customerLatitude,
+  customerLongitude
+});
 
   await addDoc(
     collection(db,"orders"),
