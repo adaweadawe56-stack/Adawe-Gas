@@ -161,7 +161,7 @@ if (
 
 }
 
-window.previousStatus = data.status;
+sessionStorage.setItem(key, data.status);
 
     
 if (
