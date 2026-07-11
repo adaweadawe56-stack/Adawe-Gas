@@ -404,45 +404,70 @@ function updateStatsAndChart(){
 
 function renderOrders(){
 
- ordersTable.innerHTML = `
- <tr>
- <th>Name</th>
- <th>Phone</th>
- <th>Qty</th>
- <th>Brand</th>
- <th>Status</th>
- <th>Date</th>
- <th>Actions</th>
- </tr>`;
+  ordersTable.innerHTML = `
+    <tr>
+      <th>Name</th>
+      <th>Phone</th>
+      <th>Location</th>
+      <th>Qty</th>
+      <th>Brand</th>
+      <th>Status</th>
+      <th>Date</th>
+      <th>Actions</th>
+    </tr>
+  `;
 
- ordersData.forEach(o=>{
+  ordersData.forEach(o=>{
 
-  ordersTable.innerHTML += `
-  <tr>
-  <td>${o.name || ""}</td>
-  <td>${o.phone || ""}</td>
-  <td>${o.quantity || ""}</td>
-  <td>${o.brand || ""}</td>
-  <td>${o.status || "pending"}</td>
-  <td>${formatDate(o.createdAt)}</td>
+    const date =
+      o.createdAt
+      ? o.createdAt.toDate().toLocaleString()
+      : "-";
 
-  <td>
+    ordersTable.innerHTML += `
+      <tr>
+        <td>${o.name}</td>
+        <td>${o.phone}</td>
+        <td>${o.location || "-"}</td>
+        <td>${o.quantity}</td>
+        <td>${o.brand}</td>
+        <td>${o.status}</td>
+        <td>${date}</td>
 
-  <button onclick="editOrder('${o.id}')" class="btn btn-primary btn-sm">
-  Edit
-  </button>
+       <td>
 
-  <button onclick="deleteOrder('${o.id}')" class="btn btn-danger btn-sm">
-  Delete
-  </button>
-
-  </td>
-
-  </tr>`;
- });
-
+${
+o.customerLatitude && o.customerLongitude
+? `
+<button
+onclick="window.open('https://maps.google.com/?q=${o.customerLatitude},${o.customerLongitude}','_blank')"
+class="btn btn-success btn-sm">
+📍 Map
+</button>
+`
+: ""
 }
 
+<button
+onclick="editOrder('${o.id}')"
+class="btn btn-primary btn-sm mt-1">
+Edit
+</button>
+
+<button
+onclick="deleteOrder('${o.id}')"
+class="btn btn-danger btn-sm mt-1">
+Delete
+</button>
+
+</td>
+
+      </tr>
+    `;
+
+  });
+
+}
 function renderSellers(){
 
  sellersTable.innerHTML = `
