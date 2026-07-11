@@ -49,6 +49,15 @@ document.getElementById("historyResults");
 const receiptBox =
 document.getElementById("receiptBox");
 
+
+if ("Notification" in window) {
+
+  if (Notification.permission !== "granted") {
+    Notification.requestPermission();
+  }
+
+}
+
 let unsubscribe = null;
 let currentOrder = null;
 
@@ -112,6 +121,42 @@ trackBtn.addEventListener("click", async () => {
   const data = snap.docs[0].data();
 
 currentOrder = data;
+
+    // Remember previous status
+let previousStatus = window.previousStatus || null;
+
+if (
+  previousStatus &&
+  previousStatus !== data.status &&
+  Notification.permission === "granted"
+) {
+
+  let message = "";
+
+  if (data.status === "Accepted") {
+    message = "✅ Your order has been accepted.";
+  }
+
+  if (data.status === "On The Way") {
+    message = "🚚 Your gas is on the way.";
+  }
+
+  if (data.status === "Delivered") {
+    message = "🎉 Your order has been delivered.";
+  }
+
+  if (message) {
+
+    new Notification("Adawe Gas", {
+      body: message,
+      icon: "images/logo.png"
+    });
+
+  }
+
+}
+
+window.previousStatus = data.status;
 
     
 if (
