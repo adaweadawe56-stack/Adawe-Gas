@@ -2103,7 +2103,7 @@ function animateReviews(){
 
 }
 
-  async function getBestSeller(quantity) {
+  async function getBestSeller(quantity, brand)
 
   const q = query(
     collection(db, "sellers"),
@@ -2277,7 +2277,7 @@ orderForm.addEventListener("submit", async (e) => {
 
   try {
 
-    const sellerData = await getBestSeller(quantity);
+   const sellerData = await getBestSeller(quantity, brand);
 
 const sellerId = sellerData.id;
 
