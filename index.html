@@ -1039,11 +1039,14 @@ Delivery Address
   style="display:none;">
 </div>
   
-<!-- SELLERS HERE -->
+<div id="sellerContainer" style="display:none;">
+
 <select id="sellerSelect" class="form-select mb-3" required>
   <option value="">Select Seller</option>
 </select>
 
+</div>
+  
 <button type="submit"
         class="btn w-100"
         aria-label="Send order via WhatsApp"
@@ -2097,6 +2100,58 @@ function animateReviews(){
   document
     .querySelectorAll(".review-card")
     .forEach(card=>reviewObserver.observe(card));
+
+}
+
+  async function getBestSeller(quantity) {
+
+  const q = query(
+    collection(db, "sellers"),
+    where("status", "==", "approved")
+  );
+
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    throw new Error("No approved sellers found");
+  }
+
+  let bestSeller = null;
+
+  snap.forEach(docSnap => {
+
+    const s = docSnap.data();
+
+    // Seller must have a price for this gas size
+    if (!s.prices?.[quantity]) return;
+
+    // Seller commission must be paid
+    if (s.paymentStatus !== "Paid") return;
+
+    // Seller must not exceed delivery limit
+    if (
+      (s.deliveryCount || 0) >=
+      (s.deliveryLimit || 999)
+    ) return;
+
+    // Pick the cheapest seller
+    if (
+      !bestSeller ||
+      s.prices[quantity] < bestSeller.prices[quantity]
+    ) {
+      bestSeller = {
+        id: docSnap.id,
+        ...s
+      };
+    }
+
+  });
+
+  if (!bestSeller) {
+    throw new Error("No seller available");
+  }
+
+  return bestSeller;
 
 }
   
