@@ -2154,6 +2154,58 @@ function animateReviews(){
   return bestSeller;
 
 }
+
+  async function getBestSeller(quantity) {
+
+  const q = query(
+    collection(db, "sellers"),
+    where("status", "==", "approved")
+  );
+
+  const snap = await getDocs(q);
+
+  if (snap.empty) {
+    throw new Error("No approved sellers found");
+  }
+
+  let bestSeller = null;
+
+  snap.forEach(docSnap => {
+
+    const s = docSnap.data();
+
+    // Seller must have a price for this gas size
+    if (!s.prices?.[quantity]) return;
+
+    // Seller commission must be paid
+    if (s.paymentStatus !== "Paid") return;
+
+    // Seller must not exceed delivery limit
+    if (
+      (s.deliveryCount || 0) >=
+      (s.deliveryLimit || 999)
+    ) return;
+
+    // Pick the cheapest seller
+    if (
+      !bestSeller ||
+      s.prices[quantity] < bestSeller.prices[quantity]
+    ) {
+      bestSeller = {
+        id: docSnap.id,
+        ...s
+      };
+    }
+
+  });
+
+  if (!bestSeller) {
+    throw new Error("No seller available");
+  }
+
+  return bestSeller;
+
+}
   
 /* -------------------- ORDER FORM -------------------- */
 
@@ -2196,10 +2248,7 @@ orderForm.addEventListener("submit", async (e) => {
 
   const brand =
   document.getElementById("brand").value;
-
-  const sellerId =
-  document.getElementById("sellerSelect").value;
-
+  
   /* VALIDATION */
 
   if (
@@ -2207,9 +2256,8 @@ orderForm.addEventListener("submit", async (e) => {
     !phone ||
     !location ||
     !quantity ||
-    !brand ||
-    !sellerId
-  ) {
+    !brand 
+     ) {
 
     showToast("Please fill all order fields", false);
 
@@ -2229,16 +2277,21 @@ orderForm.addEventListener("submit", async (e) => {
 
   try {
 
+    const sellerData = await getBestSeller(quantity);
+
+const sellerId = sellerData.id;
+
+document.getElementById("recommendedSeller").style.display = "block";
+
+document.getElementById("recommendedSeller").innerHTML = `
+<b>Recommended Seller</b><br>
+${sellerData.name}<br>
+📍 ${sellerData.location}<br>
+💰 KES ${sellerData.prices[quantity]}
+`;
+
   /* GET SELLER */
-
-  const sellerDoc = await getDoc(doc(db, "sellers", sellerId));
-
-  if (!sellerDoc.exists()) {
-    throw new Error("Seller not found");
-  }
-
-  const sellerData = sellerDoc.data();
-
+  
     const sellerWhatsapp = sellerData.phone?.trim();
 
 const orderPrice =
