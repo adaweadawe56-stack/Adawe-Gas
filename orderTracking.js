@@ -122,13 +122,16 @@ trackBtn.addEventListener("click", async () => {
 
 currentOrder = data;
 
-    // Remember previous status
-let previousStatus = window.previousStatus || null;
+    // Previous status
+const previousStatus = window.previousStatus;
+
+console.log("Previous:", previousStatus);
+console.log("Current:", data.status);
 
 if (
-  previousStatus &&
-  previousStatus !== data.status &&
-  Notification.permission === "granted"
+    previousStatus !== undefined &&
+    previousStatus !== data.status &&
+    Notification.permission === "granted"
 ) {
 
   let message = "";
@@ -144,9 +147,11 @@ if (
   if (data.status === "Delivered") {
     message = "🎉 Your order has been delivered.";
   }
+   console.log("SHOW NOTIFICATION");
 
   if (message) {
-
+    console.log(message);
+   
     new Notification("Adawe Gas", {
       body: message,
       icon: "images/logo.png"
