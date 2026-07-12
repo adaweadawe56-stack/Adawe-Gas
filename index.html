@@ -2148,8 +2148,14 @@ const s = docSnap.data();
 
 if (!s.prices?.[quantity]) return;
 
-if (s.paymentStatus !== "Paid") return;
+if (
+    s.brands &&
+    Array.isArray(s.brands) &&
+    !s.brands.includes(brand)
+) return;
 
+if (s.paymentStatus !== "Paid") return;
+    
 if (
   (s.deliveryCount || 0) >=
   (s.deliveryLimit || 999)
