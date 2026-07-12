@@ -187,45 +187,56 @@ if (
     document.getElementById("eta").innerHTML =
         `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
 
-    // LIVE MAP
-    document.getElementById("liveMap").style.display = "block";
+// LIVE MAP
+document.getElementById("liveMap").style.display = "block";
 
-    if (!map) {
+if (!map) {
 
-        map = L.map("liveMap").setView(
-            [data.sellerLatitude, data.sellerLongitude],
-            15
-        );
+    map = L.map("liveMap").setView(
+        [data.sellerLatitude, data.sellerLongitude],
+        15
+    );
 
-        L.tileLayer(
-            "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
-            {
-                attribution: "© OpenStreetMap"
-            }
-        ).addTo(map);
+    L.tileLayer(
+        "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
+        {
+            attribution: "© OpenStreetMap"
+        }
+    ).addTo(map);
 
-        sellerMarker = L.marker([
-    data.sellerLatitude,
-    data.sellerLongitude
-]).addTo(map);
+    // Seller Marker
+    sellerMarker = L.marker([
+        data.sellerLatitude,
+        data.sellerLongitude
+    ])
+    .addTo(map)
+    .bindPopup("Seller");
 
-setTimeout(() => {
-    map.invalidateSize();
-}, 100);
+    // Customer Marker (hal mar oo keliya)
+    L.marker([
+        data.customerLatitude,
+        data.customerLongitude
+    ])
+    .addTo(map)
+    .bindPopup("Customer");
 
-    } else {
+    setTimeout(() => {
+        map.invalidateSize();
+    }, 100);
 
-        sellerMarker.setLatLng([
-            data.sellerLatitude,
-            data.sellerLongitude
-        ]);
+} else {
 
-        map.setView([
-            data.sellerLatitude,
-            data.sellerLongitude
-        ], 15);
+    sellerMarker.setLatLng([
+        data.sellerLatitude,
+        data.sellerLongitude
+    ]);
 
-    }
+    map.panTo([
+        data.sellerLatitude,
+        data.sellerLongitude
+    ]);
+
+}
 
 } else {
 
