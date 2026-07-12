@@ -63,6 +63,8 @@ let currentOrder = null;
 
 let map = null;
 let sellerMarker = null;
+let customerMarker = null;
+let routeLine = null;
 
 function calculateDistance(lat1, lon1, lat2, lon2){
 
@@ -213,22 +215,40 @@ if (!map) {
     .bindPopup("Seller");
 
     // Customer Marker (hal mar oo keliya)
-    L.marker([
-        data.customerLatitude,
-        data.customerLongitude
-    ])
-    .addTo(map)
-    .bindPopup("Customer");
+customerMarker = L.marker([
+    data.customerLatitude,
+    data.customerLongitude
+])
+.addTo(map)
+.bindPopup("Customer");
 
-    setTimeout(() => {
-        map.invalidateSize();
-    }, 100);
+// BLUE ROUTE LINE
+routeLine = L.polyline(
+[
+    [data.customerLatitude, data.customerLongitude],
+    [data.sellerLatitude, data.sellerLongitude]
+],
+{
+    color: "blue",
+    weight: 5
+}
+).addTo(map);
 
+setTimeout(() => {
+    map.invalidateSize();
+}, 100);
+  
 } else {
 
     sellerMarker.setLatLng([
         data.sellerLatitude,
         data.sellerLongitude
+    ]);
+
+    // UPDATE ROUTE LINE
+    routeLine.setLatLngs([
+        [data.customerLatitude, data.customerLongitude],
+        [data.sellerLatitude, data.sellerLongitude]
     ]);
 
     map.panTo([
