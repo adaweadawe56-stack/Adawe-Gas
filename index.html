@@ -2341,6 +2341,8 @@ if (!sellerWhatsapp) {
 
   const orderId = "AG-" + Date.now();
 
+    console.log("Customer Latitude:", customerLatitude);
+
   let customerLatitude = null;
 let customerLongitude = null;
 
@@ -2375,6 +2377,14 @@ const sellerData = await getBestSeller(
     customerLatitude,
     customerLongitude
 );
+
+const sellerId = sellerData.id;
+
+const sellerWhatsapp = sellerData.phone?.trim();
+
+const orderPrice =
+Number(sellerData.prices?.[quantity] || 0);
+    
     console.log("Customer Latitude:", customerLatitude);
 console.log("Customer Longitude:", customerLongitude);
 
