@@ -2123,13 +2123,12 @@ function animateReviews(){
 
 }
  
-  async function getBestSeller(
-  quantity,
-  brand,
-  customerLatitude,
-  customerLongitude
+ async function getBestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
 ) {
-
   const q = query(
     collection(db, "sellers"),
     where("status", "==", "approved")
@@ -2321,12 +2320,7 @@ orderForm.addEventListener("submit", async (e) => {
 
   try {
 
-   const sellerData = await getBestSeller(
-    quantity,
-    brand,
-    customerLatitude,
-    customerLongitude
-);
+  
 const sellerId = sellerData.id;
 
 
@@ -2348,32 +2342,39 @@ if (!sellerWhatsapp) {
   const orderId = "AG-" + Date.now();
 
   let customerLatitude = null;
-  let customerLongitude = null;
+let customerLongitude = null;
 
-  try {
+try {
 
     const position = await new Promise((resolve,reject)=>{
 
-      navigator.geolocation.getCurrentPosition(
-        resolve,
-        reject,
-        {
-          enableHighAccuracy:true,
-          timeout:10000,
-          maximumAge:0
-        }
-      );
+        navigator.geolocation.getCurrentPosition(
+            resolve,
+            reject,
+            {
+                enableHighAccuracy:true,
+                timeout:10000,
+                maximumAge:0
+            }
+        );
 
     });
 
     customerLatitude = position.coords.latitude;
     customerLongitude = position.coords.longitude;
 
-  } catch(err){
+} catch(err){
 
     console.log("GPS not available:", err);
 
-  }
+}
+
+const sellerData = await getBestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+);
     console.log("Customer Latitude:", customerLatitude);
 console.log("Customer Longitude:", customerLongitude);
 
