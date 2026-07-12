@@ -2375,17 +2375,20 @@ Quantity: ${quantity}
 
 Status: Pending`;
 
-  showToast("✅ Order saved successfully");
+ showToast("✅ Order saved successfully");
 
 orderForm.reset();
 
-document.getElementById("recommendedSeller").style.display = "none";
-  try{
+const recommendedSeller = document.getElementById("recommendedSeller");
+recommendedSeller.style.display = "none";
+recommendedSeller.innerHTML = "";
+
+try {
   window.open(
     `https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`,
     "_blank"
   );
-}catch(e){
+} catch (e) {
   console.log("WhatsApp window blocked");
 }
 
