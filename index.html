@@ -2202,6 +2202,67 @@ if (
 
 }
 
+ async function getCheapestSeller(quantity, brand) {
+
+    const q = query(
+        collection(db, "sellers"),
+        where("status", "==", "approved")
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+        throw new Error("No approved sellers found");
+    }
+
+    let bestSeller = null;
+
+    snap.forEach(docSnap => {
+
+        const s = docSnap.data();
+
+        // Seller must have a price for this quantity
+        if (!s.prices?.[quantity]) return;
+
+        // Seller commission must be paid
+        if (s.paymentStatus !== "Paid") return;
+
+        // Seller must not exceed delivery limit
+        if (
+            (s.deliveryCount || 0) >=
+            (s.deliveryLimit || 999)
+        ) return;
+
+        // Seller must support the selected brand
+        if (
+            s.brands &&
+            Array.isArray(s.brands) &&
+            !s.brands.includes(brand)
+        ) return;
+
+        // Select the cheapest seller
+        if (
+            !bestSeller ||
+            s.prices[quantity] < bestSeller.prices[quantity]
+        ) {
+
+            bestSeller = {
+                id: docSnap.id,
+                ...s
+            };
+
+        }
+
+    });
+
+    if (!bestSeller) {
+        throw new Error("No seller available");
+    }
+
+    return bestSeller;
+
+}
+  
   async function showRecommendedSeller() {
 
   const quantity =
@@ -2220,7 +2281,7 @@ if (
   try {
 
     const seller =
-      await getBestSeller(quantity, brand);
+await getCheapestSeller(quantity, brand);
 
     document.getElementById("recommendedSeller").style.display = "block";
 
