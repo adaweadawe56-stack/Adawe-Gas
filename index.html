@@ -2176,28 +2176,43 @@ const distance = calculateDistance(
     sellerLng
 );
 
+const sellerRating = Number(s.averageRating || 0);
+
 if (
 
-  !bestSeller ||
+    !bestSeller ||
 
-  distance < bestSeller.distance ||
+    distance < bestSeller.distance ||
 
-  (
-    Math.abs(distance - bestSeller.distance) < 1 &&
-    s.prices[quantity] < bestSeller.prices[quantity]
-  )
+    (
+
+        Math.abs(distance - bestSeller.distance) < 1 &&
+
+        sellerRating > Number(bestSeller.averageRating || 0)
+
+    ) ||
+
+    (
+
+        Math.abs(distance - bestSeller.distance) < 1 &&
+
+        sellerRating === Number(bestSeller.averageRating || 0) &&
+
+        s.prices[quantity] < bestSeller.prices[quantity]
+
+    )
 
 ) {
 
-  bestSeller = {
+    bestSeller = {
 
-    id: docSnap.id,
+        id: docSnap.id,
 
-    distance,
+        distance,
 
-    ...s
+        ...s
 
-  };
+    };
 
 }
    
