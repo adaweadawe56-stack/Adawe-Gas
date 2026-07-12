@@ -2273,14 +2273,6 @@ orderForm.addEventListener("submit", async (e) => {
 
 const sellerId = sellerData.id;
 
-document.getElementById("recommendedSeller").style.display = "block";
-
-document.getElementById("recommendedSeller").innerHTML = `
-<b>Recommended Seller</b><br>
-${sellerData.name}<br>
-📍 ${sellerData.location}<br>
-💰 KES ${sellerData.prices[quantity]}
-`;
 
   /* GET SELLER */
   
@@ -2385,8 +2377,9 @@ Status: Pending`;
 
   showToast("✅ Order saved successfully");
 
-  orderForm.reset();
+orderForm.reset();
 
+document.getElementById("recommendedSeller").style.display = "none";
   try{
   window.open(
     `https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`,
