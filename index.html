@@ -2318,73 +2318,60 @@ orderForm.addEventListener("submit", async (e) => {
     return;
   }
 
-  try {
-
-  
-const sellerId = sellerData.id;
-
-
-  /* GET SELLER */
-  
-    const sellerWhatsapp = sellerData.phone?.trim();
-
-const orderPrice =
-  Number(sellerData.prices?.[quantity] || 0);
-    
-if (!sellerData.uid) {
-  throw new Error("Seller UID missing");
-}
-
-if (!sellerWhatsapp) {
-  throw new Error("Seller phone missing");
-}
-
-  const orderId = "AG-" + Date.now();
-
-    console.log("Customer Latitude:", customerLatitude);
-
-  let customerLatitude = null;
-let customerLongitude = null;
-
 try {
 
-    const position = await new Promise((resolve,reject)=>{
+    const orderId = "AG-" + Date.now();
 
-        navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            {
-                enableHighAccuracy:true,
-                timeout:10000,
-                maximumAge:0
-            }
-        );
+    let customerLatitude = null;
+    let customerLongitude = null;
 
-    });
+    // Soo qaado GPS
+    try {
 
-    customerLatitude = position.coords.latitude;
-    customerLongitude = position.coords.longitude;
+        const position = await new Promise((resolve, reject) => {
 
-} catch(err){
+            navigator.geolocation.getCurrentPosition(
+                resolve,
+                reject,
+                {
+                    enableHighAccuracy: true,
+                    timeout: 10000,
+                    maximumAge: 0
+                }
+            );
 
-    console.log("GPS not available:", err);
+        });
 
-}
+        customerLatitude = position.coords.latitude;
+        customerLongitude = position.coords.longitude;
 
-const sellerData = await getBestSeller(
-    quantity,
-    brand,
-    customerLatitude,
-    customerLongitude
-);
+    } catch (err) {
 
-const sellerId = sellerData.id;
+        console.log("GPS not available:", err);
 
-const sellerWhatsapp = sellerData.phone?.trim();
+    }
 
-const orderPrice =
-Number(sellerData.prices?.[quantity] || 0);
-    
+    // Dooro seller-ka ugu dhow
+    const sellerData = await getBestSeller(
+        quantity,
+        brand,
+        customerLatitude,
+        customerLongitude
+    );
+
+    const sellerId = sellerData.id;
+    const sellerWhatsapp = sellerData.phone?.trim();
+    const orderPrice = Number(sellerData.prices?.[quantity] || 0);
+
+    if (!sellerData.uid) {
+        throw new Error("Seller UID missing");
+    }
+
+    if (!sellerWhatsapp) {
+        throw new Error("Seller phone missing");
+    }
+   
+
     console.log("Customer Latitude:", customerLatitude);
 console.log("Customer Longitude:", customerLongitude);
 
