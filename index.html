@@ -2161,16 +2161,19 @@ if (
   (s.deliveryLimit || 999)
 ) return;
 
+const sellerLat = Number(s.sellerLatitude);
+const sellerLng = Number(s.sellerLongitude);
+
 if (
-  s.sellerLatitude == null ||
-  s.sellerLongitude == null
+    isNaN(sellerLat) ||
+    isNaN(sellerLng)
 ) return;
 
 const distance = calculateDistance(
-  customerLatitude,
-  customerLongitude,
-  s.sellerLatitude,
-  s.sellerLongitude
+    customerLatitude,
+    customerLongitude,
+    sellerLat,
+    sellerLng
 );
 
 if (
