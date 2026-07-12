@@ -2102,59 +2102,7 @@ function animateReviews(){
     .forEach(card=>reviewObserver.observe(card));
 
 }
-
-  async function getBestSeller(quantity, brand)
-
-  const q = query(
-    collection(db, "sellers"),
-    where("status", "==", "approved")
-  );
-
-  const snap = await getDocs(q);
-
-  if (snap.empty) {
-    throw new Error("No approved sellers found");
-  }
-
-  let bestSeller = null;
-
-  snap.forEach(docSnap => {
-
-    const s = docSnap.data();
-
-    // Seller must have a price for this gas size
-    if (!s.prices?.[quantity]) return;
-
-    // Seller commission must be paid
-    if (s.paymentStatus !== "Paid") return;
-
-    // Seller must not exceed delivery limit
-    if (
-      (s.deliveryCount || 0) >=
-      (s.deliveryLimit || 999)
-    ) return;
-
-    // Pick the cheapest seller
-    if (
-      !bestSeller ||
-      s.prices[quantity] < bestSeller.prices[quantity]
-    ) {
-      bestSeller = {
-        id: docSnap.id,
-        ...s
-      };
-    }
-
-  });
-
-  if (!bestSeller) {
-    throw new Error("No seller available");
-  }
-
-  return bestSeller;
-
-}
-
+ 
   async function getBestSeller(quantity, brand) {
 
   const q = query(
@@ -2174,16 +2122,13 @@ function animateReviews(){
 
     const s = docSnap.data();
 
-   const s = docSnap.data();
-
-// Seller must have a price for this gas size
 if (!s.prices?.[quantity]) return;
 
-// Seller must sell the selected brand
+if (s.paymentStatus !== "Paid") return;
+
 if (
-  s.brands &&
-  Array.isArray(s.brands) &&
-  !s.brands.includes(brand)
+  (s.deliveryCount || 0) >=
+  (s.deliveryLimit || 999)
 ) return;
     // Pick the cheapest seller
     if (
@@ -2205,6 +2150,54 @@ if (
   return bestSeller;
 
 }
+
+  async function showRecommendedSeller() {
+
+  const quantity =
+    document.getElementById("quantity").value;
+
+  const brand =
+    document.getElementById("brand").value;
+
+  if (!quantity || !brand) {
+
+    document.getElementById("recommendedSeller").style.display = "none";
+
+    return;
+  }
+
+  try {
+
+    const seller =
+      await getBestSeller(quantity, brand);
+
+    document.getElementById("recommendedSeller").style.display = "block";
+
+   document.getElementById("recommendedSeller").innerHTML = `
+<b>Recommended Seller</b><br>
+👤 ${seller.name}<br>
+📍 ${seller.location}<br>
+⭐ ${seller.averageRating || 0} Rating<br>
+💰 KES ${seller.prices[quantity]}
+`;
+  } catch (err) {
+
+    document.getElementById("recommendedSeller").style.display = "block";
+
+    document.getElementById("recommendedSeller").innerHTML =
+      "❌ No seller available";
+
+  }
+
+}
+
+  document
+.getElementById("quantity")
+.addEventListener("change", showRecommendedSeller);
+
+document
+.getElementById("brand")
+.addEventListener("change", showRecommendedSeller);
   
 /* -------------------- ORDER FORM -------------------- */
 
