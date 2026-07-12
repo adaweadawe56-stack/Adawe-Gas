@@ -2128,7 +2128,7 @@ function animateReviews(){
   brand,
   customerLatitude,
   customerLongitude
-)
+) {
 
   const q = query(
     collection(db, "sellers"),
@@ -2321,8 +2321,12 @@ orderForm.addEventListener("submit", async (e) => {
 
   try {
 
-   const sellerData = await getBestSeller(quantity, brand);
-
+   const sellerData = await getBestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+);
 const sellerId = sellerData.id;
 
 
