@@ -2102,8 +2102,33 @@ function animateReviews(){
     .forEach(card=>reviewObserver.observe(card));
 
 }
+
+  function calculateDistance(lat1, lon1, lat2, lon2) {
+
+  const R = 6371;
+
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon / 2) *
+    Math.sin(dLon / 2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+
+}
  
-  async function getBestSeller(quantity, brand) {
+  async function getBestSeller(
+  quantity,
+  brand,
+  customerLatitude,
+  customerLongitude
+)
 
   const q = query(
     collection(db, "sellers"),
@@ -2120,7 +2145,7 @@ function animateReviews(){
 
   snap.forEach(docSnap => {
 
-    const s = docSnap.data();
+const s = docSnap.data();
 
 if (!s.prices?.[quantity]) return;
 
@@ -2130,17 +2155,44 @@ if (
   (s.deliveryCount || 0) >=
   (s.deliveryLimit || 999)
 ) return;
-    // Pick the cheapest seller
-    if (
-      !bestSeller ||
-      s.prices[quantity] < bestSeller.prices[quantity]
-    ) {
-      bestSeller = {
-        id: docSnap.id,
-        ...s
-      };
-    }
 
+if (
+  s.sellerLatitude == null ||
+  s.sellerLongitude == null
+) return;
+
+const distance = calculateDistance(
+  customerLatitude,
+  customerLongitude,
+  s.sellerLatitude,
+  s.sellerLongitude
+);
+
+if (
+
+  !bestSeller ||
+
+  distance < bestSeller.distance ||
+
+  (
+    Math.abs(distance - bestSeller.distance) < 1 &&
+    s.prices[quantity] < bestSeller.prices[quantity]
+  )
+
+) {
+
+  bestSeller = {
+
+    id: docSnap.id,
+
+    distance,
+
+    ...s
+
+  };
+
+}
+   
   });
 
   if (!bestSeller) {
