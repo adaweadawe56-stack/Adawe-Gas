@@ -224,9 +224,8 @@ customerMarker = L.marker([
 .bindPopup("Customer");
 
 // BLUE ROUTE LINE
-  routingControl = L.Routing.control({
-    collapsible: true,
-show: false,
+  // BLUE ROUTE LINE
+routingControl = L.Routing.control({
 
     waypoints: [
 
