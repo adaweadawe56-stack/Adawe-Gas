@@ -290,25 +290,31 @@ setTimeout(() => {
                 data.customerLongitude
             ),
 
-            L.latLng(
-                data.sellerLatitude,
-                data.sellerLongitude
-            )
+                  L.latLng(
+            data.sellerLatitude,
+            data.sellerLongitude
+        )
 
-        ]);
-
-    }
-
-    map.panTo([
-        data.sellerLatitude,
-        data.sellerLongitude
     ]);
+
+}
+
+map.panTo([
+    data.sellerLatitude,
+    data.sellerLongitude
+]);
 
 } else {
 
     document.getElementById("eta").style.display = "none";
 
-document.getElementById("liveMap").style.display = "none";
+    document.getElementById("liveMap").style.display = "none";
+
+    if (routingControl && map) {
+        map.removeControl(routingControl);
+        routingControl = null;
+    }
+
 }
     let progressHtml = `
 <div style="display:flex;
