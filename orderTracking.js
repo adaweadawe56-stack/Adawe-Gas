@@ -65,6 +65,7 @@ let map = null;
 let sellerMarker = null;
 let customerMarker = null;
 let routeLine = null;
+let routingControl = null;
 
 function calculateDistance(lat1, lon1, lat2, lon2){
 
@@ -223,44 +224,76 @@ customerMarker = L.marker([
 .bindPopup("Customer");
 
 // BLUE ROUTE LINE
-routeLine = L.polyline(
-[
-    [data.customerLatitude, data.customerLongitude],
-    [data.sellerLatitude, data.sellerLongitude]
-],
-{
-    color: "blue",
-    weight: 5
-}
-).addTo(map);
+routingControl = L.Routing.control({
 
+    waypoints: [
+
+        L.latLng(
+            data.customerLatitude,
+            data.customerLongitude
+        ),
+
+        L.latLng(
+            data.sellerLatitude,
+            data.sellerLongitude
+        )
+
+    ],
+
+    routeWhileDragging:false,
+
+    draggableWaypoints:false,
+
+    addWaypoints:false,
+
+    fitSelectedRoutes:true,
+
+    show:false,
+
+    createMarker:()=>null
+
+}).addTo(map);
+  
 setTimeout(() => {
     map.invalidateSize();
 }, 100);
   
 } else {
 
-   if (sellerMarker) {
-    sellerMarker.setLatLng([
+    if (sellerMarker) {
+
+        sellerMarker.setLatLng([
+            data.sellerLatitude,
+            data.sellerLongitude
+        ]);
+
+    }
+
+    if (routingControl) {
+
+        routingControl.setWaypoints([
+
+            L.latLng(
+                data.customerLatitude,
+                data.customerLongitude
+            ),
+
+            L.latLng(
+                data.sellerLatitude,
+                data.sellerLongitude
+            )
+
+        ]);
+
+    }
+
+    map.panTo([
         data.sellerLatitude,
         data.sellerLongitude
     ]);
-}
 
-if (routeLine) {
-    routeLine.setLatLngs([
-        [data.customerLatitude, data.customerLongitude],
-        [data.sellerLatitude, data.sellerLongitude]
-    ]);
 }
-
-map.panTo([
-    data.sellerLatitude,
-    data.sellerLongitude
-]);
   
-}
-
 } else {
 
     document.getElementById("eta").style.display = "block";
