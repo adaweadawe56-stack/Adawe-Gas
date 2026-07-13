@@ -205,25 +205,22 @@ if (!map) {
         }
     ).addTo(map);
 
-    // sellerMarker = L.marker([
+    // Seller Marker
+sellerMarker = L.marker([
     data.sellerLatitude,
     data.sellerLongitude
 ])
 .addTo(map)
 .bindPopup("Seller");
 
-if (customerMarker) {
-
-    customerMarker.setLatLng([
-        data.customerLatitude,
-        data.customerLongitude
-    ]);
-
-}
+// Customer Marker
+customerMarker = L.marker([
+    data.customerLatitude,
+    data.customerLongitude
+])
 .addTo(map)
 .bindPopup("Customer");
   
-// BLUE ROUTE LINE
   // BLUE ROUTE LINE
 routingControl = L.Routing.control({
 
@@ -265,38 +262,50 @@ setTimeout(() => {
   
 } else {
 
-   if (sellerMarker) {
+    if (sellerMarker) {
 
-    sellerMarker.setLatLng([
+        sellerMarker.setLatLng([
+            data.sellerLatitude,
+            data.sellerLongitude
+        ]);
+
+    }
+
+    if (customerMarker) {
+
+        customerMarker.setLatLng([
+            data.customerLatitude,
+            data.customerLongitude
+        ]);
+
+    }
+
+    if (routingControl) {
+
+        routingControl.setWaypoints([
+
+            L.latLng(
+                data.customerLatitude,
+                data.customerLongitude
+            ),
+
+            L.latLng(
+                data.sellerLatitude,
+                data.sellerLongitude
+            )
+
+        ]);
+
+    }
+
+    map.panTo([
         data.sellerLatitude,
         data.sellerLongitude
     ]);
 
 }
 
-if (routingControl) {
-
-    routingControl.setWaypoints([
-        L.latLng(
-            data.customerLatitude,
-            data.customerLongitude
-        ),
-        L.latLng(
-            data.sellerLatitude,
-            data.sellerLongitude
-        )
-    ]);
-
-}
-
-map.panTo([
-    data.sellerLatitude,
-    data.sellerLongitude
-]);
-
-}
-  
-} else {
+else {
 
     document.getElementById("eta").style.display = "block";
 
