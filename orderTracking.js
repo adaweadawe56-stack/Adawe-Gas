@@ -205,22 +205,24 @@ if (!map) {
         }
     ).addTo(map);
 
-    // Seller Marker
-    sellerMarker = L.marker([
-        data.sellerLatitude,
-        data.sellerLongitude
-    ])
-    .addTo(map)
-    .bindPopup("Seller");
-
-    // Customer Marker (hal mar oo keliya)
-customerMarker = L.marker([
-    data.customerLatitude,
-    data.customerLongitude
+    // sellerMarker = L.marker([
+    data.sellerLatitude,
+    data.sellerLongitude
 ])
 .addTo(map)
-.bindPopup("Customer");
+.bindPopup("Seller");
 
+if (customerMarker) {
+
+    customerMarker.setLatLng([
+        data.customerLatitude,
+        data.customerLongitude
+    ]);
+
+}
+.addTo(map)
+.bindPopup("Customer");
+  
 // BLUE ROUTE LINE
   // BLUE ROUTE LINE
 routingControl = L.Routing.control({
@@ -239,21 +241,21 @@ routingControl = L.Routing.control({
 
     ],
 
-    routeWhileDragging: false,
-    draggableWaypoints: false,
-    addWaypoints: false,
-    fitSelectedRoutes: true,
-    showAlternatives: false,
+    routeWhileDragging:false,
+    draggableWaypoints:false,
+    addWaypoints:false,
+    fitSelectedRoutes:true,
+    showAlternatives:false,
 
-    lineOptions: {
-        styles: [{
-            color: "blue",
-            weight: 5,
-            opacity: 0.8
+    lineOptions:{
+        styles:[{
+            color:"blue",
+            weight:5,
+            opacity:0.8
         }]
     },
 
-    createMarker: () => null
+    createMarker:()=>null
 
 }).addTo(map);
   
@@ -263,37 +265,34 @@ setTimeout(() => {
   
 } else {
 
-    if (sellerMarker) {
+   if (sellerMarker) {
 
-        sellerMarker.setLatLng([
-            data.sellerLatitude,
-            data.sellerLongitude
-        ]);
-
-    }
-
-    if (routingControl) {
-
-        routingControl.setWaypoints([
-
-            L.latLng(
-                data.customerLatitude,
-                data.customerLongitude
-            ),
-
-            L.latLng(
-                data.sellerLatitude,
-                data.sellerLongitude
-            )
-
-        ]);
-
-    }
-
-    map.panTo([
+    sellerMarker.setLatLng([
         data.sellerLatitude,
         data.sellerLongitude
     ]);
+
+}
+
+if (routingControl) {
+
+    routingControl.setWaypoints([
+        L.latLng(
+            data.customerLatitude,
+            data.customerLongitude
+        ),
+        L.latLng(
+            data.sellerLatitude,
+            data.sellerLongitude
+        )
+    ]);
+
+}
+
+map.panTo([
+    data.sellerLatitude,
+    data.sellerLongitude
+]);
 
 }
   
