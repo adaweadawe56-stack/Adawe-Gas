@@ -177,18 +177,16 @@ if (
 
     // ETA
     const distance = calculateDistance(
-        data.customerLatitude,
-        data.customerLongitude,
-        data.sellerLatitude,
-        data.sellerLongitude
-    );
+    data.customerLatitude,
+    data.customerLongitude,
+    data.sellerLatitude,
+    data.sellerLongitude
+);
 
-    const eta = Math.ceil((distance / 30) * 60);
+const eta = Math.max(1, Math.ceil((distance / 30) * 60));
 
-    document.getElementById("eta").style.display = "block";
-
-    document.getElementById("eta").innerHTML =
-        `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
+document.getElementById("eta").innerHTML =
+`🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
 
 // LIVE MAP
 document.getElementById("liveMap").style.display = "block";
