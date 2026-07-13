@@ -240,22 +240,25 @@ setTimeout(() => {
   
 } else {
 
+   if (sellerMarker) {
     sellerMarker.setLatLng([
         data.sellerLatitude,
         data.sellerLongitude
     ]);
+}
 
-    // UPDATE ROUTE LINE
+if (routeLine) {
     routeLine.setLatLngs([
         [data.customerLatitude, data.customerLongitude],
         [data.sellerLatitude, data.sellerLongitude]
     ]);
+}
 
-    map.panTo([
-        data.sellerLatitude,
-        data.sellerLongitude
-    ]);
-
+map.panTo([
+    data.sellerLatitude,
+    data.sellerLongitude
+]);
+  
 }
 
 } else {
