@@ -306,13 +306,9 @@ setTimeout(() => {
 
 } else {
 
-    document.getElementById("eta").style.display = "block";
+    document.getElementById("eta").style.display = "none";
 
-    document.getElementById("eta").innerHTML =
-    "🚚 ETA will appear when the seller starts delivery.";
-
-    document.getElementById("liveMap").style.display = "none";
-
+document.getElementById("liveMap").style.display = "none";
 }
     let progressHtml = `
 <div style="display:flex;
