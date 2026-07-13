@@ -225,6 +225,8 @@ customerMarker = L.marker([
 
 // BLUE ROUTE LINE
   routingControl = L.Routing.control({
+    collapsible: true,
+show: false,
 
     waypoints: [
 
