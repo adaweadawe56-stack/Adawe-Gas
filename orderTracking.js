@@ -224,7 +224,7 @@ customerMarker = L.marker([
 .bindPopup("Customer");
 
 // BLUE ROUTE LINE
-routingControl = L.Routing.control({
+  routingControl = L.Routing.control({
 
     waypoints: [
 
@@ -240,17 +240,21 @@ routingControl = L.Routing.control({
 
     ],
 
-    routeWhileDragging:false,
+    routeWhileDragging: false,
+    draggableWaypoints: false,
+    addWaypoints: false,
+    fitSelectedRoutes: true,
+    showAlternatives: false,
 
-    draggableWaypoints:false,
+    lineOptions: {
+        styles: [{
+            color: "blue",
+            weight: 5,
+            opacity: 0.8
+        }]
+    },
 
-    addWaypoints:false,
-
-    fitSelectedRoutes:true,
-
-    show:false,
-
-    createMarker:()=>null
+    createMarker: () => null
 
 }).addTo(map);
   
