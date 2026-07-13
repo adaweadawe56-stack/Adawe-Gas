@@ -304,8 +304,6 @@ setTimeout(() => {
         data.sellerLongitude
     ]);
 
-}
-
 } else {
 
     document.getElementById("eta").style.display = "block";
@@ -543,6 +541,7 @@ style="width:100%;margin-top:10px;"
   receiptBox.innerHTML = "";
 
 }
+    window.previousStatus = data.status;
   });
 
 });
