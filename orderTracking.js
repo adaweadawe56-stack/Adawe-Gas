@@ -164,8 +164,9 @@ if (
 
 }
 
-sessionStorage.setItem(key, data.status);
+const key = "order-status-" + data.orderId;
 
+sessionStorage.setItem(key, data.status);
     
 if (
     data.status === "On The Way" &&
@@ -305,7 +306,7 @@ setTimeout(() => {
 
 }
 
-else {
+} else {
 
     document.getElementById("eta").style.display = "block";
 
