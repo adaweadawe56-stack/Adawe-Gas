@@ -181,8 +181,11 @@ if (
     data.sellerLongitude
 );
 
-const eta = Math.max(1, Math.ceil((distance / 30) * 60));
+const sellerSpeed = 30;
 
+const eta = Math.ceil(
+    distance / sellerSpeed * 60
+);
 document.getElementById("eta").innerHTML =
 `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
 
@@ -324,9 +327,11 @@ if (customerMarker && map) {
 if (map) {
     map.remove();
     map = null;
-    
-}
 
+    sellerMarker = null;
+    customerMarker = null;
+    routingControl = null;
+}
 }  
 let progressHtml = `
 <div style="display:flex;
@@ -600,7 +605,7 @@ async () => {
 
   let html = "";
 
-  const docs = snap.docs.reverse();
+  orderBy("createdAt","desc")
 
   docs.forEach(docSnap => {
 
