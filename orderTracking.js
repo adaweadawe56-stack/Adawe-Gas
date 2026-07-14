@@ -125,7 +125,9 @@ trackBtn.addEventListener("click", async () => {
 currentOrder = data;
 
     // Previous status
-const previousStatus = window.previousStatus;
+const key = "order-status-" + data.orderId;
+
+const previousStatus = sessionStorage.getItem(key);
 
 console.log("Previous:", previousStatus);
 console.log("Current:", data.status);
@@ -162,10 +164,6 @@ if (
   }
 
 }
-
-const key = "order-status-" + data.orderId;
-
-sessionStorage.setItem(key, data.status);
     
 if (
     data.status === "On The Way" &&
@@ -328,15 +326,14 @@ if (map) {
     map = null;
     
 }
+
+}  
 let progressHtml = `
 <div style="display:flex;
 justify-content:space-between;
 margin:20px 0;
 font-size:14px;
 font-weight:bold;">
-...
-</div>
-`;
 
 <span style="
 color:${
@@ -370,7 +367,7 @@ On The Way
 
 <span style="
 color:${
-data.status === "Delivered"
+data.status==="Delivered"
 ? "green"
 : "gray"
 }">
@@ -558,7 +555,7 @@ style="width:100%;margin-top:10px;"
   receiptBox.innerHTML = "";
 
 }
-    window.previousStatus = data.status;
+    sessionStorage.setItem(key, data.status);
   });
 
 });
