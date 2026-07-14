@@ -588,27 +588,23 @@ async () => {
     return;
   }
 
-  const q = query(
+const q = query(
     collection(db,"orders"),
-    where("phone","==",phone)
-  );
+    where("phone","==",phone),
+    orderBy("createdAt","desc")
+);
 
-  const snap =
-  await getDocs(q);
+const snap = await getDocs(q);
 
-  if(snap.empty){
+if (snap.empty) {
 
-    historyResults.innerHTML =
-    "<p>No orders found</p>";
+    historyResults.innerHTML = "<p>No orders found</p>";
 
     return;
-  }
+}
+let html = "";
 
-  let html = "";
-
-  orderBy("createdAt","desc")
-
-  docs.forEach(docSnap => {
+snap.docs.forEach(docSnap => {
 
     const o = docSnap.data();
 
