@@ -309,28 +309,34 @@ map.panTo([
     document.getElementById("liveMap").style.display = "none";
 
     if (routingControl && map) {
-        map.removeControl(routingControl);
-        routingControl = null;
-    }
-
-    if (sellerMarker && map) {
-        map.removeLayer(sellerMarker);
-        sellerMarker = null;
-    }
-
-    if (customerMarker && map) {
-        map.removeLayer(customerMarker);
-        customerMarker = null;
-    }
-
+    map.removeControl(routingControl);
+    routingControl = null;
 }
 
-let progressHtml = 
+if (sellerMarker && map) {
+    map.removeLayer(sellerMarker);
+    sellerMarker = null;
+}
+
+if (customerMarker && map) {
+    map.removeLayer(customerMarker);
+    customerMarker = null;
+}
+
+if (map) {
+    map.remove();
+    map = null;
+    
+}
+let progressHtml = `
 <div style="display:flex;
 justify-content:space-between;
 margin:20px 0;
 font-size:14px;
 font-weight:bold;">
+...
+</div>
+`;
 
 <span style="
 color:${
