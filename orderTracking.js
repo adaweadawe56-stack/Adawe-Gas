@@ -133,7 +133,7 @@ console.log("Previous:", previousStatus);
 console.log("Current:", data.status);
 
 if (
-    previousStatus !== undefined &&
+    previousStatus !== null &&
     previousStatus !== data.status &&
     Notification.permission === "granted"
 ) {
