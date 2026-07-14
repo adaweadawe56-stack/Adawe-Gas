@@ -64,7 +64,6 @@ let currentOrder = null;
 let map = null;
 let sellerMarker = null;
 let customerMarker = null;
-let routeLine = null;
 let routingControl = null;
 
 function calculateDistance(lat1, lon1, lat2, lon2){
@@ -283,19 +282,19 @@ setTimeout(() => {
 
     if (routingControl) {
 
-        routingControl.setWaypoints([
+       routingControl.setWaypoints([
 
-            L.latLng(
-                data.customerLatitude,
-                data.customerLongitude
-            ),
+    L.latLng(
+        data.customerLatitude,
+        data.customerLongitude
+    ),
 
-                  L.latLng(
-            data.sellerLatitude,
-            data.sellerLongitude
-        )
+    L.latLng(
+        data.sellerLatitude,
+        data.sellerLongitude
+    )
 
-    ]);
+]);
 
 }
 
@@ -307,7 +306,6 @@ map.panTo([
 } else {
 
     document.getElementById("eta").style.display = "none";
-
     document.getElementById("liveMap").style.display = "none";
 
     if (routingControl && map) {
@@ -315,8 +313,19 @@ map.panTo([
         routingControl = null;
     }
 
+    if (sellerMarker && map) {
+        map.removeLayer(sellerMarker);
+        sellerMarker = null;
+    }
+
+    if (customerMarker && map) {
+        map.removeLayer(customerMarker);
+        customerMarker = null;
+    }
+
 }
-    let progressHtml = `
+
+let progressHtml = 
 <div style="display:flex;
 justify-content:space-between;
 margin:20px 0;
