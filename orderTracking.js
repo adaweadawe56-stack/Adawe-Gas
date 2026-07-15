@@ -262,7 +262,6 @@ setTimeout(() => {
     map.invalidateSize();
 }, 100);
   
-} else {
 
     if (sellerMarker) {
 
@@ -768,3 +767,10 @@ if (sellerSnap.exists()) {
 }
 
 };
+window.addEventListener("beforeunload", () => {
+
+    if (unsubscribe) {
+        unsubscribe();
+    }
+
+});
