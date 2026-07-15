@@ -1623,27 +1623,19 @@ alert("Saving history...");
 
     },
 
-    ()=>{
+  (error)=>{
+    console.error(error);
 
-      showToast(
+    showToast(
         "Location permission denied.",
         "#dc3545"
-      );
-
-    },
-
-    {
-      enableHighAccuracy: true
-    }
-
-  );
-
-  showToast(
-    "🚚 Live tracking started.",
-    "#198754"
-  );
-
-};
+    );
+},
+{
+    enableHighAccuracy: true,
+    maximumAge: 0,
+    timeout: 10000
+}
   
 /* LOGOUT */
 
