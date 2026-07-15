@@ -1571,30 +1571,34 @@ alert("Saving history...");
 
 };
 
-  window.shareLocation = async function(orderId){
+ window.shareLocation = async function(orderId){
 
   if(!navigator.geolocation){
     showToast(
       "Geolocation is not supported.",
       "#dc3545"
     );
+    return;
+  }
+
   try{
 
     await updateStatus(orderId,"On The Way");
 
-}catch(err){
+  }catch(err){
 
+    console.error(err);
     return;
 
-}
+  }
 
-if (watchId){
+  if (watchId){
     navigator.geolocation.clearWatch(watchId);
     watchId = null;
-}
+  }
 
-watchId = navigator.geolocation.watchPosition(...);
-    
+  watchId = navigator.geolocation.watchPosition(
+
     async(position)=>{
 
       try{
@@ -1621,24 +1625,23 @@ watchId = navigator.geolocation.watchPosition(...);
 
     ()=>{
 
-     showToast(
-  "Location permission denied.",
-  "#dc3545"
-);
+      showToast(
+        "Location permission denied.",
+        "#dc3545"
+      );
 
     },
 
     {
-      enableHighAccuracy:true
+      enableHighAccuracy: true
     }
 
   );
- 
 
- showToast(
-  "🚚 Live tracking started.",
-  "#198754"
-);
+  showToast(
+    "🚚 Live tracking started.",
+    "#198754"
+  );
 
 };
   
