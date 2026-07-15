@@ -1575,7 +1575,9 @@ alert("Saving history...");
     );
     return;
 }
-
+    
+await updateStatus(orderId,"On The Way");
+    
   watchId = navigator.geolocation.watchPosition(
 
     async(position)=>{
@@ -1616,8 +1618,7 @@ alert("Saving history...");
     }
 
   );
-
-  await updateStatus(orderId,"On The Way");
+ 
 
  showToast(
   "🚚 Live tracking started.",
