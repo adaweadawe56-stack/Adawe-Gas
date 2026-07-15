@@ -717,19 +717,24 @@ if (commissionDate) {
 
 }
   
+  let unsubscribeOrders = null;
 /* LOAD ORDERS */
 function loadOrders(){
 
+  if (unsubscribeOrders) {
+        unsubscribeOrders();
+    }
+
   console.log("sellerUid =", sellerUid);
 
- const q = query(
-  collection(db,"orders"),
-  where("sellerUid","==",sellerUid)
-);
+const q = query(
+        collection(db,"orders"),
+        where("sellerUid","==",sellerUid)
+    );
 
     let firstLoad = true;
   
-  onSnapshot(q, async snap => {
+  unsubscribeOrders = onSnapshot(q, async (snap) => {
     
   console.log("SNAPSHOT RUNNING");
   console.log("Orders Found =", snap.size);
@@ -1573,13 +1578,23 @@ alert("Saving history...");
       "Geolocation is not supported.",
       "#dc3545"
     );
-    return;
-}
-    
-await updateStatus(orderId,"On The Way");
-    
-  watchId = navigator.geolocation.watchPosition(
+  try{
 
+    await updateStatus(orderId,"On The Way");
+
+}catch(err){
+
+    return;
+
+}
+
+if (watchId){
+    navigator.geolocation.clearWatch(watchId);
+    watchId = null;
+}
+
+watchId = navigator.geolocation.watchPosition(...);
+    
     async(position)=>{
 
       try{
