@@ -981,11 +981,6 @@ try{
     status
   });
 
-  if(status === "On The Way"){
-
-      startLiveTracking(id);
-
-  }
 
 }
 
@@ -1012,49 +1007,7 @@ if(oldStatus !== "Delivered" && status === "Delivered"){
 };
 
 let watchId = null;
-
-function startLiveTracking(orderId){
-
-    if(watchId){
-        navigator.geolocation.clearWatch(watchId);
-    }
-
-    watchId = navigator.geolocation.watchPosition(
-        async(position)=>{
-
-            const lat = position.coords.latitude;
-            const lng = position.coords.longitude;
-
-            try{
-
-                await updateDoc(
-                    doc(db,"orders",orderId),
-                    {
-                        sellerLatitude: lat,
-                        sellerLongitude: lng,
-                        lastLocationUpdate: serverTimestamp()
-                    }
-                );
-
-            }catch(err){
-
-                console.error(err);
-
-            }
-
-        },
-        (err)=>{
-            console.error("GPS Error:", err);
-        },
-        {
-            enableHighAccuracy:true,
-            maximumAge:0,
-            timeout:10000
-        }
-    );
-
-}
-  
+ 
   async function loadCommissionHistory() {
 
   const q = query(
