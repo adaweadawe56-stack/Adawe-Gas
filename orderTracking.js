@@ -311,7 +311,7 @@ if (!map) {
 
     document.getElementById("eta").style.display = "none";
     document.getElementById("liveMap").style.display = "none";
-
+document.getElementById("eta").innerHTML = "";
     if (routingControl && map) {
         map.removeControl(routingControl);
         routingControl = null;
