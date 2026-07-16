@@ -168,11 +168,12 @@ if (
     
 if (
     data.status === "On The Way" &&
-    data.customerLatitude &&
-    data.customerLongitude &&
-    data.sellerLatitude &&
-    data.sellerLongitude
-) {
+    data.customerLatitude != null &&
+    data.customerLongitude != null &&
+    data.sellerLatitude != null &&
+    data.sellerLongitude != null
+)
+{
 
     // ETA
     const distance = calculateDistance(
@@ -311,7 +312,14 @@ if (!map) {
 
     document.getElementById("eta").style.display = "none";
     document.getElementById("liveMap").style.display = "none";
-document.getElementById("eta").innerHTML = "";
+  
+const etaBox = document.getElementById("eta");
+
+if(etaBox){
+    etaBox.innerHTML =
+    `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
+}
+  
     if (routingControl && map) {
         map.removeControl(routingControl);
         routingControl = null;
