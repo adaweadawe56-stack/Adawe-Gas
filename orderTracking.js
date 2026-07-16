@@ -109,18 +109,23 @@ trackBtn.addEventListener("click", async () => {
 
    if (snap.empty) {
 
-  orderStatus.innerText =
-  "Order ID-kan lama helin!";
+    orderStatus.innerText =
+"Invalid Order ID!";
+     
+    receiptBox.innerHTML = "";
 
-  receiptBox.innerHTML = "";
+    document.getElementById(
+        "progressTracker"
+    ).innerHTML = "";
 
-  document.getElementById(
-    "progressTracker"
-  ).innerHTML = "";
+    document.getElementById("eta").innerHTML = "";
+    document.getElementById("eta").style.display = "none";
 
-  return;
+    document.getElementById("liveMap").style.display = "none";
+
+    return;
 }
-
+    
   const data = snap.docs[0].data();
 
 currentOrder = data;
@@ -310,16 +315,15 @@ if (!map) {
 
 } else {
 
-    document.getElementById("eta").style.display = "none";
-    document.getElementById("liveMap").style.display = "none";
-  
-const etaBox = document.getElementById("eta");
+    const etaBox = document.getElementById("eta");
 
-if(etaBox){
-    etaBox.innerHTML =
-    `🚚 ${distance.toFixed(1)} km away • ⏱ ETA ${eta} min`;
-}
-  
+    if (etaBox) {
+        etaBox.innerHTML = "";
+        etaBox.style.display = "none";
+    }
+
+    document.getElementById("liveMap").style.display = "none";
+
     if (routingControl && map) {
         map.removeControl(routingControl);
         routingControl = null;
@@ -400,7 +404,6 @@ document.getElementById(
 ).innerHTML = progressHtml;
 
 historyPhone.value = data.phone || "";
-historyBtn.click();
 
 let badgeColor = "#6c757d";
 
@@ -574,10 +577,16 @@ style="width:100%;margin-top:10px;"
 
 }
     sessionStorage.setItem(key, data.status);
-  });
+   },
 
-});
+(err) => {
 
+        console.error("Snapshot Error:", err);
+
+    }
+
+);
+  
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
@@ -586,55 +595,50 @@ if(id){
   orderIdInput.value = id;
   trackBtn.click();
   }
- historyBtn.addEventListener(
-"click",
-async () => {
 
-  let phone =
-    historyPhone.value.trim();
+async function loadHistory(phone){
 
-  phone = formatKenyaPhone(phone);
+    phone = formatKenyaPhone(phone);
 
-  if(!phone){
-    alert("Enter phone number");
-    return;
-  }
+    if(!phone) return;
 
-const q = query(
-    collection(db,"orders"),
-    where("phone","==",phone),
-    orderBy("createdAt","desc")
-);
+    const q = query(
+        collection(db,"orders"),
+        where("phone","==",phone),
+        orderBy("createdAt","desc")
+    );
 
-const snap = await getDocs(q);
+    const snap = await getDocs(q);
 
-if (snap.empty) {
+    if (snap.empty){
 
-    historyResults.innerHTML = "<p>No orders found</p>";
+        historyResults.innerHTML =
+        "<p>No orders found</p>";
 
-    return;
-}
-let html = "";
+        return;
+    }
 
-snap.docs.forEach(docSnap => {
+    let html = "";
 
-    const o = docSnap.data();
+    snap.docs.forEach(docSnap => {
 
-    let badgeColor = "#6c757d";
+        const o = docSnap.data();
 
-    if(o.status === "Accepted")
-      badgeColor = "#0d6efd";
+        let badgeColor = "#6c757d";
 
-    if(o.status === "On The Way")
-      badgeColor = "#ffc107";
+        if(o.status==="Accepted")
+            badgeColor="#0d6efd";
 
-    if(o.status === "Delivered")
-      badgeColor = "#198754";
+        if(o.status==="On The Way")
+            badgeColor="#ffc107";
 
-    if(o.status === "Rejected")
-      badgeColor = "#dc3545";
+        if(o.status==="Delivered")
+            badgeColor="#198754";
 
-    html += `
+        if(o.status==="Rejected")
+            badgeColor="#dc3545";
+
+        html += `
     <div class="card p-3 mt-2">
 
       <b>${o.orderId}</b>
@@ -670,6 +674,10 @@ snap.docs.forEach(docSnap => {
   });
 
   historyResults.innerHTML = html;
+}
+  historyBtn.addEventListener("click", () => {
+
+    loadHistory(historyPhone.value);
 
 });
 
