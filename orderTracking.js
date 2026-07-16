@@ -208,60 +208,61 @@ if (!map) {
     ).addTo(map);
 
     // Seller Marker
-sellerMarker = L.marker([
-    data.sellerLatitude,
-    data.sellerLongitude
-])
-.addTo(map)
-.bindPopup("Seller");
+    sellerMarker = L.marker([
+        data.sellerLatitude,
+        data.sellerLongitude
+    ])
+    .addTo(map)
+    .bindPopup("Seller");
 
-// Customer Marker
-customerMarker = L.marker([
-    data.customerLatitude,
-    data.customerLongitude
-])
-.addTo(map)
-.bindPopup("Customer");
-  
-  // BLUE ROUTE LINE
-routingControl = L.Routing.control({
+    // Customer Marker
+    customerMarker = L.marker([
+        data.customerLatitude,
+        data.customerLongitude
+    ])
+    .addTo(map)
+    .bindPopup("Customer");
 
-    waypoints: [
+    // BLUE ROUTE LINE
+    routingControl = L.Routing.control({
 
-        L.latLng(
-            data.customerLatitude,
-            data.customerLongitude
-        ),
+        waypoints: [
 
-        L.latLng(
-            data.sellerLatitude,
-            data.sellerLongitude
-        )
+            L.latLng(
+                data.customerLatitude,
+                data.customerLongitude
+            ),
 
-    ],
+            L.latLng(
+                data.sellerLatitude,
+                data.sellerLongitude
+            )
 
-    routeWhileDragging:false,
-    draggableWaypoints:false,
-    addWaypoints:false,
-    fitSelectedRoutes:true,
-    showAlternatives:false,
+        ],
 
-    lineOptions:{
-        styles:[{
-            color:"blue",
-            weight:5,
-            opacity:0.8
-        }]
-    },
+        routeWhileDragging:false,
+        draggableWaypoints:false,
+        addWaypoints:false,
+        fitSelectedRoutes:true,
+        showAlternatives:false,
 
-    createMarker:()=>null
+        lineOptions:{
+            styles:[{
+                color:"blue",
+                weight:5,
+                opacity:0.8
+            }]
+        },
 
-}).addTo(map);
-  
-setTimeout(() => {
-    map.invalidateSize();
-}, 100);
-  
+        createMarker:()=>null
+
+    }).addTo(map);
+
+    setTimeout(() => {
+        map.invalidateSize();
+    },100);
+
+} else {
 
     if (sellerMarker) {
 
@@ -283,26 +284,28 @@ setTimeout(() => {
 
     if (routingControl) {
 
-       routingControl.setWaypoints([
+        routingControl.setWaypoints([
 
-    L.latLng(
-        data.customerLatitude,
-        data.customerLongitude
-    ),
+            L.latLng(
+                data.customerLatitude,
+                data.customerLongitude
+            ),
 
-    L.latLng(
+            L.latLng(
+                data.sellerLatitude,
+                data.sellerLongitude
+            )
+
+        ]);
+
+    }
+
+    map.panTo([
         data.sellerLatitude,
         data.sellerLongitude
-    )
-
-]);
+    ]);
 
 }
-
-map.panTo([
-    data.sellerLatitude,
-    data.sellerLongitude
-]);
 
 } else {
 
@@ -310,29 +313,31 @@ map.panTo([
     document.getElementById("liveMap").style.display = "none";
 
     if (routingControl && map) {
-    map.removeControl(routingControl);
-    routingControl = null;
-}
+        map.removeControl(routingControl);
+        routingControl = null;
+    }
 
-if (sellerMarker && map) {
-    map.removeLayer(sellerMarker);
-    sellerMarker = null;
-}
+    if (sellerMarker && map) {
+        map.removeLayer(sellerMarker);
+        sellerMarker = null;
+    }
 
-if (customerMarker && map) {
-    map.removeLayer(customerMarker);
-    customerMarker = null;
-}
+    if (customerMarker && map) {
+        map.removeLayer(customerMarker);
+        customerMarker = null;
+    }
 
-if (map) {
-    map.remove();
-    map = null;
+    if (map) {
+        map.remove();
+        map = null;
 
-    sellerMarker = null;
-    customerMarker = null;
-    routingControl = null;
+        sellerMarker = null;
+        customerMarker = null;
+        routingControl = null;
+    }
+
 }
-}  
+    
 let progressHtml = `
 <div style="display:flex;
 justify-content:space-between;
