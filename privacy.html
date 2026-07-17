@@ -98,6 +98,14 @@ text-align:center;
 
 color:white;
 
+min-height:420px;
+
+display:flex;
+
+align-items:center;
+
+justify-content:center;
+
 }
 
 .hero h1{
@@ -333,13 +341,27 @@ Seller Login
 
 <li class="nav-item">
 
-<a class="nav-link" href="contact.html">
+<a class="nav-link"
+href="contact.html">
 
 Contact
 
 </a>
 
 </li>
+
+<li class="nav-item">
+
+<a class="nav-link active"
+href="privacy.html">
+
+Privacy Policy
+
+</a>
+
+</li>
+
+</ul>
 
 </ul>
 
@@ -824,7 +846,7 @@ Contact
 
 <p class="mb-0">
 
-© 2026 Adawe Gas Network.
+© <span id="year"></span> Adawe Gas Network.
 All Rights Reserved.
 
 </p>
@@ -833,11 +855,15 @@ All Rights Reserved.
 
 </footer>
 
+<script>
+
+document.getElementById("year").textContent =
+new Date().getFullYear();
+
+</script>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
 </body>
 
 </html>
-
-
-  
