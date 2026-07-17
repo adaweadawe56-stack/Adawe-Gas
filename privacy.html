@@ -4,41 +4,40 @@
 <head>
 
 <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="viewport"
-content="width=device-width, initial-scale=1.0">
-
-<title>
-Privacy Policy | Adawe Gas Network
-</title>
+<title>Privacy Policy | Adawe Gas Network</title>
 
 <meta name="description"
 content="Learn how Adawe Gas Network collects, uses, stores and protects your personal information.">
 
 <meta name="keywords"
-content="Adawe Gas Privacy Policy, LPG Kenya, Privacy, Gas Delivery">
+content="Adawe Gas Privacy Policy, LPG Kenya, Privacy Policy, Gas Delivery Kenya">
+
+<meta name="author" content="Adawe Gas Network">
 
 <link rel="icon" href="images/favicon.png">
 
-<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-<link rel="preconnect"
-href="https://fonts.gstatic.com"
-crossorigin>
-
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
 
 body{
 
 font-family:'Poppins',sans-serif;
 
-background:#f8f9fa;
+background:#f5f7fb;
 
 color:#333;
 
@@ -50,27 +49,31 @@ color:#333;
 
 background:#198754;
 
-padding:15px 0;
+padding:16px 0;
+
+box-shadow:0 8px 25px rgba(0,0,0,.08);
 
 }
 
 .navbar-brand{
 
-font-size:26px;
+font-size:28px;
 
 font-weight:700;
 
-color:white !important;
+color:#fff !important;
 
 }
 
 .nav-link{
 
-color:white !important;
+color:#fff !important;
 
 font-weight:500;
 
-margin-left:15px;
+margin-left:18px;
+
+transition:.3s;
 
 }
 
@@ -84,33 +87,38 @@ color:#ffc107 !important;
 
 .hero{
 
-background:linear-gradient(135deg,#198754,#0d6efd);
+background:
+linear-gradient(rgba(25,135,84,.88),
+rgba(13,110,253,.88)),
+url("images/about-gas.png") center/cover;
 
-color:white;
-
-padding:90px 20px;
+padding:110px 20px;
 
 text-align:center;
+
+color:white;
 
 }
 
 .hero h1{
 
-font-size:48px;
+font-size:52px;
 
 font-weight:700;
+
+margin-bottom:20px;
 
 }
 
 .hero p{
 
-font-size:18px;
-
-max-width:750px;
+max-width:760px;
 
 margin:auto;
 
-margin-top:20px;
+font-size:19px;
+
+line-height:1.8;
 
 opacity:.95;
 
@@ -120,57 +128,49 @@ opacity:.95;
 
 display:inline-block;
 
-margin-top:25px;
+margin-top:30px;
 
-background:white;
+background:#fff;
 
 color:#198754;
 
-padding:10px 20px;
+padding:12px 28px;
 
 border-radius:50px;
 
 font-weight:600;
 
+font-size:15px;
+
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+
 }
 
-/* CARD */
+/* MAIN CARD */
 
 .policy-card{
 
-background:white;
+background:#fff;
 
 margin-top:-60px;
 
-border-radius:20px;
+border-radius:24px;
 
-padding:50px;
+padding:55px;
 
-box-shadow:0 10px 35px rgba(0,0,0,.12);
+box-shadow:0 15px 40px rgba(0,0,0,.10);
 
 }
 
 .policy-card h2{
 
-font-size:28px;
+font-size:32px;
 
 font-weight:700;
 
 color:#198754;
 
-margin-bottom:20px;
-
-}
-
-.policy-card h4{
-
-margin-top:35px;
-
-font-size:22px;
-
-font-weight:600;
-
-color:#0d6efd;
+margin-bottom:15px;
 
 }
 
@@ -178,89 +178,103 @@ color:#0d6efd;
 
 font-size:17px;
 
-line-height:1.9;
+line-height:2;
 
 color:#555;
 
 }
 
-/* CONTACT */
+.section-title{
 
-.contact-box{
+margin-top:45px;
 
-background:#198754;
+margin-bottom:18px;
 
-color:white;
+font-size:24px;
 
-padding:40px;
+font-weight:700;
 
-border-radius:20px;
+color:#0d6efd;
 
-margin-top:40px;
+display:flex;
 
-text-align:center;
+align-items:center;
 
-}
-
-.contact-box a{
-
-color:white;
-
-text-decoration:none;
+gap:10px;
 
 }
 
-.contact-box a:hover{
+.policy-list{
 
-text-decoration:underline;
-
-}
-
-/* FOOTER */
-
-footer{
-
-background:#198754;
-
-padding:30px;
-
-margin-top:60px;
-
-text-align:center;
-
-color:white;
+padding-left:20px;
 
 }
 
-footer a{
+.policy-list li{
 
-color:white;
+margin-bottom:12px;
 
-margin:0 12px;
+font-size:17px;
 
-text-decoration:none;
+line-height:1.8;
+
+color:#555;
+
+}
+
+.info-box{
+
+background:#eef8f3;
+
+border-left:5px solid #198754;
+
+padding:18px 20px;
+
+border-radius:12px;
+
+margin:30px 0;
 
 }
 
-footer a:hover{
+.info-box strong{
 
-text-decoration:underline;
-
-color:#ffc107;
+color:#198754;
 
 }
+
+/* RESPONSIVE */
 
 @media(max-width:768px){
 
+.hero{
+
+padding:80px 20px;
+
+}
+
 .hero h1{
 
-font-size:34px;
+font-size:36px;
+
+}
+
+.hero p{
+
+font-size:16px;
 
 }
 
 .policy-card{
 
 padding:30px;
+
+margin-top:-40px;
+
+}
+
+.section-title{
+
+font-size:21px;
 
 }
 
@@ -270,21 +284,22 @@ padding:30px;
 
 </head>
 
-  <body>
+<body>
 
-<nav class="navbar navbar-expand-lg">
+<!-- NAVBAR -->
+
+<nav class="navbar navbar-expand-lg navbar-dark">
 
 <div class="container">
 
-<a class="navbar-brand"
-href="index.html">
+<a class="navbar-brand" href="index.html">
 
 Adawe Gas
 
 </a>
 
-<button
-class="navbar-toggler bg-light"
+<button class="navbar-toggler"
+type="button"
 data-bs-toggle="collapse"
 data-bs-target="#menu">
 
@@ -292,16 +307,13 @@ data-bs-target="#menu">
 
 </button>
 
-<div
-class="collapse navbar-collapse"
-id="menu">
+<div class="collapse navbar-collapse" id="menu">
 
 <ul class="navbar-nav ms-auto">
 
 <li class="nav-item">
 
-<a class="nav-link"
-href="index.html">
+<a class="nav-link" href="index.html">
 
 Home
 
@@ -311,8 +323,7 @@ Home
 
 <li class="nav-item">
 
-<a class="nav-link"
-href="seller.html">
+<a class="nav-link" href="seller.html">
 
 Seller Login
 
@@ -322,8 +333,7 @@ Seller Login
 
 <li class="nav-item">
 
-<a class="nav-link"
-href="contact.html">
+<a class="nav-link" href="contact.html">
 
 Contact
 
@@ -339,141 +349,495 @@ Contact
 
 </nav>
 
+<!-- HERO -->
 
+<section class="hero">
+
+<div class="container">
+
+<h1>
 
 Privacy Policy
 
-Last Updated: July 17, 2026
+</h1>
+
+<p>
+
+Your trust matters to us. This Privacy Policy explains
+how Adawe Gas Network collects, uses, stores, and
+protects your personal information while providing a
+safe and reliable LPG marketplace across Kenya.
+
+</p>
+
+<div class="updated">
+
+Last Updated • July 17, 2026
+
+</div>
+
+</div>
+
+</section>
+
+<!-- MAIN CONTENT -->
+
+<div class="container">
+
+<div class="policy-card">
+
+<h2>
 
 Privacy Policy for Adawe Gas Network
 
+</h2>
+
+<p>
+
 Welcome to Adawe Gas Network.
 
-Your privacy is important to us. This Privacy Policy explains how Adawe Gas collects, uses, stores, and protects your personal information when you use our website and services.
+Your privacy is extremely important to us.
 
-1. Information We Collect
+We are committed to protecting your personal information
+and ensuring transparency about how your data is collected,
+used, stored, and shared whenever you use our website
+or services.
 
-When you use Adawe Gas, we may collect:
+</p>
 
-Full Name
-Phone Number
-Delivery Address
-GPS Location (if you allow location access)
-LPG Brand and Cylinder Size
-Order Information
-Seller Information
-Ratings and Reviews
-Device and Browser Information
+<div class="info-box">
 
-For registered sellers, we may also collect:
+<strong>Our Commitment:</strong>
 
-Business Name
-Email Address
-Phone Number
-Business Location
-LPG Prices
-Account Information
-2. How We Use Your Information
+We never sell your personal information to third parties.
+Your information is only used to provide secure LPG
+marketplace services and improve your experience.
 
-We use your information to:
+</div>
+<!-- INFORMATION WE COLLECT -->
 
-Process LPG delivery orders
-Connect customers with nearby sellers
-Display order tracking information
-Improve customer support
-Improve platform performance
-Prevent fraud and abuse
-Maintain marketplace security
-3. Location Information
+<h3 class="section-title">
+📋 1. Information We Collect
+</h3>
 
-If you allow location access, Adawe Gas may use your location to:
+<p>
+When you use Adawe Gas Network, we may collect the following information to provide our services efficiently and securely.
+</p>
 
-Find nearby LPG sellers
-Calculate delivery distance
-Estimate delivery time (ETA)
-Improve delivery accuracy
+<ul class="policy-list">
 
-Location access is optional.
+<li>Full Name</li>
 
-4. Sharing Information
+<li>Phone Number</li>
 
-Adawe Gas only shares information necessary to complete your order.
+<li>Delivery Address</li>
 
+<li>GPS Location (only if you grant permission)</li>
+
+<li>LPG Brand and Cylinder Size</li>
+
+<li>Order Details</li>
+
+<li>Assigned Seller Information</li>
+
+<li>Ratings and Reviews</li>
+
+<li>Device, Browser and Technical Information</li>
+
+</ul>
+
+<p>
+If you register as an LPG Seller, we may also collect:
+</p>
+
+<ul class="policy-list">
+
+<li>Business Name</li>
+
+<li>Email Address</li>
+
+<li>Business Phone Number</li>
+
+<li>Business Location</li>
+
+<li>LPG Prices</li>
+
+<li>Account Information</li>
+
+</ul>
+
+<!-- HOW WE USE -->
+
+<h3 class="section-title">
+⚙️ 2. How We Use Your Information
+</h3>
+
+<p>
+Adawe Gas uses your information only for legitimate business purposes, including:
+</p>
+
+<ul class="policy-list">
+
+<li>Processing LPG delivery orders.</li>
+
+<li>Connecting customers with nearby LPG sellers.</li>
+
+<li>Displaying real-time order tracking.</li>
+
+<li>Providing customer support.</li>
+
+<li>Improving website performance.</li>
+
+<li>Preventing fraud and abuse.</li>
+
+<li>Maintaining marketplace security.</li>
+
+<li>Improving overall user experience.</li>
+
+</ul>
+
+<!-- LOCATION -->
+
+<h3 class="section-title">
+📍 3. Location Information
+</h3>
+
+<p>
+If you allow location access, Adawe Gas may use your GPS location to:
+</p>
+
+<ul class="policy-list">
+
+<li>Find nearby LPG sellers.</li>
+
+<li>Calculate delivery distance.</li>
+
+<li>Estimate delivery time (ETA).</li>
+
+<li>Improve delivery accuracy.</li>
+
+</ul>
+
+<div class="info-box">
+
+<strong>Location access is optional.</strong>
+
+You may continue using Adawe Gas without enabling location services, although some features may become less accurate.
+
+</div>
+
+<!-- SHARING -->
+
+<h3 class="section-title">
+🔒 4. Sharing Your Information
+</h3>
+
+<p>
+Adawe Gas only shares information necessary to complete your LPG order.
+</p>
+
+<p>
 Your information may be shared with:
+</p>
 
-The seller assigned to your order
-Service providers that help operate our platform
-Government authorities where required by law
+<ul class="policy-list">
 
-We do not sell your personal information to third parties.
+<li>The seller assigned to your order.</li>
 
-5. Data Security
+<li>Trusted service providers that help operate our platform.</li>
 
-We use reasonable technical and organizational measures to protect your information against:
+<li>Government authorities where required by Kenyan law.</li>
 
-Unauthorized access
-Data loss
-Misuse
-Unauthorized disclosure
+</ul>
 
-However, no online service can guarantee absolute security.
+<div class="info-box">
 
-6. Customer Reviews
+<strong>Important:</strong>
 
-Customers may leave ratings and reviews after completed orders.
+Adawe Gas never sells your personal information to advertisers or unrelated third parties.
 
-Reviews become visible to other users and may include:
+</div>
 
-Rating
-Review text
-Seller name
+<!-- SECURITY -->
 
-Personal phone numbers are not displayed publicly.
+<h3 class="section-title">
+🛡️ 5. Data Security
+</h3>
 
-7. Seller Responsibilities
+<p>
+Protecting your information is a priority.
+</p>
 
-Sellers are independent businesses.
+<p>
+We use appropriate technical and organizational measures to protect your data against:
+</p>
 
-Each seller is responsible for:
+<ul class="policy-list">
 
-LPG quality
-Pricing
-Delivery
-Customer service
-Compliance with Kenyan LPG regulations
+<li>Unauthorized access.</li>
 
-Adawe Gas acts only as a digital marketplace connecting buyers and sellers.
+<li>Data loss.</li>
 
-8. Cookies
+<li>Misuse.</li>
 
-Adawe Gas may use cookies or similar technologies to:
+<li>Unauthorized disclosure.</li>
 
-Improve website performance
-Remember user preferences
-Enhance user experience
+<li>Cybersecurity threats.</li>
 
-You may disable cookies in your browser settings.
+</ul>
 
-9. Children's Privacy
+<p>
+Although we work hard to protect your information, no online platform can guarantee absolute security.
+</p>
 
-Adawe Gas services are not intended for children under the age of 18.
+<!-- REVIEWS -->
 
-We do not knowingly collect personal information from children.
+<h3 class="section-title">
+⭐ 6. Ratings & Reviews
+</h3>
 
-10. Changes to This Policy
+<p>
+Customers may leave ratings and reviews after successfully completed orders.
+</p>
 
-We may update this Privacy Policy from time to time.
+<p>
+Reviews may include:
+</p>
 
-The latest version will always be available on this page.
+<ul class="policy-list">
 
-11. Contact Us
+<li>Star Rating</li>
 
-If you have any questions regarding this Privacy Policy, please contact us.
+<li>Review Comment</li>
+
+<li>Seller Name</li>
+
+</ul>
+
+<p>
+Personal phone numbers, email addresses and sensitive customer information are never displayed publicly.
+</p>
+
+<!-- SELLERS -->
+
+<h3 class="section-title">
+🏪 7. Seller Responsibilities
+</h3>
+
+<p>
+Adawe Gas is an independent digital marketplace.
+</p>
+
+<p>
+Every registered LPG seller remains fully responsible for:
+</p>
+
+<ul class="policy-list">
+
+<li>LPG quality.</li>
+
+<li>Pricing.</li>
+
+<li>Delivery.</li>
+
+<li>Customer service.</li>
+
+<li>Compliance with Kenyan LPG regulations.</li>
+
+<li>Business licenses and legal requirements.</li>
+
+</ul>
+
+<div class="info-box">
+
+Adawe Gas connects buyers and sellers but does not manufacture, refill or distribute LPG cylinders.
+
+</div>
+
+<!-- COOKIES -->
+
+<h3 class="section-title">
+🍪 8. Cookies
+</h3>
+
+<p>
+Adawe Gas may use cookies and similar technologies to:
+</p>
+
+<ul class="policy-list">
+
+<li>Improve website performance.</li>
+
+<li>Remember your preferences.</li>
+
+<li>Provide a better browsing experience.</li>
+
+<li>Maintain website security.</li>
+
+</ul>
+
+<p>
+You may disable cookies in your browser settings if you prefer.
+</p>
+
+<!-- CHILDREN -->
+
+<h3 class="section-title">
+👨‍👩‍👧‍👦 9. Children's Privacy
+</h3>
+
+<p>
+Adawe Gas services are intended for individuals aged 18 years or older.
+</p>
+
+<p>
+We do not knowingly collect personal information from children under 18 years of age.
+</p>
+
+<!-- CHANGES -->
+
+<h3 class="section-title">
+📝 10. Changes to This Privacy Policy
+</h3>
+
+<p>
+We may update this Privacy Policy from time to time to reflect changes in our services, legal obligations, or platform improvements.
+</p>
+
+<p>
+The latest version will always be published on this page together with the updated revision date.
+</p>
+  ```html
+<!-- CONTACT -->
+
+<div class="contact-box">
+
+<h2 class="mb-4">
+
+Contact Adawe Gas Network
+
+</h2>
+
+<p>
+
+If you have any questions regarding this Privacy Policy
+or how your information is handled, please contact us.
+
+</p>
+
+<p class="mt-4">
+
+📧
+
+<a href="mailto:adaweadawe56@gmail.com">
+
+adaweadawe56@gmail.com
+
+</a>
+
+</p>
+
+<p>
+
+📞
+
+<a href="tel:+254727015434">
+
++254 727 015 434
+
+</a>
+
+</p>
+
+<p>
+
+📍 Nairobi, Kenya
+
+</p>
+
+<a href="https://wa.me/254727015434"
+class="btn btn-warning btn-lg mt-3">
+
+Chat on WhatsApp
+
+</a>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- FOOTER -->
+
+<footer>
+
+<div class="container">
+
+<h4 class="mb-3">
 
 Adawe Gas Network
 
-Email: adaweadawe56@gmail.com
+</h4>
 
-Phone: +254 727 015 434
+<p>
 
-Location: Nairobi, Kenya
+Connecting customers with trusted LPG sellers across Kenya.
+
+</p>
+
+<div class="mt-4">
+
+<a href="index.html">
+
+Home
+
+</a>
+
+<a href="terms.html">
+
+Terms of Service
+
+</a>
+
+<a href="privacy.html">
+
+Privacy Policy
+
+</a>
+
+<a href="seller-policy.html">
+
+Seller Policy
+
+</a>
+
+<a href="contact.html">
+
+Contact
+
+</a>
+
+</div>
+
+<hr class="border-light opacity-25 my-4">
+
+<p class="mb-0">
+
+© 2026 Adawe Gas Network.
+All Rights Reserved.
+
+</p>
+
+</div>
+
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+</body>
+
+</html>
+```
+
+  
