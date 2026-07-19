@@ -126,6 +126,7 @@ html{
   position:sticky;
   top:0;
   z-index:1000;
+  transition:all .3s ease;
 }
 
 .navbar .nav-link{
@@ -598,8 +599,11 @@ html{
 }
 
 .loader img{
-  width:600px;
-  max-width:90%;
+
+  width:250px;
+
+  max-width:80%;
+
 }
 
 .loader p{
@@ -635,6 +639,21 @@ html{
   }
 
 }
+
+@media (prefers-reduced-motion: reduce){
+
+  *{
+
+    animation:none !important;
+
+    transition:none !important;
+
+    scroll-behavior:auto !important;
+
+  }
+
+}
+  
 </style>
   
 </head>
