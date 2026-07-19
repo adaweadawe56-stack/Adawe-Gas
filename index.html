@@ -126,6 +126,7 @@ button,
   transition:all .3s ease;
 }
 
+a:focus,
 button:focus,
 .btn:focus,
 input:focus,
@@ -136,7 +137,7 @@ textarea:focus{
 
   box-shadow:0 0 0 .25rem rgba(25,135,84,.25);
 
-}  
+}
 
 html{
   scroll-behavior:smooth;
@@ -175,8 +176,9 @@ html{
 
 }
 .navbar{
-  background:rgba(0,0,0,0.3);
+  background:rgba(0,0,0,.3);
   backdrop-filter:blur(10px);
+  -webkit-backdrop-filter:blur(10px);
   position:sticky;
   top:0;
   z-index:1000;
