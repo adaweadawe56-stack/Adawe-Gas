@@ -126,6 +126,18 @@ button,
   transition:all .3s ease;
 }
 
+button:focus,
+.btn:focus,
+input:focus,
+select:focus,
+textarea:focus{
+
+  outline:none;
+
+  box-shadow:0 0 0 .25rem rgba(25,135,84,.25);
+
+}  
+
 html{
   scroll-behavior:smooth;
 }
@@ -260,17 +272,18 @@ html{
 }
 
 .step-card{
+
   background:#fff;
   padding:30px;
   border-radius:20px;
   text-align:center;
   height:100%;
   box-shadow:0 10px 25px rgba(0,0,0,.08);
-  transition:.3s;
+
   border-top:5px solid #10b981;
   color:#064e3b;
-}
 
+}
 .step-card:hover{
   transform:translateY(-8px);
 }
