@@ -107,6 +107,13 @@ body{
   margin:0;
   background:linear-gradient(135deg,#064e3b,#10b981);
   color:white;
+  overflow-x:hidden;
+}
+
+img{
+  max-width:100%;
+  height:auto;
+  display:block;
 }
 
 html{
@@ -168,9 +175,17 @@ html{
 }
 
 .hero-image{
+
   width:100%;
+
   max-width:800px;
+
+  height:auto;
+
+  object-fit:cover;
+
   border-radius:20px;
+
 }
 .hero-features{
   margin-top:30px;
