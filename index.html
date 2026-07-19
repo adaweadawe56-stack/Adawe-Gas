@@ -116,10 +116,52 @@ img{
   display:block;
 }
 
+  a,
+button,
+.btn,
+.card-modern,
+.step-card,
+.review-card,
+.seller-card{
+  transition:all .3s ease;
+}
+
 html{
   scroll-behavior:smooth;
 }
 
+::selection{
+
+  background:#10b981;
+  color:#fff;
+
+}
+
+::-webkit-scrollbar{
+
+  width:10px;
+
+}
+
+::-webkit-scrollbar-track{
+
+  background:#f1f1f1;
+
+}
+
+::-webkit-scrollbar-thumb{
+
+  background:#10b981;
+
+  border-radius:20px;
+
+}
+
+::-webkit-scrollbar-thumb:hover{
+
+  background:#198754;
+
+}
 .navbar{
   background:rgba(0,0,0,0.3);
   backdrop-filter:blur(10px);
