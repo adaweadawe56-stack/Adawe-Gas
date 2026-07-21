@@ -1766,9 +1766,8 @@ if (
   (s.deliveryLimit || 999)
 ) return;
 
-const sellerLat = Number(s.latitude);
-const sellerLng = Number(s.longitude);
-
+const sellerLat = Number(s.sellerLatitude);
+const sellerLng = Number(s.sellerLongitude);
 if (
     isNaN(sellerLat) ||
     isNaN(sellerLng)
@@ -2364,8 +2363,8 @@ await addDoc(collection(db, "sellers"), {
   phone,
   location,
 
-  latitude: sellerLatitude,
-  longitude: sellerLongitude,
+  sellerLatitude: sellerLatitude,
+  sellerLongitude: sellerLongitude,
 
   prices,
 
