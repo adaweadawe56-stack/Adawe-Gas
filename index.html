@@ -2364,6 +2364,9 @@ if (!Object.values(prices).some(p => p > 0)) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
 
+console.log("Seller Latitude:", sellerLatitude);
+console.log("Seller Longitude:", sellerLongitude);
+
 await addDoc(collection(db, "sellers"), {
   uid,
   name,
