@@ -1766,8 +1766,8 @@ if (
   (s.deliveryLimit || 999)
 ) return;
 
-const sellerLat = Number(s.sellerLatitude);
-const sellerLng = Number(s.sellerLongitude);
+const sellerLat = Number(s.latitude);
+const sellerLng = Number(s.longitude);
 
 if (
     isNaN(sellerLat) ||
@@ -2266,7 +2266,6 @@ navigator.geolocation.getCurrentPosition(
   }
 );
 
-const sellerForm = document.getElementById("sellerForm");  
 const sellerForm = document.getElementById("sellerForm");
 const registerBtn = document.getElementById("registerSellerBtn");
 const btnText = document.getElementById("btnText");
@@ -2333,6 +2332,11 @@ for (const row of document.querySelectorAll("#priceRows .row")) {
 
 if (!Object.values(prices).some(p => p > 0)) {
   showToast("Enter at least one price", false);
+  return;
+}
+
+  if (sellerLatitude === null || sellerLongitude === null) {
+  showToast("Please allow location access.", false);
   return;
 }
  
