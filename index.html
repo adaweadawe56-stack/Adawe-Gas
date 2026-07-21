@@ -2093,36 +2093,39 @@ console.log({
 });
 
   await addDoc(
-    collection(db,"orders"),
-    {
-      orderId,
-      name,
-      phone,
-      location,
-      quantity,
-      brand,
+  collection(db,"orders"),
+  {
+    orderId,
+    name,
+    phone,
+    location,
+    quantity,
+    brand,
 
-      price: orderPrice,
+    price: orderPrice,
 
-      sellerId,
-      sellerUid: sellerData.uid,
+    sellerId,
+    sellerUid: sellerData.uid,
 
-      sellerName: sellerData.name,
-      sellerPhone: sellerWhatsapp,
-      sellerLocation: sellerData.location || "",
+    sellerName: sellerData.name,
+    sellerPhone: sellerWhatsapp,
+    sellerLocation: sellerData.location || "",
 
-      customerLatitude,
-      customerLongitude,
+    sellerLatitude: sellerData.sellerLatitude,
+    sellerLongitude: sellerData.sellerLongitude,
 
-      status:"Pending",
+    customerLatitude,
+    customerLongitude,
 
-      createdAt: serverTimestamp(),
-      assignedAt: new Date().toISOString(),
+    status:"Pending",
 
-      rating:null,
-      review:null
-    }
-  );
+    createdAt: serverTimestamp(),
+    assignedAt: new Date().toISOString(),
+
+    rating:null,
+    review:null
+  }
+);
 
     const message = `🔥 NEW LPG ORDER
 
