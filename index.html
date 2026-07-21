@@ -2253,7 +2253,20 @@ row
   window.addPriceRow = addPriceRow;
 
 addPriceRow();
-  
+let sellerLatitude = null;
+let sellerLongitude = null;
+
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+    sellerLatitude = position.coords.latitude;
+    sellerLongitude = position.coords.longitude;
+  },
+  (error) => {
+    alert("Please allow location access to register as a seller.");
+  }
+);
+
+const sellerForm = document.getElementById("sellerForm");  
 const sellerForm = document.getElementById("sellerForm");
 const registerBtn = document.getElementById("registerSellerBtn");
 const btnText = document.getElementById("btnText");
@@ -2340,15 +2353,19 @@ if (!Object.values(prices).some(p => p > 0)) {
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
 
-   await addDoc(collection(db, "sellers"), {
+await addDoc(collection(db, "sellers"), {
   uid,
   name,
   email,
   phone,
   location,
+
+  latitude: sellerLatitude,
+  longitude: sellerLongitude,
+
   prices,
 
- profileImage: "images/logo.png",
+  profileImage: "images/logo.png",
 
   averageRating: 0,
   totalRatings: 0,
