@@ -1909,7 +1909,12 @@ if (
   try {
 
     const seller =
-await getCheapestSeller(quantity, brand);
+await getBestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+);
 
     document.getElementById("recommendedSeller").style.display = "block";
 
