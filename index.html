@@ -785,6 +785,7 @@ AfriGas
 
 </div>
   
+  
 <button type="submit"
         id="registerSellerBtn"
         class="btn btn-primary w-100">
@@ -1970,31 +1971,7 @@ try {
 
     const orderId = "AG-" + Date.now();
     
-   // Soo qaado GPS
-try {
-
-    const position = await new Promise((resolve, reject) => {
-
-        navigator.geolocation.getCurrentPosition(
-            resolve,
-            reject,
-            {
-                enableHighAccuracy: true,
-                timeout: 10000,
-                maximumAge: 0
-            }
-        );
-
-    });
-
-    customerLatitude = position.coords.latitude;
-    customerLongitude = position.coords.longitude;
-
-} catch (err) {
-
-    console.log("GPS not available:", err);
-
-}
+   
 
 let sellerData;
 
@@ -2292,6 +2269,28 @@ if (!Object.values(prices).some(p => p > 0)) {
   return;
 }
 
+// ----------------------
+// Selected Gas Brands
+// ----------------------
+
+const brands = [];
+
+document
+  .querySelectorAll(".brand-checkbox:checked")
+  .forEach(cb => {
+    brands.push(cb.value);
+  });
+
+if (brands.length === 0) {
+  showToast("Select at least one gas brand", false);
+  return;
+}
+
+if (sellerLatitude === null || sellerLongitude === null) {
+  showToast("Please allow location access.", false);
+  return;
+}
+
   if (sellerLatitude === null || sellerLongitude === null) {
   showToast("Please allow location access.", false);
   return;
@@ -2329,6 +2328,8 @@ await addDoc(collection(db,"sellers"),{
   sellerLongitude,
 
   prices,
+
+  brands,
 
   profileImage:"images/logo.png",
 
