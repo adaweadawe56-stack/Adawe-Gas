@@ -1903,8 +1903,27 @@ if (
     return bestSeller;
 
 }
-  
-  async function showRecommendedSeller() {
+
+let customerLatitude = null;
+let customerLongitude = null;
+
+navigator.geolocation.getCurrentPosition(
+  (position) => {
+
+    customerLatitude = position.coords.latitude;
+    customerLongitude = position.coords.longitude;
+
+    console.log("Customer:", customerLatitude, customerLongitude);
+
+    showRecommendedSeller();
+
+  },
+  (error) => {
+    console.log("GPS not available");
+  }
+);
+
+async function showRecommendedSeller() {
 
   const quantity =
     document.getElementById("quantity").value;
@@ -1918,6 +1937,10 @@ if (
 
     return;
   }
+
+  if (customerLatitude == null || customerLongitude == null) {
+    return;
+}
 
   try {
 
@@ -1956,6 +1979,9 @@ await getBestSeller(
 document
 .getElementById("brand")
 .addEventListener("change", showRecommendedSeller);
+  
+  let customerLatitude = null;
+let customerLongitude = null;
   
 /* -------------------- ORDER FORM -------------------- */
 
@@ -2028,10 +2054,7 @@ orderForm.addEventListener("submit", async (e) => {
 try {
 
     const orderId = "AG-" + Date.now();
-
-    let customerLatitude = null;
-    let customerLongitude = null;
-
+    
    // Soo qaado GPS
 try {
 
@@ -2058,7 +2081,6 @@ try {
 
 }
 
-// Dooro seller
 let sellerData;
 
 if (
