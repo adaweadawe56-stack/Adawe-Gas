@@ -2286,10 +2286,6 @@ if (brands.length === 0) {
   return;
 }
 
-if (sellerLatitude === null || sellerLongitude === null) {
-  showToast("Please allow location access.", false);
-  return;
-}
 
   if (sellerLatitude === null || sellerLongitude === null) {
   showToast("Please allow location access.", false);
@@ -2353,6 +2349,10 @@ sellerForm.reset();
 document.getElementById("priceRows").innerHTML = "";
 
 addPriceRow();
+
+ document
+  .querySelectorAll(".brand-checkbox")
+  .forEach(cb => cb.checked = false);
 
 showToast("✅ Seller registered successfully!");
   } catch (err) {
