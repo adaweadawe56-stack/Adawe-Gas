@@ -1768,6 +1768,13 @@ if (
 
 const sellerLat = Number(s.sellerLatitude);
 const sellerLng = Number(s.sellerLongitude);
+
+console.log(
+  s.name,
+  sellerLat,
+  sellerLng
+);
+    
 if (
     isNaN(sellerLat) ||
     isNaN(sellerLng)
@@ -1778,6 +1785,12 @@ const distance = calculateDistance(
     customerLongitude,
     sellerLat,
     sellerLng
+);
+    
+ console.log(
+  s.name,
+  "Distance:",
+  distance
 );
 
 const sellerRating = Number(s.averageRating || 0);
