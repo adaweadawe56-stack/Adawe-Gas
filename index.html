@@ -1938,7 +1938,13 @@ async function showRecommendedSeller() {
     return;
   }
 
-  if (customerLatitude == null || customerLongitude == null) {
+ if (customerLatitude == null || customerLongitude == null) {
+
+    document.getElementById("recommendedSeller").style.display = "block";
+
+    document.getElementById("recommendedSeller").innerHTML =
+        "📍 Please allow location access to see the nearest seller.";
+
     return;
 }
 
@@ -1979,10 +1985,7 @@ await getBestSeller(
 document
 .getElementById("brand")
 .addEventListener("change", showRecommendedSeller);
-  
-  let customerLatitude = null;
-let customerLongitude = null;
-  
+
 /* -------------------- ORDER FORM -------------------- */
 
 const orderForm = document.getElementById("orderForm");
