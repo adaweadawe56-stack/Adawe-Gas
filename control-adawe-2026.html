@@ -611,6 +611,31 @@ if(!sellerSnap.exists()) return;
 const seller =
 sellerSnap.data();
 
+  document.getElementById(
+"editSellerName"
+).value =
+seller.name || "";
+
+document.getElementById(
+"editSellerPhone"
+).value =
+seller.phone || "";
+
+document.getElementById(
+"editSellerLocation"
+).value =
+seller.location || "";
+
+document.getElementById(
+"editPaymentStatus"
+).value =
+seller.paymentStatus || "Paid";
+
+document.getElementById(
+"editDeliveryLimit"
+).value =
+seller.deliveryLimit || 3;
+
 document.getElementById(
 "editSellerId"
 ).value=id;
@@ -630,13 +655,70 @@ cb.checked=true;
 
 });
 
+  const sizes = [
+
+"1kg",
+
+"3kg",
+
+"6kg",
+
+"13kg",
+
+"15kg",
+
+"22kg",
+
+"25kg",
+
+"35kg",
+
+"40kg",
+
+"45kg",
+
+"50kg"
+
+];
+
+const rows =
+document.getElementById(
+"editPriceRows"
+);
+
+rows.innerHTML = "";
+
+sizes.forEach(size=>{
+
+rows.innerHTML += `
+
+<div class="mb-2">
+
+<label>${size}</label>
+
+<input
+
+type="number"
+
+class="form-control edit-price"
+
+data-size="${size}"
+
+value="${seller.prices?.[size] || 0}">
+
+</div>
+
+`;
+
+});
+
 new bootstrap.Modal(
 document.getElementById("editSellerModal")
 ).show();
 
 }
 
-window.saveSellerBrands =
+window.saveSeller =
 async function(){
 
 const id =
@@ -644,6 +726,33 @@ document.getElementById(
 "editSellerId"
 ).value;
 
+const name =
+document.getElementById(
+"editSellerName"
+).value;
+
+const phone =
+document.getElementById(
+"editSellerPhone"
+).value;
+
+const location =
+document.getElementById(
+"editSellerLocation"
+).value;
+
+const paymentStatus =
+document.getElementById(
+"editPaymentStatus"
+).value;
+
+const deliveryLimit =
+Number(
+document.getElementById(
+"editDeliveryLimit"
+).value
+);
+  
 const brands=[];
 
 document
@@ -657,7 +766,21 @@ brands.push(cb.value);
 await updateDoc(
 doc(db,"sellers",id),
 {
-brands
+
+name,
+
+phone,
+
+location,
+
+prices,
+
+brands,
+
+paymentStatus,
+
+deliveryLimit
+
 }
 );
 
@@ -770,6 +893,83 @@ data-bs-dismiss="modal">
 type="hidden"
 id="editSellerId">
 
+<div class="mb-3">
+
+<label class="form-label">
+Company Name
+</label>
+
+<input
+type="text"
+class="form-control"
+id="editSellerName">
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+Phone
+</label>
+
+<input
+type="text"
+class="form-control"
+id="editSellerPhone">
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+Location
+</label>
+
+<input
+type="text"
+class="form-control"
+id="editSellerLocation">
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+Payment Status
+</label>
+
+<select
+class="form-select"
+id="editPaymentStatus">
+
+<option value="Paid">
+Paid
+</option>
+
+<option value="Unpaid">
+Unpaid
+</option>
+
+</select>
+
+</div>
+
+<div class="mb-3">
+
+<label class="form-label">
+Delivery Limit
+</label>
+
+<input
+type="number"
+class="form-control"
+id="editDeliveryLimit">
+
+</div>
+  
+<input
+type="hidden"
+id="editSellerId">
 <div class="form-check">
 <input class="form-check-input edit-brand"
 type="checkbox"
@@ -812,13 +1012,19 @@ value="Total">
 <label>Total</label>
 </div>
 
+<h5 class="mt-4">
+Gas Prices
+</h5>
+
+<div id="editPriceRows"></div>
+  
 </div>
 
 <div class="modal-footer">
 
 <button
 class="btn btn-success"
-onclick="saveSellerBrands()">
+onclick="saveSeller()"
 
 Save Changes
 
