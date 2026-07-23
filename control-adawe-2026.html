@@ -752,14 +752,25 @@ document.getElementById(
 "editDeliveryLimit"
 ).value
 );
-  
-const brands=[];
+
+const prices = {};
+
+document
+.querySelectorAll(".edit-price")
+.forEach(input=>{
+
+    prices[input.dataset.size] =
+    Number(input.value);
+
+});
+
+const brands = [];
 
 document
 .querySelectorAll(".edit-brand:checked")
 .forEach(cb=>{
 
-brands.push(cb.value);
+    brands.push(cb.value);
 
 });
 
