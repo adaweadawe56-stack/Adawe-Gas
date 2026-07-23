@@ -774,35 +774,52 @@ document
 
 });
 
-await updateDoc(
-doc(db,"sellers",id),
-{
+if(!name || !phone || !location){
 
-name,
+    alert("Please fill all required fields");
 
-phone,
-
-location,
-
-prices,
-
-brands,
-
-paymentStatus,
-
-deliveryLimit
+    return;
 
 }
-);
 
-bootstrap.Modal
-.getInstance(
-document.getElementById(
-"editSellerModal"
-)
-).hide();
+if(brands.length === 0){
 
-alert("Seller updated");
+    alert("Select at least one gas brand");
+
+    return;
+
+}
+  
+try{
+
+    await updateDoc(
+        doc(db,"sellers",id),
+        {
+            name,
+            phone,
+            location,
+            prices,
+            brands,
+            paymentStatus,
+            deliveryLimit
+        }
+    );
+
+    bootstrap.Modal
+    .getInstance(
+        document.getElementById("editSellerModal")
+    )
+    .hide();
+
+    alert("Seller updated successfully");
+
+    renderSellers();
+
+}catch(error){
+
+    console.error(error);
+
+    alert("Failed to update seller");
 
 }
   
