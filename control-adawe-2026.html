@@ -805,14 +805,14 @@ try{
         }
     );
 
-    bootstrap.Modal
-    .getInstance(
+    const modal = bootstrap.Modal.getInstance(
         document.getElementById("editSellerModal")
-    )
-    .hide();
+    );
+
+    modal.hide();
 
     alert("Seller updated successfully");
-  
+
 }catch(error){
 
     console.error(error);
@@ -820,7 +820,6 @@ try{
     alert("Failed to update seller");
 
 }
-};  
   
 window.approveSeller = async id => {
 
@@ -891,7 +890,8 @@ window.editOrder = async id => {
   }
 
 };
-
+</script>
+  
 <div class="modal fade"
      id="editSellerModal"
      tabindex="-1">
