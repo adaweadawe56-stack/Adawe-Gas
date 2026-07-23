@@ -809,7 +809,9 @@ try{
         document.getElementById("editSellerModal")
     );
 
-    modal.hide();
+    if(modal){
+        modal.hide();
+    }
 
     alert("Seller updated successfully");
 
@@ -820,7 +822,8 @@ try{
     alert("Failed to update seller");
 
 }
-  
+
+};
 window.approveSeller = async id => {
 
   if (!confirm("Approve this seller?")) return;
