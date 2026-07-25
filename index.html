@@ -575,13 +575,21 @@ Delivery Address
 </label>
 
 <input
-    id="location"
-  📍 Detect My Location
-    type="text"
-    class="form-control mb-3"
-    placeholder="Street / Estate / House No."
-    autocomplete="street-address"
-    required>
+id="location"
+type="text"
+class="form-control mb-3"
+placeholder="Street / Estate / House No."
+autocomplete="street-address"
+required>
+
+<button
+type="button"
+class="btn btn-outline-success mb-3"
+onclick="getCustomerLocation()">
+
+📍 Detect My Location
+
+</button>
 
 <!-- GAS SIZE -->
 <select id="quantity" class="form-select mb-3" required>
