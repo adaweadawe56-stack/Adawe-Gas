@@ -112,7 +112,7 @@ href="css/style.css">
 <body>
 
 <div id="loader" class="loader">
-  <img src="images/logo.png" alt="Adawe Gas">
+  <img loading="lazy"src="images/logo.png" alt="Adawe Gas">
   <p>Loading Adawe Gas...</p>
 </div>
 
@@ -243,6 +243,7 @@ href="css/style.css">
       <div class="col-lg-7 text-center">
 
   <img
+    loading="lazy"
     src="images/adawe-hero.png"
     class="img-fluid hero-image"
     alt="Adawe Gas Marketplace">
@@ -342,6 +343,21 @@ href="css/style.css">
      <div class="col-lg-6">
 
   <img
+    </div>
+
+      <div class="col-lg-7 text-center">
+
+  <img
+    loading="lazy"
+    src="images/adawe-hero.png"
+    class="img-fluid hero-image"
+    alt="Adawe Gas Marketplace">
+
+</div>
+
+    </div>
+<img
+    loading="lazy"
     src="images/about-gas.png"
     class="img-fluid rounded-4 shadow"
     alt="About Adawe Gas">
@@ -1199,7 +1215,17 @@ loadFeaturedSellers();
 
  <div class="seller-card">
 
-   <img
+  </div>
+
+    </div>
+<img
+    loading="lazy"
+    src="images/about-gas.png"
+    class="img-fluid rounded-4 shadow"
+    alt="About Adawe Gas">
+
+</div>
+      <div class="col-lg-6">
 src="images/logo.png"
 class="seller-logo">
 
@@ -1282,7 +1308,18 @@ class="seller-logo">
 
 <div class="profile-header">
 
+<div class="seller-card">
+
+  </div>
+
+    </div>
 <img
+    loading="lazy"
+    src="images/about-gas.png"
+    class="img-fluid rounded-4 shadow"
+    alt="About Adawe Gas">
+
+</div>
 src="images/logo.png"
 class="profile-logo">
 
@@ -2353,8 +2390,8 @@ if (brands.length === 0) {
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
   registerBtn.disabled = true;
-
-  try {
+  
+try {
     const q = query(collection(db, "sellers"), where("phone", "==", phone));
     const existing = await getDocs(q);
 
