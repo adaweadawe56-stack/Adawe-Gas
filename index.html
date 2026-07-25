@@ -625,6 +625,7 @@ onclick="getCustomerLocation()">
   class="alert alert-success mb-3"
   style="display:none;">
 </div>
+
   <div id="sellerContainer">
 
 <input
@@ -1031,8 +1032,16 @@ import {
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   
 import {
-  getAuth, createUserWithEmailAndPassword
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+getAuth,
+
+createUserWithEmailAndPassword,
+
+sendEmailVerification
+
+}
+  
+from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 /* -------------------- FIREBASE INIT -------------------- */
 const firebaseConfig = {
@@ -2351,6 +2360,9 @@ if (brands.length === 0) {
 
     const userCredential = await createUserWithEmailAndPassword(auth, email, password);
     const uid = userCredential.user.uid;
+    await sendEmailVerification(
+userCredential.user
+);
 
 console.log("Seller Latitude:", sellerLatitude);
 console.log("Seller Longitude:", sellerLongitude);
@@ -2376,8 +2388,16 @@ await addDoc(collection(db,"sellers"),{
   totalRatings:0,
   completedOrders:0,
 
-  paymentStatus:"Paid",
-  deliveryCount:0,
+verified:true,
+
+responseTime:"8 mins",
+
+deliveryTime:"18 mins",
+
+joinedAt:serverTimestamp(),
+
+paymentStatus:"Paid",
+ deliveryCount:0,
   deliveryLimit:3,
   commissionPerOrder:50,
   totalCommissionPayments:0,
