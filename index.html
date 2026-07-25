@@ -2233,7 +2233,19 @@ sellerForm.addEventListener("submit", async (e) => {
   const phone = formatKenyaPhone(document.getElementById("sellerPhone").value.trim());
   const location = document.getElementById("sellerLocation").value.trim();
   const email = document.getElementById("sellerEmail").value.trim();
-  const password = document.getElementById("sellerPassword").value.trim();
+  const strongPassword =
+/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+
+if(!strongPassword.test(password)){
+
+showToast(
+"Password must contain uppercase, number and symbol.",
+false
+);
+
+return;
+
+}
 
   if (!name || !phone || !location || !email || !password) {
     showToast("Please fill all seller fields", false);
