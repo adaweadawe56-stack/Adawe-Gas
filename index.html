@@ -2375,9 +2375,27 @@ addPriceRow();
   .forEach(cb => cb.checked = false);
 
 showToast("✅ Seller registered successfully!");
-  } catch (err) {
-    if (err.message !== "Duplicate seller") console.error(err);
-    showToast(err.message, false);
+ }catch(err){
+
+console.error(err);
+
+if(err.code==="auth/email-already-in-use"){
+
+showToast("Email already registered.",false);
+
+}
+else if(err.code==="auth/weak-password"){
+
+showToast("Password is too weak.",false);
+
+}
+else{
+
+showToast("Registration failed.",false);
+
+}
+
+}
 
   } finally {
     btnText.style.display = "inline";
