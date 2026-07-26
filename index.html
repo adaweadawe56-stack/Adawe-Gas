@@ -2508,7 +2508,33 @@ auth,
 email,
 password
 );
+console.log("STEP 1: Login successful");
+if (!userCredential.user.emailVerified) {
 
+    alert("Please verify your email before logging in.");
+
+    await auth.signOut();
+
+    return;
+}
+
+console.log("STEP 2: Email verified");
+  const sellerSnapshot =
+await getDocs(sellerQuery);
+
+console.log("STEP 3:", sellerSnapshot.size);
+  await updateDoc(
+    sellerSnapshot.docs[0].ref,
+    {
+        verified:true
+    }
+);
+
+console.log("STEP 4: Firestore updated");
+  document.getElementById("dashboard").style.display = "block";
+
+console.log("STEP 5: Dashboard opened");
+  
 const uid =
 userCredential.user.uid;
 
