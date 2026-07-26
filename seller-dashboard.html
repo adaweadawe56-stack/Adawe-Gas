@@ -546,13 +546,31 @@ password
 
 if (!userCredential.user.emailVerified) {
 
-alert(
-"Please verify your email before logging in."
+    alert(
+        "Please verify your email before logging in."
+    );
+
+    await auth.signOut();
+
+    return;
+}
+
+const sellerQuery = query(
+    collection(db,"sellers"),
+    where("uid","==",userCredential.user.uid)
 );
 
-await auth.signOut();
+const sellerSnapshot =
+await getDocs(sellerQuery);
 
-return;
+if (!sellerSnapshot.empty) {
+
+    await updateDoc(
+        sellerSnapshot.docs[0].ref,
+        {
+            verified:true
+        }
+    );
 
 }
     
