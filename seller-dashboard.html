@@ -562,6 +562,10 @@ const sellerQuery = query(
     where("uid", "==", userCredential.user.uid)
 );
 
+const sellerSnapshot = await getDocs(sellerQuery);
+
+console.log("STEP 3:", sellerSnapshot.size);
+
 sellerUid = userCredential.user.uid;
 
 if (!sellerSnapshot.empty) {
