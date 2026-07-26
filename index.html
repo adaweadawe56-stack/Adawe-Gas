@@ -744,7 +744,7 @@ class="form-control mb-3"
 placeholder="Password"
 minlength="8"
 required>
-
+  
 <h5 class="mt-3">Gas Sizes & Prices</h5>
 
 <div id="priceRows"></div>
@@ -2293,14 +2293,19 @@ sellerForm.addEventListener("submit", async (e) => {
   const name = document.getElementById("sellerName").value.trim();
   const phone = formatKenyaPhone(document.getElementById("sellerPhone").value.trim());
   const location = document.getElementById("sellerLocation").value.trim();
-  const email = document.getElementById("sellerEmail").value.trim();
-  const strongPassword =
-/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+  const email =
+document.getElementById("sellerEmail").value.trim();
 
+const password =
+document.getElementById("sellerPassword").value.trim();
+
+const strongPassword =
+/^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
+  
 if(!strongPassword.test(password)){
 
 showToast(
-"Password must contain uppercase, number and symbol.",
+"Password must contain at least 8 characters, one uppercase letter, one number and one special symbol.",
 false
 );
 
@@ -2308,15 +2313,16 @@ return;
 
 }
 
-  if (!name || !phone || !location || !email || !password) {
-    showToast("Please fill all seller fields", false);
-    return;
-  }
+if (!name || !phone || !location || !email || !password) {
 
-  if (!isValidKenyaPhone(phone)) {
-    showToast("Enter valid Kenya phone number", false);
-    return;
-  }
+showToast(
+"Please fill all seller fields",
+false
+);
+
+return;
+
+}
 
   const prices = {};
 
