@@ -2310,8 +2310,6 @@ false
 );
 
 };
-  
-  window.addPriceRow = addPriceRow;
 
 let sellerLatitude = null;
 let sellerLongitude = null;
@@ -2319,16 +2317,6 @@ let sellerLongitude = null;
 window.addPriceRow = addPriceRow;
 
 addPriceRow();
-
-navigator.geolocation.getCurrentPosition(
-  (position) => {
-    sellerLatitude = position.coords.latitude;
-    sellerLongitude = position.coords.longitude;
-  },
-  (error) => {
-    alert("Please allow location access to register as a seller.");
-  }
-);
 
 const sellerForm = document.getElementById("sellerForm");
 const registerBtn = document.getElementById("registerSellerBtn");
