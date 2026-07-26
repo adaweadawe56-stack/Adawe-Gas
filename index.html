@@ -2434,11 +2434,20 @@ if (brands.length === 0) {
 }
 
 
-  if (sellerLatitude === null || sellerLongitude === null) {
-  showToast("Please allow location access.", false);
-  return;
+ if (
+    sellerLatitude === null ||
+    sellerLongitude === null
+) {
+
+showToast(
+"Click 'Detect My Location' first.",
+false
+);
+
+return;
+
 }
- 
+  
   // UI State
   btnText.style.display = "none";
   btnLoader.style.display = "inline";
