@@ -556,102 +556,48 @@ if (!userCredential.user.emailVerified) {
 }
 
 console.log("STEP 2: Email verified");
-    
+
 const sellerQuery = query(
     collection(db, "sellers"),
     where("uid", "==", userCredential.user.uid)
 );
 
-const sellerSnapshot = await getDocs(sellerQuery);
-
-console.log("STEP 3:", sellerSnapshot.size);
+sellerUid = userCredential.user.uid;
 
 if (!sellerSnapshot.empty) {
 
-    await updateDoc(
-        sellerSnapshot.docs[0].ref,
-        {
-            verified: true
-        }
-    );
+    const sellerDoc = sellerSnapshot.docs[0];
+
+    await updateDoc(sellerDoc.ref, {
+        verified: true
+    });
 
     console.log("STEP 4: Firestore updated");
+
+    const sellerData = sellerDoc.data();
+
+    sellerPhone = sellerData.phone;
+    sellerDocId = sellerDoc.id;
+
+    const prices = sellerData.prices || {};
+
+    document.getElementById("price1kg").value = prices["1kg"] || "";
+    document.getElementById("price3kg").value = prices["3kg"] || "";
+    document.getElementById("price6kg").value = prices["6kg"] || "";
+    document.getElementById("price13kg").value = prices["13kg"] || "";
+    document.getElementById("price15kg").value = prices["15kg"] || "";
+    document.getElementById("price22kg").value = prices["22kg"] || "";
+    document.getElementById("price25kg").value = prices["25kg"] || "";
+    document.getElementById("price35kg").value = prices["35kg"] || "";
+    document.getElementById("price40kg").value = prices["40kg"] || "";
+    document.getElementById("price45kg").value = prices["45kg"] || "";
+    document.getElementById("price50kg").value = prices["50kg"] || "";
 }
 
 document.getElementById("loginPage").style.display = "none";
 document.getElementById("dashboard").style.display = "block";
 
 console.log("STEP 5: Dashboard opened");
-  
-if (!userCredential.user.emailVerified) {
-
-    alert(
-        "Please verify your email before logging in."
-    );
-
-    await auth.signOut();
-
-    return;
-}
-
-const sellerQuery = query(
-    collection(db,"sellers"),
-    where("uid","==",userCredential.user.uid)
-);
-
-const sellerSnapshot =
-await getDocs(sellerQuery);
-
-if (!sellerSnapshot.empty) {
-
-    await updateDoc(
-        sellerSnapshot.docs[0].ref,
-        {
-            verified:true
-        }
-    );
-
-}
-    
-    sellerUid = userCredential.user.uid;
-
-    const sellerQ = query(
-      collection(db,"sellers"),
-      where("uid","==",sellerUid)
-    );
-
-    const sellerSnap =
-    await getDocs(sellerQ);
-
-   if(!sellerSnap.empty){
-
-  const sellerData =
-  sellerSnap.docs[0].data();
-
-  sellerPhone =
-  sellerData.phone;
-
-  sellerDocId =
-  sellerSnap.docs[0].id;
-
-    const prices = sellerData.prices || {};
-
-document.getElementById("price1kg").value = prices["1kg"] || "";
-document.getElementById("price3kg").value = prices["3kg"] || "";
-document.getElementById("price6kg").value = prices["6kg"] || "";
-document.getElementById("price13kg").value = prices["13kg"] || "";
-document.getElementById("price15kg").value = prices["15kg"] || "";
-document.getElementById("price22kg").value = prices["22kg"] || "";
-document.getElementById("price25kg").value = prices["25kg"] || "";
-document.getElementById("price35kg").value = prices["35kg"] || "";
-document.getElementById("price40kg").value = prices["40kg"] || "";
-document.getElementById("price45kg").value = prices["45kg"] || "";
-document.getElementById("price50kg").value = prices["50kg"] || "";
-     
-    }
-        
-    document.getElementById("loginPage").style.display = "none";
-    document.getElementById("dashboard").style.display = "block";
     
 console.log("sellerUid =", sellerUid);
 console.log("sellerPhone =", sellerPhone);
