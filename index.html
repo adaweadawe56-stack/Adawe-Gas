@@ -2171,13 +2171,25 @@ const recommendedSeller = document.getElementById("recommendedSeller");
 recommendedSeller.style.display = "none";
 recommendedSeller.innerHTML = "";
 
-try {
-  window.open(
-    `https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`,
+const whatsappUrl =
+`https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`;
+
+const popup =
+window.open(
+    whatsappUrl,
     "_blank"
-  );
-} catch (e) {
-  console.log("WhatsApp window blocked");
+);
+
+if (!popup || popup.closed || typeof popup.closed === "undefined") {
+
+    showToast(
+        "Popup blocked. Click the WhatsApp button below.",
+        false
+    );
+
+    document.getElementById("openWhatsappBtn").style.display = "block";
+
+    document.getElementById("openWhatsappBtn").href = whatsappUrl;
 }
 
 setTimeout(()=>{
