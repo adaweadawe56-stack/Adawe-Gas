@@ -2482,7 +2482,9 @@ addPriceRow();
   .querySelectorAll(".brand-checkbox")
   .forEach(cb => cb.checked = false);
 
-showToast("✅ Seller registered successfully!");
+showToast(
+"✅ Registration successful! Verification email sent."
+);
  }catch(err){
 
 console.error(err);
