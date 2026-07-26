@@ -2264,6 +2264,53 @@ row
 
   });
   }
+
+window.getSellerLocation = function () {
+
+if (!navigator.geolocation) {
+
+showToast(
+"Geolocation is not supported.",
+false
+);
+
+return;
+
+}
+
+navigator.geolocation.getCurrentPosition(
+
+(position)=>{
+
+sellerLatitude =
+position.coords.latitude;
+
+sellerLongitude =
+position.coords.longitude;
+
+document.getElementById("sellerLocation").value =
+
+`${sellerLatitude}, ${sellerLongitude}`;
+
+showToast(
+"Location detected successfully."
+);
+
+},
+
+()=>{
+
+showToast(
+"Unable to detect location.",
+false
+);
+
+}
+
+);
+
+};
+  
   window.addPriceRow = addPriceRow;
 
 addPriceRow();
