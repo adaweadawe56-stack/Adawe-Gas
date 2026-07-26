@@ -2313,9 +2313,12 @@ false
   
   window.addPriceRow = addPriceRow;
 
-addPriceRow();
 let sellerLatitude = null;
 let sellerLongitude = null;
+
+window.addPriceRow = addPriceRow;
+
+addPriceRow();
 
 navigator.geolocation.getCurrentPosition(
   (position) => {
@@ -2500,22 +2503,27 @@ await addDoc(collection(db,"sellers"),{
   totalRatings:0,
   completedOrders:0,
 
-verified:true,
+verified:false,
 
-responseTime:"8 mins",
+responseTime:null,
 
-deliveryTime:"18 mins",
+deliveryTime:null,
 
-joinedAt:serverTimestamp(),
+paymentStatus:"Pending",
 
-paymentStatus:"Paid",
- deliveryCount:0,
-  deliveryLimit:3,
-  commissionPerOrder:50,
-  totalCommissionPayments:0,
+commissionBalance:0,
 
-  status:"pending",
-  createdAt:serverTimestamp()
+deliveryCount:0,
+
+deliveryLimit:3,
+
+commissionPerOrder:50,
+
+totalCommissionPayments:0,
+
+status:"pending",
+
+createdAt:serverTimestamp()
 
 });
     
@@ -2548,10 +2556,10 @@ showToast("Password is too weak.",false);
 }
 else{
 
-showToast("Registration failed.",false);
-
-}
-
+showToast(
+"Registration failed. Please try again.",
+false
+);
 }
 
   } finally {
