@@ -537,13 +537,25 @@ window.login = async function(){
     const password =
     document.getElementById("password").value;
 
-    const userCredential =
-    await signInWithEmailAndPassword(
-      auth,
-      email,
-      password
-    );
+  const userCredential =
+await signInWithEmailAndPassword(
+auth,
+email,
+password
+);
 
+if (!userCredential.user.emailVerified) {
+
+alert(
+"Please verify your email before logging in."
+);
+
+await auth.signOut();
+
+return;
+
+}
+    
     sellerUid = userCredential.user.uid;
 
     const sellerQ = query(
