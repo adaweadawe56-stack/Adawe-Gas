@@ -2415,9 +2415,17 @@ try {
       throw new Error("Duplicate seller");
     }
 
-    const userCredential = await createUserWithEmailAndPassword(auth, email, password);
-    const uid = userCredential.user.uid;
-    await sendEmailVerification(
+   const userCredential =
+await createUserWithEmailAndPassword(
+auth,
+email,
+password
+);
+
+const uid =
+userCredential.user.uid;
+
+await sendEmailVerification(
 userCredential.user
 );
 
