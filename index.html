@@ -2023,20 +2023,32 @@ orderForm.addEventListener("submit", async (e) => {
   
   /* VALIDATION */
 
-  if (
+if (
     !name ||
     !phone ||
     !location ||
     !quantity ||
-    !brand 
-     ) {
+    !brand
+) {
 
     showToast("Please fill all order fields", false);
 
     resetButton();
 
     return;
-  }
+}
+
+if (location.length < 5) {
+
+    showToast(
+        "Please enter a complete delivery address.",
+        false
+    );
+
+    resetButton();
+
+    return;
+}
 
   if (!isValidKenyaPhone(phone)) {
 
