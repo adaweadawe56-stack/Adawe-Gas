@@ -640,12 +640,6 @@ onclick="getCustomerLocation()">
   <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
-<div
-  id="recommendedSeller"
-  class="alert alert-success mb-3"
-  style="display:none;">
-</div>
-
 <div id="sellerContainer" style="display:none;">
 
   <input
@@ -1912,7 +1906,7 @@ if (
     return bestSeller;
 
 }
-
+let selectedSeller = null;
 let customerLatitude = null;
 let customerLongitude = null;
 
@@ -1959,7 +1953,7 @@ async function showRecommendedSeller() {
 
   try {
 
-    const seller =
+ const seller =
 await getBestSeller(
     quantity,
     brand,
@@ -1967,9 +1961,11 @@ await getBestSeller(
     customerLongitude
 );
 
-    document.getElementById("recommendedSeller").style.display = "block";
+selectedSeller = seller;
 
-   document.getElementById("recommendedSeller").innerHTML = `
+document.getElementById("recommendedSeller").style.display = "block";
+
+document.getElementById("recommendedSeller").innerHTML = `
 <b>Recommended Seller</b><br>
 👤 ${seller.name}<br>
 📍 ${seller.location}<br>
@@ -2126,7 +2122,10 @@ console.log({
   customerLatitude,
   customerLongitude
 });
-
+if (!selectedSeller) {
+    alert("No seller available.");
+    return;
+}
   await addDoc(
   collection(db,"orders"),
   {
