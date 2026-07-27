@@ -1906,7 +1906,7 @@ if (
     return bestSeller;
 
 }
-let selectedSeller = null;
+
 let customerLatitude = null;
 let customerLongitude = null;
 
@@ -1960,8 +1960,6 @@ await getBestSeller(
     customerLatitude,
     customerLongitude
 );
-
-selectedSeller = seller;
 
 document.getElementById("recommendedSeller").style.display = "block";
 
