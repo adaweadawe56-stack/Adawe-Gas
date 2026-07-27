@@ -2122,7 +2122,7 @@ console.log({
   customerLatitude,
   customerLongitude
 });
-if (!selectedSeller) {
+if (!sellerData) {
     alert("No seller available.");
     return;
 }
@@ -2138,16 +2138,17 @@ if (!selectedSeller) {
 
     price: orderPrice,
 
-    sellerId,
-    sellerUid: sellerData.uid,
+   sellerId: sellerData.id,
+sellerUid: sellerData.uid,
 
-    sellerName: sellerData.name,
-    sellerPhone: sellerWhatsapp,
-    sellerLocation: sellerData.location || "",
+sellerName: sellerData.name,
+sellerPhone: sellerData.phone,
+sellerLocation: sellerData.location || "",
 
-    sellerLatitude: sellerData.sellerLatitude,
-    sellerLongitude: sellerData.sellerLongitude,
+price: sellerData.prices[quantity],
 
+sellerLatitude: sellerData.latitude,
+sellerLongitude: sellerData.longitude,
     customerLatitude,
     customerLongitude,
 
