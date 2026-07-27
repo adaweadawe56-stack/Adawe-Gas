@@ -1911,83 +1911,86 @@ let customerLatitude = null;
 let customerLongitude = null;
 
 navigator.geolocation.getCurrentPosition(
-  (position) => {
 
-    customerLatitude = position.coords.latitude;
-    customerLongitude = position.coords.longitude;
+    (position) => {
 
-    console.log("Customer:", customerLatitude, customerLongitude);
+        customerLatitude = position.coords.latitude;
+        customerLongitude = position.coords.longitude;
 
-    showRecommendedSeller();
+        console.log("Customer:", customerLatitude, customerLongitude);
 
-  },
-  (error) => {
-    console.log("GPS not available");
-  }
+        showRecommendedSeller();
+
+    },
+
+    (error) => {
+
+        console.log(error);
+
+        customerLatitude = null;
+        customerLongitude = null;
+
+        showRecommendedSeller();
+
+    }
+
 );
 
 async function showRecommendedSeller() {
 
-  const quantity =
-    document.getElementById("quantity").value;
+    const quantity = document.getElementById("quantity").value;
+    const brand = document.getElementById("brand").value;
 
-  const brand =
-    document.getElementById("brand").value;
+    if (!quantity || !brand) {
+        document.getElementById("recommendedSeller").style.display = "none";
+        return;
+    }
 
-  if (!quantity || !brand) {
+    if (customerLatitude == null || customerLongitude == null) {
 
-    document.getElementById("recommendedSeller").style.display = "none";
+        document.getElementById("recommendedSeller").style.display = "block";
+        document.getElementById("recommendedSeller").innerHTML =
+            "📍 Please allow location access to see the nearest seller.";
 
-    return;
-  }
+        return;
+    }
 
- if (customerLatitude == null || customerLongitude == null) {
+    try {
 
-    document.getElementById("recommendedSeller").style.display = "block";
+        const seller = await getBestSeller(
+            quantity,
+            brand,
+            customerLatitude,
+            customerLongitude
+        );
 
-    document.getElementById("recommendedSeller").innerHTML =
-        "📍 Please allow location access to see the nearest seller.";
+        document.getElementById("recommendedSeller").style.display = "block";
 
-    return;
-}
+        document.getElementById("recommendedSeller").innerHTML = `
+        <b>Recommended Seller</b><br>
+        👤 ${seller.name}<br>
+        📍 ${seller.location}<br>
+        ⭐ ${seller.averageRating || 0} Rating<br>
+        💰 KES ${seller.prices[quantity]}
+        `;
 
-  try {
+   } catch (err) {
 
- const seller =
-await getBestSeller(
-    quantity,
-    brand,
-    customerLatitude,
-    customerLongitude
-);
-
-document.getElementById("recommendedSeller").style.display = "block";
-
-document.getElementById("recommendedSeller").innerHTML = `
-<b>Recommended Seller</b><br>
-👤 ${seller.name}<br>
-📍 ${seller.location}<br>
-⭐ ${seller.averageRating || 0} Rating<br>
-💰 KES ${seller.prices[quantity]}
-`;
-  } catch (err) {
+    console.error(err);
 
     document.getElementById("recommendedSeller").style.display = "block";
 
     document.getElementById("recommendedSeller").innerHTML =
-      "❌ No seller available";
-
-  }
+        `❌ ${err.message}`;
 
 }
+}
 
-  document
-.getElementById("quantity")
-.addEventListener("change", showRecommendedSeller);
+document.getElementById("quantity")
+    .addEventListener("change", showRecommendedSeller);
 
-document
-.getElementById("brand")
-.addEventListener("change", showRecommendedSeller);
+document.getElementById("brand")
+    .addEventListener("change", showRecommendedSeller);
 
 /* -------------------- ORDER FORM -------------------- */
 
