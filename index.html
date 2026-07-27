@@ -640,34 +640,16 @@ onclick="getCustomerLocation()">
   <option value="Taifa Gas">Taifa Gas</option>
 </select>
 
-<div id="sellerContainer" style="display:none;">
-
-  <input
-    id="sellerSearch"
-    class="form-control mb-2"
-    placeholder="Search Seller...">
-
-  <select
-    id="sellerSelect"
-    class="form-select mb-3"
-    required>
-
-    <option value="">
-      Select Seller
-    </option>
-
-  </select>
-
+<div id="recommendedSeller"
+     class="card border-success mt-3 mb-3"
+     style="display:none;padding:15px;">
 </div>
 
 <button
   type="submit"
   class="btn w-100"
-  aria-label="Send order via WhatsApp"
   style="background:#25D366;color:white;font-weight:600;">
-
   Send Order
-
 </button>
 
 <div id="trackingLink"></div>
