@@ -1864,6 +1864,9 @@ function getCustomerLocation() {
     );
 
 }
+  document
+    .getElementById("detectLocationBtn")
+    .addEventListener("click", getCustomerLocation);
   
 let customerLatitude = null;
 let customerLongitude = null;
