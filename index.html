@@ -1827,6 +1827,39 @@ if (
 
 }
 
+/* -------------------- CUSTOMER LOCATION -------------------- */
+
+function getCustomerLocation() {
+
+    navigator.geolocation.getCurrentPosition(
+
+        (position) => {
+
+            customerLatitude = position.coords.latitude;
+            customerLongitude = position.coords.longitude;
+
+            console.log(
+                "Customer:",
+                customerLatitude,
+                customerLongitude
+            );
+
+            showRecommendedSeller();
+
+        },
+
+        (error) => {
+
+            console.error(error);
+
+            alert("Unable to get your location.");
+
+        }
+
+    );
+
+}
+  
 let customerLatitude = null;
 let customerLongitude = null;
 
