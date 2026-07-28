@@ -455,7 +455,7 @@ html{
   text-align:center;
   box-shadow:0 10px 25px rgba(0,0,0,.12);
   height:100%;
-  transition:all .3s ease;
+ transition:transform .3s ease, box-shadow .3s ease;
 }
 
 .seller-card:hover{
@@ -465,7 +465,7 @@ html{
 .seller-logo{
   width:90px;
   height:90px;
-  object-fit:contain;
+  object-fit:cover;
   background:#fff;
   border-radius:50%;
   padding:10px;
