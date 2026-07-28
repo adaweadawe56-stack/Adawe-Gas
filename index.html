@@ -2154,6 +2154,10 @@ sellerLongitude: sellerData.sellerLongitude,
   }
 );
 
+  document.getElementById("orderLoading").style.display = "none";
+
+document.getElementById("submitOrderBtn").disabled = false;
+
     const message = `🔥 NEW LPG ORDER
 
 Order ID: ${orderId}
@@ -2201,10 +2205,10 @@ if (!popup || popup.closed || typeof popup.closed === "undefined") {
 }
 
 setTimeout(()=>{
-  window.location.href = `order-tracking.html?id=${orderId}`;
+    window.location.href = `order-tracking.html?id=${orderId}`;
 },1500);
-    
-catch(err){
+
+} catch(err){
 
     console.error(err);
 
@@ -2212,18 +2216,16 @@ catch(err){
 
     document.getElementById("submitOrderBtn").disabled = false;
 
-    alert(err.message);
+    showToast(err.message || "Failed to save order", false);
 
 }
+finally{
 
-  showToast(err.message || "Failed to save order", false);
+    document.getElementById("orderLoading").style.display = "none";
 
-} finally{
-
-  resetButton();
+    resetButton();
 
 }
-    
  
 });
 
