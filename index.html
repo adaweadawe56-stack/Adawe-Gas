@@ -1849,14 +1849,49 @@ async function showRecommendedSeller() {
 
         document.getElementById("recommendedSeller").style.display = "block";
 
-        document.getElementById("recommendedSeller").innerHTML = `
-        <b>Recommended Seller</b><br>
-        👤 ${seller.name}<br>
-        📍 ${seller.location}<br>
-        ⭐ ${seller.averageRating || 0} Rating<br>
-        💰 KES ${seller.prices[quantity]}
-        `;
+document.getElementById("recommendedSeller").innerHTML = `
+<div class="recommended-card">
 
+    <div class="recommended-title">
+        🏆 Best Seller Found
+    </div>
+
+    <h4>${seller.name}</h4>
+
+    <div class="recommended-info">
+
+        <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
+
+       <p>📍 ${seller.location}</p>
+<p>🧭 ${seller.distance.toFixed(1)} km away</p>
+
+        <p>🛢️ ${brand} • ${quantity}</p>
+
+        <p>💰 <strong>KES ${Number(seller.prices[quantity]).toLocaleString()}</strong></p>
+
+        <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
+
+        <p>🚚 Estimated Delivery:
+        ${seller.deliveryTime || "15–30 Minutes"}</p>
+
+        ${seller.verified ? "<p>✔ Verified Seller</p>" : ""}
+
+    </div>
+
+    <hr>
+
+    <h6>Why we selected this seller</h6>
+
+    <ul class="recommended-list">
+        <li>✅ Nearest to your location</li>
+        <li>✅ Highest rated nearby</li>
+        <li>✅ Supports ${brand}</li>
+        <li>✅ Ready to accept orders</li>
+    </ul>
+
+</div>
+`;
+      
    } catch (err) {
 
     console.error(err);
