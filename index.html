@@ -1209,74 +1209,60 @@ html += `
 
   });
 
-  document.getElementById("sellerProfileContent").innerHTML = `
+document.getElementById("sellerProfileContent").innerHTML = `
 
 <div class="profile-header">
 
-<div class="seller-card">
+  <img
+    src="${seller.profileImage || 'images/logo.png'}"
+    class="profile-logo"
+    alt="${seller.name}">
 
+  <div class="profile-name">
+    ${seller.name}
   </div>
 
-    </div>
-<img
-    loading="lazy"
-    src="images/about-gas.png"
-    class="img-fluid rounded-4 shadow"
-    alt="About Adawe Gas">
+  <div class="profile-location">
+    📍 ${seller.location}
+  </div>
 
-</div>
-src="images/logo.png"
-class="profile-logo">
-
-<div class="profile-name">
-${seller.name}
-</div>
-
-<div class="profile-location">
-📍 ${seller.location}
-</div>
-
-<div class="profile-rating">
-⭐ ${seller.averageRating || 0}
-</div>
+  <div class="profile-rating">
+    ⭐ ${Number(seller.averageRating || 0).toFixed(1)}
+  </div>
 
 </div>
 
 <div class="profile-stats">
 
-<div>
-<h4>${seller.totalRatings || 0}</h4>
-Reviews
-</div>
+  <div>
+    <h4>${seller.totalRatings || 0}</h4>
+    Reviews
+  </div>
 
-<div>
-<h4>${seller.completedOrders || 0}</h4>
-Orders
-</div>
+  <div>
+    <h4>${seller.completedOrders || 0}</h4>
+    Orders
+  </div>
 
 </div>
 
 <h5>Gas Prices</h5>
 
 <table class="table profile-price-table">
-
-<tbody>
-
-${prices}
-
-</tbody>
-
+  <tbody>
+    ${prices}
+  </tbody>
 </table>
 
 <div class="profile-actions">
 
-<button
-class="btn btn-secondary w-100"
-disabled>
+  <button
+    class="btn btn-secondary w-100"
+    disabled>
 
-⏳ Contact available after seller accepts your order
+    ⏳ Contact available after seller accepts your order
 
-</button>
+  </button>
 
 </div>
 
