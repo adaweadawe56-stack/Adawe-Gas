@@ -527,6 +527,8 @@ html{
     margin-top:20px;
     box-shadow:0 10px 30px rgba(0,0,0,.08);
     animation:fadeUp .4s ease;
+
+    color:#064e3b;
 }
 
 .recommended-title{
@@ -558,8 +560,8 @@ html{
     color:#374151;
 }
 
-.recommended-card hr{
-    margin:18px 0;
+.recommended-card strong{
+    color:#065f46;
 }
 
 @keyframes fadeUp{
