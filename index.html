@@ -2156,8 +2156,6 @@ sellerLongitude: sellerData.sellerLongitude,
 
   document.getElementById("orderLoading").style.display = "none";
 
-document.getElementById("submitOrderBtn").disabled = false;
-
     const message = `🔥 NEW LPG ORDER
 
 Order ID: ${orderId}
@@ -2233,11 +2231,13 @@ finally{
 
 function resetButton() {
 
-  submitting = false;
+    submitting = false;
 
-  orderButton.disabled = false;
+    orderButton.disabled = false;
 
-  orderButton.innerHTML = originalBtnText;
+    orderButton.innerHTML = originalBtnText;
+
+    document.getElementById("submitOrderBtn").disabled = false;
 
 }
 
