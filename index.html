@@ -1902,27 +1902,27 @@ document.getElementById("recommendedSeller").innerHTML = `
         🏆 Best Seller Found
     </div>
 
-    <h4>${seller.name}</h4>
+<h4>${seller.name || "Unknown Seller"}</h4>
 
-    <div class="recommended-info">
+<div class="recommended-info">
 
-        <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
+    <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
 
-       <p>📍 ${seller.location}</p>
-<p>🧭 ${Number(seller.distance || 0).toFixed(1)} km away</p>
+    <p>📍 ${seller.location || "Location not available"}</p>
 
-        <p>🛢️ ${brand} • ${quantity}</p>
+    <p>🧭 ${Number(seller.distance || 0).toFixed(1)} km away</p>
 
-        <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
+    <p>🛢️ ${brand} • ${quantity}</p>
 
-        <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
+    <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
 
-        <p>🚚 Estimated Delivery:
-        ${seller.deliveryTime || "15–30 Minutes"}</p>
+    <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
 
-        ${seller.verified ? "<p>✔ Verified Seller</p>" : ""}
+    <p>🚚 Estimated Delivery: ${seller.deliveryTime || "15–30 Minutes"}</p>
 
-    </div>
+    ${seller.verified ? "<p>✔ Verified Seller</p>" : ""}
+
+</div>
 
     <hr>
 
