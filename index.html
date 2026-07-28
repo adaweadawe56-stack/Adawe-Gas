@@ -1994,7 +1994,11 @@ let submitting = false;
 orderForm.addEventListener("submit", async (e) => {
 
   e.preventDefault();
+  
+document.getElementById("submitOrderBtn").disabled = true;
 
+    document.getElementById("orderLoading").style.display = "block";
+  
   if (submitting) return;
 
   submitting = true;
@@ -2200,9 +2204,17 @@ setTimeout(()=>{
   window.location.href = `order-tracking.html?id=${orderId}`;
 },1500);
     
-} catch(err){
+catch(err){
 
-  console.error(err);
+    console.error(err);
+
+    document.getElementById("orderLoading").style.display = "none";
+
+    document.getElementById("submitOrderBtn").disabled = false;
+
+    alert(err.message);
+
+}
 
   showToast(err.message || "Failed to save order", false);
 
