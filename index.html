@@ -1949,12 +1949,18 @@ async function showRecommendedSeller() {
 
     document.getElementById("recommendedSeller").style.display = "none";
 
-   const seller = await getBestSeller(
+  const seller = await getBestSeller(
     quantity,
     brand,
     customerLatitude,
     customerLongitude
 );
+
+// Hide loading
+document.getElementById("sellerLoading").style.display = "none";
+
+// Show seller card
+document.getElementById("recommendedSeller").style.display = "block";
 
 // Calculate ETA
 let eta = "30–40 Minutes";
@@ -2000,7 +2006,6 @@ document.getElementById("recommendedSeller").innerHTML = `
 
 </div>
 `;
-
 document.getElementById("sellerStatus").style.display = "block";
 
 document.getElementById("submitOrderBtn").disabled = false;
