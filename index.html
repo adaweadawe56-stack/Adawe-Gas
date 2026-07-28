@@ -1949,16 +1949,25 @@ async function showRecommendedSeller() {
 
     document.getElementById("recommendedSeller").style.display = "none";
 
-    const seller = await getBestSeller(
-            quantity,
-            brand,
-            customerLatitude,
-            customerLongitude
-        );
+   const seller = await getBestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+);
 
-       document.getElementById("sellerLoading").style.display = "none";
+// Calculate ETA
+let eta = "30–40 Minutes";
 
-document.getElementById("recommendedSeller").style.display = "block";
+if (seller.distance <= 1) {
+    eta = "5–10 Minutes";
+} else if (seller.distance <= 3) {
+    eta = "10–15 Minutes";
+} else if (seller.distance <= 5) {
+    eta = "15–20 Minutes";
+} else if (seller.distance <= 10) {
+    eta = "20–30 Minutes";
+}
 
 document.getElementById("recommendedSeller").innerHTML = `
 <div class="recommended-card">
@@ -1967,27 +1976,27 @@ document.getElementById("recommendedSeller").innerHTML = `
         🏆 Best Seller Found
     </div>
 
-<h4>${seller.name || "Unknown Seller"}</h4>
+    <h4>${seller.name || "Unknown Seller"}</h4>
 
-<div class="recommended-info">
+    <div class="recommended-info">
 
-    <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
+        <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
 
-    <p>📍 ${seller.location || "Location not available"}</p>
+        <p>📍 ${seller.location || "Location not available"}</p>
 
-    <p>🧭 ${Number(seller.distance || 0).toFixed(1)} km away</p>
+        <p>🧭 ${Number(seller.distance || 0).toFixed(1)} km away</p>
 
-    <p>🛢️ ${brand} • ${quantity}</p>
+        <p>🛢️ ${brand} • ${quantity}</p>
 
-    <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
+        <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
 
-    <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
+        <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
 
-  <p>🏍️ Rider ETA: ${seller.deliveryTime || "15–30 Minutes"}</p>
-  
-   ${seller.verified ? "<p>✔ Verified Seller</p>" : ""}
+        <p>🏍️ Rider ETA: ${eta}</p>
 
-</div>
+        ${seller.verified ? "<p>✔ Verified Seller</p>" : ""}
+
+    </div>
 
 </div>
 `;
