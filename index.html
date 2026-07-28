@@ -1848,7 +1848,9 @@ async function showRecommendedSeller() {
     const quantity = document.getElementById("quantity").value;
     const brand = document.getElementById("brand").value;
 
-   if (!quantity || !brand) {
+  if (!quantity || !brand) {
+
+    document.getElementById("sellerLoading").style.display = "none";
 
     document.getElementById("recommendedSeller").style.display = "none";
 
@@ -1857,8 +1859,9 @@ async function showRecommendedSeller() {
     document.getElementById("submitOrderBtn").disabled = true;
 
     return;
-
 }
+  document.getElementById("sellerLoading").style.display = "none";
+  
    if (customerLatitude == null || customerLongitude == null) {
 
     document.getElementById("recommendedSeller").style.display = "block";
@@ -1874,16 +1877,22 @@ async function showRecommendedSeller() {
 
 }
 
-    try {
+   try {
 
-        const seller = await getBestSeller(
+    document.getElementById("sellerLoading").style.display = "block";
+
+    document.getElementById("recommendedSeller").style.display = "none";
+
+    const seller = await getBestSeller(
             quantity,
             brand,
             customerLatitude,
             customerLongitude
         );
 
-        document.getElementById("recommendedSeller").style.display = "block";
+       document.getElementById("sellerLoading").style.display = "none";
+
+document.getElementById("recommendedSeller").style.display = "block";
 
 document.getElementById("recommendedSeller").innerHTML = `
 <div class="recommended-card">
@@ -1936,8 +1945,10 @@ document.getElementById("submitOrderBtn").disabled = false;
 
     console.error(err);
 
-    document.getElementById("recommendedSeller").style.display = "block";
+document.getElementById("sellerLoading").style.display = "none";
 
+document.getElementById("recommendedSeller").style.display = "block";
+     
     document.getElementById("recommendedSeller").innerHTML =
         `❌ ${err.message}`;
 
