@@ -1835,19 +1835,31 @@ async function showRecommendedSeller() {
     const quantity = document.getElementById("quantity").value;
     const brand = document.getElementById("brand").value;
 
-    if (!quantity || !brand) {
-        document.getElementById("recommendedSeller").style.display = "none";
-        return;
-    }
+   if (!quantity || !brand) {
 
-    if (customerLatitude == null || customerLongitude == null) {
+    document.getElementById("recommendedSeller").style.display = "none";
 
-        document.getElementById("recommendedSeller").style.display = "block";
-        document.getElementById("recommendedSeller").innerHTML =
-            "📍 Please allow location access to see the nearest seller.";
+    document.getElementById("sellerStatus").style.display = "none";
 
-        return;
-    }
+    document.getElementById("submitOrderBtn").disabled = true;
+
+    return;
+
+}
+   if (customerLatitude == null || customerLongitude == null) {
+
+    document.getElementById("recommendedSeller").style.display = "block";
+
+    document.getElementById("recommendedSeller").innerHTML =
+        "📍 Please allow location access to see the nearest seller.";
+
+    document.getElementById("sellerStatus").style.display = "none";
+
+    document.getElementById("submitOrderBtn").disabled = true;
+
+    return;
+
+}
 
     try {
 
@@ -1902,8 +1914,12 @@ document.getElementById("recommendedSeller").innerHTML = `
 
 </div>
 `;
+
+document.getElementById("sellerStatus").style.display = "block";
+
+document.getElementById("submitOrderBtn").disabled = false;
       
-   } catch (err) {
+catch (err) {
 
     console.error(err);
 
@@ -1911,6 +1927,10 @@ document.getElementById("recommendedSeller").innerHTML = `
 
     document.getElementById("recommendedSeller").innerHTML =
         `❌ ${err.message}`;
+
+    document.getElementById("sellerStatus").style.display = "none";
+
+    document.getElementById("submitOrderBtn").disabled = true;
 
 }
 }
