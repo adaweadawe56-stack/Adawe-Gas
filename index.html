@@ -1117,63 +1117,51 @@ function showToast(message, success = true) {
     seller.profileImage
   );
 
-  html += `
-
+html += `
 <div class="col-md-4">
+    <div class="seller-card text-center p-4 h-100">
 
- <div class="seller-card">
+        <img
+            src="${seller.profileImage || 'images/logo.png'}"
+            class="seller-logo mb-3"
+            alt="${seller.name}">
 
-  </div>
+        <h5 class="seller-name">
+            ${seller.name}
+        </h5>
+
+        <p class="seller-location">
+            📍 ${seller.location}
+        </p>
+
+        <p class="seller-rating">
+            ⭐ ${Number(seller.averageRating || 0).toFixed(1)}
+        </p>
+
+        <div class="seller-stats d-flex justify-content-around mb-3">
+
+            <div>
+                <strong>${seller.totalRatings || 0}</strong><br>
+                Reviews
+            </div>
+
+            <div>
+                <strong>${seller.completedOrders || 0}</strong><br>
+                Orders
+            </div>
+
+        </div>
+
+        <button
+            class="btn btn-success w-100"
+            onclick="showSellerProfile('${seller.id}')">
+
+            View Profile
+
+        </button>
 
     </div>
-<img
-    loading="lazy"
-    src="images/about-gas.png"
-    class="img-fluid rounded-4 shadow"
-    alt="About Adawe Gas">
-
 </div>
-      <div class="col-lg-6">
-src="images/logo.png"
-class="seller-logo">
-
-    <div class="seller-name">
-      ${seller.name}
-    </div>
-
-    <div class="seller-location">
-      📍 ${seller.location}
-    </div>
-
-    <div class="seller-rating">
-      ⭐ ${seller.averageRating || 0}
-    </div>
-
-    <div class="seller-stats">
-
-      <div>
-        <h5>${seller.totalRatings || 0}</h5>
-        <span>Reviews</span>
-      </div>
-
-      <div>
-        <h5>${seller.completedOrders || 0}</h5>
-        <span>Orders</span>
-      </div>
-
-    </div>
-
-    <button
-      class="btn btn-success view-profile-btn"
-      onclick="showSellerProfile('${seller.id}')">
-      View Profile
-    </button>
-
-
-  </div>
-
-</div>
-
 `;
 
   });
