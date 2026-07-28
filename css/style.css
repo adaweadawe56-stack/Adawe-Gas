@@ -516,6 +516,67 @@ html{
 }
 
 /* ==========================
+   RECOMMENDED SELLER
+========================== */
+
+.recommended-card{
+    background:#f0fdf4;
+    border:2px solid #10b981;
+    border-radius:18px;
+    padding:20px;
+    margin-top:20px;
+    box-shadow:0 10px 30px rgba(0,0,0,.08);
+    animation:fadeUp .4s ease;
+}
+
+.recommended-title{
+    font-size:20px;
+    font-weight:700;
+    color:#065f46;
+    margin-bottom:15px;
+}
+
+.recommended-card h4{
+    font-weight:700;
+    color:#064e3b;
+    margin-bottom:15px;
+}
+
+.recommended-info p{
+    margin-bottom:10px;
+    color:#374151;
+    font-size:15px;
+}
+
+.recommended-list{
+    margin:0;
+    padding-left:20px;
+}
+
+.recommended-list li{
+    margin-bottom:8px;
+    color:#374151;
+}
+
+.recommended-card hr{
+    margin:18px 0;
+}
+
+@keyframes fadeUp{
+
+    from{
+        opacity:0;
+        transform:translateY(20px);
+    }
+
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+
+}
+
+/* ==========================
    SELLER PROFILE POPUP
 ========================== */
 
