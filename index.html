@@ -1860,9 +1860,10 @@ async function showRecommendedSeller() {
 
     return;
 }
-  document.getElementById("sellerLoading").style.display = "none";
   
-   if (customerLatitude == null || customerLongitude == null) {
+  if (customerLatitude == null || customerLongitude == null) {
+
+    document.getElementById("sellerLoading").style.display = "none";
 
     document.getElementById("recommendedSeller").style.display = "block";
 
@@ -1908,11 +1909,11 @@ document.getElementById("recommendedSeller").innerHTML = `
         <p>⭐ ${Number(seller.averageRating || 0).toFixed(1)} Rating</p>
 
        <p>📍 ${seller.location}</p>
-<p>🧭 ${seller.distance.toFixed(1)} km away</p>
+<p>🧭 ${Number(seller.distance || 0).toFixed(1)} km away</p>
 
         <p>🛢️ ${brand} • ${quantity}</p>
 
-        <p>💰 <strong>KES ${Number(seller.prices[quantity]).toLocaleString()}</strong></p>
+        <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
 
         <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
 
