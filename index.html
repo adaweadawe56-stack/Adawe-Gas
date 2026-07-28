@@ -1844,6 +1844,8 @@ function getCustomerLocation() {
                 customerLongitude
             );
 
+            showToast("📍 Location detected successfully");
+
             showRecommendedSeller();
 
         },
@@ -1852,7 +1854,10 @@ function getCustomerLocation() {
 
             console.error(error);
 
-            alert("Unable to get your location.");
+            showToast(
+                "Unable to get your location.",
+                false
+            );
 
         }
 
@@ -1863,31 +1868,45 @@ function getCustomerLocation() {
 let customerLatitude = null;
 let customerLongitude = null;
 
-navigator.geolocation.getCurrentPosition(
+if ("geolocation" in navigator) {
 
-    (position) => {
+    navigator.geolocation.getCurrentPosition(
 
-        customerLatitude = position.coords.latitude;
-        customerLongitude = position.coords.longitude;
+        (position) => {
 
-        console.log("Customer:", customerLatitude, customerLongitude);
+            customerLatitude = position.coords.latitude;
+            customerLongitude = position.coords.longitude;
 
-        showRecommendedSeller();
+            console.log(
+                "Customer:",
+                customerLatitude,
+                customerLongitude
+            );
 
-    },
+            showRecommendedSeller();
 
-    (error) => {
+        },
 
-        console.log(error);
+        (error) => {
 
-        customerLatitude = null;
-        customerLongitude = null;
+            console.log(error);
 
-        showRecommendedSeller();
+            customerLatitude = null;
+            customerLongitude = null;
 
-    }
+            showRecommendedSeller();
 
-);
+        },
+
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
+
+    );
+
+}
 
 async function showRecommendedSeller() {
 
