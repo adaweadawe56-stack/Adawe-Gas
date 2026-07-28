@@ -460,8 +460,8 @@ html{
 
 .seller-card:hover{
   transform:translateY(-8px);
+  box-shadow:0 18px 40px rgba(0,0,0,.18);
 }
-
 .seller-logo{
   width:90px;
   height:90px;
@@ -471,6 +471,7 @@ html{
   padding:10px;
   margin:0 auto 15px;
   border:3px solid #10b981;
+  box-shadow:0 4px 15px rgba(0,0,0,.1);
 }
 
 .seller-name{
@@ -511,6 +512,7 @@ html{
   width:100%;
   border-radius:10px;
   font-weight:600;
+  padding:10px;
 }
 
 /* ==========================
