@@ -1827,8 +1827,7 @@ if (
 }
 
 /* -------------------- CUSTOMER LOCATION -------------------- */
-
-function getCustomerLocation() {
+window.getCustomerLocation = function () {
 
     navigator.geolocation.getCurrentPosition(
 
@@ -1862,10 +1861,11 @@ function getCustomerLocation() {
 
     );
 
-}
+};
+
   document
     .getElementById("detectLocationBtn")
-    .addEventListener("click", getCustomerLocation);
+    .addEventListener("click", window.getCustomerLocation);
   
 let customerLatitude = null;
 let customerLongitude = null;
