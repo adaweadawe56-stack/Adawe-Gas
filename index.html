@@ -1863,10 +1863,6 @@ window.getCustomerLocation = function () {
     );
 
 };
-
-  document
-    .getElementById("detectLocationBtn")
-    .addEventListener("click", window.getCustomerLocation);
   
 let customerLatitude = null;
 let customerLongitude = null;
@@ -2670,9 +2666,19 @@ false
 document.getElementById("year").textContent =
 new Date().getFullYear();
 </script>
+
+<script>
 window.addEventListener("load", () => {
     document.getElementById("loader").style.display = "none";
 });
+  window.addEventListener("DOMContentLoaded", () => {
+
+    document
+        .getElementById("detectLocationBtn")
+        ?.addEventListener("click", window.getCustomerLocation);
+
+});
 </script>
+
 </body>
 </html>
