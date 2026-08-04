@@ -585,8 +585,9 @@ style="width:100%;margin-top:10px;"
 
     }
 
-);
-  
+  );
+ });
+
 const params = new URLSearchParams(window.location.search);
 
 const id = params.get("id");
