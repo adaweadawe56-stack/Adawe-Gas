@@ -1821,42 +1821,79 @@ async function getBestSeller(
 
         const s = docSnap.data();
 
-        // Seller must have a price for this quantity
-        if (!s.prices?.[quantity]) return;
+        // ----------------------
+        // Seller price
+        // ----------------------
 
-        // Seller commission must be paid
-        if (s.paymentStatus !== "Paid") return;
+        const sellerPrice =
+            Number(s.prices?.[quantity] || 0);
 
-        // Seller must not exceed delivery limit
+        if (sellerPrice <= 0) return;
+
+
+        // ----------------------
+        // Payment check
+        // ----------------------
+
+        if (s.paymentStatus !== "Paid") {
+            return;
+        }
+
+
+        // ----------------------
+        // Delivery limit
+        // ----------------------
+
         if (
             (s.deliveryCount || 0) >=
             (s.deliveryLimit || 999)
-        ) return;
+        ) {
+            return;
+        }
 
-        // Seller must support the selected brand
+
+        // ----------------------
+        // Gas brand
+        // ----------------------
+
         if (
-            s.brands &&
-            Array.isArray(s.brands) &&
+            !Array.isArray(s.brands) ||
             !s.brands.includes(brand)
-        ) return;
+        ) {
+            return;
+        }
 
-        // Select the cheapest seller
+
+        // ----------------------
+        // Cheapest seller
+        // ----------------------
+
         if (
             !bestSeller ||
-            s.prices[quantity] < bestSeller.prices[quantity]
+            sellerPrice < bestSeller.sellerPrice
         ) {
 
             bestSeller = {
+
                 id: docSnap.id,
+
+                sellerPrice,
+
                 ...s
+
             };
 
         }
 
     });
 
+
     if (!bestSeller) {
-        throw new Error("No seller available");
+
+        throw new Error(
+            "No seller available for this gas size and brand"
+        );
+
     }
 
     return bestSeller;
