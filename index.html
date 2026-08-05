@@ -1651,122 +1651,157 @@ function animateReviews(){
 
 }
  
- async function getBestSeller(
+async function getBestSeller(
     quantity,
     brand,
     customerLatitude,
     customerLongitude
 ) {
-  const q = query(
-    collection(db, "sellers"),
-    where("status", "==", "approved")
-  );
 
-  const snap = await getDocs(q);
+    const q = query(
+        collection(db, "sellers"),
+        where("status", "==", "approved")
+    );
 
-  if (snap.empty) {
-    throw new Error("No approved sellers found");
-  }
+    const snap = await getDocs(q);
 
-  let bestSeller = null;
+    if (snap.empty) {
+        throw new Error("No approved sellers found");
+    }
 
-  snap.forEach(docSnap => {
+    let bestSeller = null;
 
-const s = docSnap.data();
+    snap.forEach(docSnap => {
 
-if (!s.prices?.[quantity]) return;
+        const s = docSnap.data();
 
-if (
-    !Array.isArray(s.brands) ||
-    !s.brands.includes(brand)
-) {
-    return;
+        // Must have valid price
+        const sellerPrice =
+            Number(s.prices?.[quantity] || 0);
+
+        if (sellerPrice <= 0) return;
+
+        // Must support selected brand
+        if (
+            !Array.isArray(s.brands) ||
+            !s.brands.includes(brand)
+        ) {
+            return;
+        }
+
+        // Commission/payment check
+        if (s.paymentStatus !== "Paid") {
+            return;
+        }
+
+        // Delivery limit check
+        if (
+            (s.deliveryCount || 0) >=
+            (s.deliveryLimit || 999)
+        ) {
+            return;
+        }
+
+        // Seller GPS
+        const sellerLat =
+            Number(s.sellerLatitude);
+
+        const sellerLng =
+            Number(s.sellerLongitude);
+
+        if (
+            !Number.isFinite(sellerLat) ||
+            !Number.isFinite(sellerLng)
+        ) {
+            console.warn(
+                "Seller has invalid GPS:",
+                s.name
+            );
+
+            return;
+        }
+
+        // Calculate distance
+        const distance = calculateDistance(
+            Number(customerLatitude),
+            Number(customerLongitude),
+            sellerLat,
+            sellerLng
+        );
+
+        console.log(
+            "Seller:",
+            s.name,
+            "Distance:",
+            distance,
+            "km"
+        );
+
+        const sellerRating =
+            Number(s.averageRating || 0);
+
+        // Select best seller
+        if (
+
+            !bestSeller ||
+
+            distance < bestSeller.distance ||
+
+            (
+                Math.abs(
+                    distance -
+                    bestSeller.distance
+                ) < 1 &&
+
+                sellerRating >
+                Number(
+                    bestSeller.averageRating || 0
+                )
+            ) ||
+
+            (
+                Math.abs(
+                    distance -
+                    bestSeller.distance
+                ) < 1 &&
+
+                sellerRating ===
+                Number(
+                    bestSeller.averageRating || 0
+                ) &&
+
+                sellerPrice <
+                bestSeller.prices[quantity]
+            )
+
+        ) {
+
+            bestSeller = {
+
+                id: docSnap.id,
+
+                distance,
+
+                ...s,
+
+                prices: {
+                    ...s.prices
+                }
+
+            };
+
+        }
+
+    });
+
+    if (!bestSeller) {
+        throw new Error(
+            "No seller available for this gas size and brand"
+        );
+    }
+
+    return bestSeller;
 }
-
-if (s.paymentStatus !== "Paid") return;
-    
-if (
-  (s.deliveryCount || 0) >=
-  (s.deliveryLimit || 999)
-) return;
-
-const sellerLat = Number(s.sellerLatitude);
-const sellerLng = Number(s.sellerLongitude);
-
-console.log(
-  s.name,
-  sellerLat,
-  sellerLng
-);
-    
-if (
-    isNaN(sellerLat) ||
-    isNaN(sellerLng)
-) return;
-
-const distance = calculateDistance(
-    customerLatitude,
-    customerLongitude,
-    sellerLat,
-    sellerLng
-);
-    
- console.log(
-  s.name,
-  "Distance:",
-  distance
-);
-
-const sellerRating = Number(s.averageRating || 0);
-
-if (
-
-    !bestSeller ||
-
-    distance < bestSeller.distance ||
-
-    (
-
-        Math.abs(distance - bestSeller.distance) < 1 &&
-
-        sellerRating > Number(bestSeller.averageRating || 0)
-
-    ) ||
-
-    (
-
-        Math.abs(distance - bestSeller.distance) < 1 &&
-
-        sellerRating === Number(bestSeller.averageRating || 0) &&
-
-        s.prices[quantity] < bestSeller.prices[quantity]
-
-    )
-
-) {
-
-    bestSeller = {
-
-        id: docSnap.id,
-
-        distance,
-
-        ...s
-
-    };
-
-}
-   
-  });
-
-  if (!bestSeller) {
-    throw new Error("No seller available");
-  }
-
-  return bestSeller;
-
-}
-
  async function getCheapestSeller(quantity, brand) {
 
     const q = query(
