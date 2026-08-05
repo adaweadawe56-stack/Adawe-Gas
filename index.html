@@ -2361,47 +2361,57 @@ row
 
 window.getSellerLocation = function () {
 
-if (!navigator.geolocation) {
+    if (!navigator.geolocation) {
 
-showToast(
-"Geolocation is not supported.",
-false
-);
+        showToast(
+            "Geolocation is not supported.",
+            false
+        );
 
-return;
+        return;
+    }
 
-}
+    navigator.geolocation.getCurrentPosition(
 
-navigator.geolocation.getCurrentPosition(
+        (position) => {
 
-(position)=>{
+            sellerLatitude =
+                position.coords.latitude;
 
-sellerLatitude =
-position.coords.latitude;
+            sellerLongitude =
+                position.coords.longitude;
 
-sellerLongitude =
-position.coords.longitude;
+            console.log(
+                "Seller GPS:",
+                sellerLatitude,
+                sellerLongitude
+            );
 
-document.getElementById("sellerLocation").value =
+            showToast(
+                "📍 Seller location detected successfully."
+            );
+        },
 
-`${sellerLatitude}, ${sellerLongitude}`;
+        (error) => {
 
-showToast(
-"Location detected successfully."
-);
+            console.error(
+                "Seller location error:",
+                error
+            );
 
-},
+            showToast(
+                "Unable to detect seller location.",
+                false
+            );
+        },
 
-()=>{
+        {
+            enableHighAccuracy: true,
+            timeout: 10000,
+            maximumAge: 0
+        }
 
-showToast(
-"Unable to detect location.",
-false
-);
-
-}
-
-);
+    );
 
 };
 
