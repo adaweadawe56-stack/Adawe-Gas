@@ -1677,10 +1677,11 @@ const s = docSnap.data();
 if (!s.prices?.[quantity]) return;
 
 if (
-    s.brands &&
-    Array.isArray(s.brands) &&
+    !Array.isArray(s.brands) ||
     !s.brands.includes(brand)
-) return;
+) {
+    return;
+}
 
 if (s.paymentStatus !== "Paid") return;
     
