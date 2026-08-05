@@ -2172,8 +2172,8 @@ if (!sellerData) {
     alert("No seller available.");
     return;
 }
-  await addDoc(
-  collection(db,"orders"),
+await addDoc(
+  collection(db, "orders"),
   {
     orderId,
     name,
@@ -2182,29 +2182,28 @@ if (!sellerData) {
     quantity,
     brand,
 
-    price: orderPrice,
+    sellerId: sellerData.id,
+    sellerUid: sellerData.uid,
 
-   sellerId: sellerData.id,
-sellerUid: sellerData.uid,
+    sellerName: sellerData.name,
+    sellerPhone: sellerData.phone,
+    sellerLocation: sellerData.location || "",
 
-sellerName: sellerData.name,
-sellerPhone: sellerData.phone,
-sellerLocation: sellerData.location || "",
+    price: Number(sellerData.prices?.[quantity] || 0),
 
-price: sellerData.prices[quantity],
+    sellerLatitude: Number(sellerData.sellerLatitude),
+    sellerLongitude: Number(sellerData.sellerLongitude),
 
-sellerLatitude: sellerData.sellerLatitude,
-sellerLongitude: sellerData.sellerLongitude,
-    customerLatitude,
-    customerLongitude,
+    customerLatitude: Number(customerLatitude),
+    customerLongitude: Number(customerLongitude),
 
-    status:"Pending",
+    status: "Pending",
 
     createdAt: serverTimestamp(),
     assignedAt: new Date().toISOString(),
 
-    rating:null,
-    review:null
+    rating: null,
+    review: null
   }
 );
 
