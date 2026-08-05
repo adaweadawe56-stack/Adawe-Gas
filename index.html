@@ -2146,8 +2146,9 @@ if (
 
 }
 
-const sellerId = sellerData.id;
-
+sellerId,
+sellerUid: sellerData.uid,
+  
 const sellerWhatsapp = sellerData.phone?.trim();
 
 const orderPrice =
@@ -2172,39 +2173,63 @@ if (!sellerData) {
     alert("No seller available.");
     return;
 }
+
+const sellerId = sellerData.id;
+
+const sellerWhatsapp = sellerData.phone?.trim();
+
+const orderPrice =
+    Number(sellerData.prices?.[quantity] || 0);
+
+if (!sellerData.uid) {
+    throw new Error("Seller UID missing");
+}
+
+if (!sellerWhatsapp) {
+    throw new Error("Seller phone missing");
+}
+
+console.log("Customer Latitude:", customerLatitude);
+console.log("Customer Longitude:", customerLongitude);
+
+console.log({
+    customerLatitude,
+    customerLongitude
+});
+
 await addDoc(
-  collection(db, "orders"),
-  {
-    orderId,
-    name,
-    phone,
-    location,
-    quantity,
-    brand,
+    collection(db, "orders"),
+    {
+        orderId,
+        name,
+        phone,
+        location,
+        quantity,
+        brand,
 
-    sellerId: sellerData.id,
-    sellerUid: sellerData.uid,
+        sellerId: sellerId,
+        sellerUid: sellerData.uid,
 
-    sellerName: sellerData.name,
-    sellerPhone: sellerData.phone,
-    sellerLocation: sellerData.location || "",
+        sellerName: sellerData.name,
+        sellerPhone: sellerData.phone,
+        sellerLocation: sellerData.location || "",
 
-    price: Number(sellerData.prices?.[quantity] || 0),
+        price: orderPrice,
 
-    sellerLatitude: Number(sellerData.sellerLatitude),
-    sellerLongitude: Number(sellerData.sellerLongitude),
+        sellerLatitude: Number(sellerData.sellerLatitude),
+        sellerLongitude: Number(sellerData.sellerLongitude),
 
-    customerLatitude: Number(customerLatitude),
-    customerLongitude: Number(customerLongitude),
+        customerLatitude: Number(customerLatitude),
+        customerLongitude: Number(customerLongitude),
 
-    status: "Pending",
+        status: "Pending",
 
-    createdAt: serverTimestamp(),
-    assignedAt: new Date().toISOString(),
+        createdAt: serverTimestamp(),
+        assignedAt: new Date().toISOString(),
 
-    rating: null,
-    review: null
-  }
+        rating: null,
+        review: null
+    }
 );
 
   document.getElementById("orderLoading").style.display = "none";
