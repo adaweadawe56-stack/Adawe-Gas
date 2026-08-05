@@ -2146,13 +2146,16 @@ if (
 
 }
 
-sellerId,
-sellerUid: sellerData.uid,
-  
+if (!sellerData) {
+    throw new Error("No seller available");
+}
+
+const sellerId = sellerData.id;
+
 const sellerWhatsapp = sellerData.phone?.trim();
 
 const orderPrice =
-Number(sellerData.prices?.[quantity] || 0);
+    Number(sellerData.prices?.[quantity] || 0);
 
 if (!sellerData.uid) {
     throw new Error("Seller UID missing");
@@ -2161,19 +2164,15 @@ if (!sellerData.uid) {
 if (!sellerWhatsapp) {
     throw new Error("Seller phone missing");
 }
-   
+
 console.log("Customer Latitude:", customerLatitude);
 console.log("Customer Longitude:", customerLongitude);
 
 console.log({
-  customerLatitude,
-  customerLongitude
+    customerLatitude,
+    customerLongitude
 });
-if (!sellerData) {
-    alert("No seller available.");
-    return;
-}
-
+  
 const sellerId = sellerData.id;
 
 const sellerWhatsapp = sellerData.phone?.trim();
