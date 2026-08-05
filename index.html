@@ -2172,29 +2172,6 @@ console.log({
     customerLatitude,
     customerLongitude
 });
-  
-const sellerId = sellerData.id;
-
-const sellerWhatsapp = sellerData.phone?.trim();
-
-const orderPrice =
-    Number(sellerData.prices?.[quantity] || 0);
-
-if (!sellerData.uid) {
-    throw new Error("Seller UID missing");
-}
-
-if (!sellerWhatsapp) {
-    throw new Error("Seller phone missing");
-}
-
-console.log("Customer Latitude:", customerLatitude);
-console.log("Customer Longitude:", customerLongitude);
-
-console.log({
-    customerLatitude,
-    customerLongitude
-});
 
 await addDoc(
     collection(db, "orders"),
