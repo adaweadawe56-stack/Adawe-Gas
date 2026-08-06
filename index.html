@@ -1098,7 +1098,7 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-
+const auth = getAuth(app);
 async function testFirestoreConnection() {
 
     try {
@@ -1143,8 +1143,6 @@ async function testFirestoreConnection() {
         return false;
     }
 }
-  
-const auth = getAuth(app);
 testFirestoreConnection();
 /* -------------------- HELPERS -------------------- */
 
