@@ -1954,12 +1954,14 @@ window.getCustomerLocation = function () {
     if (!navigator.geolocation) {
 
         showToast(
-            "Geolocation is not supported.",
+            "Geolocation is not supported by this browser.",
             false
         );
 
         return;
     }
+
+    showToast("📍 Detecting your location...");
 
     navigator.geolocation.getCurrentPosition(
 
@@ -1977,12 +1979,23 @@ window.getCustomerLocation = function () {
                 customerLongitude
             );
 
-            showToast(
-                "📍 Customer location detected successfully."
+            console.log(
+                "GPS Accuracy:",
+                position.coords.accuracy,
+                "meters"
             );
 
-            if (typeof showRecommendedSeller === "function") {
+            showToast(
+                "📍 Location detected successfully."
+            );
+
+            if (
+                typeof showRecommendedSeller ===
+                "function"
+            ) {
+
                 showRecommendedSeller();
+
             }
 
         },
@@ -1991,25 +2004,111 @@ window.getCustomerLocation = function () {
 
             console.error(
                 "Customer location error:",
-                error
+                error.code,
+                error.message
             );
 
-            customerLatitude = null;
-            customerLongitude = null;
+            /*
+             * Try again with normal accuracy.
+             */
 
-            showToast(
-                "Unable to detect your location.",
-                false
+            navigator.geolocation.getCurrentPosition(
+
+                (position) => {
+
+                    customerLatitude =
+                        position.coords.latitude;
+
+                    customerLongitude =
+                        position.coords.longitude;
+
+                    console.log(
+                        "Customer GPS fallback:",
+                        customerLatitude,
+                        customerLongitude
+                    );
+
+                    console.log(
+                        "GPS Accuracy:",
+                        position.coords.accuracy,
+                        "meters"
+                    );
+
+                    showToast(
+                        "📍 Location detected successfully."
+                    );
+
+                    if (
+                        typeof showRecommendedSeller ===
+                        "function"
+                    ) {
+
+                        showRecommendedSeller();
+
+                    }
+
+                },
+
+                (fallbackError) => {
+
+                    console.error(
+                        "GPS fallback error:",
+                        fallbackError.code,
+                        fallbackError.message
+                    );
+
+                    customerLatitude = null;
+                    customerLongitude = null;
+
+                    let message =
+                        "Unable to detect your location.";
+
+                    if (fallbackError.code === 1) {
+
+                        message =
+                            "📍 Please allow location access in your browser.";
+
+                    }
+
+                    else if (fallbackError.code === 2) {
+
+                        message =
+                            "📍 Location unavailable. Please turn on GPS.";
+
+                    }
+
+                    else if (fallbackError.code === 3) {
+
+                        message =
+                            "📍 Location request timed out. Try again.";
+
+                    }
+
+                    showToast(
+                        message,
+                        false
+                    );
+
+                },
+
+                {
+                    enableHighAccuracy: false,
+                    timeout: 20000,
+                    maximumAge: 60000
+                }
+
             );
 
         },
 
         {
             enableHighAccuracy: true,
-            timeout: 10000,
+            timeout: 15000,
             maximumAge: 0
         }
+
     );
+
 };
 async function showRecommendedSeller() {
 
