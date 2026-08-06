@@ -1098,8 +1098,54 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-const auth = getAuth(app);
 
+async function testFirestoreConnection() {
+
+    try {
+
+        console.log("🔥 Testing Firestore connection...");
+
+        const q = query(
+            collection(db, "sellers"),
+            where("status", "==", "approved")
+        );
+
+        const snap = await getDocs(q);
+
+        console.log(
+            "✅ Firestore connected successfully."
+        );
+
+        console.log(
+            "Approved sellers:",
+            snap.size
+        );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(
+            "❌ Firestore connection failed:",
+            error
+        );
+
+        console.error(
+            "Code:",
+            error.code
+        );
+
+        console.error(
+            "Message:",
+            error.message
+        );
+
+        return false;
+    }
+}
+  
+const auth = getAuth(app);
+testFirestoreConnection();
 /* -------------------- HELPERS -------------------- */
 
 function formatKenyaPhone(phone) {
