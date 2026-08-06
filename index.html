@@ -2056,7 +2056,9 @@ document.getElementById("recommendedSeller").innerHTML = `
 
         <p>🛢️ ${brand} • ${quantity}</p>
 
-        <p>💰 <strong>KES ${Number(seller.prices?.[quantity] || 0).toLocaleString()}</strong></p>
+       <p>
+    💰 <strong>
+    KES ${Number(seller.sellerPrice || 0).toLocaleString()}</strong> </p>
 
         <p>📦 ${seller.completedOrders || 0} Completed Orders</p>
 
