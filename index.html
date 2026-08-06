@@ -1937,7 +1937,6 @@ window.getCustomerLocation = function () {
                 "📍 Customer location detected successfully."
             );
 
-            // Update recommended seller
             if (typeof showRecommendedSeller === "function") {
                 showRecommendedSeller();
             }
@@ -1966,9 +1965,7 @@ window.getCustomerLocation = function () {
             timeout: 10000,
             maximumAge: 0
         }
-
     );
-
 };
 async function showRecommendedSeller() {
 
