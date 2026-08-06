@@ -1901,72 +1901,63 @@ async function getBestSeller(
 }
 
 /* -------------------- CUSTOMER LOCATION -------------------- */
-window.getCustomerLocation = function () {
 
-    navigator.geolocation.getCurrentPosition(
-
-        (position) => {
-
-            customerLatitude = position.coords.latitude;
-            customerLongitude = position.coords.longitude;
-
-            console.log(
-                "Customer:",
-                customerLatitude,
-                customerLongitude
-            );
-
-            showToast("📍 Location detected successfully");
-
-            showRecommendedSeller();
-
-        },
-
-        (error) => {
-
-            console.error(error);
-
-            showToast(
-                "Unable to get your location.",
-                false
-            );
-
-        }
-
-    );
-
-};
-  
 let customerLatitude = null;
 let customerLongitude = null;
 
-if ("geolocation" in navigator) {
+window.getCustomerLocation = function () {
+
+    if (!navigator.geolocation) {
+
+        showToast(
+            "Geolocation is not supported.",
+            false
+        );
+
+        return;
+    }
 
     navigator.geolocation.getCurrentPosition(
 
         (position) => {
 
-            customerLatitude = position.coords.latitude;
-            customerLongitude = position.coords.longitude;
+            customerLatitude =
+                position.coords.latitude;
+
+            customerLongitude =
+                position.coords.longitude;
 
             console.log(
-                "Customer:",
+                "Customer GPS:",
                 customerLatitude,
                 customerLongitude
             );
 
-            showRecommendedSeller();
+            showToast(
+                "📍 Customer location detected successfully."
+            );
+
+            // Update recommended seller
+            if (typeof showRecommendedSeller === "function") {
+                showRecommendedSeller();
+            }
 
         },
 
         (error) => {
 
-            console.log(error);
+            console.error(
+                "Customer location error:",
+                error
+            );
 
             customerLatitude = null;
             customerLongitude = null;
 
-            showRecommendedSeller();
+            showToast(
+                "Unable to detect your location.",
+                false
+            );
 
         },
 
@@ -1978,8 +1969,7 @@ if ("geolocation" in navigator) {
 
     );
 
-}
-
+};
 async function showRecommendedSeller() {
 
     const quantity = document.getElementById("quantity").value;
