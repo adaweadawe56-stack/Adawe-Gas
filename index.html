@@ -1951,47 +1951,66 @@ let customerLongitude = null;
 
 window.getCustomerLocation = function () {
 
-    console.log("📍 Detect My Location BUTTON CLICKED");
+    console.log("📍 getCustomerLocation() started.");
 
-    // Test muuqda oo mobile-ka ka shaqaynaya
-    showToast("📍 Detecting your location...");
-
+    /* Check browser support */
     if (!navigator.geolocation) {
 
         console.error(
-            "❌ Geolocation is NOT supported."
+            "❌ Geolocation API is not supported."
         );
 
         showToast(
-            "❌ Your browser does not support location.",
+            "📍 Your browser does not support location.",
             false
         );
 
         return;
     }
 
-    console.log(
-        "✅ Geolocation API is available."
-    );
-
+    /* Check HTTPS */
     console.log(
         "🔐 Secure context:",
         window.isSecureContext
     );
 
+    if (!window.isSecureContext) {
+
+        console.error(
+            "❌ Location requires HTTPS."
+        );
+
+        showToast(
+            "🔒 Location requires a secure HTTPS connection.",
+            false
+        );
+
+        return;
+    }
+
+    showToast(
+        "📍 Detecting your location..."
+    );
+
+    console.log(
+        "📡 Requesting GPS location..."
+    );
+
     navigator.geolocation.getCurrentPosition(
 
-        function (position) {
+        /* ---------------- SUCCESS ---------------- */
 
-            console.log(
-                "✅ LOCATION SUCCESS"
-            );
+        (position) => {
 
             customerLatitude =
                 position.coords.latitude;
 
             customerLongitude =
                 position.coords.longitude;
+
+            console.log(
+                "✅ LOCATION SUCCESS"
+            );
 
             console.log(
                 "📍 Customer GPS:",
@@ -2005,9 +2024,16 @@ window.getCustomerLocation = function () {
                 "meters"
             );
 
+            console.log(
+                "📡 Location source:",
+                position.coords
+            );
+
             showToast(
                 "📍 Location detected successfully."
             );
+
+            /* Update recommended sellers */
 
             if (
                 typeof showRecommendedSeller ===
@@ -2024,7 +2050,9 @@ window.getCustomerLocation = function () {
 
         },
 
-        function (error) {
+        /* ---------------- ERROR ---------------- */
+
+        (error) => {
 
             console.error(
                 "❌ CUSTOMER LOCATION ERROR"
@@ -2046,24 +2074,30 @@ window.getCustomerLocation = function () {
             let message =
                 "Unable to detect your location.";
 
+            /* Permission denied */
+
             if (error.code === 1) {
 
                 message =
-                    "📍 Location permission denied. Please allow location access for this website.";
+                    "📍 Location permission denied. Please allow location access for this site.";
 
             }
+
+            /* Position unavailable */
 
             else if (error.code === 2) {
 
                 message =
-                    "📍 Location unavailable. Please turn ON GPS/location on your phone.";
+                    "📍 Location unavailable. Please turn ON GPS/location services and try again.";
 
             }
+
+            /* Timeout */
 
             else if (error.code === 3) {
 
                 message =
-                    "📍 Location request timed out. Please try again.";
+                    "📍 GPS is taking too long. Please try again.";
 
             }
 
@@ -2074,10 +2108,12 @@ window.getCustomerLocation = function () {
 
         },
 
+        /* ---------------- OPTIONS ---------------- */
+
         {
-            enableHighAccuracy: true,
-            timeout: 20000,
-            maximumAge: 0
+            enableHighAccuracy: false,
+            timeout: 30000,
+            maximumAge: 60000
         }
 
     );
