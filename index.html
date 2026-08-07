@@ -2423,9 +2423,9 @@ await addDoc(
     }
 );
 
-  document.getElementById("orderLoading").style.display = "none";
+ document.getElementById("orderLoading").style.display = "none";
 
-    const message = `🔥 NEW LPG ORDER
+const message = `🔥 NEW LPG ORDER
 
 Order ID: ${orderId}
 
@@ -2442,51 +2442,71 @@ Quantity: ${quantity}
 
 Status: Pending`;
 
- showToast("✅ Order saved successfully");
+showToast("✅ Order saved successfully");
 
 orderForm.reset();
 
-const recommendedSeller = document.getElementById("recommendedSeller");
+const recommendedSeller =
+    document.getElementById("recommendedSeller");
+
 recommendedSeller.style.display = "none";
 recommendedSeller.innerHTML = "";
 
 const whatsappUrl =
-`https://wa.me/${sellerWhatsapp.replace("+","")}?text=${encodeURIComponent(message)}`;
+    `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`;
 
 const popup =
-window.open(
-    whatsappUrl,
-    "_blank"
-);
+    window.open(
+        whatsappUrl,
+        "_blank"
+    );
 
-if (!popup || popup.closed || typeof popup.closed === "undefined") {
+if (
+    !popup ||
+    popup.closed ||
+    typeof popup.closed === "undefined"
+) {
 
     showToast(
         "Popup blocked. Click the WhatsApp button below.",
         false
     );
 
-    document.getElementById("openWhatsappBtn").style.display = "block";
+    document.getElementById(
+        "openWhatsappBtn"
+    ).style.display = "block";
 
-    document.getElementById("openWhatsappBtn").href = whatsappUrl;
+    document.getElementById(
+        "openWhatsappBtn"
+    ).href = whatsappUrl;
+
 }
 
-setTimeout(()=>{
-    window.location.href = `order-tracking.html?id=${orderId}`;
-},1500);
+setTimeout(() => {
 
-} catch(err){
+    window.location.href =
+        `order-tracking.html?id=${orderId}`;
+
+}, 1500);
+
+} catch (err) {
 
     console.error(err);
 
-    document.getElementById("orderLoading").style.display = "none";
+    document.getElementById(
+        "orderLoading"
+    ).style.display = "none";
 
-    showToast(err.message || "Failed to save order", false);
+    showToast(
+        err.message || "Failed to save order",
+        false
+    );
 
-}
-finally{
+} finally {
 
-    document.getElementById("orderLoading").style.display = "none";
+    document.getElementById(
+        "orderLoading"
+    ).style.display = "none";
 
     resetButton();
 
