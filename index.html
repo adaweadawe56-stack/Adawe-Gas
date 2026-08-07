@@ -2853,11 +2853,50 @@ new Date().getFullYear();
 window.addEventListener("load", () => {
     document.getElementById("loader").style.display = "none";
 });
-  window.addEventListener("DOMContentLoaded", () => {
+<script>
+window.addEventListener("DOMContentLoaded", () => {
 
-    document
-        .getElementById("detectLocationBtn")
-        ?.addEventListener("click", window.getCustomerLocation);
+    const locationButton =
+        document.getElementById("detectLocationBtn");
+
+    if (!locationButton) {
+
+        console.error(
+            "❌ detectLocationBtn NOT FOUND"
+        );
+
+        return;
+    }
+
+    console.log(
+        "✅ Detect Location button found."
+    );
+
+    locationButton.addEventListener(
+        "click",
+        () => {
+
+            console.log(
+                "🟢 Detect Location clicked."
+            );
+
+            if (
+                typeof window.getCustomerLocation ===
+                "function"
+            ) {
+
+                window.getCustomerLocation();
+
+            } else {
+
+                console.error(
+                    "❌ window.getCustomerLocation is NOT defined."
+                );
+
+            }
+
+        }
+    );
 
 });
   
