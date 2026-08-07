@@ -2573,17 +2573,40 @@ row
   });
   }
 
+/* -------------------- SELLER LOCATION -------------------- */
+
+let sellerLatitude = null;
+let sellerLongitude = null;
+
 window.getSellerLocation = function () {
+
+    console.log("📍 Seller location request started.");
 
     if (!navigator.geolocation) {
 
         showToast(
-            "Geolocation is not supported.",
+            "Geolocation is not supported by this browser.",
             false
         );
 
         return;
     }
+
+    showToast("📍 Detecting seller location...");
+
+    const optionsHighAccuracy = {
+        enableHighAccuracy: true,
+        timeout: 20000,
+        maximumAge: 0
+    };
+
+    const optionsFallback = {
+        enableHighAccuracy: false,
+        timeout: 30000,
+        maximumAge: 120000
+    };
+
+    /* ---------------- HIGH ACCURACY ---------------- */
 
     navigator.geolocation.getCurrentPosition(
 
@@ -2595,42 +2618,151 @@ window.getSellerLocation = function () {
             sellerLongitude =
                 position.coords.longitude;
 
+            console.log("✅ SELLER LOCATION SUCCESS");
+
             console.log(
-                "Seller GPS:",
+                "📍 Seller GPS:",
                 sellerLatitude,
                 sellerLongitude
             );
 
+            console.log(
+                "🎯 Seller GPS Accuracy:",
+                position.coords.accuracy,
+                "meters"
+            );
+
+            const locationInput =
+                document.getElementById("sellerLocation");
+
+            if (locationInput) {
+
+                locationInput.value =
+                    `${sellerLatitude.toFixed(6)}, ${sellerLongitude.toFixed(6)}`;
+
+            }
+
             showToast(
                 "📍 Seller location detected successfully."
             );
+
         },
 
         (error) => {
 
-            console.error(
-                "Seller location error:",
-                error
+            console.warn(
+                "⚠️ High accuracy seller GPS failed:",
+                error.code,
+                error.message
             );
 
             showToast(
-                "Unable to detect seller location.",
-                false
+                "📍 Getting your location... please wait."
             );
+
+            /* ---------------- FALLBACK GPS ---------------- */
+
+            navigator.geolocation.getCurrentPosition(
+
+                (position) => {
+
+                    sellerLatitude =
+                        position.coords.latitude;
+
+                    sellerLongitude =
+                        position.coords.longitude;
+
+                    console.log(
+                        "✅ SELLER GPS FALLBACK SUCCESS"
+                    );
+
+                    console.log(
+                        "📍 Seller GPS:",
+                        sellerLatitude,
+                        sellerLongitude
+                    );
+
+                    console.log(
+                        "🎯 Seller GPS Accuracy:",
+                        position.coords.accuracy,
+                        "meters"
+                    );
+
+                    const locationInput =
+                        document.getElementById("sellerLocation");
+
+                    if (locationInput) {
+
+                        locationInput.value =
+                            `${sellerLatitude.toFixed(6)}, ${sellerLongitude.toFixed(6)}`;
+
+                    }
+
+                    showToast(
+                        "📍 Seller location detected successfully."
+                    );
+
+                },
+
+                (fallbackError) => {
+
+                    console.error(
+                        "❌ SELLER GPS FAILED:",
+                        fallbackError
+                    );
+
+                    console.log(
+                        "SELLER GPS ERROR CODE:",
+                        fallbackError.code
+                    );
+
+                    console.log(
+                        "SELLER GPS ERROR MESSAGE:",
+                        fallbackError.message
+                    );
+
+                    let message =
+                        "Unable to detect seller location.";
+
+                    if (fallbackError.code === 1) {
+
+                        message =
+                            "📍 Location permission denied. Please allow location access.";
+
+                    }
+
+                    else if (fallbackError.code === 2) {
+
+                        message =
+                            "📍 Location unavailable. Please turn ON GPS.";
+
+                    }
+
+                    else if (fallbackError.code === 3) {
+
+                        message =
+                            "📍 Location request timed out. Please try again.";
+
+                    }
+
+                    showToast(
+                        message,
+                        false
+                    );
+
+                },
+
+                optionsFallback
+
+            );
+
         },
 
-        {
-            enableHighAccuracy: true,
-            timeout: 10000,
-            maximumAge: 0
-        }
+        optionsHighAccuracy
 
     );
 
 };
-
-let sellerLatitude = null;
-let sellerLongitude = null;
 
 window.addPriceRow = addPriceRow;
 
@@ -2948,6 +3080,56 @@ window.addEventListener("DOMContentLoaded", () => {
 
 });
 </script>
+<script>
+window.addEventListener("DOMContentLoaded", () => {
 
+    const sellerLocationButton =
+        document.getElementById("useSellerLocationBtn");
+
+    if (!sellerLocationButton) {
+
+        console.error(
+            "❌ Seller location button NOT FOUND"
+        );
+
+        return;
+    }
+
+    console.log(
+        "✅ Seller location button found."
+    );
+
+    sellerLocationButton.addEventListener(
+        "click",
+        () => {
+
+            console.log(
+                "🟢 Seller location button clicked."
+            );
+
+            if (
+                typeof window.getSellerLocation ===
+                "function"
+            ) {
+
+                console.log(
+                    "📍 Calling getSellerLocation()..."
+                );
+
+                window.getSellerLocation();
+
+            } else {
+
+                console.error(
+                    "❌ getSellerLocation() is NOT defined."
+                );
+
+            }
+
+        }
+    );
+
+});
+</script>
 </body>
 </html>
