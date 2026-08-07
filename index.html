@@ -2536,63 +2536,84 @@ function resetButton() {
 
 function addPriceRow() {
 
-  const row = document.createElement("div");
+    const row = document.createElement("div");
 
-  row.className = "row g-2 mb-2";
+    row.className = "row g-2 mb-2";
 
-  row.innerHTML = `
-    <div class="col-6">
-      <select class="form-select gas-size">
-        <option value="">Select Size</option>
+    row.innerHTML = `
+        <div class="col-6">
 
-        ${gasSizes.map(size =>
-          `<option value="${size}">${size}</option>`
-        ).join("")}
+            <select
+                class="form-select gas-size"
+                required
+            >
 
-      </select>
-    </div>
+                <option value="">
+                    Select Size
+                </option>
 
-    <div class="col-4">
-      <input
-        type="number"
-        class="form-control gas-price"
-        placeholder="Price (KES)">
-    </div>
+                ${gasSizes.map(size =>
+                    `<option value="${size}">
+                        ${size}
+                    </option>`
+                ).join("")}
 
-    <div class="col-2">
-      <button
-        type="button"
-        class="btn btn-danger remove-row">
-        ✕
-      </button>
-    </div>
-  `;
+            </select>
 
-  document
-    .getElementById("priceRows")
-    .appendChild(row);
+        </div>
 
-row
-  .querySelector(".remove-row")
-  .addEventListener("click", () => {
+        <div class="col-4">
 
-    const rows =
-      document.querySelectorAll("#priceRows .row");
+            <input
+                type="number"
+                class="form-control gas-price"
+                placeholder="Price (KES)"
+                min="1"
+                required
+            >
 
-    if (rows.length === 1) {
+        </div>
 
-      showToast(
-        "At least one gas size is required",
-        false
-      );
+        <div class="col-2">
 
-      return;
-    }
+            <button
+                type="button"
+                class="btn btn-danger remove-row">
+                ✕
+            </button>
 
-    row.remove();
+        </div>
+    `;
 
-  });
-  }
+    document
+        .getElementById("priceRows")
+        .appendChild(row);
+
+
+    row
+        .querySelector(".remove-row")
+        .addEventListener("click", () => {
+
+            const rows =
+                document.querySelectorAll(
+                    "#priceRows .row"
+                );
+
+            if (rows.length === 1) {
+
+                showToast(
+                    "At least one gas size is required",
+                    false
+                );
+
+                return;
+            }
+
+            row.remove();
+
+        });
+
+}
 
 <script>
 /* -------------------- SELLER LOCATION -------------------- */
