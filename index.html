@@ -2029,9 +2029,9 @@ window.getCustomerLocation = function () {
                 position.coords
             );
 
-            showToast(
-                "📍 Location detected successfully."
-            );
+           showToast(
+    `📍 Location detected: ${customerLatitude.toFixed(6)}, ${customerLongitude.toFixed(6)}`
+);
 
             /* Update recommended sellers */
 
