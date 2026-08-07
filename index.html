@@ -2862,6 +2862,7 @@ window.addEventListener("load", () => {
 });
 </script>
 
+
 <!-- CUSTOMER LOCATION BUTTON -->
 <script>
 window.addEventListener("DOMContentLoaded", () => {
@@ -2882,35 +2883,32 @@ window.addEventListener("DOMContentLoaded", () => {
         "✅ Detect Location button found."
     );
 
-    locationButton.addEventListener(
-        "click",
-        () => {
+    locationButton.addEventListener("click", () => {
+
+        console.log(
+            "🟢 Detect Location clicked."
+        );
+
+        if (
+            typeof window.getCustomerLocation ===
+            "function"
+        ) {
 
             console.log(
-                "🟢 Detect Location clicked."
+                "📍 Calling getCustomerLocation()..."
             );
 
-            if (
-                typeof window.getCustomerLocation ===
-                "function"
-            ) {
+            window.getCustomerLocation();
 
-                console.log(
-                    "📍 Calling getCustomerLocation()..."
-                );
+        } else {
 
-                window.getCustomerLocation();
-
-            } else {
-
-                console.error(
-                    "❌ window.getCustomerLocation is NOT defined."
-                );
-
-            }
+            console.error(
+                "❌ window.getCustomerLocation is NOT defined."
+            );
 
         }
-    );
+
+    });
 
 });
 </script>
