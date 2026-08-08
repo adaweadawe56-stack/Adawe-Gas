@@ -2906,20 +2906,19 @@ sellerForm.addEventListener(
 document.getElementById("sellerEmail").value.trim();
 
 const password =
-document.getElementById("sellerPassword").value.trim();
+    document.getElementById("sellerPassword").value.trim();
 
 const strongPassword =
-/^(?=.\*[A-Z])(?=.\*[0-9])(?=.\*[!@#$%^&*]).{8,}$/;
-  
-if(!strongPassword.test(password)){
+    /^(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*]).{8,}$/;
 
-showToast(
-"Password must contain at least 8 characters, one uppercase letter, one number and one special symbol.",
-false
-);
+if (!strongPassword.test(password)) {
 
-return;
+    showToast(
+        "Password must contain at least 8 characters, one uppercase letter, one number and one special symbol.",
+        false
+    );
 
+    return;
 }
 
 if (!name || !phone || !location || !email || !password) {
