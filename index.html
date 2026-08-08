@@ -1719,13 +1719,22 @@ async function getBestSeller(
 
         const s = docSnap.data();
 
-        // Must have valid price
+        // ----------------------
+        // SELLER PRICE
+        // ----------------------
+
         const sellerPrice =
             Number(s.prices?.[quantity] || 0);
 
-        if (sellerPrice <= 0) return;
+        if (sellerPrice <= 0) {
+            return;
+        }
 
-        // Must support selected brand
+
+        // ----------------------
+        // GAS BRAND
+        // ----------------------
+
         if (
             !Array.isArray(s.brands) ||
             !s.brands.includes(brand)
@@ -1733,12 +1742,20 @@ async function getBestSeller(
             return;
         }
 
-        // Commission/payment check
+
+        // ----------------------
+        // PAYMENT CHECK
+        // ----------------------
+
         if (s.paymentStatus !== "Paid") {
             return;
         }
 
-        // Delivery limit check
+
+        // ----------------------
+        // DELIVERY LIMIT
+        // ----------------------
+
         if (
             (s.deliveryCount || 0) >=
             (s.deliveryLimit || 999)
@@ -1746,7 +1763,11 @@ async function getBestSeller(
             return;
         }
 
-        // Seller GPS
+
+        // ----------------------
+        // SELLER GPS
+        // ----------------------
+
         const sellerLat =
             Number(s.sellerLatitude);
 
@@ -1757,6 +1778,7 @@ async function getBestSeller(
             !Number.isFinite(sellerLat) ||
             !Number.isFinite(sellerLng)
         ) {
+
             console.warn(
                 "Seller has invalid GPS:",
                 s.name
@@ -1765,26 +1787,42 @@ async function getBestSeller(
             return;
         }
 
-        // Calculate distance
-        const distance = calculateDistance(
-            Number(customerLatitude),
-            Number(customerLongitude),
-            sellerLat,
-            sellerLng
-        );
+
+        // ----------------------
+        // DISTANCE
+        // ----------------------
+
+        const distance =
+            calculateDistance(
+                Number(customerLatitude),
+                Number(customerLongitude),
+                sellerLat,
+                sellerLng
+            );
 
         console.log(
             "Seller:",
             s.name,
-            "Distance:",
+            "| Price:",
+            sellerPrice,
+            "| Distance:",
             distance,
             "km"
         );
 
+
+        // ----------------------
+        // RATING
+        // ----------------------
+
         const sellerRating =
             Number(s.averageRating || 0);
 
-        // Select best seller
+
+        // ----------------------
+        // SELECT BEST SELLER
+        // ----------------------
+
         if (
 
             !bestSeller ||
@@ -1815,7 +1853,7 @@ async function getBestSeller(
                 ) &&
 
                 sellerPrice <
-                bestSeller.prices[quantity]
+                bestSeller.sellerPrice
             )
 
         ) {
@@ -1824,7 +1862,10 @@ async function getBestSeller(
 
                 id: docSnap.id,
 
-                distance,
+                // ⭐ IMPORTANT
+                sellerPrice: sellerPrice,
+
+                distance: distance,
 
                 ...s,
 
@@ -1838,11 +1879,32 @@ async function getBestSeller(
 
     });
 
+
     if (!bestSeller) {
+
         throw new Error(
             "No seller available for this gas size and brand"
         );
+
     }
+
+
+    console.log(
+        "🏆 BEST SELLER:",
+        bestSeller.name
+    );
+
+    console.log(
+        "💰 PRICE:",
+        bestSeller.sellerPrice
+    );
+
+    console.log(
+        "📍 DISTANCE:",
+        bestSeller.distance,
+        "km"
+    );
+
 
     return bestSeller;
 }
