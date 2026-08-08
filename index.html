@@ -1820,49 +1820,63 @@ async function getBestSeller(
         }
 
 
-        // ----------------------
-        // GPS DEBUG
-        // ----------------------
+// ----------------------
+// GPS DEBUG
+// ----------------------
 
-        console.log("👤 CUSTOMER GPS:", {
-            latitude: customerLat,
-            longitude: customerLng
-        });
+console.log("👤 CUSTOMER GPS:", {
+    latitude: customerLat,
+    longitude: customerLng
+});
 
-        console.log("🏪 SELLER GPS:", {
-            name: s.name,
-            latitude: sellerLat,
-            longitude: sellerLng
-        });
-
-
-        // ----------------------
-        // CALCULATE DISTANCE
-        // ----------------------
-
-        const distance = calculateDistance(
-            customerLat,
-            customerLng,
-            sellerLat,
-            sellerLng
-        );
+console.log("🏪 SELLER GPS:", {
+    name: s.name,
+    latitude: sellerLat,
+    longitude: sellerLng
+});
 
 
-        console.log(
-            "📏 CALCULATED DISTANCE:",
-            distance,
-            "km"
-        );
+// ----------------------
+// CALCULATE DISTANCE
+// ----------------------
 
-        console.log(
-            "Seller:",
-            s.name,
-            "| Price:",
-            sellerPrice,
-            "| Distance:",
-            distance,
-            "km"
-        );
+const distance = calculateDistance(
+    customerLat,
+    customerLng,
+    sellerLat,
+    sellerLng
+);
+
+
+// ----------------------
+// DISTANCE TEST
+// ----------------------
+
+console.log("🧪 DISTANCE TEST:", {
+    customerLat,
+    customerLng,
+    sellerLat,
+    sellerLng,
+    distance,
+    distanceMeters: distance * 1000
+});
+
+
+console.log(
+    "📏 CALCULATED DISTANCE:",
+    distance,
+    "km"
+);
+
+console.log(
+    "Seller:",
+    s.name,
+    "| Price:",
+    sellerPrice,
+    "| Distance:",
+    distance,
+    "km"
+);
 
 
         // ----------------------
