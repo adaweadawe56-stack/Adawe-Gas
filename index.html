@@ -1787,7 +1787,25 @@ async function getBestSeller(
             return;
         }
 
+console.log("👤 CUSTOMER GPS:", {
+    latitude: Number(customerLatitude),
+    longitude: Number(customerLongitude)
+});
 
+console.log("🏪 SELLER GPS:", {
+    name: s.name,
+    latitude: sellerLat,
+    longitude: sellerLng
+});
+
+const distance = calculateDistance(
+    Number(customerLatitude),
+    Number(customerLongitude),
+    sellerLat,
+    sellerLng
+);
+
+console.log("📏 CALCULATED DISTANCE:", distance, "km");
         // ----------------------
         // DISTANCE
         // ----------------------
