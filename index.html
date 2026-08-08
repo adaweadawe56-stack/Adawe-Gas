@@ -2435,25 +2435,24 @@ async function showRecommendedSeller() {
             </div>
         `;
 
-document.getElementById("sellerStatus").style.display = "block";
+    document.getElementById("sellerStatus").style.display = "block";
 
-document.getElementById("submitOrderBtn").disabled = false;
-      
-}catch (err) {
+    document.getElementById("submitOrderBtn").disabled = false;
 
-    console.error(err);
+} catch (err) {
 
-document.getElementById("sellerLoading").style.display = "none";
+    console.error("❌ showRecommendedSeller ERROR:", err);
 
-document.getElementById("recommendedSeller").style.display = "block";
-     
+    document.getElementById("sellerLoading").style.display = "none";
+
+    document.getElementById("recommendedSeller").style.display = "block";
+
     document.getElementById("recommendedSeller").innerHTML =
         `❌ ${err.message}`;
 
     document.getElementById("sellerStatus").style.display = "none";
 
     document.getElementById("submitOrderBtn").disabled = true;
-
 }
 }
 
