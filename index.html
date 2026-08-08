@@ -2247,12 +2247,11 @@ window.getCustomerLocation = function () {
 
         /* ---------------- OPTIONS ---------------- */
 
-        {
-            enableHighAccuracy: false,
-            timeout: 30000,
-            maximumAge: 60000
-        }
-
+       {
+    enableHighAccuracy: true,
+    timeout: 30000,
+    maximumAge: 0
+}
     );
 
 };
