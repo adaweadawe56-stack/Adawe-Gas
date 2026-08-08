@@ -1787,48 +1787,63 @@ async function getBestSeller(
             return;
         }
 
-console.log("👤 CUSTOMER GPS:", {
-    latitude: Number(customerLatitude),
-    longitude: Number(customerLongitude)
-});
 
-console.log("🏪 SELLER GPS:", {
-    name: s.name,
-    latitude: sellerLat,
-    longitude: sellerLng
-});
-
-console.log("👤 CUSTOMER GPS:", {
-    latitude: Number(customerLatitude),
-    longitude: Number(customerLongitude)
-});
-
-console.log("🏪 SELLER GPS:", {
-    name: s.name,
-    latitude: sellerLat,
-    longitude: sellerLng
-});
-
-const distance = calculateDistance(
-    Number(customerLatitude),
-    Number(customerLongitude),
-    sellerLat,
-    sellerLng
-);
-
-console.log("📏 CALCULATED DISTANCE:", distance, "km");
-console.log("📏 CALCULATED DISTANCE:", distance, "km");
         // ----------------------
-        // DISTANCE
+        // CUSTOMER GPS
         // ----------------------
 
-        const distance =
-            calculateDistance(
-                Number(customerLatitude),
-                Number(customerLongitude),
-                sellerLat,
-                sellerLng
+        const customerLat =
+            Number(customerLatitude);
+
+        const customerLng =
+            Number(customerLongitude);
+
+        if (
+            !Number.isFinite(customerLat) ||
+            !Number.isFinite(customerLng)
+        ) {
+
+            console.warn(
+                "Customer has invalid GPS"
             );
+
+            return;
+        }
+
+
+        // ----------------------
+        // GPS DEBUG
+        // ----------------------
+
+        console.log("👤 CUSTOMER GPS:", {
+            latitude: customerLat,
+            longitude: customerLng
+        });
+
+        console.log("🏪 SELLER GPS:", {
+            name: s.name,
+            latitude: sellerLat,
+            longitude: sellerLng
+        });
+
+
+        // ----------------------
+        // CALCULATE DISTANCE
+        // ----------------------
+
+        const distance = calculateDistance(
+            customerLat,
+            customerLng,
+            sellerLat,
+            sellerLng
+        );
+
+
+        console.log(
+            "📏 CALCULATED DISTANCE:",
+            distance,
+            "km"
+        );
 
         console.log(
             "Seller:",
@@ -1892,7 +1907,6 @@ console.log("📏 CALCULATED DISTANCE:", distance, "km");
 
                 id: docSnap.id,
 
-                // ⭐ IMPORTANT
                 sellerPrice: sellerPrice,
 
                 distance: distance,
@@ -1910,6 +1924,10 @@ console.log("📏 CALCULATED DISTANCE:", distance, "km");
     });
 
 
+    // ----------------------
+    // NO SELLER
+    // ----------------------
+
     if (!bestSeller) {
 
         throw new Error(
@@ -1918,6 +1936,10 @@ console.log("📏 CALCULATED DISTANCE:", distance, "km");
 
     }
 
+
+    // ----------------------
+    // FINAL DEBUG
+    // ----------------------
 
     console.log(
         "🏆 BEST SELLER:",
