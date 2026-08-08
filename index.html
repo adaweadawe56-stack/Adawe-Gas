@@ -2551,50 +2551,36 @@ function addPriceRow() {
 
     row.className = "row g-2 mb-2";
 
-    row.innerHTML = `
-        <div class="col-6">
+row.innerHTML = `
+    <div class="col-6">
+        <select class="form-select gas-size" required>
+            <option value="">Select Size</option>
 
-            <select
-                class="form-select gas-size"
-                required
-            >
+            ${gasSizes.map(size =>
+                `<option value="${size}">${size}</option>`
+            ).join("")}
 
-                <option value="">
-                    Select Size
-                </option>
+        </select>
+    </div>
 
-                ${gasSizes.map(size =>
-                    `<option value="${size}">
-                        ${size}
-                    </option>`
-                ).join("")}
+    <div class="col-4">
+        <input
+            type="number"
+            class="form-control gas-price"
+            placeholder="Price (KES)"
+            min="1"
+            required
+        >
+    </div>
 
-            </select>
-
-        </div>
-
-        <div class="col-4">
-
-            <input
-                type="number"
-                class="form-control gas-price"
-                placeholder="Price (KES)"
-                min="1"
-                required
-            >
-
-        </div>
-
-        <div class="col-2">
-
-            <button
-                type="button"
-                class="btn btn-danger remove-row">
-                ✕
-            </button>
-
-        </div>
-    `;
+    <div class="col-2">
+        <button
+            type="button"
+            class="btn btn-danger remove-row">
+            ✕
+        </button>
+    </div>
+`;
 
     document
         .getElementById("priceRows")
