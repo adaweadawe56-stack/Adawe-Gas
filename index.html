@@ -2528,10 +2528,22 @@ function resetButton() {
 
 }
 
+<script>
+
 /* -------------------- SELLER REGISTRATION -------------------- */
-  const gasSizes = [
-  "1kg","3kg","6kg","13kg","15kg",
-  "22kg","25kg","35kg","40kg","45kg","50kg"
+
+const gasSizes = [
+    "1kg",
+    "3kg",
+    "6kg",
+    "13kg",
+    "15kg",
+    "22kg",
+    "25kg",
+    "35kg",
+    "40kg",
+    "45kg",
+    "50kg"
 ];
 
 function addPriceRow() {
@@ -2615,6 +2627,7 @@ function addPriceRow() {
 
 }
 
+
 /* -------------------- SELLER LOCATION -------------------- */
 
 let sellerLatitude = null;
@@ -2622,7 +2635,9 @@ let sellerLongitude = null;
 
 window.getSellerLocation = function () {
 
-    console.log("📍 Seller location request started.");
+    console.log(
+        "📍 Seller location request started."
+    );
 
     if (!navigator.geolocation) {
 
@@ -2642,11 +2657,13 @@ window.getSellerLocation = function () {
         "📍 Detecting seller location..."
     );
 
+
     const optionsHighAccuracy = {
         enableHighAccuracy: true,
         timeout: 20000,
         maximumAge: 0
     };
+
 
     const optionsFallback = {
         enableHighAccuracy: false,
@@ -2655,9 +2672,9 @@ window.getSellerLocation = function () {
     };
 
 
-    /* ---------------- HIGH ACCURACY ---------------- */
-
     navigator.geolocation.getCurrentPosition(
+
+        /* ---------------- SUCCESS ---------------- */
 
         (position) => {
 
@@ -2666,6 +2683,7 @@ window.getSellerLocation = function () {
 
             sellerLongitude =
                 position.coords.longitude;
+
 
             console.log(
                 "✅ SELLER LOCATION SUCCESS"
@@ -2683,8 +2701,12 @@ window.getSellerLocation = function () {
                 "meters"
             );
 
+
             const locationInput =
-                document.getElementById("sellerLocation");
+                document.getElementById(
+                    "sellerLocation"
+                );
+
 
             if (locationInput) {
 
@@ -2703,11 +2725,15 @@ window.getSellerLocation = function () {
 
             }
 
+
             showToast(
                 "📍 Seller location detected successfully."
             );
 
         },
+
+
+        /* ---------------- HIGH ACCURACY ERROR ---------------- */
 
         (error) => {
 
@@ -2717,12 +2743,13 @@ window.getSellerLocation = function () {
                 error.message
             );
 
+
             showToast(
                 "📍 Getting your location... please wait."
             );
 
 
-            /* ---------------- FALLBACK GPS ---------------- */
+            /* ---------------- FALLBACK ---------------- */
 
             navigator.geolocation.getCurrentPosition(
 
@@ -2733,6 +2760,7 @@ window.getSellerLocation = function () {
 
                     sellerLongitude =
                         position.coords.longitude;
+
 
                     console.log(
                         "✅ SELLER GPS FALLBACK SUCCESS"
@@ -2750,8 +2778,12 @@ window.getSellerLocation = function () {
                         "meters"
                     );
 
+
                     const locationInput =
-                        document.getElementById("sellerLocation");
+                        document.getElementById(
+                            "sellerLocation"
+                        );
+
 
                     if (locationInput) {
 
@@ -2764,11 +2796,15 @@ window.getSellerLocation = function () {
 
                     }
 
+
                     showToast(
                         "📍 Seller location detected successfully."
                     );
 
                 },
+
+
+                /* ---------------- FALLBACK ERROR ---------------- */
 
                 (fallbackError) => {
 
@@ -2787,25 +2823,32 @@ window.getSellerLocation = function () {
                         fallbackError.message
                     );
 
+
                     let message =
                         "Unable to detect seller location.";
+
 
                     if (fallbackError.code === 1) {
 
                         message =
                             "📍 Location permission denied. Please allow location access.";
 
-                    } else if (fallbackError.code === 2) {
+                    }
+
+                    else if (fallbackError.code === 2) {
 
                         message =
                             "📍 Location unavailable. Please turn ON GPS.";
 
-                    } else if (fallbackError.code === 3) {
+                    }
+
+                    else if (fallbackError.code === 3) {
 
                         message =
                             "📍 Location request timed out. Please try again.";
 
                     }
+
 
                     showToast(
                         message,
@@ -2825,18 +2868,36 @@ window.getSellerLocation = function () {
     );
 
 };
+
+
+/* -------------------- START PRICE ROW -------------------- */
+
 window.addPriceRow = addPriceRow;
 
 addPriceRow();
 
-const sellerForm = document.getElementById("sellerForm");
-const registerBtn = document.getElementById("registerSellerBtn");
-const btnText = document.getElementById("btnText");
-const btnLoader = document.getElementById("btnLoader");
 
-sellerForm.addEventListener("submit", async (e) => {
-  e.preventDefault();
+/* -------------------- SELLER FORM -------------------- */
 
+const sellerForm =
+    document.getElementById("sellerForm");
+
+const registerBtn =
+    document.getElementById("registerSellerBtn");
+
+const btnText =
+    document.getElementById("btnText");
+
+const btnLoader =
+    document.getElementById("btnLoader");
+
+
+sellerForm.addEventListener(
+    "submit",
+    async (e) => {
+
+        e.preventDefault();
+       
   const name = document.getElementById("sellerName").value.trim();
   const phone = formatKenyaPhone(document.getElementById("sellerPhone").value.trim());
   const location = document.getElementById("sellerLocation").value.trim();
