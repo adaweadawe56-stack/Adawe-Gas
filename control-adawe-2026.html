@@ -334,8 +334,30 @@ function updateStatsAndChart(){
 
     let d;
 
-    if (o.createdAt?.toDate) {
-        d = o.createdAt.toDate();
+    if(o.createdAt){
+
+    const d =
+        o.createdAt?.toDate
+            ? o.createdAt.toDate()
+            : new Date(o.createdAt);
+
+    if(!isNaN(d.getTime())){
+
+        if(d.toDateString() === todayDate){
+
+            today++;
+
+        }
+
+        const day =
+            d.toLocaleDateString();
+
+        dailyMap[day] =
+            (dailyMap[day] || 0) + 1;
+
+    }
+
+}
     } else {
         d = new Date(o.createdAt);
     }
@@ -665,6 +687,15 @@ function renderOrders() {
     });
 
 }
+
+document
+    .getElementById("searchOrders")
+    .addEventListener("input", renderOrders);
+
+
+document
+    .getElementById("statusFilter")
+    .addEventListener("change", renderOrders);    
  
 function renderSellers(){
 
