@@ -3599,23 +3599,16 @@ window.addEventListener("load", () => {
 <script>
 window.addEventListener("DOMContentLoaded", () => {
 
-    const locationButton =
-        document.getElementById("detectLocationBtn");
+const detectLocationBtn =
+    document.getElementById("detectLocationBtn");
 
-    if (!locationButton) {
-
-        console.error(
-            "❌ detectLocationBtn NOT FOUND"
-        );
-
-        return;
-    }
+if (detectLocationBtn) {
 
     console.log(
         "✅ Detect Location button found."
     );
 
-    locationButton.addEventListener("click", () => {
+    detectLocationBtn.onclick = function () {
 
         console.log(
             "🟢 Detect Location clicked."
@@ -3637,7 +3630,6 @@ window.addEventListener("DOMContentLoaded", () => {
             console.error(
                 "❌ window.getCustomerLocation is NOT defined."
             );
-
         }
 
     });
