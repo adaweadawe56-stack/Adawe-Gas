@@ -1799,16 +1799,33 @@ async function getBestSeller(
         }
 
 
-        // ----------------------
-        // GAS BRAND
-        // ----------------------
+       // ----------------------
+// GAS BRAND
+// ----------------------
 
-        if (
-            !Array.isArray(s.brands) ||
-            !s.brands.includes(brand)
-        ) {
-            return;
-        }
+const normalizedCustomerBrand =
+    String(brand || "")
+        .trim()
+        .toLowerCase();
+
+const normalizedSellerBrands =
+    Array.isArray(s.brands)
+        ? s.brands.map(
+            sellerBrand =>
+                String(sellerBrand || "")
+                    .trim()
+                    .toLowerCase()
+          )
+        : [];
+
+if (
+    !normalizedCustomerBrand ||
+    !normalizedSellerBrands.includes(
+        normalizedCustomerBrand
+    )
+) {
+    return;
+}
 
 
         // ----------------------
