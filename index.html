@@ -2228,6 +2228,10 @@ window.getCustomerLocation = function () {
                 }
 
 
+                // ----------------------
+                // EXCELLENT ACCURACY
+                // ----------------------
+
                 if (accuracy <= 50) {
 
                     console.log(
@@ -2257,6 +2261,10 @@ window.getCustomerLocation = function () {
                     error
                 );
 
+
+                // ----------------------
+                // USE BEST READING
+                // ----------------------
 
                 if (bestPosition) {
 
@@ -2300,14 +2308,18 @@ window.getCustomerLocation = function () {
                 if (error.code === 1) {
 
                     message =
-                        "📍 Location permission denied.";
+                        "📍 Location permission denied. Please allow location access.";
 
-                } else if (error.code === 2) {
+                }
+
+                else if (error.code === 2) {
 
                     message =
-                        "📍 Location unavailable. Please turn on GPS.";
+                        "📍 Location unavailable. Please turn on GPS/location services.";
 
-                } else if (error.code === 3) {
+                }
+
+                else if (error.code === 3) {
 
                     message =
                         "📍 GPS is taking too long. Please try again.";
@@ -2321,6 +2333,10 @@ window.getCustomerLocation = function () {
 
             },
 
+
+            // ----------------------
+            // OPTIONS
+            // ----------------------
 
             {
                 enableHighAccuracy: true,
@@ -2358,7 +2374,9 @@ window.getCustomerLocation = function () {
                 bestPosition
             );
 
-        } else {
+        }
+
+        else {
 
             finished = true;
 
@@ -2376,6 +2394,11 @@ window.getCustomerLocation = function () {
             }
 
 
+            customerLatitude = null;
+
+            customerLongitude = null;
+
+
             showToast(
                 "📍 Could not detect your location. Please turn on GPS and try again.",
                 false
@@ -2383,6 +2406,7 @@ window.getCustomerLocation = function () {
         }
 
     }, 30000);
+
 };
 
 
@@ -2398,6 +2422,7 @@ function useCustomerLocation(position) {
     customerLongitude =
         position.coords.longitude;
 
+
     const accuracy =
         position.coords.accuracy;
 
@@ -2406,15 +2431,18 @@ function useCustomerLocation(position) {
         "✅ FINAL CUSTOMER LOCATION"
     );
 
+
     console.log(
         "📍 Latitude:",
         customerLatitude
     );
 
+
     console.log(
         "📍 Longitude:",
         customerLongitude
     );
+
 
     console.log(
         "🎯 Accuracy:",
@@ -2440,7 +2468,9 @@ function useCustomerLocation(position) {
             true
         );
 
-    } else if (accuracy <= 200) {
+    }
+
+    else if (accuracy <= 100) {
 
         console.log(
             "✅ Good GPS accuracy:",
@@ -2453,7 +2483,24 @@ function useCustomerLocation(position) {
             true
         );
 
-    } else {
+    }
+
+    else if (accuracy <= 300) {
+
+        console.log(
+            "⚠️ Acceptable GPS accuracy:",
+            accuracy,
+            "meters"
+        );
+
+        showToast(
+            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
+            true
+        );
+
+    }
+
+    else {
 
         console.warn(
             "⚠️ GPS accuracy is low:",
@@ -2462,7 +2509,7 @@ function useCustomerLocation(position) {
         );
 
         showToast(
-            `📍 Location detected (${Math.round(accuracy)}m accuracy). Turn on GPS for better accuracy.`,
+            `📍 Location detected (${Math.round(accuracy)}m accuracy). For better accuracy, turn on GPS.`,
             true
         );
     }
@@ -2493,7 +2540,9 @@ function useCustomerLocation(position) {
 
         showRecommendedSeller();
 
-    } else {
+    }
+
+    else {
 
         console.error(
             "❌ showRecommendedSeller() is not defined."
