@@ -219,83 +219,74 @@ window.login = async function(){
 
 function startRealtime(){
 
-onSnapshot(
+    onSnapshot(
+        collection(db, "orders"),
 
-  collection(db,"orders"),
+        snap => {
 
-  snap => {
+            console.log("Orders Found:", snap.size);
 
-    console.log("Orders Found:", snap.size);
+            ordersData = [];
 
-    ordersData = [];
+            snap.forEach(d => {
 
-    snap.forEach(d=>{
+                const order = {
+                    id: d.id,
+                    ...d.data()
+                };
 
-      const order = {
-        id:d.id,
-        ...d.data()
-      };
+                ordersData.push(order);
 
-      ordersData.push(order);
+            });
 
-      if(!order.sellerName){
+            renderOrders();
+            updateStatsAndChart();
 
-        autoAssignSeller(order);
+        },
 
-      }
+        error => {
 
-    });
+            console.error(
+                "Orders Error:",
+                error.code,
+                error.message
+            );
 
-    renderOrders();
-
-    updateStatsAndChart();
-
-  },
-
-  error => {
-
-    console.error(
-      "Orders Error:",
-      error.code,
-      error.message
+        }
     );
 
-  }
 
-);
+    onSnapshot(
+        collection(db, "sellers"),
 
-onSnapshot(
+        snap => {
 
-  collection(db,"sellers"),
+            sellersData = [];
 
-  snap => {
+            snap.forEach(d => {
 
-    sellersData = [];
+                sellersData.push({
+                    id: d.id,
+                    ...d.data()
+                });
 
-    snap.forEach(d=>{
+            });
 
-      sellersData.push({
-        id:d.id,
-        ...d.data()
-      });
+            renderSellers();
 
-    });
+        },
 
-    renderSellers();
+        error => {
 
-  },
+            console.error(
+                "Sellers Error:",
+                error.code,
+                error.message
+            );
 
-  error => {
-
-    console.error(
-      "Sellers Error:",
-      error.code,
-      error.message
+        }
     );
 
-  }
-
-);
 }
 
 function updateStatsAndChart(){
