@@ -128,13 +128,55 @@ let ordersData = [];
 let sellersData = [];
 let chart;
 
-function formatDate(ts){
+function formatTimestamp(timestamp) {
 
- if(!ts) return "";
+    if (!timestamp) {
+        return "—";
+    }
 
- const d = ts.toDate ? ts.toDate() : new Date(ts);
+    // Firestore Timestamp
+    if (timestamp?.toDate) {
+        return timestamp.toDate().toLocaleString("en-KE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }
 
- return d.toLocaleString();
+    // JavaScript Date
+    if (timestamp instanceof Date) {
+        return timestamp.toLocaleString("en-KE", {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric",
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }
+
+    // ISO string
+    if (typeof timestamp === "string") {
+
+        const date = new Date(timestamp);
+
+        if (!isNaN(date.getTime())) {
+
+            return date.toLocaleString("en-KE", {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+                hour: "2-digit",
+                minute: "2-digit",
+                second: "2-digit"
+            });
+        }
+    }
+
+    return "—";
 }
 
 window.login = async function(){
@@ -402,20 +444,156 @@ function updateStatsAndChart(){
 
 }
 
-function renderOrders(){
+function renderOrders() {
 
-  ordersTable.innerHTML = `
-    <tr>
-      <th>Name</th>
-      <th>Phone</th>
-      <th>Location</th>
-      <th>Qty</th>
-      <th>Brand</th>
-      <th>Status</th>
-      <th>Date</th>
-      <th>Actions</th>
-    </tr>
-  `;
+    ordersTable.innerHTML = `
+
+        <thead>
+            <tr>
+
+                <th>Order ID</th>
+
+                <th>Customer</th>
+
+                <th>Phone</th>
+
+                <th>Location</th>
+
+                <th>Quantity</th>
+
+                <th>Brand</th>
+
+                <th>Seller</th>
+
+                <th>Price</th>
+
+                <th>Status</th>
+
+                <th>Created At</th>
+
+                <th>Assigned At</th>
+
+                <th>Accepted At</th>
+
+                <th>On The Way At</th>
+
+                <th>Delivered At</th>
+
+                <th>Rejected At</th>
+
+                <th>Actions</th>
+
+            </tr>
+        </thead>
+
+        <tbody></tbody>
+    `;
+
+    const tbody = ordersTable.querySelector("tbody");
+
+    ordersData.forEach(o => {
+
+        const row = document.createElement("tr");
+
+        row.innerHTML = `
+
+            <td>
+                ${o.orderId || "—"}
+            </td>
+
+            <td>
+                ${o.name || "—"}
+            </td>
+
+            <td>
+                ${o.phone || "—"}
+            </td>
+
+            <td>
+                ${o.location || "—"}
+            </td>
+
+            <td>
+                ${o.quantity || "—"}
+            </td>
+
+            <td>
+                ${o.brand || "—"}
+            </td>
+
+            <td>
+                ${o.sellerName || "—"}
+            </td>
+
+            <td>
+                KES ${Number(o.price || 0).toLocaleString()}
+            </td>
+
+            <td>
+                ${o.status || "—"}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.createdAt)}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.assignedAt)}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.acceptedAt)}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.onTheWayAt)}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.deliveredAt)}
+            </td>
+
+            <td>
+                ${formatTimestamp(o.rejectedAt)}
+            </td>
+
+            <td>
+
+                ${
+                    o.customerLatitude != null &&
+                    o.customerLongitude != null
+                    ? `
+                        <button
+                            onclick="window.open(
+                                'https://maps.google.com/?q=${o.customerLatitude},${o.customerLongitude}',
+                                '_blank'
+                            )"
+                            class="btn btn-success btn-sm">
+                            📍 Map
+                        </button>
+                    `
+                    : ""
+                }
+
+                <button
+                    onclick="editOrder('${o.id}')"
+                    class="btn btn-primary btn-sm mt-1">
+                    Edit
+                </button>
+
+                <button
+                    onclick="deleteOrder('${o.id}')"
+                    class="btn btn-danger btn-sm mt-1">
+                    Delete
+                </button>
+
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+}
 
   ordersData.forEach(o=>{
 
