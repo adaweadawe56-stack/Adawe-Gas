@@ -2135,7 +2135,7 @@ window.getCustomerLocation = function () {
 
     navigator.geolocation.getCurrentPosition(
 
-        /* ---------------- SUCCESS ---------------- */
+/* ---------------- SUCCESS ---------------- */
 
 (position) => {
 
@@ -2144,6 +2144,7 @@ window.getCustomerLocation = function () {
 
     customerLongitude =
         position.coords.longitude;
+
 
     console.log(
         "✅ LOCATION SUCCESS"
@@ -2155,14 +2156,9 @@ window.getCustomerLocation = function () {
         customerLongitude
     );
 
-    console.log(
-        "🎯 GPS Accuracy:",
-        position.coords.accuracy,
-        "meters"
-    );
 
     // ----------------------
-    // GPS ACCURACY CHECK
+    // GPS ACCURACY
     // ----------------------
 
     const accuracy =
@@ -2174,20 +2170,43 @@ window.getCustomerLocation = function () {
         "meters"
     );
 
+
+    // ----------------------
+    // ACCURACY WARNING
+    // ----------------------
+
     if (accuracy > 100) {
 
         console.warn(
-            "⚠️ GPS accuracy is too low:",
+            "⚠️ GPS accuracy is low:",
             accuracy,
             "meters"
         );
 
         showToast(
-            `📍 Location accuracy is low (${Math.round(accuracy)}m). Please enable GPS/location services and try again.`,
+            `📍 Location detected (${Math.round(accuracy)}m accuracy). For better accuracy, turn on GPS.`,
             false
         );
 
+    } else {
+
+        console.log(
+            "✅ GPS accuracy is good:",
+            accuracy,
+            "meters"
+        );
+
+        showToast(
+            "📍 Location detected successfully.",
+            true
+        );
+
     }
+
+
+    // ----------------------
+    // LOCATION SOURCE
+    // ----------------------
 
     console.log(
         "📡 Location source:",
@@ -2198,6 +2217,8 @@ window.getCustomerLocation = function () {
     // ----------------------
     // UPDATE RECOMMENDED SELLER
     // ----------------------
+    // IMPORTANT:
+    // This must NOT be inside the accuracy check.
 
     if (
         typeof showRecommendedSeller ===
@@ -2209,6 +2230,12 @@ window.getCustomerLocation = function () {
         );
 
         showRecommendedSeller();
+
+    } else {
+
+        console.error(
+            "❌ showRecommendedSeller() is not defined."
+        );
 
     }
 
