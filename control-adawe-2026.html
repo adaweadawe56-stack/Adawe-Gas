@@ -403,38 +403,128 @@ function updateStatsAndChart(){
 
 function renderOrders() {
 
-    const table = document.getElementById("ordersTable");
+    const table =
+        document.getElementById("ordersTable");
+
+    const search =
+        document.getElementById("searchOrders")
+            .value
+            .trim()
+            .toLowerCase();
+
+    const status =
+        document.getElementById("statusFilter")
+            .value;
+
+
+    // =========================
+    // FILTER ORDERS
+    // =========================
+
+    const filteredOrders =
+        ordersData.filter(o => {
+
+            const matchesSearch =
+                !search ||
+
+                (o.orderId || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                (o.name || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                (o.phone || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                (o.location || "")
+                    .toLowerCase()
+                    .includes(search) ||
+
+                (o.sellerName || "")
+                    .toLowerCase()
+                    .includes(search);
+
+
+            const matchesStatus =
+                !status ||
+                o.status === status;
+
+
+            return (
+                matchesSearch &&
+                matchesStatus
+            );
+
+        });
+
+
+    // =========================
+    // TABLE HEADER
+    // =========================
 
     table.innerHTML = `
+
         <thead>
+
             <tr>
+
                 <th>Order ID</th>
+
                 <th>Customer</th>
+
                 <th>Phone</th>
+
                 <th>Location</th>
+
                 <th>Quantity</th>
+
                 <th>Brand</th>
+
                 <th>Seller</th>
+
                 <th>Price</th>
+
                 <th>Status</th>
+
                 <th>Created At</th>
+
                 <th>Assigned At</th>
+
                 <th>Accepted At</th>
+
                 <th>On The Way At</th>
+
                 <th>Delivered At</th>
+
                 <th>Rejected At</th>
+
                 <th>Actions</th>
+
             </tr>
+
         </thead>
 
         <tbody></tbody>
+
     `;
 
-    const tbody = table.querySelector("tbody");
 
-    ordersData.forEach(o => {
+    const tbody =
+        table.querySelector("tbody");
 
-        const row = document.createElement("tr");
+
+    // =========================
+    // RENDER FILTERED ORDERS
+    // =========================
+
+    filteredOrders.forEach(o => {
+
+        const row =
+            document.createElement("tr");
+
 
         row.innerHTML = `
 
@@ -442,61 +532,78 @@ function renderOrders() {
                 ${o.orderId || "—"}
             </td>
 
+
             <td>
                 ${o.name || "—"}
             </td>
+
 
             <td>
                 ${o.phone || "—"}
             </td>
 
+
             <td>
                 ${o.location || "—"}
             </td>
+
 
             <td>
                 ${o.quantity || "—"}
             </td>
 
+
             <td>
                 ${o.brand || "—"}
             </td>
+
 
             <td>
                 ${o.sellerName || "—"}
             </td>
 
+
             <td>
-                KES ${Number(o.price || 0).toLocaleString()}
+                KES
+                ${Number(o.price || 0)
+                    .toLocaleString()}
             </td>
+
 
             <td>
                 ${o.status || "—"}
             </td>
 
+
             <td>
                 ${formatTimestamp(o.createdAt)}
             </td>
+
 
             <td>
                 ${formatTimestamp(o.assignedAt)}
             </td>
 
+
             <td>
                 ${formatTimestamp(o.acceptedAt)}
             </td>
+
 
             <td>
                 ${formatTimestamp(o.onTheWayAt)}
             </td>
 
+
             <td>
                 ${formatTimestamp(o.deliveredAt)}
             </td>
 
+
             <td>
                 ${formatTimestamp(o.rejectedAt)}
             </td>
+
 
             <td>
 
@@ -505,31 +612,41 @@ function renderOrders() {
                     o.customerLongitude != null
 
                     ? `
+
                         <button
+
                             onclick="window.open(
                                 'https://maps.google.com/?q=${o.customerLatitude},${o.customerLongitude}',
                                 '_blank'
                             )"
+
                             class="btn btn-success btn-sm">
 
                             📍 Map
 
                         </button>
+
                     `
 
                     : ""
                 }
 
+
                 <button
+
                     onclick="editOrder('${o.id}')"
+
                     class="btn btn-primary btn-sm mt-1">
 
                     Edit
 
                 </button>
 
+
                 <button
+
                     onclick="deleteOrder('${o.id}')"
+
                     class="btn btn-danger btn-sm mt-1">
 
                     Delete
@@ -539,6 +656,7 @@ function renderOrders() {
             </td>
 
         `;
+
 
         tbody.appendChild(row);
 
