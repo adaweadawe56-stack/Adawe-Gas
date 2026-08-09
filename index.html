@@ -2433,7 +2433,6 @@ function useCustomerLocation(position) {
     customerLongitude =
         position.coords.longitude;
 
-
     const accuracy =
         position.coords.accuracy;
 
@@ -2476,9 +2475,7 @@ function useCustomerLocation(position) {
             true
         );
 
-    }
-
-    else if (accuracy <= 200) {
+    } else if (accuracy <= 200) {
 
         console.log(
             "✅ Good GPS accuracy:",
@@ -2491,9 +2488,7 @@ function useCustomerLocation(position) {
             true
         );
 
-    }
-
-    else {
+    } else {
 
         console.warn(
             "⚠️ GPS accuracy is low:",
@@ -2533,83 +2528,13 @@ function useCustomerLocation(position) {
 
         showRecommendedSeller();
 
-    }
-
-    else {
+    } else {
 
         console.error(
             "❌ showRecommendedSeller() is not defined."
         );
     }
 }
-        /* ---------------- ERROR ---------------- */
-
-        (error) => {
-
-            console.error(
-                "❌ CUSTOMER LOCATION ERROR"
-            );
-
-            console.error(
-                "Error code:",
-                error.code
-            );
-
-            console.error(
-                "Error message:",
-                error.message
-            );
-
-            customerLatitude = null;
-            customerLongitude = null;
-
-            let message =
-                "Unable to detect your location.";
-
-            /* Permission denied */
-
-            if (error.code === 1) {
-
-                message =
-                    "📍 Location permission denied. Please allow location access for this site.";
-
-            }
-
-            /* Position unavailable */
-
-            else if (error.code === 2) {
-
-                message =
-                    "📍 Location unavailable. Please turn ON GPS/location services and try again.";
-
-            }
-
-            /* Timeout */
-
-            else if (error.code === 3) {
-
-                message =
-                    "📍 GPS is taking too long. Please try again.";
-
-            }
-
-            showToast(
-                message,
-                false
-            );
-
-        },
-
-        /* ---------------- OPTIONS ---------------- */
-
-       {
-    enableHighAccuracy: true,
-    timeout: 30000,
-    maximumAge: 0
-}
-    );
-
-};
 async function showRecommendedSeller() {
 
     const quantity =
