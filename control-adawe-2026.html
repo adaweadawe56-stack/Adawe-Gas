@@ -727,38 +727,52 @@ Delete
 
 }
 
-window.showPrices = function(id){
+window.showPrices = function(id) {
 
- const s = sellersData.find(x=>x.id==id);
+    const s = sellersData.find(x => x.id == id);
 
- const body = document.getElementById("priceModalBody");
+    if (!s) {
+        alert("Seller not found");
+        return;
+    }
 
- body.innerHTML = "";
+    const body =
+        document.getElementById("priceModalBody");
 
- const sizes = [
- "1kg",
- "3kg",
- "6kg",
- "13kg",
- "15kg",
- "22kg",
- "25kg",
- "35kg",
- "40kg",
- "45kg",
- "50kg"
- ];
+    body.innerHTML = "";
 
- sizes.forEach(size=>{
+    const sizes = [
+        "1kg",
+        "3kg",
+        "6kg",
+        "13kg",
+        "15kg",
+        "22kg",
+        "25kg",
+        "35kg",
+        "40kg",
+        "45kg",
+        "50kg"
+    ];
 
-  body.innerHTML += `
-  <tr>
-  <td>${size}</td>
-  <td>${s.prices?.[size] || ""}</td>
-  </tr>`;
- });
+    sizes.forEach(size => {
 
- new bootstrap.Modal(document.getElementById("priceModal")).show();
+        body.innerHTML += `
+            <tr>
+                <td>${size}</td>
+                <td>
+                    KES ${Number(
+                        s.prices?.[size] || 0
+                    ).toLocaleString()}
+                </td>
+            </tr>
+        `;
+
+    });
+
+    new bootstrap.Modal(
+        document.getElementById("priceModal")
+    ).show();
 
 };
 
