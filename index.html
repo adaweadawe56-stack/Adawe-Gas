@@ -2081,7 +2081,9 @@ console.log(
 
 }
 
-/* -------------------- CUSTOMER LOCATION -------------------- */
+/* =========================================================
+   CUSTOMER LOCATION
+========================================================= */
 
 let customerLatitude = null;
 let customerLongitude = null;
@@ -2089,6 +2091,10 @@ let customerLongitude = null;
 window.getCustomerLocation = function () {
 
     console.log("📍 getCustomerLocation() started.");
+
+    // ----------------------
+    // BROWSER SUPPORT
+    // ----------------------
 
     if (!navigator.geolocation) {
 
@@ -2103,6 +2109,11 @@ window.getCustomerLocation = function () {
 
         return;
     }
+
+
+    // ----------------------
+    // HTTPS CHECK
+    // ----------------------
 
     console.log(
         "🔐 Secure context:",
@@ -2123,6 +2134,7 @@ window.getCustomerLocation = function () {
         return;
     }
 
+
     showToast(
         "📍 Detecting your location..."
     );
@@ -2131,10 +2143,60 @@ window.getCustomerLocation = function () {
         "📡 Requesting high accuracy GPS..."
     );
 
+
+    // ----------------------
+    // VARIABLES
+    // ----------------------
+
     let bestPosition = null;
 
-    const watchId =
+    let finished = false;
+
+    let watchId = null;
+
+
+    // ----------------------
+    // FINISH LOCATION
+    // ----------------------
+
+    function finishLocation(position) {
+
+        // Prevent duplicate execution
+        if (finished) {
+            return;
+        }
+
+        finished = true;
+
+
+        // Stop GPS watching
+        if (watchId !== null) {
+
+            navigator.geolocation.clearWatch(
+                watchId
+            );
+
+            watchId = null;
+        }
+
+
+        // Use best position
+        useCustomerLocation(
+            position
+        );
+    }
+
+
+    // ----------------------
+    // WATCH GPS
+    // ----------------------
+
+    watchId =
         navigator.geolocation.watchPosition(
+
+            /* =========================
+               SUCCESS
+            ========================= */
 
             (position) => {
 
@@ -2147,6 +2209,7 @@ window.getCustomerLocation = function () {
                 const accuracy =
                     position.coords.accuracy;
 
+
                 console.log(
                     "📍 GPS UPDATE:",
                     lat,
@@ -2158,7 +2221,7 @@ window.getCustomerLocation = function () {
 
 
                 // ----------------------
-                // KEEP BEST LOCATION
+                // KEEP BEST READING
                 // ----------------------
 
                 if (
@@ -2174,12 +2237,11 @@ window.getCustomerLocation = function () {
                         accuracy,
                         "meters"
                     );
-
                 }
 
 
                 // ----------------------
-                // STOP WHEN ACCURATE ENOUGH
+                // EXCELLENT ACCURACY
                 // ----------------------
 
                 if (accuracy <= 50) {
@@ -2190,19 +2252,27 @@ window.getCustomerLocation = function () {
                         "meters"
                     );
 
-                    navigator.geolocation.clearWatch(
-                        watchId
-                    );
-
-                    useCustomerLocation(
+                    finishLocation(
                         bestPosition
                     );
 
+                    return;
                 }
 
             },
 
+
+            /* =========================
+               ERROR
+            ========================= */
+
             (error) => {
+
+                // If already finished,
+                // ignore late errors
+                if (finished) {
+                    return;
+                }
 
                 console.error(
                     "❌ CUSTOMER LOCATION ERROR"
@@ -2218,15 +2288,38 @@ window.getCustomerLocation = function () {
                     error.message
                 );
 
-                navigator.geolocation.clearWatch(
-                    watchId
-                );
+
+                // ----------------------
+                // IF WE HAVE A GPS READING
+                // ----------------------
+
+                if (bestPosition) {
+
+                    console.warn(
+                        "⚠️ Using best GPS reading despite error."
+                    );
+
+                    finishLocation(
+                        bestPosition
+                    );
+
+                    return;
+                }
+
+
+                // ----------------------
+                // NO GPS READING
+                // ----------------------
+
+                finished = true;
 
                 customerLatitude = null;
                 customerLongitude = null;
 
+
                 let message =
                     "Unable to detect your location.";
+
 
                 if (error.code === 1) {
 
@@ -2246,52 +2339,85 @@ window.getCustomerLocation = function () {
 
                     message =
                         "📍 GPS is taking too long. Please try again.";
-
                 }
+
 
                 showToast(
                     message,
                     false
                 );
-
             },
 
+
+            /* =========================
+               OPTIONS
+            ========================= */
+
             {
-
                 enableHighAccuracy: true,
-
                 timeout: 30000,
-
                 maximumAge: 0
-
             }
         );
 
 
     // ----------------------
-    // MAXIMUM WAIT: 30 SEC
+    // MAXIMUM WAIT
     // ----------------------
 
     setTimeout(() => {
 
+        if (finished) {
+            return;
+        }
+
+
         if (bestPosition) {
 
             console.log(
-                "⏱️ 30 seconds reached. Using best GPS reading."
+                "⏱️ 30 seconds reached."
             );
 
-            navigator.geolocation.clearWatch(
-                watchId
+            console.log(
+                "🏆 Using best GPS reading:",
+                bestPosition.coords.accuracy,
+                "meters"
             );
 
-            useCustomerLocation(
+            finishLocation(
                 bestPosition
             );
 
+        } else {
+
+            console.error(
+                "❌ No GPS reading received after 30 seconds."
+            );
+
+            finished = true;
+
+
+            if (watchId !== null) {
+
+                navigator.geolocation.clearWatch(
+                    watchId
+                );
+
+                watchId = null;
+            }
+
+
+            customerLatitude = null;
+            customerLongitude = null;
+
+
+            showToast(
+                "📍 Could not detect your location. Please turn on GPS and try again.",
+                false
+            );
         }
 
     }, 30000);
-
 };
 
 
@@ -2306,6 +2432,7 @@ function useCustomerLocation(position) {
 
     customerLongitude =
         position.coords.longitude;
+
 
     const accuracy =
         position.coords.accuracy;
@@ -2336,55 +2463,85 @@ function useCustomerLocation(position) {
     // ACCURACY MESSAGE
     // ----------------------
 
-if (accuracy <= 50) {
+    if (accuracy <= 50) {
 
-    showToast(
-        `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
-        true
-    );
+        console.log(
+            "✅ Excellent GPS accuracy:",
+            accuracy,
+            "meters"
+        );
 
-} else if (accuracy <= 200) {
+        showToast(
+            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
+            true
+        );
 
-    showToast(
-        `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
-        true
-    );
+    }
 
-} else {
+    else if (accuracy <= 200) {
 
-    console.warn(
-        "⚠️ Location accuracy is low:",
-        accuracy,
-        "meters"
-    );
+        console.log(
+            "✅ Good GPS accuracy:",
+            accuracy,
+            "meters"
+        );
 
-    showToast(
-        `📍 Location detected. Accuracy: about ${Math.round(accuracy)}m. Turn on GPS for better accuracy.`,
-        true
-    );
-}
+        showToast(
+            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
+            true
+        );
+
+    }
+
+    else {
+
+        console.warn(
+            "⚠️ GPS accuracy is low:",
+            accuracy,
+            "meters"
+        );
+
+        showToast(
+            `📍 Location detected (${Math.round(accuracy)}m accuracy). Turn on GPS for better accuracy.`,
+            true
+        );
+    }
 
 
-// ALWAYS update seller
-if (
-    typeof showRecommendedSeller === "function"
-) {
+    // ----------------------
+    // LOCATION SOURCE
+    // ----------------------
 
     console.log(
-        "🔄 Updating recommended seller..."
+        "📡 Location source:",
+        position.coords
     );
 
-    showRecommendedSeller();
 
-} else {
+    // ----------------------
+    // UPDATE SELLER
+    // ----------------------
 
-    console.error(
-        "❌ showRecommendedSeller() is not defined."
-    );
+    if (
+        typeof showRecommendedSeller ===
+        "function"
+    ) {
+
+        console.log(
+            "🔄 Updating recommended seller..."
+        );
+
+        showRecommendedSeller();
+
+    }
+
+    else {
+
+        console.error(
+            "❌ showRecommendedSeller() is not defined."
+        );
+    }
 }
-
-}
-
         /* ---------------- ERROR ---------------- */
 
         (error) => {
