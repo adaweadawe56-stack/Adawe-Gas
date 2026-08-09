@@ -2975,33 +2975,35 @@ const orderData = {
 
     orderId: orderId,
 
-    name: customerName,
+    name: name,
 
-    phone: customerPhone,
+    phone: phone,
 
-    location: deliveryLocation,
+    location: location,
 
     quantity: quantity,
 
     brand: brand,
 
-    sellerId: bestSeller.id,
+    sellerId: sellerData.id,
 
-    sellerName: bestSeller.name,
+    sellerName: sellerData.name,
 
-    sellerPhone: bestSeller.phone,
+    sellerPhone: sellerData.phone,
 
-    sellerUid: bestSeller.uid,
+    sellerUid: sellerData.uid,
 
-    sellerLocation: bestSeller.location || "",
+    sellerLocation:
+        sellerData.location || "",
 
-    price: bestSeller.sellerPrice,
+    price:
+        Number(sellerData.sellerPrice || sellerData.prices?.[quantity] || 0),
 
     sellerLatitude:
-        Number(bestSeller.sellerLatitude),
+        Number(sellerData.sellerLatitude),
 
     sellerLongitude:
-        Number(bestSeller.sellerLongitude),
+        Number(sellerData.sellerLongitude),
 
     customerLatitude:
         Number(customerLatitude),
@@ -3017,11 +3019,18 @@ const orderData = {
     assignedAt:
         serverTimestamp(),
 
+    acceptedAt: null,
+
+    onTheWayAt: null,
+
+    deliveredAt: null,
+
+    rejectedAt: null,
+
     rating: null,
 
     review: null
 };
-
 
 await addDoc(
     collection(db, "orders"),
