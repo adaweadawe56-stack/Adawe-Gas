@@ -2088,6 +2088,9 @@ console.log(
 let customerLatitude = null;
 let customerLongitude = null;
 
+let locationRequestRunning = false;
+let locationWatchId = null;
+
 window.getCustomerLocation = function () {
 
     console.log("📍 getCustomerLocation() started.");
