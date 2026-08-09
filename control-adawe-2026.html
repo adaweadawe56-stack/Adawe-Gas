@@ -1086,31 +1086,130 @@ window.rejectSeller = async id => {
 
 };
 
-window.editOrder = async id => {
+window.editOrder = async function(id) {
 
-  const o = ordersData.find(x => x.id == id);
+    const o = ordersData.find(x => x.id === id);
 
-  const name = prompt("Name", o.name);
+    if (!o) {
+        alert("Order not found");
+        return;
+    }
 
-  if (!name) return;
 
-  try {
+    // =========================
+    // CUSTOMER INFORMATION
+    // =========================
 
-    await updateDoc(doc(db,"orders",id),{
-      name
-    });
+    const name = prompt(
+        "Customer Name:",
+        o.name || ""
+    );
 
-    alert("Order updated successfully");
+    if (name === null) return;
 
-  } catch(error) {
 
-    console.error(error);
+    const phone = prompt(
+        "Customer Phone:",
+        o.phone || ""
+    );
 
-    alert("Failed to update order");
+    if (phone === null) return;
 
-  }
+
+    const location = prompt(
+        "Customer Location:",
+        o.location || ""
+    );
+
+    if (location === null) return;
+
+
+    // =========================
+    // ORDER INFORMATION
+    // =========================
+
+    const quantity = prompt(
+        "Gas Quantity:",
+        o.quantity || ""
+    );
+
+    if (quantity === null) return;
+
+
+    const brand = prompt(
+        "Gas Brand:",
+        o.brand || ""
+    );
+
+    if (brand === null) return;
+
+
+    // =========================
+    // PRICE
+    // =========================
+
+    const priceInput = prompt(
+        "Order Price (KES):",
+        o.price || 0
+    );
+
+    if (priceInput === null) return;
+
+    const price = Number(priceInput);
+
+    if (isNaN(price) || price < 0) {
+
+        alert("Invalid price");
+
+        return;
+    }
+
+
+    // =========================
+    // UPDATE FIRESTORE
+    // =========================
+
+    try {
+
+        await updateDoc(
+            doc(db, "orders", id),
+            {
+
+                name: name.trim(),
+
+                phone: phone.trim(),
+
+                location: location.trim(),
+
+                quantity: quantity.trim(),
+
+                brand: brand.trim(),
+
+                price: price
+
+            }
+        );
+
+
+        alert(
+            "Order updated successfully"
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Edit Order Error:",
+            error
+        );
+
+        alert(
+            "Failed to update order"
+        );
+
+    }
 
 };
+
 </script>
   
 <div class="modal fade"
