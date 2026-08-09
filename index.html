@@ -2336,71 +2336,52 @@ function useCustomerLocation(position) {
     // ACCURACY MESSAGE
     // ----------------------
 
-    if (accuracy > 100) {
+if (accuracy <= 50) {
 
-        console.warn(
-            "⚠️ Location accuracy is low:",
-            accuracy,
-            "meters"
-        );
-
-        showToast(
-            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
-            true
-        );
-
-    }
-
-    else {
-
-        console.log(
-            "✅ GPS accuracy is good:",
-            accuracy,
-            "meters"
-        );
-
-        showToast(
-            "📍 Location detected successfully.",
-            true
-        );
-
-    }
-
-
-    // ----------------------
-    // LOCATION SOURCE
-    // ----------------------
-
-    console.log(
-        "📡 Final location source:",
-        position.coords
+    showToast(
+        `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
+        true
     );
 
+} else if (accuracy <= 200) {
 
-    // ----------------------
-    // UPDATE SELLER
-    // ----------------------
+    showToast(
+        `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
+        true
+    );
 
-    if (
-        typeof showRecommendedSeller ===
-        "function"
-    ) {
+} else {
 
-        console.log(
-            "🔄 Updating recommended seller..."
-        );
+    console.warn(
+        "⚠️ Location accuracy is low:",
+        accuracy,
+        "meters"
+    );
 
-        showRecommendedSeller();
+    showToast(
+        `📍 Location detected. Accuracy: about ${Math.round(accuracy)}m. Turn on GPS for better accuracy.`,
+        true
+    );
+}
 
-    }
 
-    else {
+// ALWAYS update seller
+if (
+    typeof showRecommendedSeller === "function"
+) {
 
-        console.error(
-            "❌ showRecommendedSeller() is not defined."
-        );
+    console.log(
+        "🔄 Updating recommended seller..."
+    );
 
-    }
+    showRecommendedSeller();
+
+} else {
+
+    console.error(
+        "❌ showRecommendedSeller() is not defined."
+    );
+}
 
 }
 
