@@ -2971,41 +2971,62 @@ console.log({
     customerLongitude
 });
 
+const orderData = {
+
+    orderId: orderId,
+
+    name: customerName,
+
+    phone: customerPhone,
+
+    location: deliveryLocation,
+
+    quantity: quantity,
+
+    brand: brand,
+
+    sellerId: bestSeller.id,
+
+    sellerName: bestSeller.name,
+
+    sellerPhone: bestSeller.phone,
+
+    sellerUid: bestSeller.uid,
+
+    sellerLocation: bestSeller.location || "",
+
+    price: bestSeller.sellerPrice,
+
+    sellerLatitude:
+        Number(bestSeller.sellerLatitude),
+
+    sellerLongitude:
+        Number(bestSeller.sellerLongitude),
+
+    customerLatitude:
+        Number(customerLatitude),
+
+    customerLongitude:
+        Number(customerLongitude),
+
+    status: "Pending",
+
+    createdAt:
+        serverTimestamp(),
+
+    assignedAt:
+        serverTimestamp(),
+
+    rating: null,
+
+    review: null
+};
+
+
 await addDoc(
     collection(db, "orders"),
-    {
-        orderId,
-        name,
-        phone,
-        location,
-        quantity,
-        brand,
-
-        sellerId,
-        sellerUid: sellerData.uid,
-
-        sellerName: sellerData.name,
-        sellerPhone: sellerData.phone,
-        sellerLocation: sellerData.location || "",
-
-        price: orderPrice,
-
-        sellerLatitude: Number(sellerData.sellerLatitude),
-        sellerLongitude: Number(sellerData.sellerLongitude),
-
-        customerLatitude: Number(customerLatitude),
-        customerLongitude: Number(customerLongitude),
-
-        status: "Pending",
-
-        createdAt: serverTimestamp(),
-        assignedAt: new Date().toISOString(),
-
-        rating: null,
-        review: null
-    }
+    orderData
 );
-
  document.getElementById("orderLoading").style.display = "none";
 
 const message = `🔥 NEW LPG ORDER
