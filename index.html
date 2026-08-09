@@ -3597,44 +3597,47 @@ window.addEventListener("load", () => {
 
 <!-- CUSTOMER LOCATION BUTTON -->
 <script>
+
 window.addEventListener("DOMContentLoaded", () => {
 
-const detectLocationBtn =
-    document.getElementById("detectLocationBtn");
+    const detectLocationBtn =
+        document.getElementById("detectLocationBtn");
 
-if (detectLocationBtn) {
-
-    console.log(
-        "✅ Detect Location button found."
-    );
-
-    detectLocationBtn.onclick = function () {
+    if (detectLocationBtn) {
 
         console.log(
-            "🟢 Detect Location clicked."
+            "✅ Detect Location button found."
         );
 
-        if (
-            typeof window.getCustomerLocation ===
-            "function"
-        ) {
+        detectLocationBtn.onclick = function () {
 
             console.log(
-                "📍 Calling getCustomerLocation()..."
+                "🟢 Detect Location clicked."
             );
 
-            window.getCustomerLocation();
+            if (
+                typeof window.getCustomerLocation ===
+                "function"
+            ) {
 
-        } else {
+                console.log(
+                    "📍 Calling getCustomerLocation()..."
+                );
 
-            console.error(
-                "❌ window.getCustomerLocation is NOT defined."
-            );
-        }
+                window.getCustomerLocation();
 
-    });
+            } else {
+
+                console.error(
+                    "❌ window.getCustomerLocation is NOT defined."
+                );
+            }
+
+        };
+    }
 
 });
+
 </script>
 
 
