@@ -2950,10 +2950,11 @@ if (!sellerData) {
 
 const sellerId = sellerData.id;
 
-const sellerWhatsapp = sellerData.phone?.trim();
+const sellerWhatsapp =
+    sellerData.phone?.trim();
 
 const orderPrice =
-    Number(sellerData.prices?.[quantity] || 0);
+    Number(sellerData.sellerPrice || 0);
 
 if (!sellerData.uid) {
     throw new Error("Seller UID missing");
@@ -2961,6 +2962,10 @@ if (!sellerData.uid) {
 
 if (!sellerWhatsapp) {
     throw new Error("Seller phone missing");
+}
+
+if (orderPrice <= 0) {
+    throw new Error("Seller price is invalid");
 }
 
 console.log("Customer Latitude:", customerLatitude);
@@ -2997,7 +3002,7 @@ const orderData = {
         sellerData.location || "",
 
     price:
-        Number(sellerData.sellerPrice || sellerData.prices?.[quantity] || 0),
+        orderPrice,
 
     sellerLatitude:
         Number(sellerData.sellerLatitude),
@@ -3006,10 +3011,14 @@ const orderData = {
         Number(sellerData.sellerLongitude),
 
     customerLatitude:
-        Number(customerLatitude),
+        customerLatitude != null
+            ? Number(customerLatitude)
+            : null,
 
     customerLongitude:
-        Number(customerLongitude),
+        customerLongitude != null
+            ? Number(customerLongitude)
+            : null,
 
     status: "Pending",
 
