@@ -2137,55 +2137,82 @@ window.getCustomerLocation = function () {
 
         /* ---------------- SUCCESS ---------------- */
 
-        (position) => {
+(position) => {
 
-            customerLatitude =
-                position.coords.latitude;
+    customerLatitude =
+        position.coords.latitude;
 
-            customerLongitude =
-                position.coords.longitude;
+    customerLongitude =
+        position.coords.longitude;
 
-            console.log(
-                "✅ LOCATION SUCCESS"
-            );
+    console.log(
+        "✅ LOCATION SUCCESS"
+    );
 
-            console.log(
-                "📍 Customer GPS:",
-                customerLatitude,
-                customerLongitude
-            );
+    console.log(
+        "📍 Customer GPS:",
+        customerLatitude,
+        customerLongitude
+    );
 
-            console.log(
-                "🎯 GPS Accuracy:",
-                position.coords.accuracy,
-                "meters"
-            );
+    console.log(
+        "🎯 GPS Accuracy:",
+        position.coords.accuracy,
+        "meters"
+    );
 
-            console.log(
-                "📡 Location source:",
-                position.coords
-            );
+    // ----------------------
+    // GPS ACCURACY CHECK
+    // ----------------------
 
-           showToast(
-    "📍 Location detected successfully."
-);
+    const accuracy =
+        position.coords.accuracy;
 
-            /* Update recommended sellers */
+    console.log(
+        "🎯 GPS ACCURACY:",
+        accuracy,
+        "meters"
+    );
 
-            if (
-                typeof showRecommendedSeller ===
-                "function"
-            ) {
+    if (accuracy > 100) {
 
-                console.log(
-                    "🔄 Updating recommended seller..."
-                );
+        console.warn(
+            "⚠️ GPS accuracy is too low:",
+            accuracy,
+            "meters"
+        );
 
-                showRecommendedSeller();
+        showToast(
+            `📍 Location accuracy is low (${Math.round(accuracy)}m). Please enable GPS/location services and try again.`,
+            false
+        );
 
-            }
+    }
 
-        },
+    console.log(
+        "📡 Location source:",
+        position.coords
+    );
+
+
+    // ----------------------
+    // UPDATE RECOMMENDED SELLER
+    // ----------------------
+
+    if (
+        typeof showRecommendedSeller ===
+        "function"
+    ) {
+
+        console.log(
+            "🔄 Updating recommended seller..."
+        );
+
+        showRecommendedSeller();
+
+    }
+
+},
 
         /* ---------------- ERROR ---------------- */
 
