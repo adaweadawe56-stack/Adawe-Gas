@@ -302,129 +302,111 @@ function startRealtime(){
 
 function updateStatsAndChart(){
 
- let total = 0;
+    let total = 0;
+    let pending = 0;
+    let today = 0;
+    let revenue = 0;
 
- let pending = 0;
+    const todayDate = new Date().toDateString();
 
- let today = 0;
+    const dailyMap = {};
 
- let revenue = 0;
+    ordersData.forEach(o => {
 
- const todayDate = new Date().toDateString();
+        // Total orders
+        total++;
 
- let dailyMap = {};
 
- ordersData.forEach(o=>{
+        // Pending orders
+        if ((o.status || "Pending") === "Pending") {
+            pending++;
+        }
 
-  total++;
 
-  if((o.status || "Pending") === "Pending"){
+        // Revenue
+        if (o.price) {
+            revenue += Number(o.price);
+        }
 
-    pending++;
-  }
 
-  if(o.price){
+        // Created At
+        if (o.createdAt) {
 
-    revenue += o.price;
-  }
+            const d =
+                o.createdAt?.toDate
+                    ? o.createdAt.toDate()
+                    : new Date(o.createdAt);
 
-  if(o.createdAt){
+            if (!isNaN(d.getTime())) {
 
-   if (o.createdAt) {
+                // Today's orders
+                if (d.toDateString() === todayDate) {
+                    today++;
+                }
 
-    let d;
 
-    if(o.createdAt){
+                // Orders per day
+                const day =
+                    d.toLocaleDateString("en-KE");
 
-    const d =
-        o.createdAt?.toDate
-            ? o.createdAt.toDate()
-            : new Date(o.createdAt);
+                dailyMap[day] =
+                    (dailyMap[day] || 0) + 1;
+            }
+        }
 
-    if(!isNaN(d.getTime())){
+    });
 
-        if(d.toDateString() === todayDate){
 
-            today++;
+    // Dashboard statistics
+    document.getElementById("totalOrders").innerText =
+        total;
+
+    document.getElementById("pendingOrders").innerText =
+        pending;
+
+    document.getElementById("todayOrders").innerText =
+        today;
+
+    document.getElementById("totalRevenue").innerText =
+        revenue.toLocaleString();
+
+
+    // Chart
+    if (chart) {
+        chart.destroy();
+    }
+
+
+    const salesCanvas =
+        document.getElementById("salesChart");
+
+    if (!salesCanvas) {
+        return;
+    }
+
+
+    chart = new Chart(salesCanvas, {
+
+        type: "line",
+
+        data: {
+
+            labels: Object.keys(dailyMap),
+
+            datasets: [{
+
+                label: "Orders per Day",
+
+                data: Object.values(dailyMap)
+
+            }]
 
         }
 
-        const day =
-            d.toLocaleDateString();
-
-        dailyMap[day] =
-            (dailyMap[day] || 0) + 1;
-
-    }
+    });
 
 }
-    } else {
-        d = new Date(o.createdAt);
-    }
-
-    if (!isNaN(d.getTime())) {
-
-        if (d.toDateString() === todayDate) {
-            today++;
-        }
-
-        const day = d.toLocaleDateString("en-KE");
-
-        dailyMap[day] =
-            (dailyMap[day] || 0) + 1;
-    }
-}
-
-    if(d.toDateString() === todayDate){
-
-      today++;
-    }
-
-    const day = d.toLocaleDateString();
-
-    dailyMap[day] = (dailyMap[day] || 0) + 1;
-  }
-
- });
-
- totalOrders.innerText = total;
-
- pendingOrders.innerText = pending;
-
- todayOrders.innerText = today;
-
- totalRevenue.innerText = revenue;
-
- if(chart){
-
-  chart.destroy();
- }
-
- const salesCanvas = document.getElementById("salesChart");
-
- if(!salesCanvas) return;
-
- chart = new Chart(salesCanvas,{
-
-  type:"line",
-
-  data:{
-
-    labels:Object.keys(dailyMap),
-
-    datasets:[{
-
-      label:"Orders per Day",
-
-      data:Object.values(dailyMap)
-
-    }]
-  }
-
- });
-
-}
-
+    
 function renderOrders() {
 
     const table =
