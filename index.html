@@ -2093,7 +2093,26 @@ let locationWatchId = null;
 
 window.getCustomerLocation = function () {
 
-    console.log("📍 getCustomerLocation() started.");
+    console.log(
+        "📍 getCustomerLocation() started."
+    );
+
+
+    // ----------------------
+    // PREVENT DUPLICATE REQUEST
+    // ----------------------
+
+    if (locationRequestRunning) {
+
+        console.warn(
+            "⚠️ Location request already running."
+        );
+
+        return;
+    }
+
+    locationRequestRunning = true;
+
 
     // ----------------------
     // BROWSER SUPPORT
@@ -2101,9 +2120,7 @@ window.getCustomerLocation = function () {
 
     if (!navigator.geolocation) {
 
-        console.error(
-            "❌ Geolocation API is not supported."
-        );
+        locationRequestRunning = false;
 
         showToast(
             "📍 Your browser does not support location.",
@@ -2115,22 +2132,15 @@ window.getCustomerLocation = function () {
 
 
     // ----------------------
-    // HTTPS CHECK
+    // HTTPS
     // ----------------------
-
-    console.log(
-        "🔐 Secure context:",
-        window.isSecureContext
-    );
 
     if (!window.isSecureContext) {
 
-        console.error(
-            "❌ Location requires HTTPS."
-        );
+        locationRequestRunning = false;
 
         showToast(
-            "🔒 Location requires a secure HTTPS connection.",
+            "🔒 Location requires HTTPS.",
             false
         );
 
@@ -2142,29 +2152,14 @@ window.getCustomerLocation = function () {
         "📍 Detecting your location..."
     );
 
-    console.log(
-        "📡 Requesting high accuracy GPS..."
-    );
-
-
-    // ----------------------
-    // VARIABLES
-    // ----------------------
 
     let bestPosition = null;
 
     let finished = false;
 
-    let watchId = null;
-
-
-    // ----------------------
-    // FINISH LOCATION
-    // ----------------------
 
     function finishLocation(position) {
 
-        // Prevent duplicate execution
         if (finished) {
             return;
         }
@@ -2172,34 +2167,27 @@ window.getCustomerLocation = function () {
         finished = true;
 
 
-        // Stop GPS watching
-        if (watchId !== null) {
+        if (locationWatchId !== null) {
 
             navigator.geolocation.clearWatch(
-                watchId
+                locationWatchId
             );
 
-            watchId = null;
+            locationWatchId = null;
         }
 
 
-        // Use best position
+        locationRequestRunning = false;
+
+
         useCustomerLocation(
             position
         );
     }
 
 
-    // ----------------------
-    // WATCH GPS
-    // ----------------------
-
-    watchId =
+    locationWatchId =
         navigator.geolocation.watchPosition(
-
-            /* =========================
-               SUCCESS
-            ========================= */
 
             (position) => {
 
@@ -2223,17 +2211,14 @@ window.getCustomerLocation = function () {
                 );
 
 
-                // ----------------------
-                // KEEP BEST READING
-                // ----------------------
-
                 if (
                     !bestPosition ||
                     accuracy <
                     bestPosition.coords.accuracy
                 ) {
 
-                    bestPosition = position;
+                    bestPosition =
+                        position;
 
                     console.log(
                         "🏆 Better GPS reading found:",
@@ -2242,10 +2227,6 @@ window.getCustomerLocation = function () {
                     );
                 }
 
-
-                // ----------------------
-                // EXCELLENT ACCURACY
-                // ----------------------
 
                 if (accuracy <= 50) {
 
@@ -2259,42 +2240,23 @@ window.getCustomerLocation = function () {
                         bestPosition
                     );
 
-                    return;
                 }
 
             },
 
 
-            /* =========================
-               ERROR
-            ========================= */
-
             (error) => {
 
-                // If already finished,
-                // ignore late errors
                 if (finished) {
                     return;
                 }
 
-                console.error(
-                    "❌ CUSTOMER LOCATION ERROR"
-                );
 
                 console.error(
-                    "Error code:",
-                    error.code
+                    "❌ CUSTOMER LOCATION ERROR:",
+                    error
                 );
 
-                console.error(
-                    "Error message:",
-                    error.message
-                );
-
-
-                // ----------------------
-                // IF WE HAVE A GPS READING
-                // ----------------------
 
                 if (bestPosition) {
 
@@ -2310,13 +2272,24 @@ window.getCustomerLocation = function () {
                 }
 
 
-                // ----------------------
-                // NO GPS READING
-                // ----------------------
-
                 finished = true;
 
+                locationRequestRunning =
+                    false;
+
+
+                if (locationWatchId !== null) {
+
+                    navigator.geolocation.clearWatch(
+                        locationWatchId
+                    );
+
+                    locationWatchId = null;
+                }
+
+
                 customerLatitude = null;
+
                 customerLongitude = null;
 
 
@@ -2327,18 +2300,14 @@ window.getCustomerLocation = function () {
                 if (error.code === 1) {
 
                     message =
-                        "📍 Location permission denied. Please allow location access.";
+                        "📍 Location permission denied.";
 
-                }
-
-                else if (error.code === 2) {
+                } else if (error.code === 2) {
 
                     message =
-                        "📍 Location unavailable. Please turn ON GPS/location services.";
+                        "📍 Location unavailable. Please turn on GPS.";
 
-                }
-
-                else if (error.code === 3) {
+                } else if (error.code === 3) {
 
                     message =
                         "📍 GPS is taking too long. Please try again.";
@@ -2349,12 +2318,9 @@ window.getCustomerLocation = function () {
                     message,
                     false
                 );
+
             },
 
-
-            /* =========================
-               OPTIONS
-            ========================= */
 
             {
                 enableHighAccuracy: true,
@@ -2365,7 +2331,7 @@ window.getCustomerLocation = function () {
 
 
     // ----------------------
-    // MAXIMUM WAIT
+    // 30 SECOND FALLBACK
     // ----------------------
 
     setTimeout(() => {
@@ -2387,31 +2353,27 @@ window.getCustomerLocation = function () {
                 "meters"
             );
 
+
             finishLocation(
                 bestPosition
             );
 
         } else {
 
-            console.error(
-                "❌ No GPS reading received after 30 seconds."
-            );
-
             finished = true;
 
+            locationRequestRunning =
+                false;
 
-            if (watchId !== null) {
+
+            if (locationWatchId !== null) {
 
                 navigator.geolocation.clearWatch(
-                    watchId
+                    locationWatchId
                 );
 
-                watchId = null;
+                locationWatchId = null;
             }
-
-
-            customerLatitude = null;
-            customerLongitude = null;
 
 
             showToast(
