@@ -145,12 +145,23 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
+
 const db = getFirestore(app);
+
 const auth = getAuth(app);
 
+
 let ordersData = [];
+
 let sellersData = [];
-let chart;
+
+let chart = null;
+
+let sellersLoaded = false;
+
+let ordersLoaded = false;
+
+const assigningOrders = new Set();
 
 function formatTimestamp(timestamp) {
 
