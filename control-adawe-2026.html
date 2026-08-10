@@ -75,13 +75,13 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
     id="statusFilter"
     class="form-select mb-2">
 
-   <option value="">All Status</option>
+  <option value="">All Status</option>
 <option value="Pending">Pending</option>
+<option value="Assigned">Assigned</option>
 <option value="Accepted">Accepted</option>
 <option value="On The Way">On The Way</option>
 <option value="Delivered">Delivered</option>
 <option value="Rejected">Rejected</option>
-</select>
 
 <table id="ordersTable" class="table table-striped"></table>
 
@@ -244,6 +244,931 @@ window.login = async function(){
  }
 };
 
+// =====================================================
+// ADAWE GAS - SMART AUTO ASSIGN SYSTEM
+// =====================================================
+
+
+// -----------------------------------------------------
+// HAVERSINE DISTANCE
+// Calculates distance between customer and seller GPS
+// -----------------------------------------------------
+
+function calculateDistanceKm(
+    lat1,
+    lon1,
+    lat2,
+    lon2
+) {
+
+    const R = 6371;
+
+    const dLat =
+        (lat2 - lat1) *
+        Math.PI / 180;
+
+    const dLon =
+        (lon2 - lon1) *
+        Math.PI / 180;
+
+    const a =
+        Math.sin(dLat / 2) *
+        Math.sin(dLat / 2) +
+
+        Math.cos(lat1 * Math.PI / 180) *
+        Math.cos(lat2 * Math.PI / 180) *
+
+        Math.sin(dLon / 2) *
+        Math.sin(dLon / 2);
+
+    const c =
+        2 *
+        Math.atan2(
+            Math.sqrt(a),
+            Math.sqrt(1 - a)
+        );
+
+    return R * c;
+}
+
+
+// -----------------------------------------------------
+// NORMALIZE TEXT
+// -----------------------------------------------------
+
+function normalizeText(value) {
+
+    return String(value || "")
+        .trim()
+        .toLowerCase();
+
+}
+
+
+// -----------------------------------------------------
+// CHECK BRAND
+// -----------------------------------------------------
+
+function sellerSupportsBrand(
+    seller,
+    order
+) {
+
+    if (!order.brand) {
+        return true;
+    }
+
+    if (!Array.isArray(seller.brands)) {
+        return false;
+    }
+
+    const orderBrand =
+        normalizeText(order.brand);
+
+    return seller.brands.some(
+        brand =>
+            normalizeText(brand) === orderBrand
+    );
+
+}
+
+
+// -----------------------------------------------------
+// GET ORDER SIZE
+// -----------------------------------------------------
+
+function getOrderSize(order) {
+
+    /*
+        Your order.quantity may contain:
+
+        "6kg"
+        "6 kg"
+        "6"
+        6
+
+        We normalize it to:
+
+        "6kg"
+    */
+
+    let quantity =
+        String(order.quantity || "")
+            .trim()
+            .toLowerCase();
+
+    quantity =
+        quantity.replace(/\s+/g, "");
+
+    if (
+        quantity &&
+        !quantity.endsWith("kg")
+    ) {
+
+        quantity += "kg";
+
+    }
+
+    return quantity;
+
+}
+
+
+// -----------------------------------------------------
+// GET SELLER PRICE
+// -----------------------------------------------------
+
+function getSellerPrice(
+    seller,
+    order
+) {
+
+    const size =
+        getOrderSize(order);
+
+    if (!size) {
+        return null;
+    }
+
+    if (!seller.prices) {
+        return null;
+    }
+
+    const price =
+        Number(
+            seller.prices[size]
+        );
+
+    if (
+        !Number.isFinite(price) ||
+        price <= 0
+    ) {
+
+        return null;
+
+    }
+
+    return price;
+
+}
+
+
+// -----------------------------------------------------
+// SELLER ELIGIBILITY
+// -----------------------------------------------------
+
+function isSellerEligible(
+    seller,
+    order
+) {
+
+    // Seller must be approved
+    if (
+        normalizeText(seller.status) !==
+        "approved"
+    ) {
+
+        return false;
+
+    }
+
+
+    // Seller must be paid
+    if (
+        normalizeText(seller.paymentStatus) !==
+        "paid"
+    ) {
+
+        return false;
+
+    }
+
+
+    // Delivery limit
+    const deliveryCount =
+        Number(
+            seller.deliveryCount || 0
+        );
+
+    const deliveryLimit =
+        Number(
+            seller.deliveryLimit || 0
+        );
+
+
+    if (
+        deliveryLimit > 0 &&
+        deliveryCount >= deliveryLimit
+    ) {
+
+        return false;
+
+    }
+
+
+    // Brand check
+    if (
+        !sellerSupportsBrand(
+            seller,
+            order
+        )
+    ) {
+
+        return false;
+
+    }
+
+
+    // Price check
+    const price =
+        getSellerPrice(
+            seller,
+            order
+        );
+
+    if (price === null) {
+
+        return false;
+
+    }
+
+
+    // Seller GPS required
+    const lat =
+        Number(
+            seller.sellerLatitude
+        );
+
+    const lng =
+        Number(
+            seller.sellerLongitude
+        );
+
+
+    if (
+        !Number.isFinite(lat) ||
+        !Number.isFinite(lng)
+    ) {
+
+        return false;
+
+    }
+
+
+    return true;
+
+}
+
+
+// -----------------------------------------------------
+// SMART SELLER SCORE
+// -----------------------------------------------------
+
+function calculateSellerScore(
+    seller,
+    order
+) {
+
+    const price =
+        getSellerPrice(
+            seller,
+            order
+        );
+
+
+    if (price === null) {
+        return null;
+    }
+
+
+    const customerLat =
+        Number(
+            order.customerLatitude
+        );
+
+    const customerLng =
+        Number(
+            order.customerLongitude
+        );
+
+
+    const sellerLat =
+        Number(
+            seller.sellerLatitude
+        );
+
+    const sellerLng =
+        Number(
+            seller.sellerLongitude
+        );
+
+
+    let distanceKm = 0;
+
+
+    if (
+        Number.isFinite(customerLat) &&
+        Number.isFinite(customerLng) &&
+        Number.isFinite(sellerLat) &&
+        Number.isFinite(sellerLng)
+    ) {
+
+        distanceKm =
+            calculateDistanceKm(
+                customerLat,
+                customerLng,
+                sellerLat,
+                sellerLng
+            );
+
+    } else {
+
+        // If customer GPS is unavailable,
+        // distance gets neutral score.
+
+        distanceKm = 0;
+
+    }
+
+
+    // -------------------------------------------------
+    // PRICE SCORE
+    // Lower price = higher score
+    // -------------------------------------------------
+
+    const allPrices =
+        sellersData
+            .map(s =>
+                getSellerPrice(
+                    s,
+                    order
+                )
+            )
+            .filter(
+                p =>
+                    Number.isFinite(p)
+            );
+
+
+    let priceScore = 50;
+
+
+    if (allPrices.length > 0) {
+
+        const minPrice =
+            Math.min(
+                ...allPrices
+            );
+
+        const maxPrice =
+            Math.max(
+                ...allPrices
+            );
+
+
+        if (
+            maxPrice !== minPrice
+        ) {
+
+            priceScore =
+                (
+                    (maxPrice - price) /
+                    (maxPrice - minPrice)
+                ) * 100;
+
+        } else {
+
+            priceScore = 100;
+
+        }
+
+    }
+
+
+    // -------------------------------------------------
+    // DISTANCE SCORE
+    // Nearer = higher score
+    // -------------------------------------------------
+
+    let distanceScore = 50;
+
+
+    if (distanceKm > 0) {
+
+        const distances =
+            sellersData
+                .map(s => {
+
+                    const lat =
+                        Number(
+                            s.sellerLatitude
+                        );
+
+                    const lng =
+                        Number(
+                            s.sellerLongitude
+                        );
+
+
+                    if (
+                        !Number.isFinite(lat) ||
+                        !Number.isFinite(lng) ||
+                        !Number.isFinite(customerLat) ||
+                        !Number.isFinite(customerLng)
+                    ) {
+
+                        return null;
+
+                    }
+
+
+                    return calculateDistanceKm(
+                        customerLat,
+                        customerLng,
+                        lat,
+                        lng
+                    );
+
+                })
+                .filter(
+                    d =>
+                        Number.isFinite(d)
+                );
+
+
+        if (distances.length > 0) {
+
+            const minDistance =
+                Math.min(
+                    ...distances
+                );
+
+            const maxDistance =
+                Math.max(
+                    ...distances
+                );
+
+
+            if (
+                maxDistance !== minDistance
+            ) {
+
+                distanceScore =
+                    (
+                        (maxDistance - distanceKm) /
+                        (maxDistance - minDistance)
+                    ) * 100;
+
+            } else {
+
+                distanceScore = 100;
+
+            }
+
+        }
+
+    }
+
+
+    // -------------------------------------------------
+    // RATING SCORE
+    // -------------------------------------------------
+
+    const averageRating =
+        Number(
+            seller.averageRating || 0
+        );
+
+
+    const totalRatings =
+        Number(
+            seller.totalRatings || 0
+        );
+
+
+    let ratingScore = 50;
+
+
+    if (totalRatings > 0) {
+
+        ratingScore =
+            Math.min(
+                100,
+                (averageRating / 5) * 100
+            );
+
+    }
+
+
+    // -------------------------------------------------
+    // DELIVERY CAPACITY SCORE
+    // -------------------------------------------------
+
+    const deliveryCount =
+        Number(
+            seller.deliveryCount || 0
+        );
+
+    const deliveryLimit =
+        Number(
+            seller.deliveryLimit || 0
+        );
+
+
+    let capacityScore = 100;
+
+
+    if (
+        deliveryLimit > 0
+    ) {
+
+        const remaining =
+            Math.max(
+                0,
+                deliveryLimit -
+                deliveryCount
+            );
+
+
+        capacityScore =
+            Math.min(
+                100,
+                (remaining /
+                deliveryLimit) * 100
+            );
+
+    }
+
+
+    // -------------------------------------------------
+    // FINAL SMART SCORE
+    // -------------------------------------------------
+
+    const finalScore =
+
+        (distanceScore * 0.40) +
+
+        (priceScore * 0.30) +
+
+        (ratingScore * 0.20) +
+
+        (capacityScore * 0.10);
+
+
+    return {
+
+        score:
+            Number(
+                finalScore.toFixed(2)
+            ),
+
+        price,
+
+        distanceKm:
+            Number(
+                distanceKm.toFixed(2)
+            ),
+
+        distanceScore:
+            Number(
+                distanceScore.toFixed(2)
+            ),
+
+        priceScore:
+            Number(
+                priceScore.toFixed(2)
+            ),
+
+        ratingScore:
+            Number(
+                ratingScore.toFixed(2)
+            ),
+
+        capacityScore:
+            Number(
+                capacityScore.toFixed(2)
+            )
+
+    };
+
+}
+
+
+// -----------------------------------------------------
+// AUTO ASSIGN ONE ORDER
+// -----------------------------------------------------
+
+async function autoAssignOrder(
+    order
+) {
+
+    try {
+
+        // ---------------------------------------------
+        // IMPORTANT:
+        // Never assign an already assigned order
+        // ---------------------------------------------
+
+        if (
+            order.sellerUid ||
+            order.sellerId ||
+            order.assignmentStatus === "Assigned"
+        ) {
+
+            return;
+
+        }
+
+
+        // Only Pending orders
+        const currentStatus =
+            normalizeText(
+                order.status || "pending"
+            );
+
+
+        if (
+            currentStatus !== "pending"
+        ) {
+
+            return;
+
+        }
+
+
+        console.log(
+            "🤖 Smart Auto-Assign:",
+            order.orderId || order.id
+        );
+
+
+        // ---------------------------------------------
+        // FIND ELIGIBLE SELLERS
+        // ---------------------------------------------
+
+        const candidates = [];
+
+
+        sellersData.forEach(
+            seller => {
+
+                if (
+                    !isSellerEligible(
+                        seller,
+                        order
+                    )
+                ) {
+
+                    return;
+
+                }
+
+
+                const result =
+                    calculateSellerScore(
+                        seller,
+                        order
+                    );
+
+
+                if (!result) {
+                    return;
+                }
+
+
+                candidates.push({
+
+                    seller,
+
+                    ...result
+
+                });
+
+            }
+        );
+
+
+        // ---------------------------------------------
+        // NO SELLER
+        // ---------------------------------------------
+
+        if (
+            candidates.length === 0
+        ) {
+
+            console.warn(
+                "⚠️ No eligible seller:",
+                order.orderId || order.id
+            );
+
+
+            await updateDoc(
+                doc(
+                    db,
+                    "orders",
+                    order.id
+                ),
+                {
+
+                    assignmentStatus:
+                        "No Seller Available",
+
+                    assignmentAttemptedAt:
+                        serverTimestamp()
+
+                }
+            );
+
+
+            return;
+
+        }
+
+
+        // ---------------------------------------------
+        // SORT BEST SELLER
+        // ---------------------------------------------
+
+        candidates.sort(
+            (a, b) =>
+                b.score - a.score
+        );
+
+
+        const best =
+            candidates[0];
+
+
+        const seller =
+            best.seller;
+
+
+        console.log(
+            "✅ Best Seller:",
+            seller.name,
+            "Score:",
+            best.score,
+            "Distance:",
+            best.distanceKm,
+            "Price:",
+            best.price
+        );
+
+
+        // ---------------------------------------------
+        // ASSIGN ORDER
+        // ---------------------------------------------
+
+        await updateDoc(
+            doc(
+                db,
+                "orders",
+                order.id
+            ),
+            {
+
+                sellerUid:
+                    seller.uid || null,
+
+                sellerId:
+                    seller.id,
+
+                sellerName:
+                    seller.name || "",
+
+                sellerPhone:
+                    seller.phone || "",
+
+                sellerPrice:
+                    best.price,
+
+                sellerDistanceKm:
+                    best.distanceKm,
+
+                sellerSmartScore:
+                    best.score,
+
+                assignmentStatus:
+                    "Assigned",
+
+                assignedAt:
+                    serverTimestamp(),
+
+                status:
+                    "Assigned"
+
+            }
+        );
+
+
+        console.log(
+            "🎯 Order assigned:",
+            order.orderId || order.id,
+            "→",
+            seller.name
+        );
+
+
+        // ---------------------------------------------
+        // WHATSAPP NOTIFICATION
+        // ---------------------------------------------
+
+        sendSellerWhatsApp(
+            seller,
+            order,
+            best
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ Auto Assign Error:",
+            error
+        );
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// WHATSAPP MESSAGE
+// -----------------------------------------------------
+
+function sendSellerWhatsApp(
+    seller,
+    order,
+    score
+) {
+
+    if (!seller.phone) {
+        return;
+    }
+
+
+    let phone =
+        String(
+            seller.phone
+        ).replace(
+            /\D/g,
+            ""
+        );
+
+
+    // Kenya number
+    if (
+        phone.startsWith("0")
+    ) {
+
+        phone =
+            "254" +
+            phone.substring(1);
+
+    }
+
+
+    const message =
+
+`🔥 ADAWE GAS NEW ORDER
+
+Order: ${order.orderId || order.id}
+
+Customer: ${order.name || "Customer"}
+
+Phone: ${order.phone || "—"}
+
+Location: ${order.location || "—"}
+
+Gas: ${order.quantity || "—"}
+
+Brand: ${order.brand || "—"}
+
+Price: KES ${Number(
+    score.price || 0
+).toLocaleString()}
+
+Distance: ${score.distanceKm} km
+
+Please open your Adawe Gas Seller Dashboard to accept this order.`;
+
+
+    const url =
+        "https://wa.me/" +
+        phone +
+        "?text=" +
+        encodeURIComponent(
+            message
+        );
+
+
+    window.open(
+        url,
+        "_blank"
+    );
+
+}
+    
 function startRealtime(){
 
     onSnapshot(
