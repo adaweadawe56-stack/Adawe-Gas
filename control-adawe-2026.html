@@ -974,12 +974,10 @@ document.getElementById(
 "editPaymentStatus"
 ).value;
 
-const deliveryLimit =
-Number(
-document.getElementById(
-"editDeliveryLimit"
-).value
-);
+if (!Number.isFinite(deliveryLimit) || deliveryLimit < 0) {
+    alert("Invalid delivery limit");
+    return;
+}
 
 const prices = {};
 
@@ -987,8 +985,14 @@ document
 .querySelectorAll(".edit-price")
 .forEach(input=>{
 
-    prices[input.dataset.size] =
-    Number(input.value);
+   const value = Number(input.value);
+
+if (!Number.isFinite(value) || value < 0) {
+    alert(`Invalid price for ${input.dataset.size}`);
+    return;
+}
+
+prices[input.dataset.size] = value;
 
 });
 
