@@ -675,68 +675,168 @@ document
  
 function renderSellers(){
 
-const table = document.getElementById("sellersTable");
+    const table =
+        document.getElementById("sellersTable");
 
-table.innerHTML = `
-<thead>
-<tr>
-    <th>Name</th>
-    <th>Phone</th>
-    <th>Location</th>
-    <th>Status</th>
-    <th>Date</th>
-    <th>Actions</th>
-</tr>
-</thead>
-<tbody></tbody>
-`;
 
-const tbody = table.querySelector("tbody");
+    table.innerHTML = `
 
-sellersData.forEach(s => {
+        <thead>
 
-    const row = document.createElement("tr");
+            <tr>
 
-    row.innerHTML = `
-        <td>${s.name || "—"}</td>
-        <td>${s.phone || "—"}</td>
-        <td>${s.location || "—"}</td>
-        <td>${s.status || "pending"}</td>
-        <td>${formatTimestamp(s.createdAt)}</td>
+                <th>Name</th>
 
-        <td>
-            <button onclick="showPrices('${s.id}')"
-                class="btn btn-info btn-sm">
-                Prices
-            </button>
+                <th>Phone</th>
 
-            <button onclick="editSeller('${s.id}')"
-                class="btn btn-primary btn-sm mt-1">
-                Edit
-            </button>
+                <th>Location</th>
 
-            <button onclick="approveSeller('${s.id}')"
-                class="btn btn-success btn-sm mt-1">
-                Approve
-            </button>
+                <th>Status</th>
 
-            <button onclick="rejectSeller('${s.id}')"
-                class="btn btn-warning btn-sm mt-1">
-                Reject
-            </button>
+                <th>Deliveries</th>
 
-            <button onclick="deleteSeller('${s.id}')"
-                class="btn btn-danger btn-sm mt-1">
-                Delete
-            </button>
-        </td>
+                <th>Limit</th>
+
+                <th>Commission</th>
+
+                <th>Payment</th>
+
+                <th>Date</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
     `;
 
-    tbody.appendChild(row);
-});
+
+    const tbody =
+        table.querySelector("tbody");
+
+
+    sellersData.forEach(s => {
+
+        const row =
+            document.createElement("tr");
+
+
+        const deliveryCount =
+            Number(s.deliveryCount || 0);
+
+        const deliveryLimit =
+            Number(s.deliveryLimit || 0);
+
+        const commission =
+            Number(s.commissionPerOrder || 0);
+
+
+        row.innerHTML = `
+
+            <td>
+                ${s.name || "—"}
+            </td>
+
+
+            <td>
+                ${s.phone || "—"}
+            </td>
+
+
+            <td>
+                ${s.location || "—"}
+            </td>
+
+
+            <td>
+                ${s.status || "pending"}
+            </td>
+
+
+            <td>
+                ${deliveryCount}
+            </td>
+
+
+            <td>
+                ${deliveryLimit}
+            </td>
+
+
+            <td>
+                KES ${commission.toLocaleString()}
+            </td>
+
+
+            <td>
+                ${s.paymentStatus || "Unpaid"}
+            </td>
+
+
+            <td>
+                ${formatTimestamp(s.createdAt)}
+            </td>
+
+
+            <td>
+
+                <button
+                    onclick="showPrices('${s.id}')"
+                    class="btn btn-info btn-sm">
+
+                    Prices
+
+                </button>
+
+
+                <button
+                    onclick="editSeller('${s.id}')"
+                    class="btn btn-primary btn-sm mt-1">
+
+                    Edit
+
+                </button>
+
+
+                <button
+                    onclick="approveSeller('${s.id}')"
+                    class="btn btn-success btn-sm mt-1">
+
+                    Approve
+
+                </button>
+
+
+                <button
+                    onclick="rejectSeller('${s.id}')"
+                    class="btn btn-warning btn-sm mt-1">
+
+                    Reject
+
+                </button>
+
+
+                <button
+                    onclick="deleteSeller('${s.id}')"
+                    class="btn btn-danger btn-sm mt-1">
+
+                    Delete
+
+                </button>
+
+            </td>
+
+        `;
+
+
+        tbody.appendChild(row);
+
+    });
 
 }
-
 window.showPrices = function(id) {
 
     const s = sellersData.find(x => x.id == id);
