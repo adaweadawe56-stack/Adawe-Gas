@@ -25,11 +25,28 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 <body>
 
 <nav class="navbar">
-<div class="container">
-<a class="navbar-brand">Adawe Gas Admin</a>
-</div>
-</nav>
 
+    <div class="container">
+
+        <a class="navbar-brand">
+            Adawe Gas Admin PRO
+        </a>
+
+
+        <button
+            id="logoutBtn"
+            onclick="logout()"
+            class="btn btn-light btn-sm"
+            style="display:none;">
+
+            Logout
+
+        </button>
+
+    </div>
+
+</nav>
+    
 <div id="loginPage" class="container mt-5" style="max-width:400px;">
 <h3>Admin Login</h3>
 <input id="email" class="form-control mb-2" placeholder="Email">
@@ -112,8 +129,9 @@ getDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 import {
-getAuth,
-signInWithEmailAndPassword
+    getAuth,
+    signInWithEmailAndPassword,
+    signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 const firebaseConfig = {
