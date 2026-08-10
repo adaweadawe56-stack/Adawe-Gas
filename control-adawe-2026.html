@@ -869,49 +869,46 @@ function calculateSellerScore(
 // AUTO ASSIGN ONE ORDER
 // -----------------------------------------------------
 
-async function autoAssignOrder(
-    order
-) {
+async function autoAssignOrder(order) {
 
     try {
 
-        // ---------------------------------------------
-        // IMPORTANT:
-        // Never assign an already assigned order
-        // ---------------------------------------------
+        const orderId = order.id;
 
+        if (!orderId) {
+            return;
+        }
+
+        // Prevent duplicate assignment
+        if (assigningOrders.has(orderId)) {
+            return;
+        }
+
+        // Already assigned
         if (
             order.sellerUid ||
             order.sellerId ||
             order.assignmentStatus === "Assigned"
         ) {
-
             return;
-
         }
 
-
-        // Only Pending orders
+        // Only Pending
         const currentStatus =
             normalizeText(
                 order.status || "pending"
             );
 
-
-        if (
-            currentStatus !== "pending"
-        ) {
-
+        if (currentStatus !== "pending") {
             return;
-
         }
 
+        assigningOrders.add(orderId);
 
         console.log(
             "🤖 Smart Auto-Assign:",
-            order.orderId || order.id
+            order.orderId || orderId
         );
-
 
         // ---------------------------------------------
         // FIND ELIGIBLE SELLERS
@@ -1179,72 +1176,234 @@ Please open your Adawe Gas Seller Dashboard to accept this order.`;
     );
 
 }
+
+    finally {
+    assigningOrders.delete(orderId);
+}
+
+// =====================================================
+// AUTO ASSIGN ALL PENDING ORDERS
+// =====================================================
+
+async function autoAssignPendingOrders() {
+
+    if (!sellersLoaded) {
+
+        console.log(
+            "⏳ Waiting for sellers..."
+        );
+
+        return;
+
+    }
+
+
+    if (!ordersLoaded) {
+
+        console.log(
+            "⏳ Waiting for orders..."
+        );
+
+        return;
+
+    }
+
+
+    if (!sellersData.length) {
+
+        console.warn(
+            "⚠️ No sellers loaded"
+        );
+
+        return;
+
+    }
+
+
+    const pendingOrders =
+        ordersData.filter(order => {
+
+            const status =
+                normalizeText(
+                    order.status || "pending"
+                );
+
+
+            return (
+
+                status === "pending" &&
+
+                !order.sellerUid &&
+
+                !order.sellerId &&
+
+                order.assignmentStatus !==
+                    "Assigned"
+
+            );
+
+        });
+
+
+    console.log(
+        "🤖 Pending orders waiting for assignment:",
+        pendingOrders.length
+    );
+
+
+    for (const order of pendingOrders) {
+
+        await autoAssignOrder(order);
+
+    }
+
+}
     
-function startRealtime(){
+function startRealtime() {
+
+    console.log("🔥 Adawe Gas Realtime Started");
+
+
+    // =====================================================
+    // SELLERS REALTIME LISTENER
+    // =====================================================
 
     onSnapshot(
-        collection(db, "orders"),
+        collection(db, "sellers"),
 
-        snap => {
+        async (snapshot) => {
 
-            console.log("Orders Found:", snap.size);
+            try {
 
-            ordersData = [];
+                sellersData =
+                    snapshot.docs.map(document => ({
 
-            snap.forEach(d => {
+                        id: document.id,
 
-                const order = {
-                    id: d.id,
-                    ...d.data()
-                };
+                        ...document.data()
 
-                ordersData.push(order);
+                    }));
 
-            });
 
-            renderOrders();
-            updateStatsAndChart();
+                sellersLoaded = true;
+
+
+                console.log(
+                    "👨‍💼 Sellers loaded:",
+                    sellersData.length
+                );
+
+
+                // Render sellers table
+                if (typeof renderSellers === "function") {
+                    renderSellers();
+                }
+
+
+                // If orders are already loaded,
+                // retry pending orders.
+                if (ordersLoaded) {
+
+                    await autoAssignPendingOrders();
+
+                }
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Seller realtime error:",
+                    error
+                );
+
+            }
 
         },
 
-        error => {
+        (error) => {
 
             console.error(
-                "Orders Error:",
-                error.code,
-                error.message
+                "❌ Sellers listener failed:",
+                error
             );
 
         }
     );
 
 
+    // =====================================================
+    // ORDERS REALTIME LISTENER
+    // =====================================================
+
     onSnapshot(
-        collection(db, "sellers"),
+        collection(db, "orders"),
 
-        snap => {
+        async (snapshot) => {
 
-            sellersData = [];
+            try {
 
-            snap.forEach(d => {
+                ordersData =
+                    snapshot.docs.map(document => ({
 
-                sellersData.push({
-                    id: d.id,
-                    ...d.data()
-                });
+                        id: document.id,
 
-            });
+                        ...document.data()
 
-            renderSellers();
+                    }));
+
+
+                ordersLoaded = true;
+
+
+                console.log(
+                    "📦 Orders loaded:",
+                    ordersData.length
+                );
+
+
+                // Render orders table
+                if (typeof renderOrders === "function") {
+                    renderOrders();
+                }
+
+
+                // Update dashboard
+                if (
+                    typeof updateStatsAndChart ===
+                    "function"
+                ) {
+
+                    updateStatsAndChart();
+
+                }
+
+
+                // IMPORTANT:
+                // Wait until sellers are loaded
+                // before auto assigning.
+
+                if (sellersLoaded) {
+
+                    await autoAssignPendingOrders();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Orders realtime error:",
+                    error
+                );
+
+            }
 
         },
 
-        error => {
+        (error) => {
 
             console.error(
-                "Sellers Error:",
-                error.code,
-                error.message
+                "❌ Orders listener failed:",
+                error
             );
 
         }
