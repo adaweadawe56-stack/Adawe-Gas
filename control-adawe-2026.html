@@ -675,55 +675,65 @@ document
  
 function renderSellers(){
 
- sellersTable.innerHTML = `
- <tr>
- <th>Name</th>
- <th>Phone</th>
- <th>Location</th>
- <th>Status</th>
- <th>Date</th>
- <th>Actions</th>
- </tr>`;
+const table = document.getElementById("sellersTable");
 
- sellersData.forEach(s=>{
+table.innerHTML = `
+<thead>
+<tr>
+    <th>Name</th>
+    <th>Phone</th>
+    <th>Location</th>
+    <th>Status</th>
+    <th>Date</th>
+    <th>Actions</th>
+</tr>
+</thead>
+<tbody></tbody>
+`;
 
-  sellersTable.innerHTML += `
-  <tr>
+const tbody = table.querySelector("tbody");
 
-  <td>${s.name || ""}</td>
+sellersData.forEach(s => {
 
-  <td>${s.phone || ""}</td>
+    const row = document.createElement("tr");
 
-  <td>${s.location || ""}</td>
+    row.innerHTML = `
+        <td>${s.name || "—"}</td>
+        <td>${s.phone || "—"}</td>
+        <td>${s.location || "—"}</td>
+        <td>${s.status || "pending"}</td>
+        <td>${formatTimestamp(s.createdAt)}</td>
 
-  <td>${s.status || "pending"}</td>
+        <td>
+            <button onclick="showPrices('${s.id}')"
+                class="btn btn-info btn-sm">
+                Prices
+            </button>
 
-  <td>${formatTimestamp(s.createdAt)}</td>
- <td>
+            <button onclick="editSeller('${s.id}')"
+                class="btn btn-primary btn-sm mt-1">
+                Edit
+            </button>
 
-<button onclick="showPrices('${s.id}')" class="btn btn-info btn-sm">
-Prices
-</button>
+            <button onclick="approveSeller('${s.id}')"
+                class="btn btn-success btn-sm mt-1">
+                Approve
+            </button>
 
-<button onclick="editSeller('${s.id}')" class="btn btn-primary btn-sm mt-1">
-Edit
-</button>
+            <button onclick="rejectSeller('${s.id}')"
+                class="btn btn-warning btn-sm mt-1">
+                Reject
+            </button>
 
-<button onclick="approveSeller('${s.id}')" class="btn btn-success btn-sm mt-1">
-Approve
-</button>
+            <button onclick="deleteSeller('${s.id}')"
+                class="btn btn-danger btn-sm mt-1">
+                Delete
+            </button>
+        </td>
+    `;
 
-<button onclick="rejectSeller('${s.id}')" class="btn btn-warning btn-sm mt-1">
-Reject
-</button>
-
-<button onclick="deleteSeller('${s.id}')" class="btn btn-danger btn-sm mt-1">
-Delete
-</button>
-
-</td>
-  </tr>`;
- });
+    tbody.appendChild(row);
+});
 
 }
 
