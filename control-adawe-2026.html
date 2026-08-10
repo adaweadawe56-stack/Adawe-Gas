@@ -1088,15 +1088,11 @@ async function autoAssignOrder(order) {
         );
 
 
-    } catch (error) {
-
-        console.error(
-            "❌ Auto Assign Error:",
-            error
-        );
-
+     } catch (error) {
+        console.error("❌ Auto Assign Error:", error);
+    } finally {
+        assigningOrders.delete(orderId);
     }
-
 }
 
 
@@ -1176,9 +1172,7 @@ Please open your Adawe Gas Seller Dashboard to accept this order.`;
     );
 
 }
-
-    finally {
-    assigningOrders.delete(orderId);
+    
 }
 
 // =====================================================
