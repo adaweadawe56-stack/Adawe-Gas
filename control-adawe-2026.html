@@ -946,114 +946,186 @@ document.getElementById("editSellerModal")
 
 }
 
-window.saveSeller =
-async function(){
+window.saveSeller = async function(){
 
-const id =
-document.getElementById(
-"editSellerId"
-).value;
+    const id =
+        document.getElementById("editSellerId").value;
 
-const name =
-document.getElementById(
-"editSellerName"
-).value;
+    const name =
+        document.getElementById("editSellerName").value.trim();
 
-const phone =
-document.getElementById(
-"editSellerPhone"
-).value;
+    const phone =
+        document.getElementById("editSellerPhone").value.trim();
 
-const location =
-document.getElementById(
-"editSellerLocation"
-).value;
+    const location =
+        document.getElementById("editSellerLocation").value.trim();
 
-const paymentStatus =
-document.getElementById(
-"editPaymentStatus"
-).value;
+    const paymentStatus =
+        document.getElementById("editPaymentStatus").value;
 
-if (!Number.isFinite(deliveryLimit) || deliveryLimit < 0) {
-    alert("Invalid delivery limit");
-    return;
-}
+    const deliveryLimit =
+        Number(
+            document.getElementById("editDeliveryLimit").value
+        );
 
-const prices = {};
+    const commissionPerOrder =
+        Number(
+            document.getElementById("editCommissionPerOrder").value
+        );
 
-document
-.querySelectorAll(".edit-price")
-.forEach(input=>{
 
-   const value = Number(input.value);
+    // =========================
+    // BASIC VALIDATION
+    // =========================
 
-if (!Number.isFinite(value) || value < 0) {
-    alert(`Invalid price for ${input.dataset.size}`);
-    return;
-}
+    if(!name || !phone || !location){
 
-prices[input.dataset.size] = value;
+        alert("Please fill all required fields");
 
-});
-
-const brands = [];
-
-document
-.querySelectorAll(".edit-brand:checked")
-.forEach(cb=>{
-
-    brands.push(cb.value);
-
-});
-
-if(!name || !phone || !location){
-
-    alert("Please fill all required fields");
-
-    return;
-
-}
-
-if(brands.length === 0){
-
-    alert("Select at least one gas brand");
-
-    return;
-
-}
-  
-try{
-
-    await updateDoc(
-        doc(db,"sellers",id),
-        {
-            name,
-            phone,
-            location,
-            prices,
-            brands,
-            paymentStatus,
-            deliveryLimit
-        }
-    );
-
-    const modal = bootstrap.Modal.getInstance(
-        document.getElementById("editSellerModal")
-    );
-
-    if(modal){
-        modal.hide();
+        return;
     }
 
-    alert("Seller updated successfully");
 
-}catch(error){
+    if(!Number.isFinite(deliveryLimit) || deliveryLimit < 0){
 
-    console.error(error);
+        alert("Invalid delivery limit");
 
-    alert("Failed to update seller");
+        return;
+    }
 
-}
+
+    if(
+        !Number.isFinite(commissionPerOrder) ||
+        commissionPerOrder < 0
+    ){
+
+        alert("Invalid commission amount");
+
+        return;
+    }
+
+
+    // =========================
+    // PRICES
+    // =========================
+
+    const prices = {};
+
+    let invalidPrice = false;
+
+    document
+        .querySelectorAll(".edit-price")
+        .forEach(input => {
+
+            const value = Number(input.value);
+
+            if(!Number.isFinite(value) || value < 0){
+
+                invalidPrice = true;
+
+                alert(
+                    `Invalid price for ${input.dataset.size}`
+                );
+
+                return;
+            }
+
+            prices[input.dataset.size] = value;
+
+        });
+
+
+    if(invalidPrice){
+
+        return;
+    }
+
+
+    // =========================
+    // BRANDS
+    // =========================
+
+    const brands = [];
+
+    document
+        .querySelectorAll(".edit-brand:checked")
+        .forEach(cb => {
+
+            brands.push(cb.value);
+
+        });
+
+
+    if(brands.length === 0){
+
+        alert("Select at least one gas brand");
+
+        return;
+    }
+
+
+    // =========================
+    // UPDATE SELLER
+    // =========================
+
+    try{
+
+        await updateDoc(
+            doc(db,"sellers",id),
+            {
+
+                name,
+
+                phone,
+
+                location,
+
+                prices,
+
+                brands,
+
+                paymentStatus,
+
+                deliveryLimit,
+
+                commissionPerOrder
+
+            }
+        );
+
+
+        const modal =
+            bootstrap.Modal.getInstance(
+                document.getElementById(
+                    "editSellerModal"
+                )
+            );
+
+
+        if(modal){
+
+            modal.hide();
+
+        }
+
+
+        alert(
+            "Seller updated successfully"
+        );
+
+
+    }catch(error){
+
+        console.error(
+            "Save Seller Error:",
+            error
+        );
+
+        alert(
+            "Failed to update seller"
+        );
+
+    }
 
 };
 window.approveSeller = async id => {
