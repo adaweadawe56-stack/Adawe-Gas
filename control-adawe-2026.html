@@ -1513,7 +1513,12 @@ function updateStatsAndChart(){
 function renderOrders() {
 
     const table =
-        document.getElementById("ordersTable");
+    document.getElementById("ordersTable");
+
+if (!table) {
+    console.error("❌ ordersTable not found in HTML");
+    return;
+}
 
     const search =
         document.getElementById("searchOrders")
@@ -1782,11 +1787,15 @@ document
     .getElementById("statusFilter")
     .addEventListener("change", renderOrders);    
  
-function renderSellers(){
+function renderSellers() {
 
     const table =
         document.getElementById("sellersTable");
 
+    if (!table) {
+        console.error("❌ sellersTable not found in HTML");
+        return;
+    }
 
     table.innerHTML = `
 
