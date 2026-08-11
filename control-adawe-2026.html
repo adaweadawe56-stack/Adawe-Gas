@@ -1603,51 +1603,47 @@ if (!table) {
     // TABLE HEADER
     // =========================
 
-    table.innerHTML = `
+table.innerHTML = `
 
-        <thead>
+    <thead>
 
-            <tr>
+        <tr>
 
-                <th>Order ID</th>
+            <th>Order ID</th>
+            <th>Customer</th>
+            <th>Phone</th>
+            <th>Location</th>
+            <th>Quantity</th>
+            <th>Brand</th>
 
-                <th>Customer</th>
+            <th>Seller</th>
 
-                <th>Phone</th>
+            <th>Assignment</th>
 
-                <th>Location</th>
+            <th>Smart Score</th>
 
-                <th>Quantity</th>
+            <th>Distance</th>
 
-                <th>Brand</th>
+            <th>Price</th>
 
-                <th>Seller</th>
+            <th>Status</th>
 
-                <th>Price</th>
+            <th>Created At</th>
+            <th>Assigned At</th>
+            <th>Accepted At</th>
+            <th>On The Way At</th>
+            <th>Delivered At</th>
+            <th>Rejected At</th>
 
-                <th>Status</th>
+            <th>Actions</th>
 
-                <th>Created At</th>
+        </tr>
 
-                <th>Assigned At</th>
+    </thead>
 
-                <th>Accepted At</th>
+    <tbody></tbody>
 
-                <th>On The Way At</th>
-
-                <th>Delivered At</th>
-
-                <th>Rejected At</th>
-
-                <th>Actions</th>
-
-            </tr>
-
-        </thead>
-
-        <tbody></tbody>
-
-    `;
+`;
 
 
     const tbody =
