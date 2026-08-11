@@ -2257,19 +2257,21 @@ function renderOrders(){
         // ---------------------------------------------
 
         const smartScore =
-            order.smartScore ??
-            order.score ??
-            "-";
+    order.sellerSmartScore ??
+    order.smartScore ??
+    order.score ??
+    "-";
 
 
         // ---------------------------------------------
         // DISTANCE
         // ---------------------------------------------
 
-        let distance =
-            order.distance ??
-            order.distanceKm ??
-            null;
+       let distance =
+    order.sellerDistanceKm ??
+    order.distanceKm ??
+    order.distance ??
+    null;
 
 
         if(
@@ -2298,10 +2300,11 @@ function renderOrders(){
         // ---------------------------------------------
 
         const price =
-            order.price ??
-            order.totalPrice ??
-            order.amount ??
-            null;
+    order.sellerPrice ??
+    order.price ??
+    order.totalPrice ??
+    order.amount ??
+    null;
 
 
         const formattedPrice =
