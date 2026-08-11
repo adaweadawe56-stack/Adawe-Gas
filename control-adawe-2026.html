@@ -22,204 +22,1191 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 
 <style>
 
-/* =====================================================
-   ADAWE GAS ADMIN DASHBOARD
-   ===================================================== */
+/* =========================================================
+   ADAWE GAS — PROFESSIONAL ADMIN DASHBOARD
+   ========================================================= */
+
+:root {
+    --adawe-green: #0f8f5f;
+    --adawe-green-dark: #087443;
+    --adawe-green-light: #e9f7f1;
+    --adawe-green-soft: #f0fdf7;
+
+    --bg: #f5f7fa;
+    --card: #ffffff;
+
+    --text: #17202a;
+    --muted: #6b7280;
+
+    --border: #e5e7eb;
+    --border-light: #f0f2f4;
+
+    --blue: #2563eb;
+    --cyan: #0891b2;
+    --purple: #7c3aed;
+    --yellow: #d97706;
+    --red: #dc2626;
+    --orange: #f59e0b;
+
+    --shadow-sm:
+        0 2px 8px rgba(0, 0, 0, .04);
+
+    --shadow-md:
+        0 6px 20px rgba(0, 0, 0, .07);
+
+    --radius:
+        14px;
+}
+
+
+/* =========================================================
+   GLOBAL RESET
+   ========================================================= */
 
 *,
 *::before,
-*::after{
-    box-sizing:border-box;
+*::after {
+    box-sizing: border-box;
 }
 
-html{
-    scroll-behavior:smooth;
+html {
+    scroll-behavior: smooth;
 }
 
-body{
-    margin:0;
-    background:#f7f9fb;
-    font-family:Arial,sans-serif;
-    color:#212529;
-    overflow-x:hidden;
+body {
+    margin: 0;
+    padding: 0;
+
+    background: var(--bg);
+
+    color: var(--text);
+
+    font-family:
+        Inter,
+        -apple-system,
+        BlinkMacSystemFont,
+        "Segoe UI",
+        Roboto,
+        Arial,
+        sans-serif;
+
+    font-size: 14px;
+
+    line-height: 1.5;
+
+    overflow-x: hidden;
 }
 
 
-/* =====================================================
+/* =========================================================
+   MAIN DASHBOARD
+   ========================================================= */
+
+.admin-dashboard {
+    min-height: 100vh;
+
+    background:
+        linear-gradient(
+            180deg,
+            #f8fafc 0%,
+            #f5f7fa 100%
+        );
+
+    padding-bottom: 50px;
+}
+
+
+/* =========================================================
    NAVBAR
-   ===================================================== */
+   ========================================================= */
 
-.navbar{
-    background:#0b7a3c;
+.navbar {
+    background:
+        linear-gradient(
+            135deg,
+            var(--adawe-green-dark),
+            var(--adawe-green)
+        ) !important;
+
+    border-bottom: 1px solid
+        rgba(255,255,255,.12);
+
+    box-shadow:
+        0 3px 12px rgba(0,0,0,.08);
+
+    min-height: 64px;
+
+    position: sticky;
+    top: 0;
+    z-index: 1030;
 }
 
-.navbar-brand{
-    color:white !important;
+.navbar-brand {
+    color: #fff !important;
+
+    font-weight: 800;
+
+    letter-spacing: -.2px;
 }
 
-
-/* =====================================================
-   TABLE
-   ===================================================== */
-
-.table-striped th{
-    background:#198754;
-    color:white;
-    white-space:nowrap;
-}
-
-
-/* =====================================================
-   STATUS COLORS
-   ===================================================== */
-
-.pending{
-    background:#fff3cd;
-}
-
-.processing{
-    background:#cfe2ff;
-}
-
-.completed{
-    background:#d1e7dd;
-}
-
-.approved{
-    background:#d4edda;
-}
-
-.rejected{
-    background:#f8d7da;
+.navbar-brand:hover {
+    color: #fff !important;
 }
 
 
-/* =====================================================
-   ORDER STATISTICS
-   ===================================================== */
+/* =========================================================
+   CONTAINER
+   ========================================================= */
 
-.stats-grid{
+.container,
+.container-fluid {
+    position: relative;
+}
 
-    display:grid;
+
+/* =========================================================
+   DASHBOARD CARDS
+   ========================================================= */
+
+.card,
+.dashboard-card {
+    background: var(--card);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius);
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+}
+
+.card-header {
+    background: #fff;
+
+    border-bottom:
+        1px solid var(--border-light);
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   STATISTICS GRID
+   ========================================================= */
+
+.stats-grid {
+
+    display: grid;
 
     grid-template-columns:
         repeat(
             auto-fit,
-            minmax(150px,1fr)
+            minmax(170px, 1fr)
         );
 
-    gap:12px;
+    gap: 16px;
 
-    margin-bottom:20px;
+    margin-bottom: 24px;
 }
 
 
-.stat-box{
+.stat-box {
 
-    background:white;
+    position: relative;
 
-    padding:18px 10px;
+    background: #fff;
 
-    border-radius:10px;
+    border:
+        1px solid var(--border);
 
-    text-align:center;
+    border-radius:
+        var(--radius);
 
-    margin-bottom:0;
+    padding:
+        20px 18px;
+
+    text-align: left;
 
     box-shadow:
-        0 2px 8px
-        rgba(0,0,0,0.06);
+        var(--shadow-sm);
 
     transition:
         transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+
+    overflow: hidden;
+}
+
+
+/* Green accent */
+
+.stat-box::before {
+
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 0;
+
+    width: 4px;
+    height: 100%;
+
+    background:
+        var(--adawe-green);
+}
+
+
+.stat-box:hover {
+
+    transform:
+        translateY(-3px);
+
+    box-shadow:
+        var(--shadow-md);
+
+    border-color:
+        #ccebdd;
+}
+
+
+.stat-box h4 {
+
+    margin:
+        0 0 5px;
+
+    font-size:
+        28px;
+
+    line-height:
+        1.1;
+
+    font-weight:
+        800;
+
+    color:
+        var(--adawe-green-dark);
+}
+
+
+.stat-box p {
+
+    margin: 0;
+
+    color:
+        var(--muted);
+
+    font-size:
+        12px;
+
+    font-weight:
+        600;
+}
+
+
+/* =========================================================
+   SECTION HEADINGS
+   ========================================================= */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+
+    color:
+        var(--text);
+
+    font-weight:
+        700;
+}
+
+
+section h5,
+section h4 {
+
+    margin-bottom:
+        14px;
+}
+
+
+/* =========================================================
+   SEARCH / FILTER AREA
+   ========================================================= */
+
+#searchOrders,
+#statusFilter,
+input.form-control,
+select.form-select {
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        9px;
+
+    min-height:
+        38px;
+
+    background:
+        #fff;
+
+    color:
+        var(--text);
+
+    box-shadow:
+        none;
+
+    transition:
+        border-color .2s ease,
         box-shadow .2s ease;
 }
 
 
-.stat-box:hover{
+#searchOrders:focus,
+#statusFilter:focus,
+input.form-control:focus,
+select.form-select:focus {
 
-    transform:translateY(-3px);
+    border-color:
+        var(--adawe-green);
 
     box-shadow:
-        0 5px 15px
-        rgba(0,0,0,0.10);
+        0 0 0 3px
+        rgba(15,143,95,.10);
 }
 
 
-.stat-box h4{
+/* =========================================================
+   TABLE WRAPPER
+   ========================================================= */
 
-    font-size:28px;
+.table-responsive {
 
-    font-weight:bold;
+    border:
+        1px solid var(--border);
 
-    margin:0 0 5px;
+    border-radius:
+        var(--radius);
 
-    color:#198754;
+    background:
+        #fff;
+
+    box-shadow:
+        var(--shadow-sm);
+
+    overflow-x:
+        auto;
+
+    overflow-y:
+        hidden;
+
+    -webkit-overflow-scrolling:
+        touch;
 }
 
 
-.stat-box p{
+/* =========================================================
+   ORDERS + SELLERS TABLE
+   ========================================================= */
 
-    margin:0;
+#ordersTable,
+#sellersTable {
 
-    font-size:13px;
+    width:
+        100%;
 
-    color:#666;
+    min-width:
+        1100px;
+
+    margin:
+        0;
+
+    background:
+        #fff;
+
+    border-collapse:
+        separate;
+
+    border-spacing:
+        0;
+
+    border:
+        0;
+
+    font-size:
+        12.5px;
 }
 
 
-/* =====================================================
-   ADMIN DASHBOARD
-   ===================================================== */
+/* =========================================================
+   TABLE HEADER
+   ========================================================= */
 
-.admin-dashboard{
+#ordersTable thead th,
+#sellersTable thead th {
 
-    background:#f7f9fb;
+    position:
+        sticky;
 
-    color:#212529;
+    top:
+        0;
 
-    min-height:100vh;
+    z-index:
+        2;
 
-    padding-bottom:40px;
+    background:
+        linear-gradient(
+            180deg,
+            #f0fdf7,
+            #e9f7f1
+        );
+
+    color:
+        #166534;
+
+    font-size:
+        11px;
+
+    font-weight:
+        800;
+
+    text-transform:
+        uppercase;
+
+    letter-spacing:
+        .35px;
+
+    border-bottom:
+        1px solid #ccebdd;
+
+    padding:
+        13px 11px;
+
+    white-space:
+        nowrap;
 }
 
 
-/* =====================================================
-   RESPONSIVE
-   ===================================================== */
+/* =========================================================
+   TABLE BODY
+   ========================================================= */
 
-@media(max-width:768px){
+#ordersTable tbody td,
+#sellersTable tbody td {
 
-    .stats-grid{
+    padding:
+        12px 11px;
+
+    border-bottom:
+        1px solid var(--border-light);
+
+    color:
+        #374151;
+
+    vertical-align:
+        middle;
+
+    white-space:
+        nowrap;
+}
+
+
+/* =========================================================
+   TABLE ROW
+   ========================================================= */
+
+#ordersTable tbody tr,
+#sellersTable tbody tr {
+
+    background:
+        #fff;
+
+    transition:
+        background .15s ease;
+}
+
+
+#ordersTable tbody tr:hover,
+#sellersTable tbody tr:hover {
+
+    background:
+        #f8fffb;
+}
+
+
+#ordersTable tbody tr:last-child td,
+#sellersTable tbody tr:last-child td {
+
+    border-bottom:
+        0;
+}
+
+
+/* =========================================================
+   ORDER ID
+   ========================================================= */
+
+#ordersTable td:first-child strong {
+
+    color:
+        var(--adawe-green-dark);
+
+    font-weight:
+        800;
+}
+
+
+/* =========================================================
+   SELLER NAME
+   ========================================================= */
+
+#sellersTable td:first-child {
+
+    font-weight:
+        700;
+
+    color:
+        #111827;
+}
+
+
+/* =========================================================
+   STATUS BADGES
+   ========================================================= */
+
+.badge {
+
+    display:
+        inline-flex;
+
+    align-items:
+        center;
+
+    justify-content:
+        center;
+
+    border-radius:
+        999px !important;
+
+    padding:
+        5px 10px;
+
+    min-height:
+        24px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        800;
+
+    letter-spacing:
+        .2px;
+
+    border:
+        0;
+}
+
+
+/* Pending */
+
+.bg-warning {
+
+    background:
+        #fef3c7 !important;
+
+    color:
+        #92400e !important;
+}
+
+
+/* Accepted / Primary */
+
+.bg-primary {
+
+    background:
+        #dbeafe !important;
+
+    color:
+        #1d4ed8 !important;
+}
+
+
+/* On The Way / Info */
+
+.bg-info {
+
+    background:
+        #cffafe !important;
+
+    color:
+        #155e75 !important;
+}
+
+
+/* Assigned / Secondary */
+
+.bg-secondary {
+
+    background:
+        #ede9fe !important;
+
+    color:
+        #6d28d9 !important;
+}
+
+
+/* Delivered / Success */
+
+.bg-success {
+
+    background:
+        #dcfce7 !important;
+
+    color:
+        #166534 !important;
+}
+
+
+/* Rejected / Danger */
+
+.bg-danger {
+
+    background:
+        #fee2e2 !important;
+
+    color:
+        #991b1b !important;
+}
+
+
+/* Dark */
+
+.bg-dark {
+
+    background:
+        #e5e7eb !important;
+
+    color:
+        #374151 !important;
+}
+
+
+/* =========================================================
+   STATUS ROW COLORS
+   ========================================================= */
+
+.pending {
+
+    background:
+        #fffbeb;
+}
+
+.processing {
+
+    background:
+        #eff6ff;
+}
+
+.completed {
+
+    background:
+        #f0fdf4;
+}
+
+.approved {
+
+    background:
+        #f0fdf4;
+}
+
+.rejected {
+
+    background:
+        #fef2f2;
+}
+
+
+/* =========================================================
+   SELLER ACTION BUTTONS
+   ========================================================= */
+
+#sellersTable .btn {
+
+    border-radius:
+        7px;
+
+    font-size:
+        10px;
+
+    font-weight:
+        700;
+
+    padding:
+        5px 9px;
+
+    margin:
+        2px;
+
+    border:
+        1px solid transparent;
+
+    transition:
+        transform .15s ease,
+        box-shadow .15s ease,
+        opacity .15s ease;
+}
+
+
+#sellersTable .btn:hover {
+
+    transform:
+        translateY(-1px);
+
+    box-shadow:
+        0 3px 8px
+        rgba(0,0,0,.12);
+}
+
+
+/* Prices */
+
+.btn-info {
+
+    background:
+        #0891b2 !important;
+
+    border-color:
+        #0891b2 !important;
+
+    color:
+        #fff !important;
+}
+
+
+/* Edit */
+
+.btn-primary {
+
+    background:
+        #2563eb !important;
+
+    border-color:
+        #2563eb !important;
+
+    color:
+        #fff !important;
+}
+
+
+/* Approve */
+
+.btn-success {
+
+    background:
+        #16a34a !important;
+
+    border-color:
+        #16a34a !important;
+
+    color:
+        #fff !important;
+}
+
+
+/* Reject */
+
+.btn-warning {
+
+    background:
+        #f59e0b !important;
+
+    border-color:
+        #f59e0b !important;
+
+    color:
+        #111827 !important;
+}
+
+
+/* Delete */
+
+.btn-danger {
+
+    background:
+        #dc2626 !important;
+
+    border-color:
+        #dc2626 !important;
+
+    color:
+        #fff !important;
+}
+
+
+/* =========================================================
+   GENERAL BUTTONS
+   ========================================================= */
+
+.btn {
+
+    border-radius:
+        8px;
+
+    font-weight:
+        600;
+
+    transition:
+        all .18s ease;
+}
+
+
+.btn:hover {
+
+    transform:
+        translateY(-1px);
+}
+
+
+/* =========================================================
+   MODALS
+   ========================================================= */
+
+.modal-content {
+
+    border:
+        0;
+
+    border-radius:
+        16px;
+
+    box-shadow:
+        0 20px 60px
+        rgba(0,0,0,.18);
+
+    overflow:
+        hidden;
+}
+
+
+.modal-header {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--adawe-green-dark),
+            var(--adawe-green)
+        );
+
+    color:
+        #fff;
+
+    border:
+        0;
+}
+
+
+.modal-header h5 {
+
+    color:
+        #fff;
+
+    font-weight:
+        800;
+}
+
+
+.modal-footer {
+
+    background:
+        #f8fafc;
+
+    border-top:
+        1px solid var(--border);
+}
+
+
+/* =========================================================
+   FORM LABELS
+   ========================================================= */
+
+.form-label {
+
+    font-size:
+        12px;
+
+    font-weight:
+        700;
+
+    color:
+        #374151;
+
+    margin-bottom:
+        6px;
+}
+
+
+/* =========================================================
+   CHECKBOXES
+   ========================================================= */
+
+.form-check {
+
+    padding:
+        7px 10px;
+
+    border:
+        1px solid var(--border);
+
+    border-radius:
+        8px;
+
+    margin-bottom:
+        6px;
+
+    background:
+        #fff;
+
+    transition:
+        background .15s ease,
+        border-color .15s ease;
+}
+
+
+.form-check:hover {
+
+    background:
+        var(--adawe-green-soft);
+
+    border-color:
+        #b7e4cf;
+}
+
+
+.form-check-input:checked {
+
+    background-color:
+        var(--adawe-green);
+
+    border-color:
+        var(--adawe-green);
+}
+
+
+/* =========================================================
+   PRICE MODAL TABLE
+   ========================================================= */
+
+#priceModalBody tr td {
+
+    padding:
+        10px;
+
+    border-bottom:
+        1px solid var(--border-light);
+}
+
+
+#priceModalBody tr:last-child td {
+
+    border-bottom:
+        0;
+}
+
+
+/* =========================================================
+   EMPTY STATE
+   ========================================================= */
+
+#ordersTable .text-center,
+#sellersTable .text-center {
+
+    color:
+        var(--muted);
+
+    font-weight:
+        600;
+
+    padding:
+        35px 20px !important;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+   ========================================================= */
+
+.table-responsive::-webkit-scrollbar {
+
+    height:
+        8px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+
+    background:
+        #f1f5f9;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+
+    background:
+        #cbd5e1;
+
+    border-radius:
+        999px;
+}
+
+.table-responsive::-webkit-scrollbar-thumb:hover {
+
+    background:
+        #94a3b8;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 992px) {
+
+    .stats-grid {
 
         grid-template-columns:
-            repeat(2,1fr);
-
-    }
-
-    .stat-box h4{
-
-        font-size:24px;
+            repeat(2, 1fr);
 
     }
 
 }
 
 
-/* =====================================================
+@media (max-width: 768px) {
+
+    body {
+
+        font-size:
+            13px;
+
+    }
+
+
+    .navbar {
+
+        min-height:
+            58px;
+
+    }
+
+
+    .stats-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
+
+        gap:
+            10px;
+
+    }
+
+
+    .stat-box {
+
+        padding:
+            15px 12px;
+
+    }
+
+
+    .stat-box h4 {
+
+        font-size:
+            22px;
+
+    }
+
+
+    .stat-box p {
+
+        font-size:
+            11px;
+
+    }
+
+
+    #ordersTable,
+    #sellersTable {
+
+        font-size:
+            11px;
+
+    }
+
+
+    #ordersTable thead th,
+    #sellersTable thead th {
+
+        padding:
+            10px 8px;
+
+        font-size:
+            9px;
+
+    }
+
+
+    #ordersTable tbody td,
+    #sellersTable tbody td {
+
+        padding:
+            9px 8px;
+
+    }
+
+}
+
+
+@media (max-width: 480px) {
+
+    .stats-grid {
+
+        grid-template-columns:
+            1fr 1fr;
+
+    }
+
+
+    .stat-box h4 {
+
+        font-size:
+            20px;
+
+    }
+
+}
+
+
+/* =========================================================
    REDUCED MOTION
-   ===================================================== */
+   ========================================================= */
 
-@media (prefers-reduced-motion: reduce){
+@media (prefers-reduced-motion: reduce) {
 
-    *{
+    *,
+    *::before,
+    *::after {
 
-        animation:none !important;
+        animation:
+            none !important;
 
-        transition:none !important;
+        transition:
+            none !important;
 
-        scroll-behavior:auto !important;
-
+        scroll-behavior:
+            auto !important;
     }
 
 }
