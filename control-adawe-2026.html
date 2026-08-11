@@ -233,18 +233,20 @@ window.login = async function(){
 
   if(!adminDoc.exists()){
 
-    loginError.innerText = "Not admin";
+    document.getElementById("loginError").innerText =
+        "Not admin";
+
+    await signOut(auth);
 
     return;
-  }
+}
 
-  loginPage.style.display = "none";
+document.getElementById("loginPage").style.display = "none";
 
-  dashboard.style.display = "block";
+document.getElementById("dashboard").style.display = "block";
 
-     document.getElementById("logoutBtn").style.display =
-    "block";
-
+document.getElementById("logoutBtn").style.display = "block";
+   
   startRealtime();
 
  }catch(err){
