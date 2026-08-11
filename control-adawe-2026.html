@@ -1709,16 +1709,34 @@ if (!table) {
             </td>
 
 
-            <td>
-                ${o.sellerName || "—"}
-            </td>
+           <td>
+    ${o.sellerName || "—"}
+</td>
 
+<td>
+    ${o.assignmentStatus || "—"}
+</td>
 
-            <td>
-                KES
-                ${Number(o.price || 0)
-                    .toLocaleString()}
-            </td>
+<td>
+    ${
+        o.sellerSmartScore != null
+            ? o.sellerSmartScore
+            : "—"
+    }
+</td>
+
+<td>
+    ${
+        o.sellerDistanceKm != null
+            ? o.sellerDistanceKm + " km"
+            : "—"
+    }
+</td>
+
+<td>
+    KES
+    ${Number(o.price || 0).toLocaleString()}
+</td>
 
 
             <td>
