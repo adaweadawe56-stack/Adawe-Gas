@@ -1349,6 +1349,16 @@ async function autoAssignOrder(order) {
         );
 
 
+       // =====================================================
+// SELLER WHATSAPP NOTIFICATION
+// =====================================================
+
+sendSellerWhatsApp(
+    seller,
+    order,
+    best
+);
+
         console.log(
             "🎯 Order assigned:",
             order.orderId || order.id,
