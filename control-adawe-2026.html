@@ -1463,54 +1463,121 @@ function startRealtime() {
 
 }
 
-function updateStatsAndChart(){
+function updateStatsAndChart() {
+
+    // =========================
+    // COUNTERS
+    // =========================
 
     let total = 0;
-    let pending = 0;
-    let today = 0;
-    let revenue = 0;
-
-    const todayDate = new Date().toDateString();
+    let pendingAssignment = 0;
+    let assigned = 0;
+    let accepted = 0;
+    let onTheWay = 0;
+    let delivered = 0;
+    let rejected = 0;
 
     const dailyMap = {};
 
-    ordersData.forEach(o => {
+    // =========================
+    // LOOP ORDERS
+    // =========================
 
-        // Total orders
+    ordersData.forEach(order => {
+
         total++;
 
+        const status = normalizeText(
+            order.status || "pending"
+        );
 
-        // Pending orders
-        if ((o.status || "Pending") === "Pending") {
-            pending++;
+        const assignmentStatus = normalizeText(
+            order.assignmentStatus || ""
+        );
+
+        // =========================
+        // PENDING ASSIGNMENT
+        // =========================
+
+        if (
+            status === "pending" &&
+            !order.sellerUid &&
+            !order.sellerId &&
+            assignmentStatus !== "assigned"
+        ) {
+
+            pendingAssignment++;
+
         }
 
+        // =========================
+        // ASSIGNED
+        // =========================
 
-        // Revenue
-        if (o.price) {
-            revenue += Number(o.price);
+        if (
+            status === "assigned" ||
+            assignmentStatus === "assigned"
+        ) {
+
+            assigned++;
+
         }
 
+        // =========================
+        // ACCEPTED
+        // =========================
 
-        // Created At
-        if (o.createdAt) {
+        if (status === "accepted") {
 
-            const d =
-                o.createdAt?.toDate
-                    ? o.createdAt.toDate()
-                    : new Date(o.createdAt);
+            accepted++;
 
-            if (!isNaN(d.getTime())) {
+        }
 
-                // Today's orders
-                if (d.toDateString() === todayDate) {
-                    today++;
-                }
+        // =========================
+        // ON THE WAY
+        // =========================
 
+        if (status === "on the way") {
 
-                // Orders per day
+            onTheWay++;
+
+        }
+
+        // =========================
+        // DELIVERED
+        // =========================
+
+        if (status === "delivered") {
+
+            delivered++;
+
+        }
+
+        // =========================
+        // REJECTED
+        // =========================
+
+        if (status === "rejected") {
+
+            rejected++;
+
+        }
+
+        // =========================
+        // CHART DATA
+        // =========================
+
+        if (order.createdAt) {
+
+            const date =
+                order.createdAt?.toDate
+                    ? order.createdAt.toDate()
+                    : new Date(order.createdAt);
+
+            if (!isNaN(date.getTime())) {
+
                 const day =
-                    d.toLocaleDateString("en-KE");
+                    date.toLocaleDateString("en-KE");
 
                 dailyMap[day] =
                     (dailyMap[day] || 0) + 1;
@@ -1520,31 +1587,51 @@ function updateStatsAndChart(){
     });
 
 
-    // Dashboard statistics
+    // =========================
+    // UPDATE DASHBOARD
+    // =========================
+
     document.getElementById("totalOrders").innerText =
         total;
 
-    document.getElementById("pendingOrders").innerText =
-        pending;
+    document.getElementById("pendingAssignment").innerText =
+        pendingAssignment;
 
-    document.getElementById("todayOrders").innerText =
-        today;
+    document.getElementById("assignedOrders").innerText =
+        assigned;
 
-    document.getElementById("totalRevenue").innerText =
-        revenue.toLocaleString();
+    document.getElementById("acceptedOrders").innerText =
+        accepted;
+
+    document.getElementById("onTheWayOrders").innerText =
+        onTheWay;
+
+    document.getElementById("deliveredOrders").innerText =
+        delivered;
+
+    document.getElementById("rejectedOrders").innerText =
+        rejected;
 
 
-    // Chart
+    // =========================
+    // SALES / ORDERS CHART
+    // =========================
+
     if (chart) {
+
         chart.destroy();
+
     }
 
 
     const salesCanvas =
         document.getElementById("salesChart");
 
+
     if (!salesCanvas) {
+
         return;
+
     }
 
 
@@ -1563,6 +1650,38 @@ function updateStatsAndChart(){
                 data: Object.values(dailyMap)
 
             }]
+
+        },
+
+        options: {
+
+            responsive: true,
+
+            maintainAspectRatio: true,
+
+            plugins: {
+
+                legend: {
+                    display: true
+                }
+
+            },
+
+            scales: {
+
+                y: {
+
+                    beginAtZero: true,
+
+                    ticks: {
+
+                        precision: 0
+
+                    }
+
+                }
+
+            }
 
         }
 
