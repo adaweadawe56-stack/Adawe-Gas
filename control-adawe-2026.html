@@ -1896,7 +1896,91 @@ function updateStatsAndChart() {
     });
 
 }
-    
+
+// =====================================================
+// FORMAT ADMIN DATE
+// =====================================================
+
+function formatAdminDate(value){
+
+    if(!value){
+        return "-";
+    }
+
+    try{
+
+        let date;
+
+        if(
+            value &&
+            typeof value.toDate === "function"
+        ){
+
+            date = value.toDate();
+
+        }else{
+
+            date = new Date(value);
+
+        }
+
+        if(isNaN(date.getTime())){
+            return "-";
+        }
+
+        return date.toLocaleString("en-KE", {
+
+            day:"2-digit",
+            month:"short",
+            year:"numeric",
+
+            hour:"2-digit",
+            minute:"2-digit"
+
+        });
+
+    }catch(error){
+
+        return "-";
+    }
+
+}
+
+   // =====================================================
+// STATUS BADGE
+// =====================================================
+
+function getStatusBadgeClass(status){
+
+    const normalized =
+        normalizeText(status);
+
+    switch(normalized){
+
+        case "pending":
+            return "bg-warning text-dark";
+
+        case "assigned":
+            return "bg-primary";
+
+        case "accepted":
+            return "bg-info text-dark";
+
+        case "on the way":
+            return "bg-secondary";
+
+        case "delivered":
+            return "bg-success";
+
+        case "rejected":
+            return "bg-danger";
+
+        default:
+            return "bg-dark";
+    }
+
+}
+   
 // =====================================================
 // RENDER ORDERS TABLE
 // =====================================================
