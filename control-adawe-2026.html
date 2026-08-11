@@ -1897,61 +1897,179 @@ function updateStatsAndChart() {
 
 }
     
-function renderOrders() {
+// =====================================================
+// RENDER ORDERS TABLE
+// =====================================================
+
+function renderOrders(){
 
     const table =
-    document.getElementById("ordersTable");
+        document.getElementById("ordersTable");
 
-if (!table) {
-    console.error("❌ ordersTable not found in HTML");
-    return;
-}
+    if(!table){
+        return;
+    }
+
+
+    // =================================================
+    // TABLE HEADER
+    // =================================================
+
+    table.innerHTML = `
+
+        <thead>
+
+            <tr>
+
+                <th>Order ID</th>
+                <th>Customer</th>
+                <th>Phone</th>
+                <th>Location</th>
+                <th>Quantity</th>
+                <th>Brand</th>
+
+                <th>Seller</th>
+
+                <th>Assignment</th>
+
+                <th>Smart Score</th>
+
+                <th>Distance</th>
+
+                <th>Price</th>
+
+                <th>Status</th>
+
+                <th>Created At</th>
+                <th>Assigned At</th>
+                <th>Accepted At</th>
+                <th>On The Way At</th>
+                <th>Delivered At</th>
+                <th>Rejected At</th>
+
+                <th>Actions</th>
+
+            </tr>
+
+        </thead>
+
+        <tbody></tbody>
+
+    `;
+
+
+    const tbody =
+        table.querySelector("tbody");
+
+
+    // =================================================
+    // GET FILTERS
+    // =================================================
+
+    const searchInput =
+        document.getElementById("searchOrders");
+
+    const statusFilter =
+        document.getElementById("statusFilter");
+
 
     const search =
-        document.getElementById("searchOrders")
-            .value
-            .trim()
-            .toLowerCase();
-
-    const status =
-        document.getElementById("statusFilter")
-            .value;
+        searchInput
+            ? searchInput.value
+                .trim()
+                .toLowerCase()
+            : "";
 
 
-    // =========================
+    const selectedStatus =
+        statusFilter
+            ? statusFilter.value
+                .trim()
+                .toLowerCase()
+            : "";
+
+
+    // =================================================
     // FILTER ORDERS
-    // =========================
+    // =================================================
 
     const filteredOrders =
-        ordersData.filter(o => {
+        ordersData.filter(order => {
+
+            const customer =
+                String(
+                    order.name ||
+                    order.customerName ||
+                    ""
+                ).toLowerCase();
+
+
+            const phone =
+                String(
+                    order.phone ||
+                    ""
+                ).toLowerCase();
+
+
+            const location =
+                String(
+                    order.location ||
+                    ""
+                ).toLowerCase();
+
+
+            const orderId =
+                String(
+                    order.orderId ||
+                    order.id ||
+                    ""
+                ).toLowerCase();
+
+
+            const seller =
+                String(
+                    order.sellerName ||
+                    ""
+                ).toLowerCase();
+
+
+            const brand =
+                String(
+                    order.brand ||
+                    ""
+                ).toLowerCase();
+
+
+            const status =
+                normalizeText(
+                    order.status ||
+                    "Pending"
+                );
+
+
+            // -----------------------------------------
+            // SEARCH
+            // -----------------------------------------
 
             const matchesSearch =
                 !search ||
 
-                (o.orderId || "")
-                    .toLowerCase()
-                    .includes(search) ||
+                customer.includes(search) ||
+                phone.includes(search) ||
+                location.includes(search) ||
+                orderId.includes(search) ||
+                seller.includes(search) ||
+                brand.includes(search);
 
-                (o.name || "")
-                    .toLowerCase()
-                    .includes(search) ||
 
-                (o.phone || "")
-                    .toLowerCase()
-                    .includes(search) ||
-
-                (o.location || "")
-                    .toLowerCase()
-                    .includes(search) ||
-
-                (o.sellerName || "")
-                    .toLowerCase()
-                    .includes(search);
-
+            // -----------------------------------------
+            // STATUS FILTER
+            // -----------------------------------------
 
             const matchesStatus =
-                !status ||
-                o.status === status;
+                !selectedStatus ||
+
+                status === selectedStatus;
 
 
             return (
@@ -1962,62 +2080,216 @@ if (!table) {
         });
 
 
-    // =========================
-    // TABLE HEADER
-    // =========================
+    // =================================================
+    // NO ORDERS
+    // =================================================
 
-table.innerHTML = `
+    if(filteredOrders.length === 0){
 
-    <thead>
+        tbody.innerHTML = `
 
-        <tr>
+            <tr>
 
-            <th>Order ID</th>
-            <th>Customer</th>
-            <th>Phone</th>
-            <th>Location</th>
-            <th>Quantity</th>
-            <th>Brand</th>
+                <td colspan="19"
+                    class="text-center py-4">
 
-            <th>Seller</th>
+                    No orders found.
 
-            <th>Assignment</th>
+                </td>
 
-            <th>Smart Score</th>
+            </tr>
 
-            <th>Distance</th>
+        `;
 
-            <th>Price</th>
+        return;
 
-            <th>Status</th>
-
-            <th>Created At</th>
-            <th>Assigned At</th>
-            <th>Accepted At</th>
-            <th>On The Way At</th>
-            <th>Delivered At</th>
-            <th>Rejected At</th>
-
-            <th>Actions</th>
-
-        </tr>
-
-    </thead>
-
-    <tbody></tbody>
-
-`;
+    }
 
 
-    const tbody =
-        table.querySelector("tbody");
+    // =================================================
+    // RENDER ROWS
+    // =================================================
+
+    filteredOrders.forEach(order => {
 
 
-    // =========================
-    // RENDER FILTERED ORDERS
-    // =========================
+        // ---------------------------------------------
+        // BASIC DATA
+        // ---------------------------------------------
 
-    filteredOrders.forEach(o => {
+        const orderId =
+            order.orderId ||
+            order.id ||
+            "-";
+
+
+        const customer =
+            order.name ||
+            order.customerName ||
+            "-";
+
+
+        const phone =
+            order.phone ||
+            "-";
+
+
+        const location =
+            order.location ||
+            "-";
+
+
+        const quantity =
+            order.quantity ??
+            "-";
+
+
+        const brand =
+            order.brand ||
+            "-";
+
+
+        const seller =
+            order.sellerName ||
+            "-";
+
+
+        // ---------------------------------------------
+        // ASSIGNMENT
+        // ---------------------------------------------
+
+        const assignment =
+            order.assignmentStatus ||
+            (
+                order.sellerUid ||
+                order.sellerId
+                    ? "Assigned"
+                    : "Pending"
+            );
+
+
+        // ---------------------------------------------
+        // SMART SCORE
+        // ---------------------------------------------
+
+        const smartScore =
+            order.smartScore ??
+            order.score ??
+            "-";
+
+
+        // ---------------------------------------------
+        // DISTANCE
+        // ---------------------------------------------
+
+        let distance =
+            order.distance ??
+            order.distanceKm ??
+            null;
+
+
+        if(
+            distance !== null &&
+            distance !== undefined &&
+            distance !== ""
+        ){
+
+            distance =
+                Number(distance);
+
+            distance =
+                isNaN(distance)
+                    ? "-"
+                    : distance.toFixed(2) + " km";
+
+        }else{
+
+            distance = "-";
+
+        }
+
+
+        // ---------------------------------------------
+        // PRICE
+        // ---------------------------------------------
+
+        const price =
+            order.price ??
+            order.totalPrice ??
+            order.amount ??
+            null;
+
+
+        const formattedPrice =
+            price !== null &&
+            price !== undefined &&
+            price !== ""
+                ? "KES " +
+                  Number(price).toLocaleString("en-KE")
+                : "-";
+
+
+        // ---------------------------------------------
+        // STATUS
+        // ---------------------------------------------
+
+        const status =
+            order.status ||
+            "Pending";
+
+
+        // ---------------------------------------------
+        // TIMESTAMPS
+        // ---------------------------------------------
+
+        const createdAt =
+            formatAdminDate(
+                order.createdAt
+            );
+
+
+        const assignedAt =
+            formatAdminDate(
+                order.assignedAt
+            );
+
+
+        const acceptedAt =
+            formatAdminDate(
+                order.acceptedAt
+            );
+
+
+        const onTheWayAt =
+            formatAdminDate(
+                order.onTheWayAt
+            );
+
+
+        const deliveredAt =
+            formatAdminDate(
+                order.deliveredAt
+            );
+
+
+        const rejectedAt =
+            formatAdminDate(
+                order.rejectedAt
+            );
+
+
+        // ---------------------------------------------
+        // STATUS CLASS
+        // ---------------------------------------------
+
+        const statusClass =
+            normalizeText(status)
+                .replace(/\s+/g,"-");
+
+
+        // ---------------------------------------------
+        // ROW
+        // ---------------------------------------------
 
         const row =
             document.createElement("tr");
@@ -2026,147 +2298,101 @@ table.innerHTML = `
         row.innerHTML = `
 
             <td>
-                ${o.orderId || "—"}
+                <strong>
+                    ${escapeHTML(orderId)}
+                </strong>
             </td>
-
 
             <td>
-                ${o.name || "—"}
+                ${escapeHTML(customer)}
             </td>
-
 
             <td>
-                ${o.phone || "—"}
+                ${escapeHTML(phone)}
             </td>
-
 
             <td>
-                ${o.location || "—"}
+                ${escapeHTML(location)}
             </td>
-
 
             <td>
-                ${o.quantity || "—"}
+                ${escapeHTML(quantity)}
             </td>
-
 
             <td>
-                ${o.brand || "—"}
+                ${escapeHTML(brand)}
             </td>
-
-
-           <td>
-    ${o.sellerName || "—"}
-</td>
-
-<td>
-    ${o.assignmentStatus || "—"}
-</td>
-
-<td>
-    ${
-        o.sellerSmartScore != null
-            ? o.sellerSmartScore
-            : "—"
-    }
-</td>
-
-<td>
-    ${
-        o.sellerDistanceKm != null
-            ? o.sellerDistanceKm + " km"
-            : "—"
-    }
-</td>
-
-<td>
-    KES
-    ${Number(o.price || 0).toLocaleString()}
-</td>
-
 
             <td>
-                ${o.status || "—"}
+                ${escapeHTML(seller)}
             </td>
-
 
             <td>
-                ${formatTimestamp(o.createdAt)}
+                <span class="badge bg-secondary">
+                    ${escapeHTML(assignment)}
+                </span>
             </td>
-
 
             <td>
-                ${formatTimestamp(o.assignedAt)}
+                <strong>
+                    ${escapeHTML(smartScore)}
+                </strong>
             </td>
-
 
             <td>
-                ${formatTimestamp(o.acceptedAt)}
+                ${escapeHTML(distance)}
             </td>
-
 
             <td>
-                ${formatTimestamp(o.onTheWayAt)}
+                ${escapeHTML(formattedPrice)}
             </td>
-
 
             <td>
-                ${formatTimestamp(o.deliveredAt)}
-            </td>
+                <span class="badge
+                    ${getStatusBadgeClass(status)}">
 
+                    ${escapeHTML(status)}
+
+                </span>
+            </td>
 
             <td>
-                ${formatTimestamp(o.rejectedAt)}
+                ${escapeHTML(createdAt)}
             </td>
 
+            <td>
+                ${escapeHTML(assignedAt)}
+            </td>
+
+            <td>
+                ${escapeHTML(acceptedAt)}
+            </td>
+
+            <td>
+                ${escapeHTML(onTheWayAt)}
+            </td>
+
+            <td>
+                ${escapeHTML(deliveredAt)}
+            </td>
+
+            <td>
+                ${escapeHTML(rejectedAt)}
+            </td>
 
             <td>
 
-                ${
-                    o.customerLatitude != null &&
-                    o.customerLongitude != null
+                <div class="btn-group btn-group-sm">
 
-                    ? `
+                    <button
+                        class="btn btn-outline-success"
+                        onclick="viewOrder('${escapeJS(order.id)}')">
 
-                        <button
+                        View
 
-                            onclick="window.open(
-                                'https://maps.google.com/?q=${o.customerLatitude},${o.customerLongitude}',
-                                '_blank'
-                            )"
+                    </button>
 
-                            class="btn btn-success btn-sm">
-
-                            📍 Map
-
-                        </button>
-
-                    `
-
-                    : ""
-                }
-
-
-                <button
-
-                    onclick="editOrder('${o.id}')"
-
-                    class="btn btn-primary btn-sm mt-1">
-
-                    Edit
-
-                </button>
-
-
-                <button
-
-                    onclick="deleteOrder('${o.id}')"
-
-                    class="btn btn-danger btn-sm mt-1">
-
-                    Delete
-
-                </button>
+                </div>
 
             </td>
 
