@@ -1112,18 +1112,6 @@ async function autoAssignOrder(order) {
             seller.name
         );
 
-
-        // ---------------------------------------------
-        // WHATSAPP NOTIFICATION
-        // ---------------------------------------------
-
-        sendSellerWhatsApp(
-            seller,
-            order,
-            best
-        );
-
-
      } catch (error) {
         console.error("❌ Auto Assign Error:", error);
     } finally {
