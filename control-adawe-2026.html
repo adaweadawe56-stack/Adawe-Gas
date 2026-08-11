@@ -908,10 +908,9 @@ function calculateSellerScore(
 
 async function autoAssignOrder(order) {
 
+    const orderId = order.id;
+
     try {
-
-        const orderId = order.id;
-
         if (!orderId) {
             return;
         }
