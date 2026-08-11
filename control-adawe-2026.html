@@ -19,7 +19,213 @@ body{margin:0;background:#f7f9fb;font-family:Arial}
 .approved{background:#d4edda}
 .rejected{background:#f8d7da}
 .stat-box{background:white;padding:15px;border-radius:8px;text-align:center;margin-bottom:10px}
+
+<style>
+
+/* =====================================================
+   ADAWE GAS ADMIN DASHBOARD
+   ===================================================== */
+
+*,
+*::before,
+*::after{
+    box-sizing:border-box;
+}
+
+html{
+    scroll-behavior:smooth;
+}
+
+body{
+    margin:0;
+    background:#f7f9fb;
+    font-family:Arial,sans-serif;
+    color:#212529;
+    overflow-x:hidden;
+}
+
+
+/* =====================================================
+   NAVBAR
+   ===================================================== */
+
+.navbar{
+    background:#0b7a3c;
+}
+
+.navbar-brand{
+    color:white !important;
+}
+
+
+/* =====================================================
+   TABLE
+   ===================================================== */
+
+.table-striped th{
+    background:#198754;
+    color:white;
+    white-space:nowrap;
+}
+
+
+/* =====================================================
+   STATUS COLORS
+   ===================================================== */
+
+.pending{
+    background:#fff3cd;
+}
+
+.processing{
+    background:#cfe2ff;
+}
+
+.completed{
+    background:#d1e7dd;
+}
+
+.approved{
+    background:#d4edda;
+}
+
+.rejected{
+    background:#f8d7da;
+}
+
+
+/* =====================================================
+   ORDER STATISTICS
+   ===================================================== */
+
+.stats-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(
+            auto-fit,
+            minmax(150px,1fr)
+        );
+
+    gap:12px;
+
+    margin-bottom:20px;
+}
+
+
+.stat-box{
+
+    background:white;
+
+    padding:18px 10px;
+
+    border-radius:10px;
+
+    text-align:center;
+
+    margin-bottom:0;
+
+    box-shadow:
+        0 2px 8px
+        rgba(0,0,0,0.06);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+
+.stat-box:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 5px 15px
+        rgba(0,0,0,0.10);
+}
+
+
+.stat-box h4{
+
+    font-size:28px;
+
+    font-weight:bold;
+
+    margin:0 0 5px;
+
+    color:#198754;
+}
+
+
+.stat-box p{
+
+    margin:0;
+
+    font-size:13px;
+
+    color:#666;
+}
+
+
+/* =====================================================
+   ADMIN DASHBOARD
+   ===================================================== */
+
+.admin-dashboard{
+
+    background:#f7f9fb;
+
+    color:#212529;
+
+    min-height:100vh;
+
+    padding-bottom:40px;
+}
+
+
+/* =====================================================
+   RESPONSIVE
+   ===================================================== */
+
+@media(max-width:768px){
+
+    .stats-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+
+    }
+
+    .stat-box h4{
+
+        font-size:24px;
+
+    }
+
+}
+
+
+/* =====================================================
+   REDUCED MOTION
+   ===================================================== */
+
+@media (prefers-reduced-motion: reduce){
+
+    *{
+
+        animation:none !important;
+
+        transition:none !important;
+
+        scroll-behavior:auto !important;
+
+    }
+
+}
+
 </style>
+
 </head>
 
 <body>
