@@ -255,6 +255,36 @@ window.login = async function(){
  }
 };
 
+    window.logout = async function () {
+
+    try {
+
+        await signOut(auth);
+
+        document.getElementById("dashboard").style.display = "none";
+
+        document.getElementById("loginPage").style.display = "block";
+
+        document.getElementById("logoutBtn").style.display = "none";
+
+        document.getElementById("email").value = "";
+
+        document.getElementById("password").value = "";
+
+        document.getElementById("loginError").innerText = "";
+
+        console.log("✅ Admin logged out");
+
+    } catch (error) {
+
+        console.error("Logout Error:", error);
+
+        alert("Logout failed");
+
+    }
+
+};
+
 // =====================================================
 // ADAWE GAS - SMART AUTO ASSIGN SYSTEM
 // =====================================================
