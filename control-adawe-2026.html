@@ -2489,15 +2489,102 @@ function renderOrders(){
 
 }
 
+   // =====================================================
+// ESCAPE HTML
+// =====================================================
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+
+}
+
+   // =====================================================
+// ESCAPE JAVASCRIPT
+// =====================================================
+
+function escapeJS(value){
+
+    return String(value ?? "")
+        .replace(/\\/g,"\\\\")
+        .replace(/'/g,"\\'")
+        .replace(/"/g,'\\"')
+        .replace(/\n/g,"\\n")
+        .replace(/\r/g,"\\r");
+
+}
+
+// =====================================================
+// VIEW ORDER
+// =====================================================
+
+function viewOrder(orderId){
+
+    const order =
+        ordersData.find(
+            item => item.id === orderId
+        );
+
+    if(!order){
+
+        alert("Order not found.");
+
+        return;
+
+    }
+
+    console.log(
+        "📦 Order:",
+        order
+    );
+
+    alert(
+        "Order ID: " +
+        (order.orderId || order.id) +
+
+        "\n\nCustomer: " +
+        (order.name || order.customerName || "-") +
+
+        "\nPhone: " +
+        (order.phone || "-") +
+
+        "\nLocation: " +
+        (order.location || "-") +
+
+        "\nStatus: " +
+        (order.status || "Pending")
+    );
+
+}
+
+   // =====================================================
+// ORDERS SEARCH FILTER
+// =====================================================
+
 document
     .getElementById("searchOrders")
-    .addEventListener("input", renderOrders);
+    ?.addEventListener(
+        "input",
+        renderOrders
+    );
 
+
+// =====================================================
+// ORDERS STATUS FILTER
+// =====================================================
 
 document
     .getElementById("statusFilter")
-    .addEventListener("change", renderOrders);    
- 
+    ?.addEventListener(
+        "change",
+        renderOrders
+    );
+   
 function renderSellers() {
 
     const table =
