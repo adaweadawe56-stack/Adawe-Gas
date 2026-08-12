@@ -3915,6 +3915,14 @@ window.showPrices = function(id) {
         return;
     }
 
+    const modalElement =
+    document.getElementById("priceModal");
+
+const modal =
+    new bootstrap.Modal(modalElement);
+
+modal.show();
+
     body.innerHTML = "";
 
     const sizes = [
