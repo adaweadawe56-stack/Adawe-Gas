@@ -3626,100 +3626,129 @@ function renderSellers() {
 
         row.innerHTML = `
 
-            <td>
-                ${s.name || "—"}
-            </td>
+    <td>
+        ${escapeHTML(s.name || "—")}
+    </td>
 
 
-            <td>
-                ${s.phone || "—"}
-            </td>
+    <td>
+        ${escapeHTML(s.phone || "—")}
+    </td>
 
 
-            <td>
-                ${s.location || "—"}
-            </td>
+    <td>
+        ${escapeHTML(s.location || "—")}
+    </td>
 
 
-            <td>
-                ${s.status || "pending"}
-            </td>
+    <td>
+
+        <span class="badge ${
+            s.status === "approved"
+                ? "bg-success"
+                : s.status === "rejected"
+                    ? "bg-danger"
+                    : "bg-warning"
+        }">
+
+            ${escapeHTML(
+                s.status || "pending"
+            )}
+
+        </span>
+
+    </td>
 
 
-            <td>
-                ${deliveryCount}
-            </td>
+    <td>
+        ${deliveryCount}
+    </td>
 
 
-            <td>
-                ${deliveryLimit}
-            </td>
+    <td>
+        ${deliveryLimit}
+    </td>
 
 
-            <td>
-                KES ${commission.toLocaleString()}
-            </td>
+    <td>
+        KES ${commission.toLocaleString("en-KE")}
+    </td>
 
 
-            <td>
-                ${s.paymentStatus || "Unpaid"}
-            </td>
+    <td>
+
+        <span class="badge ${
+            String(s.paymentStatus || "")
+                .toLowerCase() === "paid"
+                ? "bg-success"
+                : "bg-warning"
+        }">
+
+            ${escapeHTML(
+                s.paymentStatus || "Unpaid"
+            )}
+
+        </span>
+
+    </td>
 
 
-            <td>
-                ${formatTimestamp(s.createdAt)}
-            </td>
+    <td>
+        ${escapeHTML(
+            formatTimestamp(s.createdAt)
+        )}
+    </td>
 
 
-            <td>
+    <td>
 
-                <button
-                    onclick="showPrices('${s.id}')"
-                    class="btn btn-info btn-sm">
+        <button
+            onclick="showPrices('${escapeJS(s.id)}')"
+            class="btn btn-info btn-sm">
 
-                    Prices
+            Prices
 
-                </button>
-
-
-                <button
-                    onclick="editSeller('${s.id}')"
-                    class="btn btn-primary btn-sm mt-1">
-
-                    Edit
-
-                </button>
+        </button>
 
 
-                <button
-                    onclick="approveSeller('${s.id}')"
-                    class="btn btn-success btn-sm mt-1">
+        <button
+            onclick="editSeller('${escapeJS(s.id)}')"
+            class="btn btn-primary btn-sm mt-1">
 
-                    Approve
+            Edit
 
-                </button>
-
-
-                <button
-                    onclick="rejectSeller('${s.id}')"
-                    class="btn btn-warning btn-sm mt-1">
-
-                    Reject
-
-                </button>
+        </button>
 
 
-                <button
-                    onclick="deleteSeller('${s.id}')"
-                    class="btn btn-danger btn-sm mt-1">
+        <button
+            onclick="approveSeller('${escapeJS(s.id)}')"
+            class="btn btn-success btn-sm mt-1">
 
-                    Delete
+            Approve
 
-                </button>
+        </button>
 
-            </td>
 
-        `;
+        <button
+            onclick="rejectSeller('${escapeJS(s.id)}')"
+            class="btn btn-warning btn-sm mt-1">
+
+            Reject
+
+        </button>
+
+
+        <button
+            onclick="deleteSeller('${escapeJS(s.id)}')"
+            class="btn btn-danger btn-sm mt-1">
+
+            Delete
+
+        </button>
+
+    </td>
+
+`;
 
 
         tbody.appendChild(row);
