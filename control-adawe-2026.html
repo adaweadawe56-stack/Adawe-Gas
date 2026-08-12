@@ -3844,8 +3844,11 @@ function renderSellers() {
         tbody.appendChild(row);
 
     });
-
+renderOrders();
+renderSellers();
+    
 }
+   
 window.showPrices = function(id) {
 
     const s = sellersData.find(x => x.id == id);
