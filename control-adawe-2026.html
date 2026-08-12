@@ -3882,15 +3882,38 @@ function renderSellers() {
    
 window.showPrices = function(id) {
 
-    const s = sellersData.find(x => x.id == id);
+    console.log("💰 Showing prices:", id);
 
-    if (!s) {
-        alert("Seller not found");
+    const seller = sellersData.find(
+        s => s.id === id
+    );
+
+    if (!seller) {
+
+        console.error(
+            "❌ Seller not found:",
+            id
+        );
+
         return;
     }
 
-    const body =
+    console.log(
+        "💰 Seller prices:",
+        seller
+    );
+
+    const tbody =
         document.getElementById("priceModalBody");
+
+    if (!tbody) {
+
+        console.error(
+            "❌ priceModalBody not found"
+        );
+
+        return;
+    }
 
     body.innerHTML = "";
 
