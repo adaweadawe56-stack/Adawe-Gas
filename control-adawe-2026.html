@@ -3681,48 +3681,51 @@ function renderSellers() {
         document.getElementById("sellersTable");
 
     if (!table) {
-        console.error("❌ sellersTable not found in HTML");
+
+        console.error(
+            "❌ sellersTable not found in HTML"
+        );
+
         return;
     }
 
     table.innerHTML = `
-
         <thead>
-
             <tr>
-
                 <th>Name</th>
-
                 <th>Phone</th>
-
                 <th>Location</th>
-
                 <th>Status</th>
-
                 <th>Deliveries</th>
-
                 <th>Limit</th>
-
                 <th>Commission</th>
-
                 <th>Payment</th>
-
                 <th>Date</th>
-
                 <th>Actions</th>
-
             </tr>
-
         </thead>
 
         <tbody></tbody>
-
     `;
-
 
     const tbody =
         table.querySelector("tbody");
 
+    if (!sellersData || sellersData.length === 0) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10"
+                    class="text-center py-4">
+
+                    No sellers found.
+
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
 
     sellersData.forEach(s => {
 
