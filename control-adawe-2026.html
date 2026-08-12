@@ -1307,32 +1307,93 @@ select.form-select:focus {
 <canvas id="salesChart"></canvas>
 </div>
 
-<h3>Orders</h3>
-<input id="searchOrders" class="form-control mb-2" placeholder="Search Orders...">
+<!-- =====================================================
+     ORDERS
+     ===================================================== -->
 
-<select
-    id="statusFilter"
-    class="form-select mb-2">
+<section class="mt-4">
 
-    <option value="">All Status</option>
-    <option value="Pending">Pending</option>
-    <option value="Assigned">Assigned</option>
-    <option value="Accepted">Accepted</option>
-    <option value="On The Way">On The Way</option>
-    <option value="Delivered">Delivered</option>
-    <option value="Rejected">Rejected</option>
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-</select>
+        <div>
+            <h5 class="mb-1">
+                Orders
+            </h5>
 
-<table
-    id="ordersTable"
-    class="table table-striped">
-</table>
+            <small class="text-muted">
+                Manage and monitor customer orders
+            </small>
+        </div>
 
-<h3 class="mt-4">Sellers</h3>
-<table id="sellersTable" class="table table-striped"></table>
+    </div>
 
-</div>
+
+    <!-- ORDER FILTERS -->
+
+    <div class="row g-2 mb-3">
+
+        <div class="col-md-8">
+
+            <input
+                type="text"
+                id="searchOrders"
+                class="form-control"
+                placeholder="Search orders..."
+            >
+
+        </div>
+
+
+        <div class="col-md-4">
+
+            <select
+                id="statusFilter"
+                class="form-select">
+
+                <option value="">
+                    All Statuses
+                </option>
+
+                <option value="pending">
+                    Pending
+                </option>
+
+                <option value="assigned">
+                    Assigned
+                </option>
+
+                <option value="accepted">
+                    Accepted
+                </option>
+
+                <option value="on the way">
+                    On The Way
+                </option>
+
+                <option value="delivered">
+                    Delivered
+                </option>
+
+                <option value="rejected">
+                    Rejected
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- IMPORTANT TABLE WRAPPER -->
+
+    <div class="table-responsive">
+
+        <table id="ordersTable"></table>
+
+    </div>
+
+</section>
 
 <!-- 🔥 MODAL -->
 <div class="modal fade" id="priceModal" tabindex="-1">
