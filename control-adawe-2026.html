@@ -4949,237 +4949,99 @@ window.viewOrder = function(orderId) {
     // MODAL CONTENT
     // =================================================
 
-    body.innerHTML = `
+   body.innerHTML = `
 
-        <!-- ORDER SUMMARY -->
+    <!-- =================================================
+         ORDER HERO
+    ================================================= -->
 
-        <div class="row g-3">
+    <div class="order-view-hero">
 
+        <div class="order-view-hero-left">
 
-            <!-- ORDER ID -->
+            <div class="order-view-icon">
+                📦
+            </div>
 
-            <div class="col-md-6">
+            <div>
 
-                <label class="form-label fw-bold">
-                    Order ID
-                </label>
+                <div class="order-view-id">
+                    ${escapeHTML(orderIdValue)}
+                </div>
 
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(
-                        orderIdValue
-                    )}
-
+                <div class="order-view-subtitle">
+                    Adawe Gas Order
                 </div>
 
             </div>
 
+        </div>
 
-            <!-- STATUS -->
 
-            <div class="col-md-6">
+        <div class="order-view-status">
 
-                <label class="form-label fw-bold">
-                    Status
-                </label>
+            ${escapeHTML(status)}
 
-                <div class="form-control bg-light">
+        </div>
 
-                    <span class="badge
-                        ${getStatusBadgeClass(status)}">
+    </div>
 
-                        ${escapeHTML(status)}
 
+    <!-- =================================================
+         MAIN INFORMATION
+    ================================================= -->
+
+    <div class="row g-3">
+
+
+        <!-- CUSTOMER -->
+
+        <div class="col-lg-4">
+
+            <div class="order-info-card">
+
+                <div class="order-info-title">
+
+                    👤 Customer Information
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Customer
                     </span>
 
-                </div>
-
-            </div>
-
-
-            <!-- CUSTOMER -->
-
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Customer
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(customer)}
+                    <div class="order-info-value">
+                        ${escapeHTML(customer)}
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="order-info-item">
 
-            <!-- PHONE -->
+                    <span class="order-info-label">
+                        Phone
+                    </span>
 
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Phone
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(phone)}
+                    <div class="order-info-value">
+                        ${escapeHTML(phone)}
+                    </div>
 
                 </div>
 
-            </div>
 
+                <div class="order-info-item">
 
-            <!-- LOCATION -->
+                    <span class="order-info-label">
+                        Location
+                    </span>
 
-            <div class="col-md-8">
-
-                <label class="form-label fw-bold">
-                    Location
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(location)}
-
-                </div>
-
-            </div>
-
-
-            <!-- QUANTITY -->
-
-            <div class="col-md-4">
-
-                <label class="form-label fw-bold">
-                    Quantity
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(quantity)}
-
-                </div>
-
-            </div>
-
-
-            <!-- BRAND -->
-
-            <div class="col-md-4">
-
-                <label class="form-label fw-bold">
-                    Gas Brand
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(brand)}
-
-                </div>
-
-            </div>
-
-
-            <!-- PRICE -->
-
-            <div class="col-md-4">
-
-                <label class="form-label fw-bold">
-                    Price
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(price)}
-
-                </div>
-
-            </div>
-
-
-            <!-- SELLER -->
-
-            <div class="col-md-4">
-
-                <label class="form-label fw-bold">
-                    Seller
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(seller)}
-
-                </div>
-
-            </div>
-
-
-            <!-- SELLER PHONE -->
-
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Seller Phone
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(sellerPhone)}
-
-                </div>
-
-            </div>
-
-
-            <!-- ASSIGNMENT -->
-
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Assignment
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(assignment)}
-
-                </div>
-
-            </div>
-
-
-            <!-- SMART SCORE -->
-
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Smart Score
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(
-                        String(smartScore)
-                    )}
-
-                </div>
-
-            </div>
-
-
-            <!-- DISTANCE -->
-
-            <div class="col-md-6">
-
-                <label class="form-label fw-bold">
-                    Distance
-                </label>
-
-                <div class="form-control bg-light">
-
-                    ${escapeHTML(distance)}
+                    <div class="order-info-value">
+                        ${escapeHTML(location)}
+                    </div>
 
                 </div>
 
@@ -5188,116 +5050,354 @@ window.viewOrder = function(orderId) {
         </div>
 
 
-        <!-- =================================================
-             TIMELINE
-        ================================================= -->
+        <!-- GAS ORDER -->
 
-        <hr class="my-4">
+        <div class="col-lg-4">
+
+            <div class="order-info-card">
+
+                <div class="order-info-title">
+
+                    🔥 Gas Order
+
+                </div>
 
 
-        <h6 class="fw-bold mb-3">
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Gas Brand
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(brand)}
+                    </div>
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Quantity
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(quantity)}
+                    </div>
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Assignment
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(assignment)}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SELLER -->
+
+        <div class="col-lg-4">
+
+            <div class="order-info-card">
+
+                <div class="order-info-title">
+
+                    👨‍💼 Seller
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Seller Name
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(seller)}
+                    </div>
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Seller Phone
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(sellerPhone)}
+                    </div>
+
+                </div>
+
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Distance
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(distance)}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- PRICE -->
+
+        <div class="col-md-4">
+
+            <div class="order-price-card">
+
+                <div class="order-price-label">
+                    Order Price
+                </div>
+
+                <div class="order-price-value">
+                    ${escapeHTML(price)}
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- SMART SCORE -->
+
+        <div class="col-md-4">
+
+            <div class="order-info-card">
+
+                <div class="order-info-title">
+                    🤖 Smart Assignment
+                </div>
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Smart Score
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(String(smartScore))}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ORDER ID -->
+
+        <div class="col-md-4">
+
+            <div class="order-info-card">
+
+                <div class="order-info-title">
+                    🆔 Order Reference
+                </div>
+
+                <div class="order-info-item">
+
+                    <span class="order-info-label">
+                        Order ID
+                    </span>
+
+                    <div class="order-info-value">
+                        ${escapeHTML(orderIdValue)}
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =================================================
+         ORDER TIMELINE
+    ================================================= -->
+
+    <div class="order-timeline-card">
+
+        <div class="order-timeline-title">
 
             🕒 Order Timeline
 
-        </h6>
+        </div>
 
 
-        <div class="row g-3">
+        <div class="order-timeline">
 
 
-            <div class="col-md-6">
+            <!-- CREATED -->
 
-                <label class="form-label">
-                    Created At
-                </label>
+            <div class="
+                order-timeline-step
+                ${createdAt !== "-" ? "completed" : ""}
+            ">
 
-                <div class="form-control bg-light">
+                <div class="order-timeline-dot">
+                    ✓
+                </div>
 
+                <div class="order-timeline-label">
+                    Created
+                </div>
+
+                <div class="order-timeline-date">
                     ${escapeHTML(createdAt)}
-
                 </div>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- ASSIGNED -->
 
-                <label class="form-label">
-                    Assigned At
-                </label>
+            <div class="
+                order-timeline-step
+                ${assignedAt !== "-" ? "completed" : ""}
+            ">
 
-                <div class="form-control bg-light">
+                <div class="order-timeline-dot">
+                    👤
+                </div>
 
+                <div class="order-timeline-label">
+                    Assigned
+                </div>
+
+                <div class="order-timeline-date">
                     ${escapeHTML(assignedAt)}
-
                 </div>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- ACCEPTED -->
 
-                <label class="form-label">
-                    Accepted At
-                </label>
+            <div class="
+                order-timeline-step
+                ${acceptedAt !== "-" ? "completed" : ""}
+            ">
 
-                <div class="form-control bg-light">
+                <div class="order-timeline-dot">
+                    ✓
+                </div>
 
+                <div class="order-timeline-label">
+                    Accepted
+                </div>
+
+                <div class="order-timeline-date">
                     ${escapeHTML(acceptedAt)}
-
                 </div>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- ON THE WAY -->
 
-                <label class="form-label">
-                    On The Way At
-                </label>
+            <div class="
+                order-timeline-step
+                ${onTheWayAt !== "-" ? "completed" : ""}
+            ">
 
-                <div class="form-control bg-light">
+                <div class="order-timeline-dot">
+                    🚚
+                </div>
 
+                <div class="order-timeline-label">
+                    On The Way
+                </div>
+
+                <div class="order-timeline-date">
                     ${escapeHTML(onTheWayAt)}
-
                 </div>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- DELIVERED -->
 
-                <label class="form-label">
-                    Delivered At
-                </label>
+            <div class="
+                order-timeline-step
+                ${deliveredAt !== "-" ? "completed" : ""}
+            ">
 
-                <div class="form-control bg-light">
+                <div class="order-timeline-dot">
+                    ✓
+                </div>
 
+                <div class="order-timeline-label">
+                    Delivered
+                </div>
+
+                <div class="order-timeline-date">
                     ${escapeHTML(deliveredAt)}
-
                 </div>
 
             </div>
 
 
-            <div class="col-md-6">
+            <!-- REJECTED -->
 
-                <label class="form-label">
-                    Rejected At
-                </label>
+            ${
+                rejectedAt !== "-"
+                    ? `
 
-                <div class="form-control bg-light">
+                    <div class="
+                        order-timeline-step
+                        completed
+                    ">
 
-                    ${escapeHTML(rejectedAt)}
+                        <div class="order-timeline-dot">
+                            ✕
+                        </div>
 
-                </div>
+                        <div class="order-timeline-label">
+                            Rejected
+                        </div>
 
-            </div>
+                        <div class="order-timeline-date">
+                            ${escapeHTML(rejectedAt)}
+                        </div>
+
+                    </div>
+
+                    `
+                    : ""
+            }
 
 
         </div>
 
-    `;
+    </div>
+
+`;
 
 
     // =================================================
