@@ -5241,156 +5241,178 @@ const rejectedCurrent =
     </div>
 
 
-    <!-- =================================================
-         ORDER TIMELINE
-    ================================================= -->
+  <!-- =================================================
+     ORDER TIMELINE
+================================================= -->
 
-    <div class="order-timeline-card">
+<div class="order-timeline-card">
 
-        <div class="order-timeline-title">
+    <div class="order-timeline-title">
+        🕒 Order Timeline
+    </div>
 
-            🕒 Order Timeline
+    <div class="order-timeline">
+
+
+        <!-- =================================================
+             CREATED
+        ================================================= -->
+
+        <div class="
+            order-timeline-step
+            created
+            ${isCreated ? "completed" : ""}
+            ${createdCurrent ? "current" : ""}
+        ">
+
+            <div class="order-timeline-dot">
+                ✓
+            </div>
+
+            <div class="order-timeline-label">
+                Created
+            </div>
+
+            <div class="order-timeline-date">
+                ${escapeHTML(createdAt)}
+            </div>
 
         </div>
 
 
-        <div class="order-timeline">
+        <!-- =================================================
+             ASSIGNED
+        ================================================= -->
 
+        <div class="
+            order-timeline-step
+            assigned
+            ${isAssigned ? "completed" : ""}
+            ${assignedCurrent ? "current" : ""}
+        ">
 
-            <!-- CREATED -->
-
-            <div class="
-                order-timeline-step
-                ${createdAt !== "-" ? "completed" : ""}
-            ">
-
-                <div class="order-timeline-dot">
-                    ✓
-                </div>
-
-                <div class="order-timeline-label">
-                    Created
-                </div>
-
-                <div class="order-timeline-date">
-                    ${escapeHTML(createdAt)}
-                </div>
-
+            <div class="order-timeline-dot">
+                👤
             </div>
 
-
-            <!-- ASSIGNED -->
-
-            <div class="
-                order-timeline-step
-                ${assignedAt !== "-" ? "completed" : ""}
-            ">
-
-                <div class="order-timeline-dot">
-                    👤
-                </div>
-
-                <div class="order-timeline-label">
-                    Assigned
-                </div>
-
-                <div class="order-timeline-date">
-                    ${escapeHTML(assignedAt)}
-                </div>
-
+            <div class="order-timeline-label">
+                Assigned
             </div>
 
-
-            <!-- ACCEPTED -->
-
-            <div class="
-                order-timeline-step
-                ${acceptedAt !== "-" ? "completed" : ""}
-            ">
-
-                <div class="order-timeline-dot">
-                    ✓
-                </div>
-
-                <div class="order-timeline-label">
-                    Accepted
-                </div>
-
-                <div class="order-timeline-date">
-                    ${escapeHTML(acceptedAt)}
-                </div>
-
+            <div class="order-timeline-date">
+                ${escapeHTML(assignedAt)}
             </div>
 
+        </div>
 
-            <!-- ON THE WAY -->
 
-            <div class="
-                order-timeline-step
-                ${onTheWayAt !== "-" ? "completed" : ""}
-            ">
+        <!-- =================================================
+             ACCEPTED
+        ================================================= -->
 
-                <div class="order-timeline-dot">
-                    🚚
-                </div>
+        <div class="
+            order-timeline-step
+            accepted
+            ${isAccepted ? "completed" : ""}
+            ${acceptedCurrent ? "current" : ""}
+        ">
 
-                <div class="order-timeline-label">
-                    On The Way
-                </div>
-
-                <div class="order-timeline-date">
-                    ${escapeHTML(onTheWayAt)}
-                </div>
-
+            <div class="order-timeline-dot">
+                ✓
             </div>
 
-
-            <!-- DELIVERED -->
-
-            <div class="
-                order-timeline-step
-                ${deliveredAt !== "-" ? "completed" : ""}
-            ">
-
-                <div class="order-timeline-dot">
-                    ✓
-                </div>
-
-                <div class="order-timeline-label">
-                    Delivered
-                </div>
-
-                <div class="order-timeline-date">
-                    ${escapeHTML(deliveredAt)}
-                </div>
-
+            <div class="order-timeline-label">
+                Accepted
             </div>
 
+            <div class="order-timeline-date">
+                ${escapeHTML(acceptedAt)}
+            </div>
 
-            <!-- REJECTED -->
+        </div>
 
-            ${
-                rejectedAt !== "-"
-                    ? `
 
-                    <div class="
-                        order-timeline-step
-                        completed
-                    ">
+        <!-- =================================================
+             ON THE WAY
+        ================================================= -->
 
-                        <div class="order-timeline-dot">
-                            ✕
-                        </div>
+        <div class="
+            order-timeline-step
+            ontheway
+            ${isOnTheWay ? "completed" : ""}
+            ${onTheWayCurrent ? "current" : ""}
+        ">
 
-                        <div class="order-timeline-label">
-                            Rejected
-                        </div>
+            <div class="order-timeline-dot">
+                🚚
+            </div>
 
-                        <div class="order-timeline-date">
-                            ${escapeHTML(rejectedAt)}
-                        </div>
+            <div class="order-timeline-label">
+                On The Way
+            </div>
 
+            <div class="order-timeline-date">
+                ${escapeHTML(onTheWayAt)}
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             DELIVERED
+        ================================================= -->
+
+        <div class="
+            order-timeline-step
+            delivered
+            ${isDelivered ? "completed" : ""}
+            ${deliveredCurrent ? "current" : ""}
+        ">
+
+            <div class="order-timeline-dot">
+                ✓
+            </div>
+
+            <div class="order-timeline-label">
+                Delivered
+            </div>
+
+            <div class="order-timeline-date">
+                ${escapeHTML(deliveredAt)}
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             REJECTED
+        ================================================= -->
+
+        ${
+            isRejected
+                ? `
+
+                <div class="
+                    order-timeline-step
+                    rejected
+                    completed
+                    current
+                ">
+
+                    <div class="order-timeline-dot">
+                        ✕
                     </div>
+
+                    <div class="order-timeline-label">
+                        Rejected
+                    </div>
+
+                    <div class="order-timeline-date">
+                        ${escapeHTML(rejectedAt)}
+                    </div>
+
+                </div>
+           
 
                     `
                     : ""
