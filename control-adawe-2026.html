@@ -1537,16 +1537,15 @@ let ordersUnsubscribe = null;
 
 const assigningOrders = new Set();
 
+
 // =====================================================
-// SELLERS REAL-TIME LISTENER
+// SELLERS REAL-TIME
 // =====================================================
 
 function listenToSellers() {
 
     console.log("👨‍💼 Starting sellers realtime listener...");
 
-
-    // Stop previous listener if one exists
     if (sellersUnsubscribe) {
 
         sellersUnsubscribe();
@@ -1554,7 +1553,6 @@ function listenToSellers() {
         sellersUnsubscribe = null;
 
     }
-
 
     sellersUnsubscribe = onSnapshot(
 
@@ -1565,30 +1563,22 @@ function listenToSellers() {
             try {
 
                 sellersData = snapshot.docs.map(docSnap => ({
-
                     id: docSnap.id,
-
                     ...docSnap.data()
-
                 }));
 
-
                 sellersLoaded = true;
-
 
                 console.log(
                     "🔥 SELLERS FROM FIRESTORE:",
                     sellersData
                 );
 
-
                 console.log(
                     "👨‍💼 SELLERS COUNT:",
                     sellersData.length
                 );
 
-
-                // Render table immediately
                 if (
                     typeof renderSellers === "function"
                 ) {
@@ -1596,7 +1586,6 @@ function listenToSellers() {
                     renderSellers();
 
                 }
-
 
             } catch (error) {
 
