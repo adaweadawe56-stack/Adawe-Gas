@@ -1338,22 +1338,66 @@ select.form-select:focus {
     box-shadow: 0 0 0 1px #e5e7eb;
 }
 
-.order-timeline-step.completed .order-timeline-dot {
+/* =========================================================
+   TIMELINE STATUS COLORS
+   ========================================================= */
+
+/* CREATED */
+.order-timeline-step.created.completed .order-timeline-dot {
     background: #16a34a;
-
     color: #fff;
-
-    box-shadow:
-        0 0 0 1px #16a34a;
+    box-shadow: 0 0 0 1px #16a34a;
 }
 
-.order-timeline-step.current .order-timeline-dot {
-    background: #0f8f5f;
-
+/* ASSIGNED */
+.order-timeline-step.assigned.completed .order-timeline-dot {
+    background: #2563eb;
     color: #fff;
+    box-shadow: 0 0 0 1px #2563eb;
+}
 
+/* ACCEPTED */
+.order-timeline-step.accepted.completed .order-timeline-dot {
+    background: #f59e0b;
+    color: #fff;
+    box-shadow: 0 0 0 1px #f59e0b;
+}
+
+/* ON THE WAY */
+.order-timeline-step.ontheway.completed .order-timeline-dot {
+    background: #f97316;
+    color: #fff;
+    box-shadow: 0 0 0 1px #f97316;
+}
+
+/* DELIVERED */
+.order-timeline-step.delivered.completed .order-timeline-dot {
+    background: #16a34a;
+    color: #fff;
+    box-shadow: 0 0 0 1px #16a34a;
+}
+
+
+/* CURRENT STATUS */
+.order-timeline-step.current .order-timeline-dot {
+    transform: scale(1.08);
     box-shadow:
         0 0 0 4px rgba(15,143,95,.15);
+}
+
+
+/* FUTURE / NOT REACHED */
+.order-timeline-step:not(.completed) .order-timeline-dot {
+    background: #f3f4f6;
+    color: #9ca3af;
+    box-shadow: 0 0 0 1px #e5e7eb;
+}
+
+
+/* CURRENT LABEL */
+.order-timeline-step.current .order-timeline-label {
+    color: #0f8f5f;
+    font-weight: 900;
 }
 
 .order-timeline-label {
