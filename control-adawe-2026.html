@@ -4362,23 +4362,31 @@ table.innerHTML = `
 // VIEW ORDER
 // =====================================================
 
-function viewOrder(orderId){
+// =====================================================
+// VIEW ORDER
+// =====================================================
+
+window.viewOrder = function(orderId) {
 
     const order =
         ordersData.find(
             item => item.id === orderId
         );
 
-    if(!order){
+    if (!order) {
 
         alert("Order not found.");
 
-        return;
+        console.error(
+            "❌ Order not found:",
+            orderId
+        );
 
+        return;
     }
 
     console.log(
-        "📦 Order:",
+        "📦 VIEW ORDER:",
         order
     );
 
@@ -4395,11 +4403,29 @@ function viewOrder(orderId){
         "\nLocation: " +
         (order.location || "-") +
 
+        "\nQuantity: " +
+        (order.quantity || "-") +
+
+        "\nBrand: " +
+        (order.brand || "-") +
+
+        "\nSeller: " +
+        (order.sellerName || "-") +
+
+        "\nPrice: KES " +
+        Number(
+            order.sellerPrice ||
+            order.price ||
+            order.totalPrice ||
+            order.amount ||
+            0
+        ).toLocaleString("en-KE") +
+
         "\nStatus: " +
         (order.status || "Pending")
     );
 
-}
+};
 
 // =====================================================
 // ORDERS SEARCH FILTER
