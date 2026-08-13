@@ -4408,9 +4408,13 @@ window.approveSeller = async id => {
 
   try {
 
-    await updateDoc(doc(db,"sellers",id),{
-      status:"approved"
-    });
+   await updateDoc(
+    doc(db, "sellers", id),
+    {
+        status: "approved",
+        updatedAt: serverTimestamp()
+    }
+);
 
     alert("Seller approved successfully");
 
@@ -4430,9 +4434,13 @@ window.rejectSeller = async id => {
 
   try {
 
-    await updateDoc(doc(db,"sellers",id),{
-      status:"rejected"
-    });
+   await updateDoc(
+    doc(db, "sellers", id),
+    {
+        status: "approved",
+        updatedAt: serverTimestamp()
+    }
+);
 
     alert("Seller rejected successfully");
 
