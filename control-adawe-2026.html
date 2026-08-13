@@ -4603,48 +4603,11 @@ table.innerHTML = `
         const status =
             order.status ||
             "Pending";
+        
+const createdAt =
+    formatAdminDate(order.createdAt);
 
-
-        // ---------------------------------------------
-        // TIMESTAMPS
-        // ---------------------------------------------
-
-        const createdAt =
-            formatAdminDate(
-                order.createdAt
-            );
-
-
-        const assignedAt =
-            formatAdminDate(
-                order.assignedAt
-            );
-
-
-        const acceptedAt =
-            formatAdminDate(
-                order.acceptedAt
-            );
-
-
-        const onTheWayAt =
-            formatAdminDate(
-                order.onTheWayAt
-            );
-
-
-        const deliveredAt =
-            formatAdminDate(
-                order.deliveredAt
-            );
-
-
-        const rejectedAt =
-            formatAdminDate(
-                order.rejectedAt
-            );
-       
-
+        
         // ---------------------------------------------
         // ROW
         // ---------------------------------------------
