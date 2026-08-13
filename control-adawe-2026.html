@@ -1036,6 +1036,381 @@ select.form-select:focus {
         1px solid var(--border);
 }
 
+/* =========================================================
+   VIEW ORDER MODAL
+   ========================================================= */
+
+#viewOrderModal .modal-content {
+    border: 0;
+    border-radius: 16px;
+    overflow: hidden;
+    box-shadow: 0 20px 60px rgba(0,0,0,.18);
+}
+
+#viewOrderModal .modal-header {
+    padding: 16px 20px;
+}
+
+#viewOrderModal .modal-body {
+    padding: 22px;
+    background: #f8fafc;
+}
+
+
+/* =========================================================
+   ORDER HERO
+   ========================================================= */
+
+.order-view-hero {
+    background: linear-gradient(
+        135deg,
+        #0f8f5f,
+        #087443
+    );
+
+    color: #fff;
+
+    border-radius: 14px;
+
+    padding: 18px 20px;
+
+    margin-bottom: 18px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: space-between;
+
+    gap: 15px;
+}
+
+.order-view-hero-left {
+    display: flex;
+    align-items: center;
+    gap: 13px;
+}
+
+.order-view-icon {
+    width: 48px;
+    height: 48px;
+
+    border-radius: 12px;
+
+    background: rgba(255,255,255,.15);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 24px;
+}
+
+.order-view-id {
+    font-size: 15px;
+    font-weight: 800;
+}
+
+.order-view-subtitle {
+    font-size: 11px;
+    opacity: .8;
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   STATUS BADGE
+   ========================================================= */
+
+.order-view-status {
+    background: #fff;
+    color: #166534;
+
+    padding: 7px 13px;
+
+    border-radius: 30px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   INFO CARDS
+   ========================================================= */
+
+.order-info-card {
+    background: #fff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 12px;
+
+    padding: 15px;
+
+    height: 100%;
+
+    box-shadow:
+        0 2px 8px rgba(0,0,0,.04);
+}
+
+.order-info-title {
+    font-size: 12px;
+
+    font-weight: 800;
+
+    color: #166534;
+
+    margin-bottom: 13px;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 7px;
+}
+
+.order-info-item {
+    margin-bottom: 11px;
+}
+
+.order-info-item:last-child {
+    margin-bottom: 0;
+}
+
+.order-info-label {
+    display: block;
+
+    font-size: 10px;
+
+    color: #6b7280;
+
+    margin-bottom: 3px;
+
+    text-transform: uppercase;
+
+    letter-spacing: .3px;
+
+    font-weight: 700;
+}
+
+.order-info-value {
+    font-size: 13px;
+
+    color: #111827;
+
+    font-weight: 600;
+
+    word-break: break-word;
+}
+
+
+/* =========================================================
+   PRICE CARD
+   ========================================================= */
+
+.order-price-card {
+    background: #ecfdf5;
+
+    border: 1px solid #bbf7d0;
+
+    border-radius: 12px;
+
+    padding: 15px;
+}
+
+.order-price-label {
+    font-size: 10px;
+
+    color: #166534;
+
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.order-price-value {
+    font-size: 22px;
+
+    font-weight: 900;
+
+    color: #15803d;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   TIMELINE
+   ========================================================= */
+
+.order-timeline-card {
+    background: #fff;
+
+    border: 1px solid #e5e7eb;
+
+    border-radius: 14px;
+
+    padding: 20px;
+
+    margin-top: 18px;
+}
+
+.order-timeline-title {
+    font-size: 14px;
+
+    font-weight: 800;
+
+    color: #166534;
+
+    margin-bottom: 20px;
+}
+
+
+/* Timeline */
+
+.order-timeline {
+    position: relative;
+
+    display: flex;
+
+    justify-content: space-between;
+
+    gap: 8px;
+}
+
+.order-timeline::before {
+    content: "";
+
+    position: absolute;
+
+    top: 15px;
+
+    left: 7%;
+
+    right: 7%;
+
+    height: 3px;
+
+    background: #e5e7eb;
+
+    z-index: 0;
+}
+
+.order-timeline-step {
+    position: relative;
+
+    z-index: 1;
+
+    flex: 1;
+
+    text-align: center;
+}
+
+.order-timeline-dot {
+    width: 30px;
+
+    height: 30px;
+
+    margin: 0 auto 8px;
+
+    border-radius: 50%;
+
+    background: #e5e7eb;
+
+    color: #6b7280;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    border: 3px solid #fff;
+
+    box-shadow: 0 0 0 1px #e5e7eb;
+}
+
+.order-timeline-step.completed .order-timeline-dot {
+    background: #16a34a;
+
+    color: #fff;
+
+    box-shadow:
+        0 0 0 1px #16a34a;
+}
+
+.order-timeline-step.current .order-timeline-dot {
+    background: #0f8f5f;
+
+    color: #fff;
+
+    box-shadow:
+        0 0 0 4px rgba(15,143,95,.15);
+}
+
+.order-timeline-label {
+    font-size: 10px;
+
+    font-weight: 800;
+
+    color: #374151;
+}
+
+.order-timeline-date {
+    font-size: 9px;
+
+    color: #9ca3af;
+
+    margin-top: 3px;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 768px) {
+
+    #viewOrderModal .modal-body {
+        padding: 14px;
+    }
+
+    .order-view-hero {
+        align-items: flex-start;
+
+        flex-direction: column;
+    }
+
+    .order-timeline {
+        overflow-x: auto;
+
+        justify-content: flex-start;
+
+        padding-bottom: 8px;
+    }
+
+    .order-timeline-step {
+        min-width: 105px;
+    }
+
+    .order-timeline::before {
+        left: 50px;
+
+        right: auto;
+
+        width: 420px;
+    }
+
+}        
+
 
 /* =========================================================
    FORM LABELS
