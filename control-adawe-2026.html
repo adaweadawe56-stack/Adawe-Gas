@@ -2744,79 +2744,71 @@ function startRealtime() {
     console.log("🔥 Adawe Gas Realtime Started");
 
 
+    // =====================================================
+    // SELLERS REAL-TIME
+    // =====================================================
 
-
-
-                // If orders are already loaded,
-                // retry pending orders.
-                if (ordersLoaded) {
-
-                    await autoAssignPendingOrders();
-
-                }
-
-            } catch (error) {
-
-                console.error(
-                    "❌ Seller realtime error:",
-                    error
-                );
-
-            }
-
-        },
-
-        (error) => {
-
-            console.error(
-                "❌ Sellers listener failed:",
-                error
-            );
-
-        }
-    );
+    listenToSellers();
 
 
     // =====================================================
-    // ORDERS REALTIME LISTENER
+    // ORDERS REAL-TIME
     // =====================================================
 
-    onSnapshot(
+    if (ordersUnsubscribe) {
+
+        ordersUnsubscribe();
+
+        ordersUnsubscribe = null;
+
+    }
+
+
+    ordersUnsubscribe = onSnapshot(
+
         collection(db, "orders"),
 
         async (snapshot) => {
 
             try {
 
-                ordersData =
-                    snapshot.docs.map(document => ({
+                ordersData = snapshot.docs.map(docSnap => ({
 
-                        id: document.id,
+                    id: docSnap.id,
 
-                        ...document.data()
+                    ...docSnap.data()
 
-                    }));
+                }));
 
 
                 ordersLoaded = true;
 
 
                 console.log(
-                    "📦 Orders loaded:",
+                    "📦 ORDERS FROM FIRESTORE:",
+                    ordersData
+                );
+
+
+                console.log(
+                    "📦 ORDERS COUNT:",
                     ordersData.length
                 );
 
 
-                // Render orders table
-                if (typeof renderOrders === "function") {
+                // Render orders
+                if (
+                    typeof renderOrders === "function"
+                ) {
+
                     renderOrders();
+
                 }
 
 
-                // Update dashboard
+                // Update statistics + chart
                 if (
-                    typeof updateStatsAndChart ===
-                    "function"
+                    typeof updateStatsAndChart === "function"
                 ) {
 
                     updateStatsAndChart();
@@ -2824,16 +2816,12 @@ function startRealtime() {
                 }
 
 
-                // IMPORTANT:
-                // Wait until sellers are loaded
-                // before auto assigning.
-
+                // Auto assign
                 if (sellersLoaded) {
 
                     await autoAssignPendingOrders();
 
                 }
-
 
             } catch (error) {
 
@@ -2848,16 +2836,18 @@ function startRealtime() {
 
         (error) => {
 
+            ordersLoaded = false;
+
             console.error(
-                "❌ Orders listener failed:",
+                "❌ Orders realtime listener failed:",
                 error
             );
 
         }
+
     );
 
 }
-
 function updateStatsAndChart() {
 
     // =========================
