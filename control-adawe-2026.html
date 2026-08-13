@@ -4357,13 +4357,8 @@ table.innerHTML = `
 
 }
 
-
 // =====================================================
-// VIEW ORDER
-// =====================================================
-
-// =====================================================
-// VIEW ORDER
+// VIEW ORDER MODAL
 // =====================================================
 
 window.viewOrder = function(orderId) {
@@ -4372,6 +4367,7 @@ window.viewOrder = function(orderId) {
         ordersData.find(
             item => item.id === orderId
         );
+
 
     if (!order) {
 
@@ -4385,48 +4381,579 @@ window.viewOrder = function(orderId) {
         return;
     }
 
+
     console.log(
         "📦 VIEW ORDER:",
         order
     );
 
-    alert(
-        "Order ID: " +
-        (order.orderId || order.id) +
 
-        "\n\nCustomer: " +
-        (order.name || order.customerName || "-") +
+    const body =
+        document.getElementById(
+            "viewOrderBody"
+        );
 
-        "\nPhone: " +
-        (order.phone || "-") +
 
-        "\nLocation: " +
-        (order.location || "-") +
+    if (!body) {
 
-        "\nQuantity: " +
-        (order.quantity || "-") +
+        console.error(
+            "❌ viewOrderBody not found"
+        );
 
-        "\nBrand: " +
-        (order.brand || "-") +
+        return;
+    }
 
-        "\nSeller: " +
-        (order.sellerName || "-") +
 
-        "\nPrice: KES " +
-        Number(
-            order.sellerPrice ||
-            order.price ||
-            order.totalPrice ||
-            order.amount ||
-            0
-        ).toLocaleString("en-KE") +
+    // =================================================
+    // VALUES
+    // =================================================
 
-        "\nStatus: " +
-        (order.status || "Pending")
-    );
+    const orderIdValue =
+        order.orderId ||
+        order.id ||
+        "-";
+
+
+    const customer =
+        order.name ||
+        order.customerName ||
+        "-";
+
+
+    const phone =
+        order.phone ||
+        "-";
+
+
+    const location =
+        order.location ||
+        "-";
+
+
+    const quantity =
+        order.quantity ||
+        "-";
+
+
+    const brand =
+        order.brand ||
+        "-";
+
+
+    const seller =
+        order.sellerName ||
+        "-";
+
+
+    const sellerPhone =
+        order.sellerPhone ||
+        "-";
+
+
+    const assignment =
+        order.assignmentStatus ||
+        (
+            order.sellerUid ||
+            order.sellerId
+                ? "Assigned"
+                : "Pending"
+        );
+
+
+    const smartScore =
+        order.sellerSmartScore ??
+        order.smartScore ??
+        order.score ??
+        "-";
+
+
+    // =================================================
+    // DISTANCE
+    // =================================================
+
+    let distance =
+        order.sellerDistanceKm ??
+        order.distanceKm ??
+        order.distance ??
+        null;
+
+
+    if (
+        distance !== null &&
+        distance !== undefined &&
+        distance !== ""
+    ) {
+
+        distance =
+            Number(distance);
+
+        distance =
+            Number.isFinite(distance)
+                ? distance.toFixed(2) + " km"
+                : "-";
+
+    } else {
+
+        distance = "-";
+
+    }
+
+
+    // =================================================
+    // PRICE
+    // =================================================
+
+    const rawPrice =
+        order.sellerPrice ??
+        order.price ??
+        order.totalPrice ??
+        order.amount ??
+        null;
+
+
+    const price =
+        rawPrice !== null &&
+        rawPrice !== undefined &&
+        rawPrice !== ""
+            ? "KES " +
+              Number(rawPrice)
+                  .toLocaleString("en-KE")
+            : "-";
+
+
+    // =================================================
+    // STATUS
+    // =================================================
+
+    const status =
+        order.status ||
+        "Pending";
+
+
+    // =================================================
+    // TIMESTAMPS
+    // =================================================
+
+    const createdAt =
+        formatAdminDate(
+            order.createdAt
+        );
+
+
+    const assignedAt =
+        formatAdminDate(
+            order.assignedAt
+        );
+
+
+    const acceptedAt =
+        formatAdminDate(
+            order.acceptedAt
+        );
+
+
+    const onTheWayAt =
+        formatAdminDate(
+            order.onTheWayAt
+        );
+
+
+    const deliveredAt =
+        formatAdminDate(
+            order.deliveredAt
+        );
+
+
+    const rejectedAt =
+        formatAdminDate(
+            order.rejectedAt
+        );
+
+
+    // =================================================
+    // MODAL CONTENT
+    // =================================================
+
+    body.innerHTML = `
+
+        <!-- ORDER SUMMARY -->
+
+        <div class="row g-3">
+
+
+            <!-- ORDER ID -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Order ID
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(
+                        orderIdValue
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Status
+                </label>
+
+                <div class="form-control bg-light">
+
+                    <span class="badge
+                        ${getStatusBadgeClass(status)}">
+
+                        ${escapeHTML(status)}
+
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- CUSTOMER -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Customer
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(customer)}
+
+                </div>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Phone
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(phone)}
+
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="col-md-8">
+
+                <label class="form-label fw-bold">
+                    Location
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(location)}
+
+                </div>
+
+            </div>
+
+
+            <!-- QUANTITY -->
+
+            <div class="col-md-4">
+
+                <label class="form-label fw-bold">
+                    Quantity
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(quantity)}
+
+                </div>
+
+            </div>
+
+
+            <!-- BRAND -->
+
+            <div class="col-md-4">
+
+                <label class="form-label fw-bold">
+                    Gas Brand
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(brand)}
+
+                </div>
+
+            </div>
+
+
+            <!-- PRICE -->
+
+            <div class="col-md-4">
+
+                <label class="form-label fw-bold">
+                    Price
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(price)}
+
+                </div>
+
+            </div>
+
+
+            <!-- SELLER -->
+
+            <div class="col-md-4">
+
+                <label class="form-label fw-bold">
+                    Seller
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(seller)}
+
+                </div>
+
+            </div>
+
+
+            <!-- SELLER PHONE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Seller Phone
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(sellerPhone)}
+
+                </div>
+
+            </div>
+
+
+            <!-- ASSIGNMENT -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Assignment
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(assignment)}
+
+                </div>
+
+            </div>
+
+
+            <!-- SMART SCORE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Smart Score
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(
+                        String(smartScore)
+                    )}
+
+                </div>
+
+            </div>
+
+
+            <!-- DISTANCE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label fw-bold">
+                    Distance
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(distance)}
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             TIMELINE
+        ================================================= -->
+
+        <hr class="my-4">
+
+
+        <h6 class="fw-bold mb-3">
+
+            🕒 Order Timeline
+
+        </h6>
+
+
+        <div class="row g-3">
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Created At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(createdAt)}
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Assigned At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(assignedAt)}
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Accepted At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(acceptedAt)}
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    On The Way At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(onTheWayAt)}
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Delivered At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(deliveredAt)}
+
+                </div>
+
+            </div>
+
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Rejected At
+                </label>
+
+                <div class="form-control bg-light">
+
+                    ${escapeHTML(rejectedAt)}
+
+                </div>
+
+            </div>
+
+
+        </div>
+
+    `;
+
+
+    // =================================================
+    // SHOW MODAL
+    // =================================================
+
+    const modalElement =
+        document.getElementById(
+            "viewOrderModal"
+        );
+
+
+    if (!modalElement) {
+
+        console.error(
+            "❌ viewOrderModal not found"
+        );
+
+        return;
+    }
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
 
 };
-
 // =====================================================
 // ORDERS SEARCH FILTER
 // =====================================================
