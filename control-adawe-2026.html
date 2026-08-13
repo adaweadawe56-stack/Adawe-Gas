@@ -1845,6 +1845,166 @@ function listenToSellers() {
 
 }
 
+ // =====================================================
+// SELLER STATISTICS - REAL TIME
+// =====================================================
+
+function updateSellerStatistics() {
+
+    const total = sellersData.length;
+
+
+    const approved = sellersData.filter(s =>
+        String(s.status || "")
+            .toLowerCase() === "approved"
+    ).length;
+
+
+    const pending = sellersData.filter(s =>
+        String(s.status || "")
+            .toLowerCase() === "pending"
+    ).length;
+
+
+    /*
+     * ACTIVE SELLER
+     *
+     * Seller waxaa loo tixgelinayaa active haddii
+     * uu approved yahay oo uu leeyahay delivery limit.
+     */
+
+    const active = sellersData.filter(s => {
+
+        const status =
+            String(s.status || "")
+                .toLowerCase();
+
+        const limit =
+            Number(s.deliveryLimit || 0);
+
+        return (
+            status === "approved" &&
+            limit > 0
+        );
+
+    }).length;
+
+
+    /*
+     * COMMISSION DUE
+     *
+     * deliveryCount × commissionPerOrder
+     *
+     * waxaana laga jarayaa sellers-ka Paid.
+     */
+
+    let commissionDue = 0;
+
+
+    sellersData.forEach(s => {
+
+        const paymentStatus =
+            String(s.paymentStatus || "")
+                .toLowerCase();
+
+
+        if (paymentStatus === "paid") {
+
+            return;
+
+        }
+
+
+        const deliveryCount =
+            Number(s.deliveryCount || 0);
+
+
+        const commission =
+            Number(s.commissionPerOrder || 0);
+
+
+        const amount =
+            deliveryCount * commission;
+
+
+        commissionDue += amount;
+
+    });
+
+
+    // =====================================================
+    // UPDATE HTML
+    // =====================================================
+
+    const totalElement =
+        document.getElementById("totalSellers");
+
+    const approvedElement =
+        document.getElementById("approvedSellers");
+
+    const pendingElement =
+        document.getElementById("pendingSellers");
+
+    const activeElement =
+        document.getElementById("activeSellers");
+
+    const commissionElement =
+        document.getElementById("commissionDue");
+
+
+    if (totalElement) {
+
+        totalElement.textContent =
+            total;
+
+    }
+
+
+    if (approvedElement) {
+
+        approvedElement.textContent =
+            approved;
+
+    }
+
+
+    if (pendingElement) {
+
+        pendingElement.textContent =
+            pending;
+
+    }
+
+
+    if (activeElement) {
+
+        activeElement.textContent =
+            active;
+
+    }
+
+
+    if (commissionElement) {
+
+        commissionElement.textContent =
+            `KES ${commissionDue.toLocaleString("en-KE")}`;
+
+    }
+
+
+    console.log(
+        "📊 Seller statistics updated:",
+        {
+            total,
+            approved,
+            pending,
+            active,
+            commissionDue
+        }
+    );
+
+}   
+
 function formatTimestamp(timestamp) {
 
     if (!timestamp) {
