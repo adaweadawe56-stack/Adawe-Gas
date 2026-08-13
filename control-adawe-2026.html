@@ -2014,7 +2014,271 @@ function updateSellerStatistics() {
         }
     );
 
-}   
+}
+
+ // =====================================================
+// VIEW SELLER PROFILE
+// =====================================================
+
+window.viewSeller = function(id) {
+
+    const seller =
+        sellersData.find(s => s.id === id);
+
+    if (!seller) {
+
+        alert("Seller not found");
+
+        return;
+
+    }
+
+
+    const body =
+        document.getElementById("sellerProfileBody");
+
+    if (!body) return;
+
+
+    const status =
+        String(seller.status || "pending")
+            .toLowerCase();
+
+
+    const paymentStatus =
+        String(seller.paymentStatus || "-");
+
+
+    const deliveryCount =
+        Number(seller.deliveryCount || 0);
+
+
+    const deliveryLimit =
+        Number(seller.deliveryLimit || 0);
+
+
+    const commission =
+        Number(seller.commissionPerOrder || 0);
+
+
+    const averageRating =
+        Number(seller.averageRating || 0);
+
+
+    const totalRatings =
+        Number(seller.totalRatings || 0);
+
+
+    const completedOrders =
+        Number(seller.completedOrders || 0);
+
+
+    body.innerHTML = `
+
+        <div class="row g-3">
+
+            <!-- NAME -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Seller Name
+                </label>
+
+                <div class="form-control bg-light">
+                    ${seller.name || "-"}
+                </div>
+
+            </div>
+
+
+            <!-- PHONE -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Phone
+                </label>
+
+                <div class="form-control bg-light">
+                    ${seller.phone || "-"}
+                </div>
+
+            </div>
+
+
+            <!-- LOCATION -->
+
+            <div class="col-md-8">
+
+                <label class="form-label">
+                    Location
+                </label>
+
+                <div class="form-control bg-light">
+                    ${seller.location || "-"}
+                </div>
+
+            </div>
+
+
+            <!-- STATUS -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Status
+                </label>
+
+                <div class="form-control bg-light">
+                    ${seller.status || "-"}
+                </div>
+
+            </div>
+
+
+            <!-- DELIVERIES -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Deliveries
+                </label>
+
+                <div class="form-control bg-light">
+                    ${deliveryCount}
+                </div>
+
+            </div>
+
+
+            <!-- LIMIT -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Delivery Limit
+                </label>
+
+                <div class="form-control bg-light">
+                    ${deliveryLimit}
+                </div>
+
+            </div>
+
+
+            <!-- COMMISSION -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Commission / Order
+                </label>
+
+                <div class="form-control bg-light">
+                    KES ${commission.toLocaleString("en-KE")}
+                </div>
+
+            </div>
+
+
+            <!-- PAYMENT -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Payment Status
+                </label>
+
+                <div class="form-control bg-light">
+                    ${paymentStatus}
+                </div>
+
+            </div>
+
+
+            <!-- RATING -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Average Rating
+                </label>
+
+                <div class="form-control bg-light">
+                    ⭐ ${averageRating.toFixed(1)}
+                </div>
+
+            </div>
+
+
+            <!-- REVIEWS -->
+
+            <div class="col-md-4">
+
+                <label class="form-label">
+                    Total Reviews
+                </label>
+
+                <div class="form-control bg-light">
+                    ${totalRatings}
+                </div>
+
+            </div>
+
+
+            <!-- COMPLETED ORDERS -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Completed Orders
+                </label>
+
+                <div class="form-control bg-light">
+                    ${completedOrders}
+                </div>
+
+            </div>
+
+
+            <!-- REGISTERED -->
+
+            <div class="col-md-6">
+
+                <label class="form-label">
+                    Registered
+                </label>
+
+                <div class="form-control bg-light">
+                    ${formatTimestamp(seller.createdAt)}
+                </div>
+
+            </div>
+
+        </div>
+
+    `;
+
+
+    const modalElement =
+        document.getElementById(
+            "sellerProfileModal"
+        );
+
+
+    if (!modalElement) return;
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
+
+};   
 
 function formatTimestamp(timestamp) {
 
