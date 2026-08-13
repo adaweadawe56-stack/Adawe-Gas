@@ -452,6 +452,105 @@ select.form-select:focus {
     font-size: 12.5px;
 }
 
+ /* =====================================================
+   ORDERS TABLE - COMPACT & RESPONSIVE
+===================================================== */
+
+.orders-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    border-radius: 10px;
+}
+
+
+/* Main orders table */
+
+#ordersTable {
+    width: 100%;
+    min-width: 1050px;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+
+/* Table cells */
+
+#ordersTable th,
+#ordersTable td {
+    padding: 9px 10px;
+    font-size: 12px;
+    white-space: nowrap;
+    vertical-align: middle;
+}
+
+
+/* Header */
+
+#ordersTable thead th {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+
+/* Order ID */
+
+#ordersTable td:first-child {
+    font-weight: 700;
+}
+
+
+/* Status */
+
+#ordersTable .badge {
+    font-size: 10px;
+    padding: 5px 8px;
+}
+
+
+/* Actions */
+
+#ordersTable th:last-child,
+#ordersTable td:last-child {
+    position: sticky;
+    right: 0;
+    background: #fff;
+    z-index: 5;
+}
+
+
+/* Header Actions */
+
+#ordersTable th:last-child {
+    z-index: 10;
+}
+
+
+/* View button */
+
+#ordersTable .view-order-btn {
+    font-size: 11px;
+    padding: 5px 10px;
+    white-space: nowrap;
+}
+
+
+/* Mobile */
+
+@media (max-width: 768px) {
+
+    #ordersTable {
+        min-width: 950px;
+    }
+
+    #ordersTable th,
+    #ordersTable td {
+        padding: 7px 8px;
+        font-size: 11px;
+    }
+
+}       
 
 /* =========================================================
    ORDERS TABLE — WIDE TABLE
