@@ -4542,54 +4542,62 @@ function renderSellers() {
 )}
     </td>
 
+<td>
 
-    <td>
+    <button
+        onclick="viewSeller('${escapeJS(s.id)}')"
+        class="btn btn-secondary btn-sm">
 
-        <button
-            onclick="showPrices('${escapeJS(s.id)}')"
-            class="btn btn-info btn-sm">
+        View
 
-            Prices
-
-        </button>
-
-
-        <button
-            onclick="editSeller('${escapeJS(s.id)}')"
-            class="btn btn-primary btn-sm mt-1">
-
-            Edit
-
-        </button>
+    </button>
 
 
-        <button
-            onclick="approveSeller('${escapeJS(s.id)}')"
-            class="btn btn-success btn-sm mt-1">
+    <button
+        onclick="showPrices('${escapeJS(s.id)}')"
+        class="btn btn-info btn-sm mt-1">
 
-            Approve
+        Prices
 
-        </button>
-
-
-        <button
-            onclick="rejectSeller('${escapeJS(s.id)}')"
-            class="btn btn-warning btn-sm mt-1">
-
-            Reject
-
-        </button>
+    </button>
 
 
-        <button
-            onclick="deleteSeller('${escapeJS(s.id)}')"
-            class="btn btn-danger btn-sm mt-1">
+    <button
+        onclick="editSeller('${escapeJS(s.id)}')"
+        class="btn btn-primary btn-sm mt-1">
 
-            Delete
+        Edit
 
-        </button>
+    </button>
 
-    </td>
+
+    <button
+        onclick="approveSeller('${escapeJS(s.id)}')"
+        class="btn btn-success btn-sm mt-1">
+
+        Approve
+
+    </button>
+
+
+    <button
+        onclick="rejectSeller('${escapeJS(s.id)}')"
+        class="btn btn-warning btn-sm mt-1">
+
+        Reject
+
+    </button>
+
+
+    <button
+        onclick="deleteSeller('${escapeJS(s.id)}')"
+        class="btn btn-danger btn-sm mt-1">
+
+        Delete
+
+    </button>
+
+</td>
 
 `;
 
