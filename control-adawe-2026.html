@@ -2636,43 +2636,7 @@ function startRealtime() {
     console.log("🔥 Adawe Gas Realtime Started");
 
 
-    // =====================================================
-    // SELLERS REALTIME LISTENER
-    // =====================================================
 
-    onSnapshot(
-        collection(db, "sellers"),
-
-        async (snapshot) => {
-
-            try {
-
-                sellersData =
-                    snapshot.docs.map(document => ({
-
-                        id: document.id,
-
-                        ...document.data()
-
-                    }));
-
-                console.log("🔥 SELLERS FROM FIRESTORE:", sellersData);
-console.log("🔥 SELLERS COUNT:", sellersData.length);
-
-
-                sellersLoaded = true;
-
-
-                console.log(
-                    "👨‍💼 Sellers loaded:",
-                    sellersData.length
-                );
-
-
-                // Render sellers table
-                if (typeof renderSellers === "function") {
-                    renderSellers();
-                }
 
 
                 // If orders are already loaded,
