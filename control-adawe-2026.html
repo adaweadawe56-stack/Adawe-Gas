@@ -4576,63 +4576,6 @@ table.innerHTML = `
 
 
         // ---------------------------------------------
-        // ASSIGNMENT
-        // ---------------------------------------------
-
-        const assignment =
-            order.assignmentStatus ||
-            (
-                order.sellerUid ||
-                order.sellerId
-                    ? "Assigned"
-                    : "Pending"
-            );
-
-
-        // ---------------------------------------------
-        // SMART SCORE
-        // ---------------------------------------------
-
-        const smartScore =
-    order.sellerSmartScore ??
-    order.smartScore ??
-    order.score ??
-    "-";
-
-
-        // ---------------------------------------------
-        // DISTANCE
-        // ---------------------------------------------
-
-       let distance =
-    order.sellerDistanceKm ??
-    order.distanceKm ??
-    order.distance ??
-    null;
-
-
-        if(
-            distance !== null &&
-            distance !== undefined &&
-            distance !== ""
-        ){
-
-            distance =
-                Number(distance);
-
-            distance =
-                isNaN(distance)
-                    ? "-"
-                    : distance.toFixed(2) + " km";
-
-        }else{
-
-            distance = "-";
-
-        }
-
-
-        // ---------------------------------------------
         // PRICE
         // ---------------------------------------------
 
