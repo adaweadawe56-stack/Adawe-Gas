@@ -3943,9 +3943,11 @@ window.showPrices = function(id) {
 
     console.log("💰 Showing prices:", id);
 
+
     const seller = sellersData.find(
         s => s.id === id
     );
+
 
     if (!seller) {
 
@@ -3955,15 +3957,13 @@ window.showPrices = function(id) {
         );
 
         return;
+
     }
 
-    console.log(
-        "💰 Seller prices:",
-        seller
-    );
 
     const tbody =
         document.getElementById("priceModalBody");
+
 
     if (!tbody) {
 
@@ -3972,19 +3972,31 @@ window.showPrices = function(id) {
         );
 
         return;
+
     }
 
+
     const modalElement =
-    document.getElementById("priceModal");
+        document.getElementById("priceModal");
 
-const modal =
-    new bootstrap.Modal(modalElement);
 
-modal.show();
+    if (!modalElement) {
 
-    body.innerHTML = "";
+        console.error(
+            "❌ priceModal not found"
+        );
+
+        return;
+
+    }
+
+
+    // Clear old prices
+    tbody.innerHTML = "";
+
 
     const sizes = [
+
         "1kg",
         "3kg",
         "6kg",
@@ -3996,29 +4008,53 @@ modal.show();
         "40kg",
         "45kg",
         "50kg"
+
     ];
+
 
     sizes.forEach(size => {
 
-        body.innerHTML += `
+        const price =
+            Number(
+                seller.prices?.[size] || 0
+            );
+
+
+        tbody.innerHTML += `
+
             <tr>
-                <td>${size}</td>
+
                 <td>
-                    KES ${Number(
-                        s.prices?.[size] || 0
-                    ).toLocaleString()}
+                    <strong>${size}</strong>
                 </td>
+
+                <td>
+
+                    ${
+                        price > 0
+                            ? `KES ${price.toLocaleString("en-KE")}`
+                            : `<span class="text-muted">Not set</span>`
+                    }
+
+                </td>
+
             </tr>
+
         `;
 
     });
 
-    new bootstrap.Modal(
-        document.getElementById("priceModal")
-    ).show();
+
+    // Bootstrap modal
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
 
 };
-
 window.deleteOrder = async id => {
 
   if (!confirm("Delete this order?")) return;
