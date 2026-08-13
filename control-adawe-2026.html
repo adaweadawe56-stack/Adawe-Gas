@@ -4425,30 +4425,32 @@ window.approveSeller = async id => {
 
 window.rejectSeller = async id => {
 
-  if (!confirm("Reject this seller?")) return;
+    if (!confirm("Reject this seller?")) return;
 
-  try {
+    try {
 
-   await updateDoc(
-    doc(db, "sellers", id),
-    {
-        status: "approved",
-        updatedAt: serverTimestamp()
+        await updateDoc(
+            doc(db, "sellers", id),
+            {
+                status: "rejected",
+                updatedAt: serverTimestamp()
+            }
+        );
+
+        alert("Seller rejected successfully");
+
+    } catch (error) {
+
+        console.error(
+            "❌ Reject seller error:",
+            error
+        );
+
+        alert("Failed to reject seller");
+
     }
-);
-
-    alert("Seller rejected successfully");
-
-  } catch(error) {
-
-    console.error(error);
-
-    alert("Failed to reject seller");
-
-  }
 
 };
-
 window.editOrder = async function(id) {
 
     const o = ordersData.find(x => x.id === id);
