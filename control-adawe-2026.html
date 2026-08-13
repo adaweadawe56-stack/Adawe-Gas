@@ -4868,45 +4868,80 @@ window.viewOrder = function(orderId) {
     }
 
 
-    // =================================================
-    // PRICE
-    // =================================================
+// =================================================
+// PRICE
+// =================================================
 
-    const rawPrice =
-        order.sellerPrice ??
-        order.price ??
-        order.totalPrice ??
-        order.amount ??
-        null;
+const rawPrice =
+    order.sellerPrice ??
+    order.price ??
+    order.totalPrice ??
+    order.amount ??
+    null;
 
-
-    const price =
-        rawPrice !== null &&
-        rawPrice !== undefined &&
-        rawPrice !== ""
-            ? "KES " +
-              Number(rawPrice)
-                  .toLocaleString("en-KE")
-            : "-";
+const price =
+    rawPrice !== null &&
+    rawPrice !== undefined &&
+    rawPrice !== ""
+        ? "KES " +
+          Number(rawPrice).toLocaleString("en-KE")
+        : "-";
 
 
-    // =================================================
-    // STATUS
-    // =================================================
+// =================================================
+// STATUS
+// =================================================
 
-    const status =
-        order.status ||
-        "Pending";
+const status =
+    order.status ||
+    "Pending";
 
-// =====================================================
+
+// =================================================
+// TIMESTAMPS
+// =================================================
+
+const createdAt =
+    formatAdminDate(
+        order.createdAt
+    );
+
+const assignedAt =
+    formatAdminDate(
+        order.assignedAt
+    );
+
+const acceptedAt =
+    formatAdminDate(
+        order.acceptedAt
+    );
+
+const onTheWayAt =
+    formatAdminDate(
+        order.onTheWayAt
+    );
+
+const deliveredAt =
+    formatAdminDate(
+        order.deliveredAt
+    );
+
+const rejectedAt =
+    formatAdminDate(
+        order.rejectedAt
+    );
+
+
+// =================================================
 // TIMELINE STATUS
-// =====================================================
+// =================================================
 
 const normalizedStatus =
     normalizeText(status);
 
 
-// Timeline timestamps
+// Completed states
+
 const isCreated =
     createdAt !== "-";
 
@@ -4926,7 +4961,10 @@ const isRejected =
     rejectedAt !== "-";
 
 
-// Current status
+// =================================================
+// CURRENT STATUS
+// =================================================
+
 const createdCurrent =
     normalizedStatus === "pending" &&
     !isAssigned;
