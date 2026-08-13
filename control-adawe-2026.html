@@ -1811,13 +1811,24 @@ function listenToSellers() {
                     sellersData.length
                 );
 
-                if (
-                    typeof renderSellers === "function"
-                ) {
+               // Update seller table
+if (
+    typeof renderSellers === "function"
+) {
 
-                    renderSellers();
+    renderSellers();
 
-                }
+}
+
+
+// Update seller statistics
+if (
+    typeof updateSellerStatistics === "function"
+) {
+
+    updateSellerStatistics();
+
+}
 
             } catch (error) {
 
