@@ -1514,7 +1514,99 @@ let sellersLoaded = false;
 
 let ordersLoaded = false;
 
+let sellersUnsubscribe = null;
+
+let ordersUnsubscribe = null;
+
 const assigningOrders = new Set();
+
+
+// =====================================================
+// SELLERS REAL-TIME LISTENER
+// =====================================================
+
+function listenToSellers() {
+
+    console.log("👨‍💼 Starting sellers realtime listener...");
+
+
+    // Stop previous listener if one exists
+    if (sellersUnsubscribe) {
+
+        sellersUnsubscribe();
+
+        sellersUnsubscribe = null;
+
+    }
+
+
+    sellersUnsubscribe = onSnapshot(
+
+        collection(db, "sellers"),
+
+        (snapshot) => {
+
+            try {
+
+                sellersData = snapshot.docs.map(docSnap => ({
+
+                    id: docSnap.id,
+
+                    ...docSnap.data()
+
+                }));
+
+
+                sellersLoaded = true;
+
+
+                console.log(
+                    "🔥 SELLERS FROM FIRESTORE:",
+                    sellersData
+                );
+
+
+                console.log(
+                    "👨‍💼 SELLERS COUNT:",
+                    sellersData.length
+                );
+
+
+                // Render table immediately
+                if (
+                    typeof renderSellers === "function"
+                ) {
+
+                    renderSellers();
+
+                }
+
+
+            } catch (error) {
+
+                console.error(
+                    "❌ Error processing sellers:",
+                    error
+                );
+
+            }
+
+        },
+
+        (error) => {
+
+            sellersLoaded = false;
+
+            console.error(
+                "❌ Sellers realtime listener failed:",
+                error
+            );
+
+        }
+
+    );
+
+}
 
 function formatTimestamp(timestamp) {
 
