@@ -3961,20 +3961,13 @@ table.innerHTML = `
             <th>Quantity</th>
             <th>Brand</th>
             <th>Seller</th>
-            <th>Assignment</th>
-            <th>Smart Score</th>
-            <th>Distance</th>
             <th>Price</th>
             <th>Status</th>
             <th>Created At</th>
-            <th>Assigned At</th>
-            <th>Accepted At</th>
-            <th>On The Way At</th>
-            <th>Delivered At</th>
-            <th>Rejected At</th>
             <th>Actions</th>
         </tr>
     </thead>
+
     <tbody></tbody>
 `;
 
@@ -4310,109 +4303,65 @@ table.innerHTML = `
             document.createElement("tr");
 
 
-        row.innerHTML = `
+       row.innerHTML = `
 
-            <td>
-                <strong>
-                    ${escapeHTML(orderId)}
-                </strong>
-            </td>
+    <td>
+        <strong>
+            ${escapeHTML(orderId)}
+        </strong>
+    </td>
 
-            <td>
-                ${escapeHTML(customer)}
-            </td>
+    <td>
+        ${escapeHTML(customer)}
+    </td>
 
-            <td>
-                ${escapeHTML(phone)}
-            </td>
+    <td>
+        ${escapeHTML(phone)}
+    </td>
 
-            <td>
-                ${escapeHTML(location)}
-            </td>
+    <td>
+        ${escapeHTML(location)}
+    </td>
 
-            <td>
-                ${escapeHTML(quantity)}
-            </td>
+    <td>
+        ${escapeHTML(quantity)}
+    </td>
 
-            <td>
-                ${escapeHTML(brand)}
-            </td>
+    <td>
+        ${escapeHTML(brand)}
+    </td>
 
-            <td>
-                ${escapeHTML(seller)}
-            </td>
+    <td>
+        ${escapeHTML(seller)}
+    </td>
 
-            <td>
-                <span class="badge bg-secondary">
-                    ${escapeHTML(assignment)}
-                </span>
-            </td>
+    <td>
+        ${escapeHTML(formattedPrice)}
+    </td>
 
-            <td>
-                <strong>
-                    ${escapeHTML(smartScore)}
-                </strong>
-            </td>
+    <td>
+        <span class="badge ${getStatusBadgeClass(status)}">
+            ${escapeHTML(status)}
+        </span>
+    </td>
 
-            <td>
-                ${escapeHTML(distance)}
-            </td>
+    <td>
+        ${escapeHTML(createdAt)}
+    </td>
 
-            <td>
-                ${escapeHTML(formattedPrice)}
-            </td>
+    <td>
 
-            <td>
-                <span class="badge
-                    ${getStatusBadgeClass(status)}">
+        <button
+            class="btn btn-outline-success view-order-btn"
+            onclick="viewOrder('${escapeJS(order.id)}')">
 
-                    ${escapeHTML(status)}
+            View
 
-                </span>
-            </td>
+        </button>
 
-            <td>
-                ${escapeHTML(createdAt)}
-            </td>
+    </td>
 
-            <td>
-                ${escapeHTML(assignedAt)}
-            </td>
-
-            <td>
-                ${escapeHTML(acceptedAt)}
-            </td>
-
-            <td>
-                ${escapeHTML(onTheWayAt)}
-            </td>
-
-            <td>
-                ${escapeHTML(deliveredAt)}
-            </td>
-
-            <td>
-                ${escapeHTML(rejectedAt)}
-            </td>
-
-            <td>
-
-                <div class="btn-group btn-group-sm">
-
-                    <button
-                        class="btn btn-outline-success"
-                        onclick="viewOrder('${escapeJS(order.id)}')">
-
-                        View
-
-                    </button>
-
-                </div>
-
-            </td>
-
-        `;
-
+`;
 
         tbody.appendChild(row);
 
