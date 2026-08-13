@@ -4854,7 +4854,61 @@ window.viewOrder = function(orderId) {
         order.status ||
         "Pending";
 
+// =====================================================
+// TIMELINE STATUS
+// =====================================================
 
+const normalizedStatus =
+    normalizeText(status);
+
+
+// Timeline timestamps
+const isCreated =
+    createdAt !== "-";
+
+const isAssigned =
+    assignedAt !== "-";
+
+const isAccepted =
+    acceptedAt !== "-";
+
+const isOnTheWay =
+    onTheWayAt !== "-";
+
+const isDelivered =
+    deliveredAt !== "-";
+
+const isRejected =
+    rejectedAt !== "-";
+
+
+// Current status
+const createdCurrent =
+    normalizedStatus === "pending" &&
+    !isAssigned;
+
+const assignedCurrent =
+    normalizedStatus === "assigned" ||
+    (
+        isAssigned &&
+        !isAccepted &&
+        normalizedStatus === "pending"
+    );
+
+const acceptedCurrent =
+    normalizedStatus === "accepted";
+
+const onTheWayCurrent =
+    normalizedStatus === "on the way" ||
+    normalizedStatus === "ontheway";
+
+const deliveredCurrent =
+    normalizedStatus === "delivered";
+
+const rejectedCurrent =
+    normalizedStatus === "rejected";
+
+    
     // =================================================
     // TIMESTAMPS
     // =================================================
