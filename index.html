@@ -2017,6 +2017,48 @@ const distance = calculateDistance(
     sellerLng
 );
 
+// ----------------------
+// SELLER DELIVERY RADIUS
+// ----------------------
+
+const deliveryRadiusKm =
+    Number(s.deliveryRadiusKm || 0);
+
+if (
+    !Number.isFinite(deliveryRadiusKm) ||
+    deliveryRadiusKm <= 0
+) {
+    console.warn(
+        "Seller has invalid delivery radius:",
+        s.name
+    );
+
+    return;
+}
+
+// Customer outside seller delivery area
+if (distance > deliveryRadiusKm) {
+
+    console.log(
+        `❌ ${s.name} outside delivery radius`,
+        {
+            distance: distance,
+            radius: deliveryRadiusKm
+        }
+    );
+
+    return;
+}
+
+// Seller is within delivery radius
+console.log(
+    `✅ ${s.name} is eligible`,
+    {
+        distance: distance,
+        radius: deliveryRadiusKm
+    }
+);      
+
 
 // ----------------------
 // DISTANCE TEST
