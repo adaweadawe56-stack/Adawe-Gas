@@ -2114,62 +2114,116 @@ console.log(
             Number(s.averageRating || 0);
 
 
-        // ----------------------
-        // SELECT BEST SELLER
-        // ----------------------
+// =================================================
+// SELECT BEST SELLER
+// =================================================
 
-        if (
+const currentBestDistance =
+    bestSeller
+        ? Number(bestSeller.distance)
+        : Infinity;
 
-            !bestSeller ||
+const currentBestRating =
+    bestSeller
+        ? Number(bestSeller.averageRating || 0)
+        : 0;
 
-            distance < bestSeller.distance ||
+const currentBestPrice =
+    bestSeller
+        ? Number(bestSeller.sellerPrice || 0)
+        : Infinity;
 
-            (
-                Math.abs(
-                    distance -
-                    bestSeller.distance
-                ) < 1 &&
 
-                sellerRating >
-                Number(
-                    bestSeller.averageRating || 0
-                )
-            ) ||
+// =================================================
+// SMART COMPARISON
+// =================================================
 
-            (
-                Math.abs(
-                    distance -
-                    bestSeller.distance
-                ) < 1 &&
+let shouldSelectSeller = false;
 
-                sellerRating ===
-                Number(
-                    bestSeller.averageRating || 0
-                ) &&
 
-                sellerPrice <
-                bestSeller.sellerPrice
-            )
+// ----------------------
+// 1. NO BEST SELLER YET
+// ----------------------
 
-        ) {
+if (!bestSeller) {
 
-            bestSeller = {
+    shouldSelectSeller = true;
 
-                id: docSnap.id,
+}
 
-                sellerPrice: sellerPrice,
 
-                distance: distance,
+// ----------------------
+// 2. CLOSER SELLER
+// ----------------------
 
-                ...s,
+else if (
+    distance < currentBestDistance
+) {
 
-                prices: {
-                    ...s.prices
-                }
+    shouldSelectSeller = true;
 
-            };
+}
 
+
+// ----------------------
+// 3. SAME DISTANCE → BETTER RATING
+// ----------------------
+
+else if (
+    Math.abs(
+        distance - currentBestDistance
+    ) < 1 &&
+    sellerRating > currentBestRating
+) {
+
+    shouldSelectSeller = true;
+
+}
+
+
+// ----------------------
+// 4. SAME DISTANCE + SAME RATING
+//    → CHEAPER PRICE
+// ----------------------
+
+else if (
+    Math.abs(
+        distance - currentBestDistance
+    ) < 1 &&
+
+    sellerRating === currentBestRating &&
+
+    sellerPrice < currentBestPrice
+) {
+
+    shouldSelectSeller = true;
+
+}
+
+
+// =================================================
+// SAVE BEST SELLER
+// =================================================
+
+if (shouldSelectSeller) {
+
+    bestSeller = {
+
+        id: docSnap.id,
+
+        sellerPrice: sellerPrice,
+
+        distance: distance,
+
+        ...s,
+
+        prices: {
+            ...s.prices
         }
+
+    };
+
+}
 
     });
 
