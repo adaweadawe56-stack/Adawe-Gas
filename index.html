@@ -3062,7 +3062,23 @@ function useCustomerLocation(position) {
         );
     }
 }
+/* =========================================================
+   SHOW RECOMMENDED SELLER
+========================================================= */
+
 async function showRecommendedSeller() {
+
+    const recommendedSeller =
+        document.getElementById("recommendedSeller");
+
+    const sellerLoading =
+        document.getElementById("sellerLoading");
+
+    const sellerStatus =
+        document.getElementById("sellerStatus");
+
+    const submitOrderBtn =
+        document.getElementById("submitOrderBtn");
 
     const quantity =
         document.getElementById("quantity").value;
@@ -3070,45 +3086,47 @@ async function showRecommendedSeller() {
     const brand =
         document.getElementById("brand").value;
 
-    console.log("🛢️ Quantity:", quantity);
 
-    console.log("🔥 Brand:", brand);
+    // =====================================================
+    // RESET
+    // =====================================================
 
-    console.log("📍 Customer GPS:", {
-        latitude: customerLatitude,
-        longitude: customerLongitude
-    });
+    recommendedSeller.style.display = "none";
+    recommendedSeller.innerHTML = "";
 
+    sellerStatus.style.display = "none";
+
+    submitOrderBtn.disabled = true;
+
+
+    // =====================================================
+    // CHECK GAS SIZE + BRAND
+    // =====================================================
 
     if (!quantity || !brand) {
-
-        document.getElementById("sellerLoading").style.display = "none";
-
-        document.getElementById("recommendedSeller").style.display = "none";
-
-        document.getElementById("sellerStatus").style.display = "none";
-
-        document.getElementById("submitOrderBtn").disabled = true;
-
         return;
     }
 
 
+    // =====================================================
+    // CUSTOMER GPS REQUIRED
+    // =====================================================
+
     if (
-        customerLatitude == null ||
-        customerLongitude == null
+        customerLatitude === null ||
+        customerLongitude === null ||
+        !Number.isFinite(Number(customerLatitude)) ||
+        !Number.isFinite(Number(customerLongitude))
     ) {
 
-        document.getElementById("sellerLoading").style.display = "none";
+        recommendedSeller.style.display = "block";
 
-        document.getElementById("recommendedSeller").style.display = "block";
-
-        document.getElementById("recommendedSeller").innerHTML =
-            "📍 Please allow location access to see the nearest seller.";
-
-        document.getElementById("sellerStatus").style.display = "none";
-
-        document.getElementById("submitOrderBtn").disabled = true;
+        recommendedSeller.innerHTML = `
+            <div class="text-center text-warning">
+                📍 Please detect your location first
+                to find the best seller near you.
+            </div>
+        `;
 
         return;
     }
@@ -3116,158 +3134,297 @@ async function showRecommendedSeller() {
 
     try {
 
-        document.getElementById("sellerLoading").style.display = "block";
+        // =================================================
+        // SHOW LOADING
+        // =================================================
 
-        document.getElementById("recommendedSeller").style.display = "none";
+        sellerLoading.style.display = "block";
 
 
-        // ----------------------
-        // GET BEST SELLER
-        // ----------------------
-
-        console.log("➡️ Calling getBestSeller() now...");
-
-        const seller = await getBestSeller(
-            quantity,
-            brand,
-            customerLatitude,
-            customerLongitude
+        console.log(
+            "🔍 Finding best seller..."
         );
 
         console.log(
-            "⬅️ getBestSeller() returned:",
+            "🛢️ Quantity:",
+            quantity
+        );
+
+        console.log(
+            "🔥 Brand:",
+            brand
+        );
+
+        console.log(
+            "📍 Customer GPS:",
+            {
+                latitude: customerLatitude,
+                longitude: customerLongitude
+            }
+        );
+
+
+        // =================================================
+        // GET BEST SELLER
+        // =================================================
+
+        const seller =
+            await getBestSeller(
+                quantity,
+                brand,
+                Number(customerLatitude),
+                Number(customerLongitude)
+            );
+
+
+        if (!seller) {
+
+            throw new Error(
+                "No seller available within your delivery area."
+            );
+        }
+
+
+        console.log(
+            "🏆 BEST SELLER RETURNED:",
             seller
         );
 
 
-        // ----------------------
-        // HIDE LOADING
-        // ----------------------
+        // =================================================
+        // SELLER DATA
+        // =================================================
 
-        document.getElementById("sellerLoading").style.display = "none";
+        const sellerName =
+            seller.name || "Available Seller";
+
+        const sellerPrice =
+            Number(seller.sellerPrice || 0);
+
+        const sellerDistance =
+            Number(seller.distance || 0);
+
+        const sellerRating =
+            Number(seller.averageRating || 0);
+
+        const sellerRadius =
+            Number(seller.deliveryRadiusKm || 0);
+
+        const completedOrders =
+            Number(seller.completedOrders || 0);
 
 
-        // ----------------------
-        // SHOW SELLER
-        // ----------------------
-
-        document.getElementById("recommendedSeller").style.display = "block";
-
-
-        // ----------------------
+        // =================================================
         // ETA
-        // ----------------------
+        // =================================================
 
         let eta = "30–40 Minutes";
 
-        if (seller.distance <= 1) {
+        if (sellerDistance <= 1) {
 
             eta = "5–10 Minutes";
 
-        } else if (seller.distance <= 3) {
+        } else if (sellerDistance <= 3) {
 
             eta = "10–15 Minutes";
 
-        } else if (seller.distance <= 5) {
+        } else if (sellerDistance <= 5) {
 
             eta = "15–20 Minutes";
 
-        } else if (seller.distance <= 10) {
+        } else if (sellerDistance <= 10) {
 
             eta = "20–30 Minutes";
 
         }
 
 
-        // ----------------------
+        // =================================================
         // SELLER CARD
-        // ----------------------
+        // =================================================
 
-        document.getElementById("recommendedSeller").innerHTML = `
+        recommendedSeller.innerHTML = `
 
-            <div class="recommended-title">
-                🏆 Best Seller Found
+            <div class="text-center">
+
+                <div style="font-size:35px;">
+                    🏪
+                </div>
+
+                <div class="recommended-title">
+                    🏆 Best Seller Found
+                </div>
+
+                <h4 class="text-success">
+                    ${sellerName}
+                </h4>
+
             </div>
 
-            <h4>
-                ${seller.name || "Unknown Seller"}
-            </h4>
 
             <div class="recommended-info">
 
                 <p>
-                    ⭐ ${Number(
-                        seller.averageRating || 0
-                    ).toFixed(1)} Rating
+                    ⭐ <strong>
+                        ${sellerRating.toFixed(1)}
+                    </strong>
+                    Rating
                 </p>
 
-                <p>
-                    📍 ${seller.location || "Location not available"}
-                </p>
 
                 <p>
-                    🧭 ${Number(
-                        seller.distance || 0
-                    ).toFixed(2)} km away
+                    📍
+                    ${seller.location || "Location not available"}
                 </p>
 
-                <p>
-                    🛢️ ${brand} • ${quantity}
-                </p>
 
                 <p>
-                    💰 <strong>
-                        KES ${Number(
-                            seller.sellerPrice || 0
-                        ).toLocaleString()}
+                    🧭
+                    <strong>
+                        ${sellerDistance.toFixed(2)} km
+                    </strong>
+                    away
+                </p>
+
+
+                <p>
+                    🛢️
+                    ${brand} • ${quantity}
+                </p>
+
+
+                <p>
+                    💰
+                    <strong>
+                        KSh ${sellerPrice.toLocaleString()}
                     </strong>
                 </p>
 
+
                 <p>
-                    📦 ${seller.completedOrders || 0}
+                    📦
+                    ${completedOrders}
                     Completed Orders
                 </p>
 
+
                 <p>
-                    🏍️ Rider ETA: ${eta}
+                    🏍️
+                    Rider ETA:
+                    <strong>
+                        ${eta}
+                    </strong>
                 </p>
+
+
+                <p>
+                    🚚
+                    Delivery radius:
+                    <strong>
+                        ${sellerRadius} km
+                    </strong>
+                </p>
+
 
                 ${
                     seller.verified
-                        ? "<p>✔ Verified Seller</p>"
+                        ? `
+                            <p class="text-success">
+                                ✔ Verified Seller
+                            </p>
+                          `
                         : ""
                 }
 
             </div>
+
         `;
 
-    document.getElementById("sellerStatus").style.display = "block";
 
-    document.getElementById("submitOrderBtn").disabled = false;
+        recommendedSeller.style.display = "block";
 
-} catch (err) {
 
-    console.error("❌ showRecommendedSeller ERROR:", err);
+        // =================================================
+        // SELLER FOUND STATUS
+        // =================================================
 
-    document.getElementById("sellerLoading").style.display = "none";
+        sellerStatus.innerHTML = `
+            ✅ Seller Found:
+            <strong>${sellerName}</strong>
+        `;
 
-    document.getElementById("recommendedSeller").style.display = "block";
+        sellerStatus.style.display = "block";
 
-    document.getElementById("recommendedSeller").innerHTML =
-        `❌ ${err.message}`;
 
-    document.getElementById("sellerStatus").style.display = "none";
+        // =================================================
+        // ENABLE ORDER BUTTON
+        // =================================================
 
-    document.getElementById("submitOrderBtn").disabled = true;
+        submitOrderBtn.disabled = false;
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ showRecommendedSeller ERROR:",
+            error
+        );
+
+
+        recommendedSeller.innerHTML = `
+
+            <div class="text-center text-danger">
+
+                ❌ No seller available
+
+                <br>
+
+                <small>
+                    ${
+                        error.message ||
+                        "No available seller was found within your delivery area."
+                    }
+                </small>
+
+            </div>
+
+        `;
+
+        recommendedSeller.style.display = "block";
+
+
+        sellerStatus.style.display = "none";
+
+        submitOrderBtn.disabled = true;
+
+
+    } finally {
+
+        sellerLoading.style.display = "none";
+
+    }
+
 }
-}
 
-document.getElementById("quantity")
-    .addEventListener("change", showRecommendedSeller);
 
-document.getElementById("brand")
-    .addEventListener("change", showRecommendedSeller);
+/* =========================================================
+   SELLER RECOMMENDATION EVENTS
+========================================================= */
 
+document
+    .getElementById("quantity")
+    ?.addEventListener(
+        "change",
+        showRecommendedSeller
+    );
+
+
+document
+    .getElementById("brand")
+    ?.addEventListener(
+        "change",
+        showRecommendedSeller
+    );
 /* -------------------- ORDER FORM -------------------- */
 
 const orderForm = document.getElementById("orderForm");
