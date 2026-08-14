@@ -3664,6 +3664,37 @@ document
     brands.push(cb.value);
   });
 
+      // ----------------------
+// Seller Availability
+// ----------------------
+
+const isAvailable =
+    document.getElementById("isAvailable")?.value === "true";
+
+
+// ----------------------
+// Delivery Radius
+// ----------------------
+
+const deliveryRadiusKm =
+    Number(
+        document.getElementById("deliveryRadiusKm")?.value || 10
+    );
+
+
+if (
+    !Number.isFinite(deliveryRadiusKm) ||
+    deliveryRadiusKm < 1
+) {
+
+    showToast(
+        "Enter a valid delivery radius.",
+        false
+    );
+
+    return;
+}
+
 if (brands.length === 0) {
   showToast("Select at least one gas brand", false);
   return;
