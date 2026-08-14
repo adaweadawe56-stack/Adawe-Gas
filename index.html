@@ -3318,14 +3318,12 @@ if (
         customerLongitude
     );
 
-} else {
-
-    sellerData = await getCheapestSeller(
-        quantity,
-        brand
-    );
-
-}
+sellerData = await getCheapestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+);
 
 if (!sellerData) {
     throw new Error("No seller available");
