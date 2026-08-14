@@ -3306,45 +3306,93 @@ try {
 
 let sellerData;
 
+// =================================================
+// CUSTOMER GPS REQUIRED
+// =================================================
+
 if (
-    customerLatitude != null &&
-    customerLongitude != null
+    customerLatitude === null ||
+    customerLongitude === null ||
+    !Number.isFinite(Number(customerLatitude)) ||
+    !Number.isFinite(Number(customerLongitude))
 ) {
 
-    sellerData = await getBestSeller(
-        quantity,
-        brand,
-        customerLatitude,
-        customerLongitude
+    throw new Error(
+        "Please detect your location before placing the order."
     );
+}
 
-sellerData = await getCheapestSeller(
+
+// =================================================
+// FIND BEST SELLER
+// =================================================
+
+sellerData = await getBestSeller(
+
     quantity,
+
     brand,
-    customerLatitude,
-    customerLongitude
+
+    Number(customerLatitude),
+
+    Number(customerLongitude)
+
 );
 
+
+// =================================================
+// SAFETY CHECK
+// =================================================
+
 if (!sellerData) {
-    throw new Error("No seller available");
+
+    throw new Error(
+        "No seller available within your delivery area."
+    );
+
 }
+
+
+// =================================================
+// SELLER WHATSAPP
+// =================================================
 
 const sellerWhatsapp =
     sellerData.phone?.trim();
 
+
+// =================================================
+// SELLER PRICE
+// =================================================
+
 const orderPrice =
     Number(sellerData.sellerPrice || 0);
 
+
 if (!sellerData.uid) {
-    throw new Error("Seller UID missing");
+
+    throw new Error(
+        "Seller UID missing."
+    );
+
 }
+
 
 if (!sellerWhatsapp) {
-    throw new Error("Seller phone missing");
+
+    throw new Error(
+        "Seller phone missing."
+    );
+
 }
 
+
 if (orderPrice <= 0) {
-    throw new Error("Seller price is invalid");
+
+    throw new Error(
+        "Seller price is invalid."
+    );
+
 }
 
 console.log("Customer Latitude:", customerLatitude);
