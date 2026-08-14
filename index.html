@@ -3748,39 +3748,112 @@ console.log("Seller Longitude:", sellerLongitude);
 await addDoc(collection(db, "sellers"), {
 
     uid,
+
     name,
+
     email,
+
     phone,
+
     location,
 
-    sellerLatitude: Number(sellerLatitude),
-    sellerLongitude: Number(sellerLongitude),
+
+    // =================================================
+    // SELLER GPS
+    // =================================================
+
+    sellerLatitude:
+        Number(sellerLatitude),
+
+    sellerLongitude:
+        Number(sellerLongitude),
+
+
+    // =================================================
+    // AVAILABILITY & DELIVERY RADIUS
+    // =================================================
+
+    isAvailable:
+        isAvailable,
+
+    deliveryRadiusKm:
+        deliveryRadiusKm,
+
+
+    // =================================================
+    // GAS
+    // =================================================
 
     prices,
+
     brands,
 
-    profileImage: "images/logo.png",
+
+    // =================================================
+    // PROFILE
+    // =================================================
+
+    profileImage:
+        "images/logo.png",
+
+
+    // =================================================
+    // SELLER STATS
+    // =================================================
 
     averageRating: 0,
+
     totalRatings: 0,
+
     completedOrders: 0,
+
+
+    // =================================================
+    // VERIFICATION
+    // =================================================
 
     verified: false,
 
+
+    // =================================================
+    // DELIVERY
+    // =================================================
+
     responseTime: null,
+
     deliveryTime: null,
+
+
+    // =================================================
+    // COMMISSION
+    // =================================================
 
     paymentStatus: "Paid",
 
     commissionBalance: 0,
+
     deliveryCount: 0,
+
     deliveryLimit: 3,
+
     commissionPerOrder: 50,
+
     totalCommissionPayments: 0,
+
+
+    // =================================================
+    // STATUS
+    // =================================================
 
     status: "pending",
 
-    createdAt: serverTimestamp()
+
+    // =================================================
+    // CREATED
+    // =================================================
+
+    createdAt:
+        serverTimestamp()
 
 });
     
