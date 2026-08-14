@@ -1879,19 +1879,34 @@ async function getBestSeller(
 
     snap.forEach(docSnap => {
 
-        const s = docSnap.data();
+    const s = docSnap.data();
 
-        // ----------------------
-        // SELLER PRICE
-        // ----------------------
 
-        const sellerPrice =
-            Number(s.prices?.[quantity] || 0);
+    // =================================================
+    // SELLER AVAILABILITY
+    // =================================================
 
-        if (sellerPrice <= 0) {
-            return;
-        }
+    if (s.isAvailable !== true) {
 
+        console.log(
+            "❌ Seller not available:",
+            s.name
+        );
+
+        return;
+    }
+
+
+    // =================================================
+    // SELLER PRICE
+    // =================================================
+
+    const sellerPrice =
+        Number(s.prices?.[quantity] || 0);
+
+    if (sellerPrice <= 0) {
+        return;
+    }
 
        // ----------------------
 // GAS BRAND
