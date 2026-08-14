@@ -3716,11 +3716,12 @@ const deliveryRadiusKm =
 
 if (
     !Number.isFinite(deliveryRadiusKm) ||
-    deliveryRadiusKm < 1
+    deliveryRadiusKm < 1 ||
+    deliveryRadiusKm > 100
 ) {
 
     showToast(
-        "Enter a valid delivery radius.",
+        "Delivery radius must be between 1 and 100 KM.",
         false
     );
 
