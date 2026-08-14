@@ -920,6 +920,84 @@ required>
     </div>
 
 </div>
+
+  <!-- =====================================================
+     SELLER AVAILABILITY
+     👇 HALKAN KU DAR
+===================================================== -->
+
+<div class="mb-3">
+
+    <label
+        for="isAvailable"
+        class="form-label">
+
+        Seller Availability
+
+    </label>
+
+    <select
+        id="isAvailable"
+        class="form-select">
+
+        <option value="true">
+            Available
+        </option>
+
+        <option value="false">
+            Not Available
+        </option>
+
+    </select>
+
+</div>
+
+
+<!-- =====================================================
+     DELIVERY RADIUS
+     👇 HALKAN KU DAR
+===================================================== -->
+
+<div class="mb-3">
+
+    <label
+        for="deliveryRadiusKm"
+        class="form-label">
+
+        Delivery Radius (KM)
+
+    </label>
+
+    <input
+        type="number"
+        id="deliveryRadiusKm"
+        class="form-control"
+        min="1"
+        max="100"
+        step="1"
+        value="10"
+        placeholder="e.g. 10"
+        required
+    >
+
+    <small class="text-muted">
+        Maximum distance this seller can deliver.
+    </small>
+
+</div>
+
+
+<!-- =====================================================
+     REGISTER SELLER
+===================================================== -->
+
+<button type="submit"
+        id="registerSellerBtn"
+        class="btn btn-primary w-100">
+
+    <span id="btnText">
+        Register
+    </span>
   
   
 <button type="submit"
