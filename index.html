@@ -2210,7 +2210,12 @@ console.log(
 
     return bestSeller;
 }
- async function getCheapestSeller(quantity, brand) {
+async function getCheapestSeller(
+    quantity,
+    brand,
+    customerLatitude,
+    customerLongitude
+) {
 
     const q = query(
         collection(db, "sellers"),
@@ -2229,10 +2234,9 @@ console.log(
 
         const s = docSnap.data();
 
-// =================================================
-// SELLER AVAILABILITY
-// =================================================
-
+        // =================================================
+        // SELLER AVAILABILITY
+        // =================================================
 if (s.isAvailable !== true) {
 
     console.log(
