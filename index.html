@@ -1965,16 +1965,40 @@ if (
         }
 
 
-        // ----------------------
-        // DELIVERY LIMIT
-        // ----------------------
+        // =================================================
+// DELIVERY LIMIT CHECK
+// =================================================
 
-        if (
-            (s.deliveryCount || 0) >=
-            (s.deliveryLimit || 999)
-        ) {
-            return;
+const deliveryCount =
+    Number(s.deliveryCount || 0);
+
+const deliveryLimit =
+    Number(s.deliveryLimit || 999);
+
+if (deliveryCount >= deliveryLimit) {
+
+    console.log(
+        "❌ SELLER REACHED DELIVERY LIMIT:",
+        s.name,
+        {
+            deliveryCount,
+            deliveryLimit,
+            paymentStatus: s.paymentStatus,
+            commissionBalance: s.commissionBalance
         }
+    );
+
+    return;
+}
+
+console.log(
+    "✅ SELLER WITHIN DELIVERY LIMIT:",
+    s.name,
+    {
+        deliveryCount,
+        deliveryLimit
+    }
+);
 
 
         // ----------------------
