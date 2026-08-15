@@ -1881,15 +1881,14 @@ async function getBestSeller(
 
     const s = docSnap.data();
 
-console.log("🔎 SELLER RAW DATA:", {
-    id: docSnap.id,
-    name: s.name,
-    isAvailable: s.isAvailable,
-    isAvailableType: typeof s.isAvailable,
-    status: s.status,
-    brands: s.brands,
-    deliveryRadiusKm: s.deliveryRadiusKm
+console.log("🔎 DELIVERY RADIUS RAW:", {
+    seller: s.name,
+    value: s.deliveryRadiusKm,
+    type: typeof s.deliveryRadiusKm
 });
+
+const deliveryRadiusKm =
+    Number(s.deliveryRadiusKm);
 
     // =================================================
     // SELLER AVAILABILITY
