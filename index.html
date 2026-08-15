@@ -1880,7 +1880,12 @@ async function getBestSeller(
     snap.forEach(docSnap => {
 
     const s = docSnap.data();
-
+      
+console.log("🔎 FULL SELLER DOCUMENT:", {
+    id: docSnap.id,
+    data: s
+});
+      
 console.log("🔎 DELIVERY RADIUS RAW:", {
     seller: s.name,
     value: s.deliveryRadiusKm,
