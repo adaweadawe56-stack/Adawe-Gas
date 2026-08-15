@@ -1886,15 +1886,24 @@ async function getBestSeller(
     // SELLER AVAILABILITY
     // =================================================
 
-    if (s.isAvailable !== true) {
+if (s.isAvailable !== true) {
 
-        console.log(
-            "❌ Seller not available:",
-            s.name
-        );
+    console.log(
+        "❌ Seller not available:",
+        s.name,
+        "| value:",
+        s.isAvailable,
+        "| type:",
+        typeof s.isAvailable
+    );
 
-        return;
-    }
+    return;
+}
+
+console.log(
+    "🟢 Seller is AVAILABLE:",
+    s.name
+);
 
 
     // =================================================
@@ -2293,15 +2302,24 @@ async function getCheapestSeller(
         // SELLER AVAILABILITY
         // =================================================
 
-        if (s.isAvailable !== true) {
+if (s.isAvailable !== true) {
 
-            console.log(
-                "❌ Seller not available:",
-                s.name
-            );
+    console.log(
+        "❌ Seller not available:",
+        s.name,
+        "| value:",
+        s.isAvailable,
+        "| type:",
+        typeof s.isAvailable
+    );
 
-            return;
-        }
+    return;
+}
+
+console.log(
+    "🟢 Seller is AVAILABLE:",
+    s.name
+);}
 
 
         // =================================================
