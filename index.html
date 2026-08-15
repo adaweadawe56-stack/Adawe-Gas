@@ -1881,6 +1881,15 @@ async function getBestSeller(
 
     const s = docSnap.data();
 
+console.log("🔎 SELLER RAW DATA:", {
+    id: docSnap.id,
+    name: s.name,
+    isAvailable: s.isAvailable,
+    isAvailableType: typeof s.isAvailable,
+    status: s.status,
+    brands: s.brands,
+    deliveryRadiusKm: s.deliveryRadiusKm
+});
 
     // =================================================
     // SELLER AVAILABILITY
@@ -1917,7 +1926,7 @@ console.log(
         return;
     }
 
-       // ----------------------
+ // ----------------------
 // GAS BRAND
 // ----------------------
 
