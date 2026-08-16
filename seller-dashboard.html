@@ -2067,97 +2067,332 @@ printWindow.document.close();
 printWindow.print();
 
 };
-window.payCommission = async function(){
+// =====================================================
+// SELLER REQUEST MANUAL COMMISSION PAYMENT
+// =====================================================
 
-  try{
+window.payCommission = async function () {
 
-    if(!confirm("Confirm commission payment?")){
-      return;
+    try {
+
+        // -------------------------------------------------
+        // CHECK SELLER
+        // -------------------------------------------------
+
+        if (!sellerDocId) {
+
+            alert(
+                "Seller information not loaded."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // GET SELLER
+        // -------------------------------------------------
+
+        const sellerRef =
+            doc(
+                db,
+                "sellers",
+                sellerDocId
+            );
+
+
+        const sellerSnap =
+            await getDoc(
+                sellerRef
+            );
+
+
+        if (!sellerSnap.exists()) {
+
+            throw new Error(
+                "Seller account not found."
+            );
+
+        }
+
+
+        const seller =
+            sellerSnap.data();
+
+
+        // -------------------------------------------------
+        // CURRENT COMMISSION BALANCE
+        // -------------------------------------------------
+
+        const commissionBalance =
+            Number(
+                seller.commissionBalance || 0
+            );
+
+
+        // -------------------------------------------------
+        // VALIDATE COMMISSION
+        // -------------------------------------------------
+
+        if (
+            commissionBalance <= 0
+        ) {
+
+            alert(
+                "You have no outstanding commission."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // CHECK EXISTING PENDING PAYMENT
+        // -------------------------------------------------
+
+        const pendingQuery =
+            query(
+                collection(
+                    db,
+                    "commissionHistory"
+                ),
+                where(
+                    "sellerUid",
+                    "==",
+                    sellerUid
+                ),
+                where(
+                    "status",
+                    "==",
+                    "Pending"
+                )
+            );
+
+
+        const pendingSnap =
+            await getDocs(
+                pendingQuery
+            );
+
+
+        if (
+            !pendingSnap.empty
+        ) {
+
+            alert(
+                "You already have a pending commission payment. Please wait for Admin confirmation."
+            );
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // CONFIRM PAYMENT REQUEST
+        // -------------------------------------------------
+
+        const confirmed =
+            confirm(
+                `Request manual payment confirmation for KES ${commissionBalance.toLocaleString("en-KE")} ?`
+            );
+
+
+        if (!confirmed) {
+
+            return;
+        }
+
+
+        // -------------------------------------------------
+        // PREVIOUS PAYMENTS
+        // -------------------------------------------------
+
+        const previousPayments =
+            Number(
+                seller.totalCommissionPayments || 0
+            );
+
+
+        // -------------------------------------------------
+        // PAYMENT NUMBER
+        // -------------------------------------------------
+
+        const paymentNumber =
+            previousPayments + 1;
+
+
+        // -------------------------------------------------
+        // RECEIPT NUMBER
+        // -------------------------------------------------
+
+        const receiptNo =
+            "COM-" +
+            String(
+                paymentNumber
+            ).padStart(
+                4,
+                "0"
+            );
+
+
+        // -------------------------------------------------
+        // INVOICE NUMBER
+        // -------------------------------------------------
+
+        const invoiceNo =
+            "INV-" +
+            String(
+                paymentNumber
+            ).padStart(
+                4,
+                "0"
+            );
+
+
+        // -------------------------------------------------
+        // CREATE PENDING COMMISSION PAYMENT
+        // -------------------------------------------------
+
+        await addDoc(
+
+            collection(
+                db,
+                "commissionHistory"
+            ),
+
+            {
+
+                sellerUid:
+                    sellerUid,
+
+                sellerId:
+                    sellerDocId,
+
+                sellerName:
+                    seller.name ||
+                    "Unknown Seller",
+
+                sellerPhone:
+                    seller.phone ||
+                    "",
+
+
+                amount:
+                    commissionBalance,
+
+
+                paymentMethod:
+                    "Manual",
+
+
+                status:
+                    "Pending",
+
+
+                receiptNo:
+                    receiptNo,
+
+
+                invoiceNo:
+                    invoiceNo,
+
+
+                previousPayments:
+                    previousPayments,
+
+
+                totalPaid:
+                    Number(
+                        seller.totalCommissionPaid || 0
+                    ) + commissionBalance,
+
+
+                outstandingBalance:
+                    commissionBalance,
+
+
+                createdAt:
+                    serverTimestamp()
+
+            }
+
+        );
+
+
+        // -------------------------------------------------
+        // MARK SELLER PAYMENT STATUS
+        // -------------------------------------------------
+
+        await updateDoc(
+
+            sellerRef,
+
+            {
+
+                paymentStatus:
+                    "Pending Confirmation"
+
+            }
+
+        );
+
+
+        // -------------------------------------------------
+        // SUCCESS MESSAGE
+        // -------------------------------------------------
+
+        alert(
+            "✅ Payment request submitted.\n\nPlease wait for Admin to confirm your payment."
+        );
+
+
+        // -------------------------------------------------
+        // DEBUG
+        // -------------------------------------------------
+
+        console.log(
+            "💰 Manual commission payment request created:",
+            {
+
+                sellerUid:
+                    sellerUid,
+
+                sellerDocId:
+                    sellerDocId,
+
+                amount:
+                    commissionBalance,
+
+                receiptNo:
+                    receiptNo,
+
+                invoiceNo:
+                    invoiceNo
+
+            }
+        );
+
+
+    } catch (error) {
+
+        // -------------------------------------------------
+        // ERROR
+        // -------------------------------------------------
+
+        console.error(
+            "❌ Manual commission payment request failed:",
+            error
+        );
+
+
+        alert(
+            "❌ " +
+            error.message
+        );
+
     }
 
-    const sellerSnap = await getDoc(
-      doc(db,"sellers",sellerDocId)
-    );
-
-   const seller = sellerSnap.data();
-
-const amount =
-    Number(seller.commissionBalance || 0);
-const previousPayments =
-  Number(seller.totalCommissionPayments || 0);
-
-const totalPaid =
-  (previousPayments + 1) * amount;
-
-const outstandingBalance =
-  Math.max(
-    0,
-    (seller.deliveryCount * seller.commissionPerOrder) - amount
-  );
-
-const receiptNo =
-  "COM-" +
-  String(previousPayments + 1).padStart(4,"0");
-
-const invoiceNo =
-  "INV-" +
-  String(previousPayments + 1).padStart(4,"0");
-    
-alert("Saving history...");
-
-   
-   await addDoc(
-  collection(db,"commissionHistory"),
-  {
-
-    sellerUid,
-    sellerId: sellerDocId,
-    sellerName: seller.name,
-    sellerPhone: seller.phone,
-
-    amount,
-
-    paymentMethod: "Manual",
-
-    status: "Paid",
-
-    receiptNo,
-
-    invoiceNo,
-
-    previousPayments,
-
-    totalPaid,
-
-    outstandingBalance,
-
-    createdAt: serverTimestamp()
-
-  }
-);
-
-    alert("History Saved");
-
-   await updateDoc(
-  doc(db,"sellers",sellerDocId),
-  {
-    deliveryCount: 0,
-    paymentStatus: "Paid",
-    totalCommissionPayments: increment(1)
-  }
-);
-
-    alert("Done");
-
-  }catch(err){
-
-    console.error(err);
-    alert(err.message);
-
-  }
-
 };
-
  window.shareLocation = async function(orderId){
 
   if(!navigator.geolocation){
