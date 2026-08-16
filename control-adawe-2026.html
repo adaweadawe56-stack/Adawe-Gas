@@ -2338,7 +2338,172 @@ let ordersUnsubscribe = null;
 
 const assigningOrders = new Set();
 
+// =====================================================
+// LOAD PENDING COMMISSION PAYMENTS
+// =====================================================
 
+function loadPendingCommissionPayments() {
+
+    console.log(
+        "💰 Loading pending commission payments..."
+    );
+
+    const q = query(
+        collection(db, "commissionHistory"),
+        where("status", "==", "Pending"),
+        orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(
+        q,
+        (snap) => {
+
+            const container =
+                document.getElementById(
+                    "pendingCommissionPayments"
+                );
+
+            if (!container) {
+
+                console.error(
+                    "❌ pendingCommissionPayments container not found"
+                );
+
+                return;
+            }
+
+            if (snap.empty) {
+
+                container.innerHTML = `
+                    <div class="alert alert-success">
+                        ✅ No pending commission payments.
+                    </div>
+                `;
+
+                return;
+            }
+
+            let html = "";
+
+            snap.forEach(docSnap => {
+
+                const payment =
+                    docSnap.data();
+
+                const paymentId =
+                    docSnap.id;
+
+                let date = "N/A";
+
+                if (payment.createdAt) {
+
+                    date =
+                        payment.createdAt
+                            .toDate()
+                            .toLocaleString();
+                }
+
+                html += `
+
+                <div class="card border-warning mb-3">
+
+                    <div class="card-body">
+
+                        <div class="row">
+
+                            <div class="col-md-6">
+
+                                <h5 class="text-success">
+                                    ${payment.sellerName || "Unknown Seller"}
+                                </h5>
+
+                                <p class="mb-1">
+                                    📞 ${payment.sellerPhone || "N/A"}
+                                </p>
+
+                                <p class="mb-1">
+                                    💰 Amount:
+                                    <strong>
+                                        KES ${Number(
+                                            payment.amount || 0
+                                        ).toLocaleString()}
+                                    </strong>
+                                </p>
+
+                                <p class="mb-1">
+                                    💳 Method:
+                                    ${payment.paymentMethod || "Manual"}
+                                </p>
+
+                                <p class="mb-1">
+                                    🧾 Invoice:
+                                    ${payment.invoiceNo || "N/A"}
+                                </p>
+
+                                <p class="mb-1">
+                                    📅 ${date}
+                                </p>
+
+                            </div>
+
+                            <div class="col-md-6 text-md-end">
+
+                                <span class="badge bg-warning text-dark mb-3">
+                                    ⏳ PENDING
+                                </span>
+
+                                <br>
+
+                                <button
+                                    class="btn btn-success"
+                                    onclick="confirmCommissionPayment('${paymentId}')">
+
+                                    ✅ Confirm Payment
+
+                                </button>
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                `;
+            });
+
+            container.innerHTML = html;
+
+        },
+
+        (error) => {
+
+            console.error(
+                "❌ Failed loading commission payments:",
+                error
+            );
+
+            const container =
+                document.getElementById(
+                    "pendingCommissionPayments"
+                );
+
+            if (container) {
+
+                container.innerHTML = `
+                    <div class="alert alert-danger">
+                        ❌ Failed to load commission payments.
+                    </div>
+                `;
+            }
+
+        }
+    );
+}
+
+
+    
 // =====================================================
 // SELLERS REAL-TIME
 // =====================================================
