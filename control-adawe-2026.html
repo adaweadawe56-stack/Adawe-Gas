@@ -2502,7 +2502,261 @@ function loadPendingCommissionPayments() {
     );
 }
 
+// =====================================================
+// CONFIRM COMMISSION PAYMENT
+// =====================================================
 
+window.confirmCommissionPayment =
+async function(paymentId) {
+
+    console.log(
+        "💰 Confirming commission payment:",
+        paymentId
+    );
+
+
+    const paymentRef =
+        doc(
+            db,
+            "commissionHistory",
+            paymentId
+        );
+
+
+    try {
+
+        await runTransaction(
+            db,
+            async (transaction) => {
+
+                // -----------------------------------------
+                // GET PAYMENT
+                // -----------------------------------------
+
+                const paymentSnap =
+                    await transaction.get(
+                        paymentRef
+                    );
+
+
+                if (!paymentSnap.exists()) {
+
+                    throw new Error(
+                        "Commission payment record not found."
+                    );
+                }
+
+
+                const payment =
+                    paymentSnap.data();
+
+
+                // -----------------------------------------
+                // PREVENT DOUBLE CONFIRMATION
+                // -----------------------------------------
+
+                if (
+                    payment.status === "Paid"
+                ) {
+
+                    throw new Error(
+                        "This payment has already been confirmed."
+                    );
+                }
+
+
+                // -----------------------------------------
+                // SELLER REFERENCE
+                // -----------------------------------------
+
+                const sellerRef =
+                    doc(
+                        db,
+                        "sellers",
+                        payment.sellerId
+                    );
+
+
+                const sellerSnap =
+                    await transaction.get(
+                        sellerRef
+                    );
+
+
+                if (!sellerSnap.exists()) {
+
+                    throw new Error(
+                        "Seller document not found."
+                    );
+                }
+
+
+                const seller =
+                    sellerSnap.data();
+
+
+                // -----------------------------------------
+                // CURRENT SELLER VALUES
+                // -----------------------------------------
+
+                const currentBalance =
+                    Number(
+                        seller.commissionBalance || 0
+                    );
+
+
+                const currentDeliveryCount =
+                    Number(
+                        seller.deliveryCount || 0
+                    );
+
+
+                const currentPayments =
+                    Number(
+                        seller.totalCommissionPayments || 0
+                    );
+
+
+                const amountPaid =
+                    Number(
+                        payment.amount || 0
+                    );
+
+
+                console.log(
+                    "💰 PAYMENT DATA:",
+                    {
+                        seller: seller.name,
+                        currentBalance,
+                        currentDeliveryCount,
+                        amountPaid,
+                        currentPayments
+                    }
+                );
+
+
+                // -----------------------------------------
+                // VALIDATE PAYMENT
+                // -----------------------------------------
+
+                if (amountPaid <= 0) {
+
+                    throw new Error(
+                        "Invalid payment amount."
+                    );
+                }
+
+
+                if (currentBalance <= 0) {
+
+                    throw new Error(
+                        "Seller has no outstanding commission."
+                    );
+                }
+
+
+                if (
+                    amountPaid < currentBalance
+                ) {
+
+                    throw new Error(
+                        "Payment amount is less than outstanding commission."
+                    );
+                }
+
+
+                // -----------------------------------------
+                // ADMIN UID
+                // -----------------------------------------
+
+                const adminUid =
+                    auth.currentUser
+                        ? auth.currentUser.uid
+                        : "ADMIN";
+
+
+                // -----------------------------------------
+                // UPDATE SELLER
+                // -----------------------------------------
+
+                transaction.update(
+                    sellerRef,
+                    {
+
+                        commissionBalance: 0,
+
+                        deliveryCount: 0,
+
+                        paymentStatus: "Paid",
+
+                        totalCommissionPayments:
+                            currentPayments + 1
+
+                    }
+                );
+
+
+                // -----------------------------------------
+                // UPDATE PAYMENT HISTORY
+                // -----------------------------------------
+
+                transaction.update(
+                    paymentRef,
+                    {
+
+                        status: "Paid",
+
+                        outstandingBalance: 0,
+
+                        confirmedAt:
+                            serverTimestamp(),
+
+                        confirmedBy:
+                            adminUid
+
+                    }
+                );
+
+
+                console.log(
+                    "✅ Transaction prepared."
+                );
+
+            }
+        );
+
+
+        // -----------------------------------------
+        // SUCCESS
+        // -----------------------------------------
+
+        console.log(
+            "🎉 COMMISSION PAYMENT CONFIRMED!"
+        );
+
+
+        showToast(
+            "✅ Payment confirmed. Seller unlocked.",
+            "#198754"
+        );
+
+
+    } catch (error) {
+
+        console.error(
+            "❌ COMMISSION CONFIRMATION ERROR:",
+            error
+        );
+
+
+        showToast(
+            "❌ " + error.message,
+            "#dc3545"
+        );
+
+    }
+
+};
     
 // =====================================================
 // SELLERS REAL-TIME
