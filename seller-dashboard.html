@@ -1151,33 +1151,129 @@ window.updateStatus = async function(id, status){
     // COMPLETED ORDER
     // ----------------------
 
-    if (
-        oldStatus !== "Delivered" &&
-        status === "Delivered"
-    ) {
+if (
+    oldStatus !== "Delivered" &&
+    status === "Delivered"
+) {
 
-        await updateDoc(
-            doc(
-                db,
-                "sellers",
-                sellerDocId
-            ),
-            {
-                completedOrders:
-                    increment(1),
+    // ----------------------
+    // GET SELLER DATA
+    // ----------------------
 
-                deliveryCount:
-                    increment(1)
-            }
+    const sellerRef =
+        doc(
+            db,
+            "sellers",
+            sellerDocId
         );
 
+    const sellerSnap =
+        await getDoc(sellerRef);
 
-        console.log(
-            "✅ Seller delivery count updated."
+    if (!sellerSnap.exists()) {
+
+        console.error(
+            "❌ Seller document not found."
         );
 
+        return;
     }
 
+    const seller =
+        sellerSnap.data();
+
+
+    // ----------------------
+    // CURRENT VALUES
+    // ----------------------
+
+    const currentDeliveryCount =
+        Number(
+            seller.deliveryCount || 0
+        );
+
+    const commissionPerOrder =
+        Number(
+            seller.commissionPerOrder || 0
+        );
+
+    const currentCommissionBalance =
+        Number(
+            seller.commissionBalance || 0
+        );
+
+
+    // ----------------------
+    // NEW VALUES
+    // ----------------------
+
+    const newDeliveryCount =
+        currentDeliveryCount + 1;
+
+    const newCommissionBalance =
+        currentCommissionBalance +
+        commissionPerOrder;
+
+
+    // ----------------------
+    // PAYMENT STATUS
+    // ----------------------
+
+    const newPaymentStatus =
+        newCommissionBalance > 0
+            ? "Pending"
+            : "Paid";
+
+
+    // ----------------------
+    // UPDATE SELLER
+    // ----------------------
+
+    await updateDoc(
+        sellerRef,
+        {
+
+            completedOrders:
+                increment(1),
+
+            deliveryCount:
+                newDeliveryCount,
+
+            commissionBalance:
+                newCommissionBalance,
+
+            paymentStatus:
+                newPaymentStatus
+
+        }
+    );
+
+
+    console.log(
+        "✅ SELLER COMMISSION UPDATED:",
+        {
+            seller: seller.name,
+
+            completedOrders:
+                Number(
+                    seller.completedOrders || 0
+                ) + 1,
+
+            deliveryCount:
+                newDeliveryCount,
+
+            commissionPerOrder:
+                commissionPerOrder,
+
+            commissionBalance:
+                newCommissionBalance,
+
+            paymentStatus:
+                newPaymentStatus
+        }
+    );
+
+}
 };
 
   async function loadCommissionHistory() {
