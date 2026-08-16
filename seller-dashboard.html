@@ -2082,8 +2082,8 @@ window.payCommission = async function(){
    const seller = sellerSnap.data();
 
 const amount =
-  seller.deliveryLimit * seller.commissionPerOrder;
-
+    Number(seller.deliveryCount || 0) *
+    Number(seller.commissionPerOrder || 0);
 const previousPayments =
   Number(seller.totalCommissionPayments || 0);
 
