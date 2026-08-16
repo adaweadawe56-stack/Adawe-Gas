@@ -2293,8 +2293,13 @@ import {
     updateDoc,
     deleteDoc,
     getDoc,
-    serverTimestamp
+    serverTimestamp,
+    query,
+    where,
+    orderBy,
+    runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+    
 import {
     getAuth,
     signInWithEmailAndPassword,
