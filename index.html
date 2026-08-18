@@ -1957,8 +1957,27 @@ console.log("🔍 SELLER ELIGIBILITY CHECK:", {
         Number(s.prices?.[quantity] || 0);
 
     if (sellerPrice <= 0) {
-        return;
+
+    console.log(
+        "❌ NO PRICE FOR THIS GAS SIZE:",
+        {
+            seller: s.name,
+            quantity: quantity,
+            prices: s.prices
+        }
+    );
+
+    return;
+}
+
+console.log(
+    "✅ PRICE AVAILABLE:",
+    {
+        seller: s.name,
+        quantity: quantity,
+        price: sellerPrice
     }
+);
 
  // ----------------------
 // GAS BRAND
