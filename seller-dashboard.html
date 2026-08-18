@@ -941,35 +941,57 @@ window.updateStatus = async function(id, status){
     // COMMISSION CHECK
     // ----------------------
 
-    if (status === "Accepted") {
+   if (status === "Accepted") {
 
-        const sellerSnap =
-            await getDoc(
-                doc(db, "sellers", sellerDocId)
-            );
+    const sellerSnap =
+        await getDoc(
+            doc(db, "sellers", sellerDocId)
+        );
 
-        const seller =
-            sellerSnap.data();
+    if (!sellerSnap.exists()) {
 
-        const deliveryCount =
-            seller.deliveryCount || 0;
+        showToast(
+            "Seller account not found.",
+            "#dc3545"
+        );
 
-        const deliveryLimit =
-            seller.deliveryLimit || 999999;
-
-
-        if (deliveryCount >= deliveryLimit) {
-
-            showToast(
-                "Please pay your commission before accepting new orders.",
-                "#dc3545"
-            );
-
-            return;
-        }
-
+        return;
     }
 
+    const seller =
+        sellerSnap.data();
+
+    const deliveryCount =
+        Number(
+            seller.deliveryCount || 0
+        );
+
+    const deliveryLimit =
+        Number(
+            seller.deliveryLimit || 999999
+        );
+
+    const commissionBalance =
+        Number(
+            seller.commissionBalance || 0
+        );
+
+
+    if (
+        deliveryCount >= deliveryLimit ||
+        commissionBalance > 0 &&
+        deliveryCount >= deliveryLimit
+    ) {
+
+        showToast(
+            "Please pay your commission before accepting new orders.",
+            "#dc3545"
+        );
+
+        return;
+    }
+
+}
 
     console.log(
         "Continuing update..."
