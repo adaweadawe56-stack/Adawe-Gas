@@ -2678,47 +2678,37 @@ async function(paymentId) {
                 );
 
 
-                // -----------------------------------------
-                // VALIDATE PAYMENT AMOUNT
-                // -----------------------------------------
+// -----------------------------------------
+// VALIDATE PAYMENT AMOUNT
+// -----------------------------------------
 
-                if (
-                    amountPaid <= 0
-                ) {
+if (
+    amountPaid <= 0
+) {
 
-                    throw new Error(
-                        "Invalid payment amount."
-                    );
+    throw new Error(
+        "Invalid payment amount."
+    );
 
-                }
-             
-                // -----------------------------------------
-                // CHECK FOR STALE PAYMENT REQUEST
-                // -----------------------------------------
-              
-                    throw new Error(
-                        `Payment request is outdated. Requested: KES ${amountPaid.toLocaleString("en-KE")}, Current commission balance: KES ${currentBalance.toLocaleString("en-KE")}.`
-                    );
-
-                }
+}
 
 
-                // -----------------------------------------
-                // ADMIN UID
-                // -----------------------------------------
+// -----------------------------------------
+// ADMIN UID
+// -----------------------------------------
 
-                const adminUid =
-                    auth.currentUser
-                        ? auth.currentUser.uid
-                        : "ADMIN";
+const adminUid =
+    auth.currentUser
+        ? auth.currentUser.uid
+        : "ADMIN";
 
 
-                // -----------------------------------------
-                // NEW PAYMENT COUNT
-                // -----------------------------------------
+// -----------------------------------------
+// NEW PAYMENT COUNT
+// -----------------------------------------
 
-                const newPaymentCount =
-                    currentPayments + 1;
+const newPaymentCount =
+    currentPayments + 1;
 
 
                 // -----------------------------------------
