@@ -1987,7 +1987,32 @@ if (
 ) {
     return;
 }
+if (
+    !normalizedCustomerBrand ||
+    !normalizedSellerBrands.includes(
+        normalizedCustomerBrand
+    )
+) {
 
+    console.log(
+        "❌ BRAND MISMATCH:",
+        {
+            seller: s.name,
+            customerBrand:
+                normalizedCustomerBrand,
+            sellerBrands:
+                normalizedSellerBrands
+        }
+    );
+
+    return;
+}
+
+console.log(
+    "✅ BRAND MATCH:",
+    s.name,
+    normalizedCustomerBrand
+);
 
         // ----------------------
         // PAYMENT CHECK
