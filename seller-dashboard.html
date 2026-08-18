@@ -977,11 +977,17 @@ window.updateStatus = async function(id, status){
         );
 
 
-    if (
-        deliveryCount >= deliveryLimit ||
-        commissionBalance > 0 &&
-        deliveryCount >= deliveryLimit
-    ) {
+   if (
+    deliveryCount >= deliveryLimit
+) {
+
+    showToast(
+        "Please pay your commission before accepting new orders.",
+        "#dc3545"
+    );
+
+    return;
+}
 
         showToast(
             "Please pay your commission before accepting new orders.",
