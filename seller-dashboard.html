@@ -1542,34 +1542,7 @@ window.updateStatus = async function(id, status) {
     }
 
 };
-   
-    console.log(
-        "✅ SELLER COMMISSION UPDATED:",
-        {
-            seller: seller.name,
-
-            completedOrders:
-                Number(
-                    seller.completedOrders || 0
-                ) + 1,
-
-            deliveryCount:
-                newDeliveryCount,
-
-            commissionPerOrder:
-                commissionPerOrder,
-
-            commissionBalance:
-                newCommissionBalance,
-
-            paymentStatus:
-                newPaymentStatus
-        }
-    );
-
-}
-};
-
+     
 // =====================================================
 // LOAD COMMISSION HISTORY - SELLER
 // =====================================================
