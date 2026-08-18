@@ -1956,15 +1956,43 @@ console.log("🔍 SELLER ELIGIBILITY CHECK:", {
 const sellerPrice =
     Number(s.prices?.[quantity] || 0);
 
-
 if (sellerPrice <= 0) {
 
     console.log(
-        "❌ NO PRICE FOR THIS GAS SIZE:",
+        "❌ Seller does not have this gas size:",
+        s.name,
+        quantity
+    );
+
+    return;
+}
+
+
+// =================================================
+// DELIVERY LIMIT / COMMISSION CHECK
+// =================================================
+
+const deliveryCount =
+    Number(s.deliveryCount || 0);
+
+const deliveryLimit =
+    Number(s.deliveryLimit || 999);
+
+const commissionBalance =
+    Number(s.commissionBalance || 0);
+
+
+if (deliveryCount >= deliveryLimit) {
+
+    console.log(
+        "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
+        s.name,
         {
-            seller: s.name,
-            quantity: quantity,
-            prices: s.prices
+            deliveryCount,
+            deliveryLimit,
+            commissionBalance,
+            paymentStatus:
+                s.paymentStatus
         }
     );
 
@@ -1973,11 +2001,14 @@ if (sellerPrice <= 0) {
 
 
 console.log(
-    "✅ PRICE AVAILABLE:",
+    "✅ SELLER WITHIN DELIVERY LIMIT:",
+    s.name,
     {
-        seller: s.name,
-        quantity: quantity,
-        price: sellerPrice
+        deliveryCount,
+        deliveryLimit,
+        commissionBalance,
+        paymentStatus:
+            s.paymentStatus
     }
 );
 
