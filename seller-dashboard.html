@@ -1088,26 +1088,264 @@ window.updateStatus = async function(id, status){
 
         else if (status === "Delivered") {
 
-            await updateDoc(
+    // =================================================
+    // DELIVERED + COMMISSION = ATOMIC TRANSACTION
+    // =================================================
+
+    await runTransaction(
+        db,
+        async (transaction) => {
+
+            // -----------------------------------------
+            // GET FRESH ORDER
+            // -----------------------------------------
+
+            const freshOrderSnap =
+                await transaction.get(
+                    orderRef
+                );
+
+            if (!freshOrderSnap.exists()) {
+
+                throw new Error(
+                    "Order not found."
+                );
+
+            }
+
+
+            const freshOrder =
+                freshOrderSnap.data();
+
+
+            // -----------------------------------------
+            // PREVENT DOUBLE COMMISSION
+            // -----------------------------------------
+
+            if (
+                freshOrder.status === "Delivered"
+            ) {
+
+                throw new Error(
+                    "This order has already been delivered."
+                );
+
+            }
+
+
+            // -----------------------------------------
+            // SELLER REFERENCE
+            // -----------------------------------------
+
+            const sellerRef =
+                doc(
+                    db,
+                    "sellers",
+                    sellerDocId
+                );
+
+
+            // -----------------------------------------
+            // GET FRESH SELLER
+            // -----------------------------------------
+
+            const sellerSnap =
+                await transaction.get(
+                    sellerRef
+                );
+
+
+            if (!sellerSnap.exists()) {
+
+                throw new Error(
+                    "Seller document not found."
+                );
+
+            }
+
+
+            const seller =
+                sellerSnap.data();
+
+
+            // -----------------------------------------
+            // CURRENT VALUES
+            // -----------------------------------------
+
+            const currentDeliveryCount =
+                Number(
+                    seller.deliveryCount || 0
+                );
+
+
+            const currentBalance =
+                Number(
+                    seller.commissionBalance || 0
+                );
+
+
+            const commissionPerOrder =
+                Number(
+                    seller.commissionPerOrder || 0
+                );
+
+
+            const currentCompletedOrders =
+                Number(
+                    seller.completedOrders || 0
+                );
+
+
+            const deliveryLimit =
+                Number(
+                    seller.deliveryLimit || 0
+                );
+
+
+            // -----------------------------------------
+            // VALIDATE COMMISSION CONFIGURATION
+            // -----------------------------------------
+
+            if (
+                commissionPerOrder < 0
+            ) {
+
+                throw new Error(
+                    "Invalid commission configuration."
+                );
+
+            }
+
+
+            // -----------------------------------------
+            // NEW VALUES
+            // -----------------------------------------
+
+            const newDeliveryCount =
+                currentDeliveryCount + 1;
+
+
+            const newCommissionBalance =
+                currentBalance +
+                commissionPerOrder;
+
+
+            const newCompletedOrders =
+                currentCompletedOrders + 1;
+
+
+            // -----------------------------------------
+            // PAYMENT STATUS
+            // -----------------------------------------
+
+            const newPaymentStatus =
+                newCommissionBalance > 0
+                    ? "Pending"
+                    : "Paid";
+
+
+            // -----------------------------------------
+            // UPDATE ORDER
+            // -----------------------------------------
+
+            transaction.update(
                 orderRef,
                 {
-                    status: "Delivered",
-                    deliveredAt: serverTimestamp()
+
+                    status:
+                        "Delivered",
+
+                    deliveredAt:
+                        serverTimestamp()
+
                 }
             );
 
 
-            // Stop seller GPS tracking
-            if (watchId) {
+            // -----------------------------------------
+            // UPDATE SELLER
+            // -----------------------------------------
 
-                navigator.geolocation.clearWatch(
-                    watchId
-                );
+            transaction.update(
+                sellerRef,
+                {
 
-                watchId = null;
-            }
+                    completedOrders:
+                        newCompletedOrders,
+
+                    deliveryCount:
+                        newDeliveryCount,
+
+                    commissionBalance:
+                        newCommissionBalance,
+
+                    paymentStatus:
+                        newPaymentStatus
+
+                }
+            );
+
+
+            // -----------------------------------------
+            // DEBUG
+            // -----------------------------------------
+
+            console.log(
+                "💰 COMMISSION TRANSACTION:",
+                {
+
+                    seller:
+                        seller.name,
+
+                    orderId:
+                        freshOrder.orderId || orderRef.id,
+
+                    commissionPerOrder:
+                        commissionPerOrder,
+
+                    previousDeliveryCount:
+                        currentDeliveryCount,
+
+                    newDeliveryCount:
+                        newDeliveryCount,
+
+                    deliveryLimit:
+                        deliveryLimit,
+
+                    previousBalance:
+                        currentBalance,
+
+                    newBalance:
+                        newCommissionBalance,
+
+                    completedOrders:
+                        newCompletedOrders,
+
+                    paymentStatus:
+                        newPaymentStatus
+
+                }
+            );
 
         }
+    );
+
+
+    // -----------------------------------------
+    // STOP SELLER GPS TRACKING
+    // -----------------------------------------
+
+    if (watchId) {
+
+        navigator.geolocation.clearWatch(
+            watchId
+        );
+
+        watchId = null;
+
+    }
+
+}
 
 
         // ----------------------
@@ -1168,110 +1406,7 @@ window.updateStatus = async function(id, status){
 
         return;
     }
-
-
-    // ----------------------
-    // COMPLETED ORDER
-    // ----------------------
-
-if (
-    oldStatus !== "Delivered" &&
-    status === "Delivered"
-) {
-
-    // ----------------------
-    // GET SELLER DATA
-    // ----------------------
-
-    const sellerRef =
-        doc(
-            db,
-            "sellers",
-            sellerDocId
-        );
-
-    const sellerSnap =
-        await getDoc(sellerRef);
-
-    if (!sellerSnap.exists()) {
-
-        console.error(
-            "❌ Seller document not found."
-        );
-
-        return;
-    }
-
-    const seller =
-        sellerSnap.data();
-
-
-    // ----------------------
-    // CURRENT VALUES
-    // ----------------------
-
-    const currentDeliveryCount =
-        Number(
-            seller.deliveryCount || 0
-        );
-
-    const commissionPerOrder =
-        Number(
-            seller.commissionPerOrder || 0
-        );
-
-    const currentCommissionBalance =
-        Number(
-            seller.commissionBalance || 0
-        );
-
-
-    // ----------------------
-    // NEW VALUES
-    // ----------------------
-
-    const newDeliveryCount =
-        currentDeliveryCount + 1;
-
-    const newCommissionBalance =
-        currentCommissionBalance +
-        commissionPerOrder;
-
-
-    // ----------------------
-    // PAYMENT STATUS
-    // ----------------------
-
-    const newPaymentStatus =
-        newCommissionBalance > 0
-            ? "Pending"
-            : "Paid";
-
-
-    // ----------------------
-    // UPDATE SELLER
-    // ----------------------
-
-    await updateDoc(
-        sellerRef,
-        {
-
-            completedOrders:
-                increment(1),
-
-            deliveryCount:
-                newDeliveryCount,
-
-            commissionBalance:
-                newCommissionBalance,
-
-            paymentStatus:
-                newPaymentStatus
-
-        }
-    );
-
-
+   
     console.log(
         "✅ SELLER COMMISSION UPDATED:",
         {
