@@ -1949,14 +1949,15 @@ console.log("🔍 SELLER ELIGIBILITY CHECK:", {
         s.deliveryRadiusKm
 });
 
-    // =================================================
-    // SELLER PRICE
-    // =================================================
+// =================================================
+// SELLER PRICE
+// =================================================
 
-    const sellerPrice =
-        Number(s.prices?.[quantity] || 0);
+const sellerPrice =
+    Number(s.prices?.[quantity] || 0);
 
-    if (sellerPrice <= 0) {
+
+if (sellerPrice <= 0) {
 
     console.log(
         "❌ NO PRICE FOR THIS GAS SIZE:",
@@ -1970,6 +1971,7 @@ console.log("🔍 SELLER ELIGIBILITY CHECK:", {
     return;
 }
 
+
 console.log(
     "✅ PRICE AVAILABLE:",
     {
@@ -1979,14 +1981,16 @@ console.log(
     }
 );
 
- // ----------------------
+
+// =================================================
 // GAS BRAND
-// ----------------------
+// =================================================
 
 const normalizedCustomerBrand =
     String(brand || "")
         .trim()
         .toLowerCase();
+
 
 const normalizedSellerBrands =
     Array.isArray(s.brands)
@@ -1998,14 +2002,11 @@ const normalizedSellerBrands =
           )
         : [];
 
-if (
-    !normalizedCustomerBrand ||
-    !normalizedSellerBrands.includes(
-        normalizedCustomerBrand
-    )
-) {
-    return;
-}
+
+// =================================================
+// BRAND CHECK
+// =================================================
+
 if (
     !normalizedCustomerBrand ||
     !normalizedSellerBrands.includes(
@@ -2016,9 +2017,12 @@ if (
     console.log(
         "❌ BRAND MISMATCH:",
         {
-            seller: s.name,
+            seller:
+                s.name,
+
             customerBrand:
                 normalizedCustomerBrand,
+
             sellerBrands:
                 normalizedSellerBrands
         }
@@ -2027,43 +2031,83 @@ if (
     return;
 }
 
+
 console.log(
     "✅ BRAND MATCH:",
-    s.name,
-    normalizedCustomerBrand
+    {
+        seller:
+            s.name,
+
+        brand:
+            normalizedCustomerBrand
+    }
 );
 
-        // ----------------------
-        // PAYMENT CHECK
-        // ----------------------
 
-        if (s.paymentStatus !== "Paid") {
-            return;
-        }
-
-
-        // =================================================
-// DELIVERY LIMIT CHECK
+// =================================================
+// DELIVERY LIMIT / COMMISSION CHECK
 // =================================================
 
 const deliveryCount =
-    Number(s.deliveryCount || 0);
+    Number(
+        s.deliveryCount || 0
+    );
+
 
 const deliveryLimit =
-    Number(s.deliveryLimit || 999);
+    Number(
+        s.deliveryLimit || 999
+    );
 
-if (deliveryCount >= deliveryLimit) {
+
+const commissionBalance =
+    Number(
+        s.commissionBalance || 0
+    );
+
+
+if (
+    deliveryCount >= deliveryLimit
+) {
 
     console.log(
-        "❌ SELLER REACHED DELIVERY LIMIT:",
+        "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
         s.name,
         {
-            deliveryCount,
-            deliveryLimit,
-            paymentStatus: s.paymentStatus,
-            commissionBalance: s.commissionBalance
+            deliveryCount:
+                deliveryCount,
+
+            deliveryLimit:
+                deliveryLimit,
+
+            commissionBalance:
+                commissionBalance,
+
+            paymentStatus:
+                s.paymentStatus
         }
     );
+
+    return;
+}
+
+
+console.log(
+    "✅ SELLER WITHIN DELIVERY LIMIT:",
+    {
+        seller:
+            s.name,
+
+        deliveryCount:
+            deliveryCount,
+
+        deliveryLimit:
+            deliveryLimit,
+
+        commissionBalance:
+            commissionBalance
+    }
+);
 
     return;
 }
