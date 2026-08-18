@@ -454,18 +454,21 @@ Update your LPG prices. Customers will see these prices in the app.
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
+
 import {
-    collection,
-    doc,
-    getDoc,
-    getDocs,
-    query,
-    where,
-    updateDoc,
-    addDoc,
-    onSnapshot,
-    serverTimestamp,
-    increment,
+  getFirestore,
+  collection,
+  query,
+  where,
+  getDocs,
+  getDoc,
+  onSnapshot,
+  doc,
+  updateDoc,
+  increment,
+  addDoc,
+  serverTimestamp,
+  orderBy
     runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
   
