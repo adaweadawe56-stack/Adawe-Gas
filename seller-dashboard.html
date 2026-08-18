@@ -454,7 +454,6 @@ Update your LPG prices. Customers will see these prices in the app.
 import { initializeApp }
 from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-
 import {
   getFirestore,
   collection,
@@ -468,10 +467,9 @@ import {
   increment,
   addDoc,
   serverTimestamp,
-  orderBy
-    runTransaction
+  orderBy,
+  runTransaction
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
-  
 import {
 getAuth,
 signInWithEmailAndPassword,
