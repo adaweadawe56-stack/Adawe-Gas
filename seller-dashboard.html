@@ -546,16 +546,13 @@ await signInWithEmailAndPassword(
 
 console.log("STEP 1: Login successful");
 
-if (!userCredential.user.emailVerified) {
+// =====================================================
+// EMAIL VERIFICATION - TEMPORARILY BYPASSED
+// =====================================================
 
-    alert("Please verify your email before logging in.");
-
-    await auth.signOut();
-
-    return;
-}
-
-console.log("STEP 2: Email verified");
+console.log(
+    "STEP 2: Email verification temporarily bypassed"
+);
 
 const sellerQuery = query(
     collection(db, "sellers"),
