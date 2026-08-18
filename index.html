@@ -1973,24 +1973,44 @@ if (sellerPrice <= 0) {
 // =================================================
 
 const deliveryCount =
-    Number(s.deliveryCount || 0);
+    Number(
+        s.deliveryCount || 0
+    );
 
 const deliveryLimit =
-    Number(s.deliveryLimit || 999);
+    Number(
+        s.deliveryLimit || 999
+    );
 
 const commissionBalance =
-    Number(s.commissionBalance || 0);
+    Number(
+        s.commissionBalance || 0
+    );
 
 
-if (deliveryCount >= deliveryLimit) {
+// =================================================
+// SELLER LOCKED
+// =================================================
+
+if (
+    deliveryCount >= deliveryLimit
+) {
 
     console.log(
         "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
-        s.name,
         {
-            deliveryCount,
-            deliveryLimit,
-            commissionBalance,
+            seller:
+                s.name,
+
+            deliveryCount:
+                deliveryCount,
+
+            deliveryLimit:
+                deliveryLimit,
+
+            commissionBalance:
+                commissionBalance,
+
             paymentStatus:
                 s.paymentStatus
         }
@@ -2000,106 +2020,9 @@ if (deliveryCount >= deliveryLimit) {
 }
 
 
-console.log(
-    "✅ SELLER WITHIN DELIVERY LIMIT:",
-    s.name,
-    {
-        deliveryCount,
-        deliveryLimit,
-        commissionBalance,
-        paymentStatus:
-            s.paymentStatus
-    }
-);
-
-
 // =================================================
-// GAS BRAND
+// SELLER WITHIN DELIVERY LIMIT
 // =================================================
-
-const normalizedCustomerBrand =
-    String(brand || "")
-        .trim()
-        .toLowerCase();
-
-
-const normalizedSellerBrands =
-    Array.isArray(s.brands)
-        ? s.brands.map(
-            sellerBrand =>
-                String(sellerBrand || "")
-                    .trim()
-                    .toLowerCase()
-          )
-        : [];
-
-
-// =================================================
-// BRAND CHECK
-// =================================================
-
-if (
-    !normalizedCustomerBrand ||
-    !normalizedSellerBrands.includes(
-        normalizedCustomerBrand
-    )
-) {
-
-    console.log(
-        "❌ BRAND MISMATCH:",
-        {
-            seller:
-                s.name,
-
-            customerBrand:
-                normalizedCustomerBrand,
-
-            sellerBrands:
-                normalizedSellerBrands
-        }
-    );
-
-    return;
-}
-
-
-console.log(
-    "✅ BRAND MATCH:",
-    {
-        seller:
-            s.name,
-
-        brand:
-            normalizedCustomerBrand
-    }
-);
-
-
-// =================================================
-// DELIVERY LIMIT / COMMISSION CHECK
-// =================================================
-
-const deliveryCount =
-    Number(
-        s.deliveryCount || 0
-    );
-
-
-const deliveryLimit =
-    Number(
-        s.deliveryLimit || 999
-    );
-
-
-const commissionBalance =
-    Number(
-        s.commissionBalance || 0
-    );
-
-
-if (
-    deliveryCount >= deliveryLimit
-) {
 
 console.log(
     "✅ SELLER WITHIN DELIVERY LIMIT:",
@@ -2114,140 +2037,110 @@ console.log(
             deliveryLimit,
 
         commissionBalance:
-            commissionBalance
+            commissionBalance,
+
+        paymentStatus:
+            s.paymentStatus
     }
 );
 
 
-        // ----------------------
-        // SELLER GPS
-        // ----------------------
+// =================================================
+// SELLER GPS
+// =================================================
 
-        const sellerLat =
-            Number(s.sellerLatitude);
+const sellerLat =
+    Number(
+        s.sellerLatitude
+    );
 
-        const sellerLng =
-            Number(s.sellerLongitude);
-
-        if (
-            !Number.isFinite(sellerLat) ||
-            !Number.isFinite(sellerLng)
-        ) {
-
-            console.warn(
-                "Seller has invalid GPS:",
-                s.name
-            );
-
-            return;
-        }
-
-
-        // ----------------------
-        // CUSTOMER GPS
-        // ----------------------
-
-        const customerLat =
-            Number(customerLatitude);
-
-        const customerLng =
-            Number(customerLongitude);
-
-        if (
-            !Number.isFinite(customerLat) ||
-            !Number.isFinite(customerLng)
-        ) {
-
-            console.warn(
-                "Customer has invalid GPS"
-            );
-
-            return;
-        }
-
-
-// ----------------------
-// GPS DEBUG
-// ----------------------
-
-console.log("👤 CUSTOMER GPS:", {
-    latitude: customerLat,
-    longitude: customerLng
-});
-
-console.log("🏪 SELLER GPS:", {
-    name: s.name,
-    latitude: sellerLat,
-    longitude: sellerLng
-});
-
-
-// ----------------------
-// CALCULATE DISTANCE
-// ----------------------
-
-const distance = calculateDistance(
-    customerLat,
-    customerLng,
-    sellerLat,
-    sellerLng
-);
-
-// ----------------------
-// SELLER DELIVERY RADIUS
-// ----------------------
-
-const deliveryRadiusKm =
-    Number(s.deliveryRadiusKm || 0);
+const sellerLng =
+    Number(
+        s.sellerLongitude
+    );
 
 if (
-    !Number.isFinite(deliveryRadiusKm) ||
-    deliveryRadiusKm <= 0
+    !Number.isFinite(sellerLat) ||
+    !Number.isFinite(sellerLng)
 ) {
+
     console.warn(
-        "Seller has invalid delivery radius:",
+        "❌ Seller has invalid GPS:",
         s.name
     );
 
     return;
 }
 
-// Customer outside seller delivery area
-if (distance > deliveryRadiusKm) {
 
-    console.log(
-        `❌ ${s.name} outside delivery radius`,
-        {
-            distance: distance,
-            radius: deliveryRadiusKm
-        }
+// =================================================
+// CUSTOMER GPS
+// =================================================
+
+const customerLat =
+    Number(
+        customerLatitude
+    );
+
+const customerLng =
+    Number(
+        customerLongitude
+    );
+
+if (
+    !Number.isFinite(customerLat) ||
+    !Number.isFinite(customerLng)
+) {
+
+    console.warn(
+        "❌ Customer has invalid GPS"
     );
 
     return;
 }
 
-// Seller is within delivery radius
+
+// =================================================
+// GPS DEBUG
+// =================================================
+
 console.log(
-    `✅ ${s.name} is eligible`,
+    "👤 CUSTOMER GPS:",
     {
-        distance: distance,
-        radius: deliveryRadiusKm
+        latitude:
+            customerLat,
+
+        longitude:
+            customerLng
     }
-);      
+);
+
+console.log(
+    "🏪 SELLER GPS:",
+    {
+        name:
+            s.name,
+
+        latitude:
+            sellerLat,
+
+        longitude:
+            sellerLng
+    }
+);
 
 
-// ----------------------
-// DISTANCE TEST
-// ----------------------
+// =================================================
+// CALCULATE DISTANCE
+// =================================================
 
-console.log("🧪 DISTANCE TEST:", {
-    customerLat,
-    customerLng,
-    sellerLat,
-    sellerLng,
-    distance,
-    distanceMeters: distance * 1000
-});
+const distance =
+    calculateDistance(
+        customerLat,
+        customerLng,
+        sellerLat,
+        sellerLng
+    );
 
 
 console.log(
@@ -2256,23 +2149,82 @@ console.log(
     "km"
 );
 
+
+// =================================================
+// SELLER DELIVERY RADIUS
+// =================================================
+
+const deliveryRadiusKm =
+    Number(
+        s.deliveryRadiusKm || 0
+    );
+
+if (
+    !Number.isFinite(
+        deliveryRadiusKm
+    ) ||
+    deliveryRadiusKm <= 0
+) {
+
+    console.warn(
+        "❌ Seller has invalid delivery radius:",
+        s.name
+    );
+
+    return;
+}
+
+
+// =================================================
+// DISTANCE vs DELIVERY RADIUS
+// =================================================
+
+if (
+    distance > deliveryRadiusKm
+) {
+
+    console.log(
+        `❌ ${s.name} outside delivery radius`,
+        {
+            distance:
+                distance,
+
+            radius:
+                deliveryRadiusKm
+        }
+    );
+
+    return;
+}
+
+
+// =================================================
+// SELLER IS ELIGIBLE
+// =================================================
+
 console.log(
-    "Seller:",
-    s.name,
-    "| Price:",
-    sellerPrice,
-    "| Distance:",
-    distance,
-    "km"
+    `✅ ${s.name} is eligible`,
+    {
+        distance:
+            distance,
+
+        radius:
+            deliveryRadiusKm,
+
+        price:
+            sellerPrice
+    }
 );
 
 
-        // ----------------------
-        // RATING
-        // ----------------------
+// =================================================
+// RATING
+// =================================================
 
-        const sellerRating =
-            Number(s.averageRating || 0);
+const sellerRating =
+    Number(
+        s.averageRating || 0
+    );
 
 
 // =================================================
@@ -2281,17 +2233,23 @@ console.log(
 
 const currentBestDistance =
     bestSeller
-        ? Number(bestSeller.distance)
+        ? Number(
+            bestSeller.distance
+          )
         : Infinity;
 
 const currentBestRating =
     bestSeller
-        ? Number(bestSeller.averageRating || 0)
+        ? Number(
+            bestSeller.averageRating || 0
+          )
         : 0;
 
 const currentBestPrice =
     bestSeller
-        ? Number(bestSeller.sellerPrice || 0)
+        ? Number(
+            bestSeller.sellerPrice || 0
+          )
         : Infinity;
 
 
@@ -2302,9 +2260,9 @@ const currentBestPrice =
 let shouldSelectSeller = false;
 
 
-// ----------------------
-// 1. NO BEST SELLER YET
-// ----------------------
+// =================================================
+// 1. NO BEST SELLER
+// =================================================
 
 if (!bestSeller) {
 
@@ -2313,12 +2271,13 @@ if (!bestSeller) {
 }
 
 
-// ----------------------
+// =================================================
 // 2. CLOSER SELLER
-// ----------------------
+// =================================================
 
 else if (
-    distance < currentBestDistance
+    distance <
+    currentBestDistance
 ) {
 
     shouldSelectSeller = true;
@@ -2326,15 +2285,18 @@ else if (
 }
 
 
-// ----------------------
+// =================================================
 // 3. SAME DISTANCE → BETTER RATING
-// ----------------------
+// =================================================
 
 else if (
     Math.abs(
-        distance - currentBestDistance
+        distance -
+        currentBestDistance
     ) < 1 &&
-    sellerRating > currentBestRating
+
+    sellerRating >
+    currentBestRating
 ) {
 
     shouldSelectSeller = true;
@@ -2342,19 +2304,22 @@ else if (
 }
 
 
-// ----------------------
+// =================================================
 // 4. SAME DISTANCE + SAME RATING
 //    → CHEAPER PRICE
-// ----------------------
+// =================================================
 
 else if (
     Math.abs(
-        distance - currentBestDistance
+        distance -
+        currentBestDistance
     ) < 1 &&
 
-    sellerRating === currentBestRating &&
+    sellerRating ===
+    currentBestRating &&
 
-    sellerPrice < currentBestPrice
+    sellerPrice <
+    currentBestPrice
 ) {
 
     shouldSelectSeller = true;
@@ -2370,11 +2335,14 @@ if (shouldSelectSeller) {
 
     bestSeller = {
 
-        id: docSnap.id,
+        id:
+            docSnap.id,
 
-        sellerPrice: sellerPrice,
+        sellerPrice:
+            sellerPrice,
 
-        distance: distance,
+        distance:
+            distance,
 
         ...s,
 
@@ -2385,8 +2353,6 @@ if (shouldSelectSeller) {
     };
 
 }
-
-    });
 
 
     // ----------------------
