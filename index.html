@@ -2378,15 +2378,25 @@ console.log(
         // PAYMENT CHECK
         // =================================================
 
-        if (s.paymentStatus !== "Paid") {
+       if (
+    Number(s.commissionBalance || 0) > 0 &&
+    deliveryCount >= deliveryLimit
+) {
 
-            console.log(
-                "❌ Seller payment not paid:",
-                s.name
-            );
+    console.log(
+        "❌ COMMISSION PAYMENT REQUIRED:",
+        s.name,
+        {
+            commissionBalance:
+                Number(s.commissionBalance || 0),
 
-            return;
+            deliveryCount,
+            deliveryLimit
         }
+    );
+
+    return;
+}
 
 
         // =================================================
