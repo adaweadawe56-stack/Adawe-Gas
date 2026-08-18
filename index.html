@@ -2070,28 +2070,6 @@ if (
     deliveryCount >= deliveryLimit
 ) {
 
-    console.log(
-        "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
-        s.name,
-        {
-            deliveryCount:
-                deliveryCount,
-
-            deliveryLimit:
-                deliveryLimit,
-
-            commissionBalance:
-                commissionBalance,
-
-            paymentStatus:
-                s.paymentStatus
-        }
-    );
-
-    return;
-}
-
-
 console.log(
     "✅ SELLER WITHIN DELIVERY LIMIT:",
     {
@@ -2106,18 +2084,6 @@ console.log(
 
         commissionBalance:
             commissionBalance
-    }
-);
-
-    return;
-}
-
-console.log(
-    "✅ SELLER WITHIN DELIVERY LIMIT:",
-    s.name,
-    {
-        deliveryCount,
-        deliveryLimit
     }
 );
 
