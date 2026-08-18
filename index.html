@@ -1914,7 +1914,40 @@ console.log(
     "🟢 Seller is AVAILABLE:",
     s.name
 );
+console.log("🔍 SELLER ELIGIBILITY CHECK:", {
+    seller: s.name,
 
+    quantity: quantity,
+
+    requestedBrand: brand,
+
+    sellerPrice:
+        Number(s.prices?.[quantity] || 0),
+
+    sellerBrands:
+        s.brands,
+
+    paymentStatus:
+        s.paymentStatus,
+
+    commissionBalance:
+        Number(s.commissionBalance || 0),
+
+    deliveryCount:
+        Number(s.deliveryCount || 0),
+
+    deliveryLimit:
+        Number(s.deliveryLimit || 0),
+
+    sellerLatitude:
+        s.sellerLatitude,
+
+    sellerLongitude:
+        s.sellerLongitude,
+
+    deliveryRadiusKm:
+        s.deliveryRadiusKm
+});
 
     // =================================================
     // SELLER PRICE
