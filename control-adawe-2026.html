@@ -2691,31 +2691,11 @@ async function(paymentId) {
                     );
 
                 }
-
-
-                // -----------------------------------------
-                // SELLER MUST HAVE BALANCE
-                // -----------------------------------------
-
-                if (
-                    currentBalance <= 0
-                ) {
-
-                    throw new Error(
-                        "Seller has no outstanding commission."
-                    );
-
-                }
-
-
+             
                 // -----------------------------------------
                 // CHECK FOR STALE PAYMENT REQUEST
                 // -----------------------------------------
-
-                if (
-                    amountPaid !== currentBalance
-                ) {
-
+              
                     throw new Error(
                         `Payment request is outdated. Requested: KES ${amountPaid.toLocaleString("en-KE")}, Current commission balance: KES ${currentBalance.toLocaleString("en-KE")}.`
                     );
@@ -2818,10 +2798,9 @@ async function(paymentId) {
         );
 
 
-        showToast(
-            "✅ Payment confirmed. Seller unlocked.",
-            "#198754"
-        );
+       alert(
+    "✅ Payment confirmed. Seller unlocked."
+);
 
 
     } catch (error) {
@@ -2832,12 +2811,10 @@ async function(paymentId) {
         );
 
 
-        showToast(
-            "❌ " + error.message,
-            "#dc3545"
-        );
-
-    }
+       alert(
+    "❌ " + error.message
+);
+}
 
 };
     
