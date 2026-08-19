@@ -1875,7 +1875,13 @@ async function getBestSeller(
         throw new Error("No approved sellers found");
     }
 
-    let bestSeller = null;
+   let bestSeller = null;
+
+let brandMatchCount = 0;
+let priceMatchCount = 0;
+let radiusMatchCount = 0;
+let lockedSellerCount = 0;
+let availableSellerCount = 0;
 
     snap.forEach(docSnap => {
 
