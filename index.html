@@ -2486,18 +2486,20 @@ console.log(
         // PAYMENT CHECK
         // =================================================
 
-       if (deliveryCount >= deliveryLimit) {
+      if (
+    deliveryCount >= deliveryLimit
+) {
+
+    lockedSellerCount++;
 
     console.log(
-        "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
-        s.name,
+        "🔒 SELLER LOCKED:",
         {
-            deliveryCount,
-            deliveryLimit,
-            commissionBalance:
-                Number(s.commissionBalance || 0),
-            paymentStatus:
-                s.paymentStatus
+            seller: s.name,
+            deliveryCount: deliveryCount,
+            deliveryLimit: deliveryLimit,
+            commissionBalance: commissionBalance,
+            paymentStatus: s.paymentStatus
         }
     );
 
