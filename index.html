@@ -1967,6 +1967,55 @@ if (sellerPrice <= 0) {
     return;
 }
 
+// =================================================
+// GAS BRAND CHECK
+// =================================================
+
+const normalizedCustomerBrand =
+    String(brand || "")
+        .trim()
+        .toLowerCase();
+
+const normalizedSellerBrands =
+    Array.isArray(s.brands)
+        ? s.brands.map(
+            sellerBrand =>
+                String(sellerBrand || "")
+                    .trim()
+                    .toLowerCase()
+          )
+        : [];
+
+if (
+    !normalizedCustomerBrand ||
+    !normalizedSellerBrands.includes(
+        normalizedCustomerBrand
+    )
+) {
+
+    console.log(
+        "❌ BRAND MISMATCH:",
+        {
+            seller: s.name,
+            customerBrand:
+                normalizedCustomerBrand,
+            sellerBrands:
+                normalizedSellerBrands
+        }
+    );
+
+    return;
+}
+
+console.log(
+    "✅ BRAND MATCH:",
+    {
+        seller: s.name,
+        brand:
+            normalizedCustomerBrand
+    }
+);      
+
 
 // =================================================
 // DELIVERY LIMIT / COMMISSION CHECK
