@@ -2022,44 +2022,21 @@ console.log(
 // =================================================
 
 const deliveryCount =
-    Number(
-        s.deliveryCount || 0
-    );
+    Number(s.deliveryCount || 0);
 
 const deliveryLimit =
-    Number(
-        s.deliveryLimit || 999
-    );
+    Number(s.deliveryLimit || 3);
 
-const commissionBalance =
-    Number(
-        s.commissionBalance || 0
-    );
-
-
-// =================================================
-// SELLER LOCKED
-// =================================================
-
-if (
-    deliveryCount >= deliveryLimit
-) {
+if (deliveryCount >= deliveryLimit) {
 
     console.log(
-        "❌ SELLER LOCKED - COMMISSION PAYMENT REQUIRED:",
+        "🔒 SELLER LOCKED:",
         {
-            seller:
-                s.name,
-
-            deliveryCount:
-                deliveryCount,
-
-            deliveryLimit:
-                deliveryLimit,
-
+            seller: s.name,
+            deliveryCount: deliveryCount,
+            deliveryLimit: deliveryLimit,
             commissionBalance:
-                commissionBalance,
-
+                Number(s.commissionBalance || 0),
             paymentStatus:
                 s.paymentStatus
         }
@@ -2068,28 +2045,13 @@ if (
     return;
 }
 
-
-// =================================================
-// SELLER WITHIN DELIVERY LIMIT
-// =================================================
-
 console.log(
-    "✅ SELLER WITHIN DELIVERY LIMIT:",
+    "✅ SELLER CAN RECEIVE ORDER:",
     {
-        seller:
-            s.name,
-
-        deliveryCount:
-            deliveryCount,
-
-        deliveryLimit:
-            deliveryLimit,
-
-        commissionBalance:
-            commissionBalance,
-
-        paymentStatus:
-            s.paymentStatus
+        seller: s.name,
+        deliveryCount: deliveryCount,
+        remaining:
+            deliveryLimit - deliveryCount
     }
 );
 
