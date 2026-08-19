@@ -2379,12 +2379,58 @@ if (shouldSelectSeller) {
 
 if (!bestSeller) {
 
+    console.log(
+        "❌ NO BEST SELLER - REASON ANALYSIS:",
+        {
+            availableSellerCount,
+            brandMatchCount,
+            priceMatchCount,
+            radiusMatchCount,
+            lockedSellerCount
+        }
+    );
+
+
+    // =================================================
+    // ALL SELLERS LOCKED
+    // =================================================
+
+    if (
+        lockedSellerCount > 0 &&
+        lockedSellerCount === brandMatchCount
+    ) {
+
+        throw new Error(
+            `All ${brand} sellers have reached their delivery limits.`
+        );
+
+    }
+
+
+    // =================================================
+    // NO SELLER FOR THIS BRAND
+    // =================================================
+
+    if (
+        brandMatchCount === 0
+    ) {
+
+        throw new Error(
+            `No seller is currently available for ${brand}.`
+        );
+
+    }
+
+
+    // =================================================
+    // BRAND EXISTS BUT NO VALID SELLER
+    // =================================================
+
     throw new Error(
-        "No seller available for this gas size and brand"
+        `No ${brand} seller is currently available for ${quantity}.`
     );
 
 }
-
 
 // =================================================
 // FINAL DEBUG
