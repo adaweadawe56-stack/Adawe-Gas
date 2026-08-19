@@ -2354,43 +2354,47 @@ if (shouldSelectSeller) {
 
 }
 
-
-    // ----------------------
-    // NO SELLER
-    // ----------------------
-
-    if (!bestSeller) {
-
-        throw new Error(
-            "No seller available for this gas size and brand"
-        );
-
-    }
+}); // ✅ snap.forEach ENDS HERE
 
 
-    // ----------------------
-    // FINAL DEBUG
-    // ----------------------
+// =================================================
+// NO SELLER
+// =================================================
 
-    console.log(
-        "🏆 BEST SELLER:",
-        bestSeller.name
+if (!bestSeller) {
+
+    throw new Error(
+        "No seller available for this gas size and brand"
     );
 
-    console.log(
-        "💰 PRICE:",
-        bestSeller.sellerPrice
-    );
-
-    console.log(
-        "📍 DISTANCE:",
-        bestSeller.distance,
-        "km"
-    );
-
-
-    return bestSeller;
 }
+
+
+// =================================================
+// FINAL DEBUG
+// =================================================
+
+console.log(
+    "🏆 BEST SELLER:",
+    bestSeller.name
+);
+
+console.log(
+    "💰 PRICE:",
+    bestSeller.sellerPrice
+);
+
+console.log(
+    "📍 DISTANCE:",
+    bestSeller.distance,
+    "km"
+);
+
+
+return bestSeller;
+
+}
+  
 async function getCheapestSeller(
     quantity,
     brand,
