@@ -1955,28 +1955,6 @@ console.log("🔍 SELLER ELIGIBILITY CHECK:", {
 });
 
 // =================================================
-// SELLER PRICE
-// =================================================
-
-const sellerPrice =
-    Number(s.prices?.[quantity] || 0);
-
-if (sellerPrice <= 0) {
-
-    console.log(
-        "❌ NO PRICE FOR CYLINDER:",
-        {
-            seller: s.name,
-            quantity: quantity
-        }
-    );
-
-    return;
-}
-
-priceMatchCount++;
-      
-// =================================================
 // GAS BRAND CHECK
 // =================================================
 
@@ -2023,6 +2001,29 @@ console.log(
         brand: normalizedCustomerBrand
     }
 );
+
+
+// =================================================
+// SELLER PRICE
+// =================================================
+
+const sellerPrice =
+    Number(s.prices?.[quantity] || 0);
+
+if (sellerPrice <= 0) {
+
+    console.log(
+        "❌ NO PRICE FOR CYLINDER:",
+        {
+            seller: s.name,
+            quantity: quantity
+        }
+    );
+
+    return;
+}
+
+priceMatchCount++;
 // =================================================
 // DELIVERY LIMIT / COMMISSION CHECK
 // =================================================
