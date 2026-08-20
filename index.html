@@ -3571,7 +3571,7 @@ async function showRecommendedSeller() {
         submitOrderBtn.disabled = false;
 
 
-  catch (error) {
+catch (error) {
 
     console.error(
         "❌ showRecommendedSeller ERROR:",
@@ -3587,42 +3587,33 @@ async function showRecommendedSeller() {
         "#dc3545"
     );
 
+    recommendedSeller.innerHTML = `
+
+        <div class="text-center text-danger">
+
+            ❌ No seller available
+
+            <br>
+
+            <small>
+                ${message}
+            </small>
+
+        </div>
+
+    `;
+
+    recommendedSeller.style.display = "block";
+
+    sellerStatus.style.display = "none";
+
+    submitOrderBtn.disabled = true;
+
+} finally {
+
+    sellerLoading.style.display = "none";
+
 }
-
-
-        recommendedSeller.innerHTML = `
-
-            <div class="text-center text-danger">
-
-                ❌ No seller available
-
-                <br>
-
-                <small>
-                    ${
-                        error.message ||
-                        "No available seller was found within your delivery area."
-                    }
-                </small>
-
-            </div>
-
-        `;
-
-        recommendedSeller.style.display = "block";
-
-
-        sellerStatus.style.display = "none";
-
-        submitOrderBtn.disabled = true;
-
-
-    } finally {
-
-        sellerLoading.style.display = "none";
-
-    }
-
 }
 
 
