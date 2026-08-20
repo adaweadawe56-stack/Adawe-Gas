@@ -2026,6 +2026,26 @@ if (sellerPrice <= 0) {
 }
 
 priceMatchCount++;
+
+
+// =================================================
+// MATCHING SELLER
+// BRAND + CYLINDER SIZE MATCHED
+// =================================================
+
+matchingSellerCount++;
+
+console.log(
+    "🎯 MATCHING SELLER:",
+    {
+        seller: s.name,
+        brand: brand,
+        quantity: quantity,
+        matchingSellerCount: matchingSellerCount
+    }
+);
+
+
 // =================================================
 // DELIVERY LIMIT / COMMISSION CHECK
 // =================================================
