@@ -1964,14 +1964,18 @@ const sellerPrice =
 if (sellerPrice <= 0) {
 
     console.log(
-        "❌ Seller does not have this gas size:",
-        s.name,
-        quantity
+        "❌ NO PRICE FOR CYLINDER:",
+        {
+            seller: s.name,
+            quantity: quantity
+        }
     );
 
     return;
 }
 
+priceMatchCount++;
+      
 // =================================================
 // GAS BRAND CHECK
 // =================================================
