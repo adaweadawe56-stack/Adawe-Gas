@@ -2002,15 +2002,15 @@ if (
         "❌ BRAND MISMATCH:",
         {
             seller: s.name,
-            customerBrand:
-                normalizedCustomerBrand,
-            sellerBrands:
-                normalizedSellerBrands
+            customerBrand: normalizedCustomerBrand,
+            sellerBrands: normalizedSellerBrands
         }
     );
 
     return;
 }
+
+brandMatchCount++;
 
 console.log(
     "✅ BRAND MATCH:",
@@ -2019,9 +2019,6 @@ console.log(
         brand: normalizedCustomerBrand
     }
 );
-
-brandMatchCount++;
-
 // =================================================
 // DELIVERY LIMIT / COMMISSION CHECK
 // =================================================
