@@ -2437,15 +2437,15 @@ if (!bestSeller) {
     // -------------------------------------------------
 
     if (
-        lockedSellerCount > 0 &&
-        eligibleSellerCount === 0
-    ) {
+    matchingSellerCount > 0 &&
+    lockedSellerCount === matchingSellerCount
+) {
 
-        throw new Error(
-            `All ${brand} sellers have reached their delivery limits.`
-        );
+    throw new Error(
+        `All ${brand} sellers have reached their delivery limits.`
+    );
 
-    }
+}
 
 
     // -------------------------------------------------
