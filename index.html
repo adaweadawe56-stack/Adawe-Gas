@@ -2373,7 +2373,7 @@ if (shouldSelectSeller) {
 
 
 // =================================================
-// NO SELLER
+// NO SELLER / ERROR CLASSIFICATION
 // =================================================
 
 if (!bestSeller) {
@@ -2385,18 +2385,58 @@ if (!bestSeller) {
             brandMatchCount,
             priceMatchCount,
             radiusMatchCount,
-            lockedSellerCount
+            lockedSellerCount,
+            eligibleSellerCount
         }
     );
 
 
-    // =================================================
-    // ALL SELLERS LOCKED
-    // =================================================
+    // -------------------------------------------------
+    // 1. NO AVAILABLE SELLERS
+    // -------------------------------------------------
+
+    if (availableSellerCount === 0) {
+
+        throw new Error(
+            "No sellers are currently available."
+        );
+
+    }
+
+
+    // -------------------------------------------------
+    // 2. BRAND NOT AVAILABLE
+    // -------------------------------------------------
+
+    if (brandMatchCount === 0) {
+
+        throw new Error(
+            `No seller currently offers ${brand}.`
+        );
+
+    }
+
+
+    // -------------------------------------------------
+    // 3. CYLINDER SIZE NOT AVAILABLE
+    // -------------------------------------------------
+
+    if (priceMatchCount === 0) {
+
+        throw new Error(
+            `No ${brand} seller currently has ${quantity} available.`
+        );
+
+    }
+
+
+    // -------------------------------------------------
+    // 4. ALL BRAND SELLERS LOCKED
+    // -------------------------------------------------
 
     if (
         lockedSellerCount > 0 &&
-        lockedSellerCount === brandMatchCount
+        eligibleSellerCount === 0
     ) {
 
         throw new Error(
@@ -2406,20 +2446,28 @@ if (!bestSeller) {
     }
 
 
-    // =================================================
-    // NO SELLER FOR THIS BRAND
-    // =================================================
+    // -------------------------------------------------
+    // 5. OUTSIDE DELIVERY AREA
+    // -------------------------------------------------
 
-    if (
-        brandMatchCount === 0
-    ) {
+    if (radiusMatchCount === 0) {
 
         throw new Error(
-            `No seller is currently available for ${brand}.`
+            `No ${brand} seller is currently available within your delivery area.`
         );
 
     }
 
+
+    // -------------------------------------------------
+    // 6. GENERAL FALLBACK
+    // -------------------------------------------------
+
+    throw new Error(
+        `No ${brand} seller is currently available for ${quantity}.`
+    );
+
+}
 
     // =================================================
     // BRAND EXISTS BUT NO VALID SELLER
