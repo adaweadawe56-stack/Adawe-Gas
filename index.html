@@ -3601,26 +3601,26 @@ async function showRecommendedSeller() {
 
         recommendedSeller.style.display = "block";
 
+ // =================================================
+// SELLER FOUND STATUS
+// =================================================
 
-        // =================================================
-        // SELLER FOUND STATUS
-        // =================================================
+sellerStatus.innerHTML = `
+    ✅ Seller Found:
+    <strong>${sellerName}</strong>
+`;
 
-        sellerStatus.innerHTML = `
-            ✅ Seller Found:
-            <strong>${sellerName}</strong>
-        `;
-
-        sellerStatus.style.display = "block";
+sellerStatus.style.display = "block";
 
 
-        // =================================================
-        // ENABLE ORDER BUTTON
-        // =================================================
+// =================================================
+// ENABLE ORDER BUTTON
+// =================================================
 
-        submitOrderBtn.disabled = false;
+submitOrderBtn.disabled = false;
 
-}catch (error) {
+
+} catch (error) {
 
     console.error(
         "❌ showRecommendedSeller ERROR:",
@@ -3658,13 +3658,15 @@ async function showRecommendedSeller() {
 
     submitOrderBtn.disabled = true;
 
-}
-finally {
+} finally {
 
     sellerLoading.style.display = "none";
 
 }
-}
+
+} // ← IMPORTANT: closes showRecommendedSeller()
+
+
 /* =========================================================
    SELLER RECOMMENDATION EVENTS
 ========================================================= */
@@ -3676,13 +3678,13 @@ document
         showRecommendedSeller
     );
 
-
 document
     .getElementById("brand")
     ?.addEventListener(
         "change",
         showRecommendedSeller
     );
+
 /* -------------------- ORDER FORM -------------------- */
 
 const orderForm = document.getElementById("orderForm");
