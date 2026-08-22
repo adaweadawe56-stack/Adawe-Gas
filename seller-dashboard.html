@@ -1143,6 +1143,312 @@ const REJECTION_CODES = {
         "Other"
 
 };
+
+  // =========================================================
+// OPEN REJECT MODAL
+// =========================================================
+
+window.openRejectModal = function(orderId) {
+
+    console.log(
+        "🚫 Opening rejection modal:",
+        orderId
+    );
+
+    rejectingOrderId = orderId;
+
+
+    // ---------------------------------------------
+    // SET ORDER ID
+    // ---------------------------------------------
+
+    const orderIdInput =
+        document.getElementById("rejectOrderId");
+
+    if (orderIdInput) {
+
+        orderIdInput.value =
+            orderId;
+
+    }
+
+
+    // ---------------------------------------------
+    // RESET FORM
+    // ---------------------------------------------
+
+    const rejectionCode =
+        document.getElementById("rejectionCode");
+
+    const rejectionReason =
+        document.getElementById("rejectionReason");
+
+    const rejectionCodeError =
+        document.getElementById("rejectionCodeError");
+
+
+    if (rejectionCode) {
+
+        rejectionCode.value = "";
+
+    }
+
+
+    if (rejectionReason) {
+
+        rejectionReason.value = "";
+
+    }
+
+
+    if (rejectionCodeError) {
+
+        rejectionCodeError.style.display =
+            "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // OPEN BOOTSTRAP MODAL
+    // ---------------------------------------------
+
+    const modalElement =
+        document.getElementById(
+            "rejectOrderModal"
+        );
+
+    if (!modalElement) {
+
+        console.error(
+            "❌ Reject modal element not found."
+        );
+
+        return;
+
+    }
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+    modal.show();
+
+};
+
+  // =========================================================
+// CONFIRM REJECTION
+// =========================================================
+
+document.addEventListener(
+    "DOMContentLoaded",
+    () => {
+
+        const confirmRejectBtn =
+            document.getElementById(
+                "confirmRejectBtn"
+            );
+
+
+        if (!confirmRejectBtn) {
+
+            console.warn(
+                "⚠️ confirmRejectBtn not found."
+            );
+
+            return;
+
+        }
+
+
+        confirmRejectBtn.addEventListener(
+            "click",
+            async () => {
+
+                // -----------------------------------------
+                // VALIDATE ORDER
+                // -----------------------------------------
+
+                if (!rejectingOrderId) {
+
+                    showToast(
+                        "Order ID is missing.",
+                        "#dc3545"
+                    );
+
+                    return;
+
+                }
+
+
+                // -----------------------------------------
+                // GET VALUES
+                // -----------------------------------------
+
+                const rejectionCode =
+                    document.getElementById(
+                        "rejectionCode"
+                    ).value;
+
+
+                const rejectionReason =
+                    document.getElementById(
+                        "rejectionReason"
+                    ).value.trim();
+
+
+                const errorElement =
+                    document.getElementById(
+                        "rejectionCodeError"
+                    );
+
+
+                // -----------------------------------------
+                // VALIDATE REJECTION CODE
+                // -----------------------------------------
+
+                if (!rejectionCode) {
+
+                    if (errorElement) {
+
+                        errorElement.style.display =
+                            "block";
+
+                    }
+
+                    return;
+
+                }
+
+
+                if (errorElement) {
+
+                    errorElement.style.display =
+                        "none";
+
+                }
+
+
+                // -----------------------------------------
+                // DISABLE BUTTON
+                // -----------------------------------------
+
+                confirmRejectBtn.disabled =
+                    true;
+
+                confirmRejectBtn.innerHTML =
+                    `
+                    <span class="spinner-border spinner-border-sm"></span>
+                    Rejecting...
+                    `;
+
+
+                try {
+
+                    console.log(
+                        "🚫 Confirming rejection:",
+                        {
+                            orderId:
+                                rejectingOrderId,
+
+                            rejectionCode:
+                                rejectionCode,
+
+                            rejectionReason:
+                                rejectionReason
+                        }
+                    );
+
+
+                    // -------------------------------------
+                    // UPDATE ORDER
+                    // -------------------------------------
+
+                    await window.updateStatus(
+
+                        rejectingOrderId,
+
+                        "Rejected",
+
+                        rejectionCode,
+
+                        rejectionReason
+
+                    );
+
+
+                    // -------------------------------------
+                    // CLOSE MODAL
+                    // -------------------------------------
+
+                    const modalElement =
+                        document.getElementById(
+                            "rejectOrderModal"
+                        );
+
+
+                    const modal =
+                        bootstrap.Modal.getInstance(
+                            modalElement
+                        );
+
+
+                    if (modal) {
+
+                        modal.hide();
+
+                    }
+
+
+                    // -------------------------------------
+                    // RESET STATE
+                    // -------------------------------------
+
+                    rejectingOrderId =
+                        null;
+
+
+                } catch (error) {
+
+                    console.error(
+                        "❌ Rejection failed:",
+                        error
+                    );
+
+                    showToast(
+                        error.message ||
+                        "Failed to reject order.",
+                        "#dc3545"
+                    );
+
+                } finally {
+
+                    // -------------------------------------
+                    // RESTORE BUTTON
+                    // -------------------------------------
+
+                    confirmRejectBtn.disabled =
+                        false;
+
+                    confirmRejectBtn.innerHTML =
+                        "Reject Order";
+
+                }
+
+            }
+        );
+
+    }
+);
+
+// =========================================================
+// REJECTION MODAL STATE
+// =========================================================
+
+let rejectingOrderId = null;
+  
 // =====================================================
 // UPDATE ORDER STATUS
 // =====================================================
