@@ -1453,24 +1453,31 @@ window.updateStatus = async function(id, status) {
         // REJECTED
         // =============================================
 
-        else if (
-            status === "Rejected"
-        ) {
+       else if (status === "Rejected") {
 
-            await updateDoc(
-                orderRef,
-                {
+    await updateDoc(
+        orderRef,
+        {
 
-                    status:
-                        "Rejected",
+            status:
+                "Rejected",
 
-                    rejectedAt:
-                        serverTimestamp()
+            rejectionCode:
+                rejectionCode || "OTHER",
 
-                }
-            );
+            rejectionReason:
+                rejectionReason || "",
+
+            rejectedBySellerId:
+                sellerDocId,
+
+            rejectedAt:
+                serverTimestamp()
 
         }
+    );
+
+}
 
 
         // =============================================
