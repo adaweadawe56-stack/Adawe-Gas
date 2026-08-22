@@ -933,13 +933,20 @@ deliveryRate + "%";
 // UPDATE ORDER STATUS
 // =====================================================
 
-window.updateStatus = async function(id, status) {
+window.updateStatus = async function(
+    id,
+    status,
+    rejectionCode = null,
+    rejectionReason = null
+) {
 
     console.log(
         "🔄 Updating order status:",
         {
             orderId: id,
-            newStatus: status
+            newStatus: status,
+            rejectionCode: rejectionCode,
+            rejectionReason: rejectionReason
         }
     );
 
