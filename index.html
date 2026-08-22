@@ -3930,7 +3930,33 @@ const orderData = {
             ? Number(customerLongitude)
             : null,
 
+    // =================================================
+    // ORDER STATUS
+    // =================================================
+
     status: "Pending",
+
+    // =================================================
+    // ASSIGNMENT / REASSIGNMENT
+    // =================================================
+
+    assignmentAttempts: 1,
+
+    // =================================================
+    // REJECTION
+    // =================================================
+
+    rejectionCode: null,
+
+    rejectionReason: null,
+
+    rejectedBySellerId: null,
+
+    rejectedAt: null,
+
+    // =================================================
+    // TIMESTAMPS
+    // =================================================
 
     createdAt:
         serverTimestamp(),
@@ -3944,7 +3970,9 @@ const orderData = {
 
     deliveredAt: null,
 
-    rejectedAt: null,
+    // =================================================
+    // RATING
+    // =================================================
 
     rating: null,
 
