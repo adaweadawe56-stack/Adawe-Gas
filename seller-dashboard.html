@@ -217,6 +217,193 @@ Login
   </div>
 
  </div>
+
+<!-- =========================================================
+     REJECT ORDER MODAL
+========================================================= -->
+
+<div
+    class="modal fade"
+    id="rejectOrderModal"
+    tabindex="-1"
+    aria-labelledby="rejectOrderModalLabel"
+    aria-hidden="true"
+>
+
+    <div class="modal-dialog modal-dialog-centered">
+
+        <div class="modal-content">
+
+            <!-- HEADER -->
+            <div class="modal-header">
+
+                <h5
+                    class="modal-title"
+                    id="rejectOrderModalLabel"
+                >
+                    Reject Order
+                </h5>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close"
+                ></button>
+
+            </div>
+
+
+            <!-- BODY -->
+            <div class="modal-body">
+
+                <div class="alert alert-warning">
+
+                    <strong>⚠️ Reject this order?</strong>
+
+                    <div class="small mt-1">
+                        Please select a reason before rejecting.
+                    </div>
+
+                </div>
+
+
+                <!-- ORDER ID -->
+                <div class="mb-3">
+
+                    <label
+                        class="form-label fw-bold"
+                        for="rejectOrderId"
+                    >
+                        Order ID
+                    </label>
+
+                    <input
+                        type="text"
+                        id="rejectOrderId"
+                        class="form-control"
+                        readonly
+                    >
+
+                </div>
+
+
+                <!-- REJECTION CODE -->
+                <div class="mb-3">
+
+                    <label
+                        class="form-label fw-bold"
+                        for="rejectionCode"
+                    >
+                        Rejection Reason
+                    </label>
+
+                    <select
+                        id="rejectionCode"
+                        class="form-select"
+                    >
+
+                        <option value="">
+                            Select a reason
+                        </option>
+
+                        <option value="OUT_OF_STOCK">
+                            Out of Stock
+                        </option>
+
+                        <option value="TOO_BUSY">
+                            Too Busy / Cannot Handle Order
+                        </option>
+
+                        <option value="OUT_OF_SERVICE_AREA">
+                            Outside Service Area
+                        </option>
+
+                        <option value="CUSTOMER_UNREACHABLE">
+                            Customer Unreachable
+                        </option>
+
+                        <option value="VEHICLE_ISSUE">
+                            Vehicle / Delivery Issue
+                        </option>
+
+                        <option value="PRICE_ISSUE">
+                            Pricing Issue
+                        </option>
+
+                        <option value="OTHER">
+                            Other
+                        </option>
+
+                    </select>
+
+                    <div
+                        id="rejectionCodeError"
+                        class="text-danger small mt-1"
+                        style="display:none;"
+                    >
+                        Please select a rejection reason.
+                    </div>
+
+                </div>
+
+
+                <!-- ADDITIONAL DETAILS -->
+                <div class="mb-3">
+
+                    <label
+                        class="form-label fw-bold"
+                        for="rejectionReason"
+                    >
+                        Additional Details
+                        <span class="text-muted fw-normal">
+                            (optional)
+                        </span>
+                    </label>
+
+                    <textarea
+                        id="rejectionReason"
+                        class="form-control"
+                        rows="4"
+                        maxlength="500"
+                        placeholder="Provide additional details if necessary..."
+                    ></textarea>
+
+                    <div class="text-muted small mt-1">
+                        Maximum 500 characters.
+                    </div>
+
+                </div>
+
+            </div>
+
+
+            <!-- FOOTER -->
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal"
+                >
+                    Cancel
+                </button>
+
+                <button
+                    type="button"
+                    id="confirmRejectBtn"
+                    class="btn btn-danger"
+                >
+                    Reject Order
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
   
   <!-- Reviews Modal -->
 <div class="modal fade" id="reviewsModal" tabindex="-1">
@@ -928,7 +1115,34 @@ deliveryRate + "%";
   });
 
 }
+// =========================================================
+// PROFESSIONAL REJECTION CODES
+// =========================================================
 
+const REJECTION_CODES = {
+
+    OUT_OF_STOCK:
+        "Out of Stock",
+
+    TOO_BUSY:
+        "Too Busy / Cannot Handle Order",
+
+    OUT_OF_SERVICE_AREA:
+        "Outside Service Area",
+
+    CUSTOMER_UNREACHABLE:
+        "Customer Unreachable",
+
+    VEHICLE_ISSUE:
+        "Vehicle / Delivery Issue",
+
+    PRICE_ISSUE:
+        "Pricing Issue",
+
+    OTHER:
+        "Other"
+
+};
 // =====================================================
 // UPDATE ORDER STATUS
 // =====================================================
