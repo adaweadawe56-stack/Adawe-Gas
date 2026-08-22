@@ -1086,12 +1086,12 @@ ordersTable.innerHTML += `
     Delivered
   </button>
 
-  <button
-    onclick="updateStatus('${docSnap.id}','Rejected')"
+ <button
+    onclick="openRejectModal('${docSnap.id}')"
     class="btn btn-danger btn-sm"
     ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
     Reject
-  </button>
+</button>
 
 </div>
 
