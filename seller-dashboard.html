@@ -2045,30 +2045,29 @@ window.updateStatus = async function(
             status
         );
 
-
         showToast(
             "✅ Status updated to " + status,
             "#198754"
         );
 
+    } catch (error) {
 
-} catch (error) {
+        console.error(
+            "❌ UPDATE STATUS ERROR:",
+            error
+        );
 
-    console.error(
-        "❌ UPDATE STATUS ERROR:",
-        error
-    );
+        showToast(
+            "❌ " + (
+                error.message ||
+                "Failed to update order status."
+            ),
+            "#dc3545"
+        );
 
-    showToast(
-        "❌ " + (
-            error.message ||
-            "Failed to update order status."
-        ),
-        "#dc3545"
-    );
+        throw error;
 
-    throw error;
-}
+    }
 
 };
      
