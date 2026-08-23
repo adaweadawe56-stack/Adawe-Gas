@@ -1460,6 +1460,398 @@ document.addEventListener(
 
     }
 );
+
+  // =========================================================
+// FIND NEXT SELLER FOR REASSIGNMENT
+// =========================================================
+
+async function findNextSellerForReassignment(
+    orderData,
+    rejectedSellerId
+) {
+
+    console.log(
+        "🔄 FINDING NEXT SELLER:",
+        {
+            orderId:
+                orderData.orderId,
+
+            rejectedSellerId:
+                rejectedSellerId,
+
+            brand:
+                orderData.brand,
+
+            quantity:
+                orderData.quantity
+        }
+    );
+
+
+    // =====================================================
+    // GET APPROVED SELLERS
+    // =====================================================
+
+    const q = query(
+        collection(db, "sellers"),
+        where("status", "==", "approved")
+    );
+
+    const snap =
+        await getDocs(q);
+
+
+    if (snap.empty) {
+
+        console.log(
+            "❌ No approved sellers found."
+        );
+
+        return null;
+    }
+
+
+    let candidates = [];
+
+
+    // =====================================================
+    // CHECK EVERY SELLER
+    // =====================================================
+
+    snap.forEach(docSnap => {
+
+        const seller =
+            docSnap.data();
+
+        const sellerId =
+            docSnap.id;
+
+
+        // =================================================
+        // DO NOT REASSIGN TO SAME SELLER
+        // =================================================
+
+        if (
+            sellerId === rejectedSellerId
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // SELLER MUST BE AVAILABLE
+        // =================================================
+
+        if (
+            seller.isAvailable !== true
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // SELLER MUST HAVE UID
+        // =================================================
+
+        if (
+            !seller.uid
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // BRAND MATCH
+        // =================================================
+
+        const customerBrand =
+            String(
+                orderData.brand || ""
+            )
+            .trim()
+            .toLowerCase();
+
+
+        const sellerBrands =
+            Array.isArray(
+                seller.brands
+            )
+                ? seller.brands.map(
+                    b =>
+                        String(b || "")
+                        .trim()
+                        .toLowerCase()
+                )
+                : [];
+
+
+        if (
+            !sellerBrands.includes(
+                customerBrand
+            )
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // PRICE CHECK
+        // =================================================
+
+        const sellerPrice =
+            Number(
+                seller.prices?.[
+                    orderData.quantity
+                ] || 0
+            );
+
+
+        if (
+            sellerPrice <= 0
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // DELIVERY LIMIT
+        // =================================================
+
+        const deliveryCount =
+            Number(
+                seller.deliveryCount || 0
+            );
+
+
+        const deliveryLimit =
+            Number(
+                seller.deliveryLimit || 999999
+            );
+
+
+        if (
+            deliveryCount >=
+            deliveryLimit
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // GPS
+        // =================================================
+
+        const sellerLat =
+            Number(
+                seller.sellerLatitude
+            );
+
+
+        const sellerLng =
+            Number(
+                seller.sellerLongitude
+            );
+
+
+        const customerLat =
+            Number(
+                orderData.customerLatitude
+            );
+
+
+        const customerLng =
+            Number(
+                orderData.customerLongitude
+            );
+
+
+        if (
+            !Number.isFinite(sellerLat) ||
+            !Number.isFinite(sellerLng) ||
+            !Number.isFinite(customerLat) ||
+            !Number.isFinite(customerLng)
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // DISTANCE
+        // =================================================
+
+        const distance =
+            calculateDistance(
+                customerLat,
+                customerLng,
+                sellerLat,
+                sellerLng
+            );
+
+
+        // =================================================
+        // DELIVERY RADIUS
+        // =================================================
+
+        const deliveryRadiusKm =
+            Number(
+                seller.deliveryRadiusKm || 0
+            );
+
+
+        if (
+            deliveryRadiusKm <= 0
+        ) {
+
+            return;
+        }
+
+
+        if (
+            distance >
+            deliveryRadiusKm
+        ) {
+
+            return;
+        }
+
+
+        // =================================================
+        // ELIGIBLE SELLER
+        // =================================================
+
+        candidates.push({
+
+            id:
+                sellerId,
+
+            ...seller,
+
+            sellerPrice:
+                sellerPrice,
+
+            distance:
+                distance,
+
+            averageRating:
+                Number(
+                    seller.averageRating || 0
+                )
+
+        });
+
+    });
+
+
+    // =====================================================
+    // NO CANDIDATES
+    // =====================================================
+
+    if (
+        candidates.length === 0
+    ) {
+
+        console.log(
+            "❌ No eligible seller found for reassignment."
+        );
+
+        return null;
+    }
+
+
+    // =====================================================
+    // SMART SORT
+    // 1. NEAREST
+    // 2. RATING
+    // 3. PRICE
+    // =====================================================
+
+    candidates.sort(
+        (a, b) => {
+
+            // -------------------------------
+            // DISTANCE
+            // -------------------------------
+
+            const distanceDifference =
+                a.distance -
+                b.distance;
+
+
+            if (
+                Math.abs(
+                    distanceDifference
+                ) >= 1
+            ) {
+
+                return distanceDifference;
+            }
+
+
+            // -------------------------------
+            // RATING
+            // -------------------------------
+
+            const ratingDifference =
+                b.averageRating -
+                a.averageRating;
+
+
+            if (
+                ratingDifference !== 0
+            ) {
+
+                return ratingDifference;
+            }
+
+
+            // -------------------------------
+            // PRICE
+            // -------------------------------
+
+            return (
+                a.sellerPrice -
+                b.sellerPrice
+            );
+
+        }
+    );
+
+
+    const bestSeller =
+        candidates[0];
+
+
+    console.log(
+        "🏆 NEXT SELLER FOUND:",
+        {
+            seller:
+                bestSeller.name,
+
+            sellerId:
+                bestSeller.id,
+
+            distance:
+                bestSeller.distance,
+
+            price:
+                bestSeller.sellerPrice,
+
+            rating:
+                bestSeller.averageRating
+        }
+    );
+
+
+    return bestSeller;
+
+}
   
 // =====================================================
 // UPDATE ORDER STATUS
