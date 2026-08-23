@@ -1461,7 +1461,7 @@ document.addEventListener(
     }
 );
 
-  // =========================================================
+// =========================================================
 // FIND NEXT SELLER FOR REASSIGNMENT
 // =========================================================
 
@@ -1480,6 +1480,9 @@ async function findNextSellerForReassignment(
             rejectedSellerId:
                 rejectedSellerId,
 
+            rejectionHistory:
+                rejectionHistory,
+
             brand:
                 orderData.brand,
 
@@ -1495,8 +1498,13 @@ async function findNextSellerForReassignment(
 
     const q = query(
         collection(db, "sellers"),
-        where("status", "==", "approved")
+        where(
+            "status",
+            "==",
+            "approved"
+        )
     );
+
 
     const snap =
         await getDocs(q);
@@ -1512,7 +1520,11 @@ async function findNextSellerForReassignment(
     }
 
 
-    let candidates = [];
+    // =====================================================
+    // CANDIDATES
+    // =====================================================
+
+    const candidates = [];
 
 
     // =====================================================
@@ -1524,31 +1536,42 @@ async function findNextSellerForReassignment(
         const seller =
             docSnap.data();
 
+
         const sellerId =
             docSnap.id;
-// =================================================
-// DO NOT REASSIGN TO SELLER WHO ALREADY REJECTED
-// =================================================
 
-const alreadyRejected =
-    rejectionHistory.some(
-        rejection =>
-            rejection.sellerId === sellerId
-    );
-
-
-if (alreadyRejected) {
-
-    console.log(
-        "⛔ Seller already rejected this order:",
-        seller.name
-    );
-
-    return;
-}
 
         // =================================================
-        // DO NOT REASSIGN TO SAME SELLER
+        // ALREADY REJECTED THIS ORDER
+        // =================================================
+
+        const alreadyRejected =
+            rejectionHistory.some(
+                rejection =>
+                    rejection &&
+                    rejection.sellerId === sellerId
+            );
+
+
+        if (alreadyRejected) {
+
+            console.log(
+                "⛔ SELLER ALREADY REJECTED:",
+                {
+                    sellerId:
+                        sellerId,
+
+                    sellerName:
+                        seller.name
+                }
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // DO NOT REASSIGN TO CURRENT SELLER
         // =================================================
 
         if (
@@ -1567,6 +1590,11 @@ if (alreadyRejected) {
             seller.isAvailable !== true
         ) {
 
+            console.log(
+                "⏸️ SELLER NOT AVAILABLE:",
+                seller.name
+            );
+
             return;
         }
 
@@ -1578,6 +1606,11 @@ if (alreadyRejected) {
         if (
             !seller.uid
         ) {
+
+            console.log(
+                "⚠️ SELLER UID MISSING:",
+                seller.name
+            );
 
             return;
         }
@@ -1600,8 +1633,10 @@ if (alreadyRejected) {
                 seller.brands
             )
                 ? seller.brands.map(
-                    b =>
-                        String(b || "")
+                    brand =>
+                        String(
+                            brand || ""
+                        )
                         .trim()
                         .toLowerCase()
                 )
@@ -1613,6 +1648,20 @@ if (alreadyRejected) {
                 customerBrand
             )
         ) {
+
+            console.log(
+                "❌ BRAND NOT SUPPORTED:",
+                {
+                    seller:
+                        seller.name,
+
+                    requestedBrand:
+                        customerBrand,
+
+                    sellerBrands:
+                        sellerBrands
+                }
+            );
 
             return;
         }
@@ -1633,6 +1682,20 @@ if (alreadyRejected) {
         if (
             sellerPrice <= 0
         ) {
+
+            console.log(
+                "❌ INVALID PRICE:",
+                {
+                    seller:
+                        seller.name,
+
+                    quantity:
+                        orderData.quantity,
+
+                    price:
+                        sellerPrice
+                }
+            );
 
             return;
         }
@@ -1659,12 +1722,26 @@ if (alreadyRejected) {
             deliveryLimit
         ) {
 
+            console.log(
+                "💰 SELLER COMMISSION LIMIT REACHED:",
+                {
+                    seller:
+                        seller.name,
+
+                    deliveryCount:
+                        deliveryCount,
+
+                    deliveryLimit:
+                        deliveryLimit
+                }
+            );
+
             return;
         }
 
 
         // =================================================
-        // GPS
+        // SELLER GPS
         // =================================================
 
         const sellerLat =
@@ -1679,6 +1756,10 @@ if (alreadyRejected) {
             );
 
 
+        // =================================================
+        // CUSTOMER GPS
+        // =================================================
+
         const customerLat =
             Number(
                 orderData.customerLatitude
@@ -1691,27 +1772,62 @@ if (alreadyRejected) {
             );
 
 
+        // =================================================
+        // GPS VALIDATION
+        // =================================================
+
         if (
-            !Number.isFinite(sellerLat) ||
-            !Number.isFinite(sellerLng) ||
-            !Number.isFinite(customerLat) ||
-            !Number.isFinite(customerLng)
+            !Number.isFinite(
+                sellerLat
+            ) ||
+            !Number.isFinite(
+                sellerLng
+            ) ||
+            !Number.isFinite(
+                customerLat
+            ) ||
+            !Number.isFinite(
+                customerLng
+            )
         ) {
+
+            console.log(
+                "❌ INVALID GPS:",
+                {
+                    seller:
+                        seller.name,
+
+                    sellerLat:
+                        sellerLat,
+
+                    sellerLng:
+                        sellerLng,
+
+                    customerLat:
+                        customerLat,
+
+                    customerLng:
+                        customerLng
+                }
+            );
 
             return;
         }
 
 
         // =================================================
-        // DISTANCE
+        // CALCULATE DISTANCE
         // =================================================
 
         const distance =
             calculateDistance(
+
                 customerLat,
                 customerLng,
+
                 sellerLat,
                 sellerLng
+
             );
 
 
@@ -1729,14 +1845,37 @@ if (alreadyRejected) {
             deliveryRadiusKm <= 0
         ) {
 
+            console.log(
+                "❌ INVALID DELIVERY RADIUS:",
+                seller.name
+            );
+
             return;
         }
 
+
+        // =================================================
+        // OUTSIDE DELIVERY RADIUS
+        // =================================================
 
         if (
             distance >
             deliveryRadiusKm
         ) {
+
+            console.log(
+                "📍 SELLER OUTSIDE DELIVERY RADIUS:",
+                {
+                    seller:
+                        seller.name,
+
+                    distance:
+                        distance,
+
+                    radius:
+                        deliveryRadiusKm
+                }
+            );
 
             return;
         }
@@ -1778,7 +1917,7 @@ if (alreadyRejected) {
     ) {
 
         console.log(
-            "❌ No eligible seller found for reassignment."
+            "❌ NO ELIGIBLE SELLER FOUND."
         );
 
         return null;
@@ -1787,6 +1926,7 @@ if (alreadyRejected) {
 
     // =====================================================
     // SMART SORT
+    //
     // 1. NEAREST
     // 2. RATING
     // 3. PRICE
@@ -1795,9 +1935,9 @@ if (alreadyRejected) {
     candidates.sort(
         (a, b) => {
 
-            // -------------------------------
+            // ---------------------------------------------
             // DISTANCE
-            // -------------------------------
+            // ---------------------------------------------
 
             const distanceDifference =
                 a.distance -
@@ -1814,9 +1954,9 @@ if (alreadyRejected) {
             }
 
 
-            // -------------------------------
+            // ---------------------------------------------
             // RATING
-            // -------------------------------
+            // ---------------------------------------------
 
             const ratingDifference =
                 b.averageRating -
@@ -1831,9 +1971,9 @@ if (alreadyRejected) {
             }
 
 
-            // -------------------------------
+            // ---------------------------------------------
             // PRICE
-            // -------------------------------
+            // ---------------------------------------------
 
             return (
                 a.sellerPrice -
@@ -1844,13 +1984,22 @@ if (alreadyRejected) {
     );
 
 
+    // =====================================================
+    // BEST SELLER
+    // =====================================================
+
     const bestSeller =
         candidates[0];
 
 
+    // =====================================================
+    // DEBUG
+    // =====================================================
+
     console.log(
         "🏆 NEXT SELLER FOUND:",
         {
+
             seller:
                 bestSeller.name,
 
@@ -1865,6 +2014,7 @@ if (alreadyRejected) {
 
             rating:
                 bestSeller.averageRating
+
         }
     );
 
