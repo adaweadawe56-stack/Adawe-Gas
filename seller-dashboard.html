@@ -2052,29 +2052,23 @@ window.updateStatus = async function(
         );
 
 
-    } catch (error) {
+} catch (error) {
 
+    console.error(
+        "❌ UPDATE STATUS ERROR:",
+        error
+    );
 
-        // =============================================
-        // ERROR
-        // =============================================
+    showToast(
+        "❌ " + (
+            error.message ||
+            "Failed to update order status."
+        ),
+        "#dc3545"
+    );
 
-        console.error(
-            "❌ UPDATE STATUS ERROR:",
-            error
-        );
-
-
-        showToast(
-            "❌ " + (
-                error.message ||
-                "Failed to update order status."
-            ),
-            "#dc3545"
-        );
-
-        return;
-    }
+    throw error;
+}
 
 };
      
