@@ -1152,7 +1152,7 @@ const REJECTION_CODES = {
 
 };
 
-  // =========================================================
+// =========================================================
 // OPEN REJECT MODAL
 // =========================================================
 
@@ -1175,25 +1175,17 @@ window.openRejectModal = function(orderId) {
 
     if (orderIdInput) {
 
-        orderIdInput.value =
-            orderId;
+        orderIdInput.value = orderId;
 
     }
 
 
     // ---------------------------------------------
-    // RESET FORM
+    // RESET REJECTION CODE
     // ---------------------------------------------
 
     const rejectionCode =
         document.getElementById("rejectionCode");
-
-    const rejectionReason =
-        document.getElementById("rejectionReason");
-
-    const rejectionCodeError =
-        document.getElementById("rejectionCodeError");
-
 
     if (rejectionCode) {
 
@@ -1202,12 +1194,28 @@ window.openRejectModal = function(orderId) {
     }
 
 
+    // ---------------------------------------------
+    // RESET ADDITIONAL DETAILS
+    // ---------------------------------------------
+
+    const rejectionReason =
+        document.getElementById("rejectionReason");
+
     if (rejectionReason) {
 
         rejectionReason.value = "";
 
     }
 
+
+    // ---------------------------------------------
+    // HIDE VALIDATION ERROR
+    // ---------------------------------------------
+
+    const rejectionCodeError =
+        document.getElementById(
+            "rejectionCodeError"
+        );
 
     if (rejectionCodeError) {
 
@@ -1218,7 +1226,7 @@ window.openRejectModal = function(orderId) {
 
 
     // ---------------------------------------------
-    // OPEN BOOTSTRAP MODAL
+    // GET MODAL
     // ---------------------------------------------
 
     const modalElement =
@@ -1233,9 +1241,12 @@ window.openRejectModal = function(orderId) {
         );
 
         return;
-
     }
 
+
+    // ---------------------------------------------
+    // OPEN BOOTSTRAP MODAL
+    // ---------------------------------------------
 
     const modal =
         bootstrap.Modal.getOrCreateInstance(
@@ -1305,8 +1316,7 @@ document.addEventListener(
                     document.getElementById(
                         "rejectionReason"
                     ).value.trim();
-
-
+              
                 const errorElement =
                     document.getElementById(
                         "rejectionCodeError"
