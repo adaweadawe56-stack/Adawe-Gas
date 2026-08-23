@@ -2380,33 +2380,238 @@ window.updateStatus = async function(
         }
 
 
-        // =============================================
-        // REJECTED
-        // =============================================
+       // =============================================
+// REJECTED + AUTOMATIC REASSIGNMENT
+// =============================================
 
-      else if (status === "Rejected") {
+else if (status === "Rejected") {
 
-    await updateDoc(
-        orderRef,
-        {
+    // -----------------------------------------
+    // FIND NEXT SELLER
+    // -----------------------------------------
 
-            status:
-                "Rejected",
+    const rejectedSellerId =
+        sellerDocId;
 
-            rejectionCode:
-                rejectionCode || "OTHER",
 
-            rejectionReason:
-                rejectionReason || "",
+    const nextSeller =
+        await findNextSellerForReassignment(
+            data,
+            rejectedSellerId
+        );
 
-            rejectedBySellerId:
-                sellerDocId,
 
-            rejectedAt:
-                serverTimestamp()
+    // -----------------------------------------
+    // CURRENT REASSIGNMENT COUNT
+    // -----------------------------------------
+
+    const currentReassignmentCount =
+        Number(
+            data.reassignmentCount || 0
+        );
+
+
+    const currentAssignmentAttempts =
+        Number(
+            data.assignmentAttempts || 1
+        );
+
+
+    // -----------------------------------------
+    // NO SELLER AVAILABLE
+    // -----------------------------------------
+
+    if (!nextSeller) {
+
+        await updateDoc(
+            orderRef,
+            {
+
+                status:
+                    "Rejected",
+
+                rejectionCode:
+                    rejectionCode || "OTHER",
+
+                rejectionReason:
+                    rejectionReason || "",
+
+                rejectedBySellerId:
+                    rejectedSellerId,
+
+                rejectedAt:
+                    serverTimestamp(),
+
+                reassignmentCount:
+                    currentReassignmentCount,
+
+                assignmentAttempts:
+                    currentAssignmentAttempts
+
+            }
+        );
+
+
+        console.log(
+            "⚠️ No next seller available."
+        );
+
+    }
+
+    // -----------------------------------------
+    // NEXT SELLER FOUND
+    // -----------------------------------------
+
+    else {
+
+        const nextSellerPhone =
+            nextSeller.phone?.trim();
+
+
+        if (!nextSellerPhone) {
+
+            throw new Error(
+                "Next seller phone number is missing."
+            );
 
         }
-    );
+
+
+        // -----------------------------------------
+        // UPDATE ORDER
+        // -----------------------------------------
+
+        await updateDoc(
+            orderRef,
+            {
+
+                status:
+                    "Pending",
+
+                sellerId:
+                    nextSeller.id,
+
+                sellerName:
+                    nextSeller.name,
+
+                sellerPhone:
+                    nextSeller.phone,
+
+                sellerUid:
+                    nextSeller.uid,
+
+                sellerLocation:
+                    nextSeller.location || "",
+
+                price:
+                    Number(
+                        nextSeller.sellerPrice || 0
+                    ),
+
+                sellerLatitude:
+                    Number(
+                        nextSeller.sellerLatitude
+                    ),
+
+                sellerLongitude:
+                    Number(
+                        nextSeller.sellerLongitude
+                    ),
+
+                rejectionCode:
+                    rejectionCode || "OTHER",
+
+                rejectionReason:
+                    rejectionReason || "",
+
+                rejectedBySellerId:
+                    rejectedSellerId,
+
+                rejectedAt:
+                    serverTimestamp(),
+
+                reassignmentCount:
+                    currentReassignmentCount + 1,
+
+                assignmentAttempts:
+                    currentAssignmentAttempts + 1,
+
+                assignedAt:
+                    serverTimestamp()
+
+            }
+        );
+
+
+        console.log(
+            "🔄 ORDER REASSIGNED:",
+            {
+
+                orderId:
+                    data.orderId || id,
+
+                previousSeller:
+                    rejectedSellerId,
+
+                newSeller:
+                    nextSeller.id,
+
+                newSellerName:
+                    nextSeller.name,
+
+                reassignmentCount:
+                    currentReassignmentCount + 1
+
+            }
+        );
+
+
+        // -----------------------------------------
+        // WHATSAPP NEXT SELLER
+        // -----------------------------------------
+
+        const message =
+`🔥 NEW LPG ORDER
+
+Order ID: ${data.orderId || id}
+
+Customer: ${data.name || ""}
+
+Phone: ${data.phone || ""}
+
+Location:
+${data.location || ""}
+
+Gas Brand: ${data.brand || ""}
+
+Quantity: ${data.quantity || ""}
+
+Price: KES ${Number(
+    nextSeller.sellerPrice || 0
+).toLocaleString()}
+
+Status: Pending
+
+⚠️ This order was reassigned to you after another seller rejected it.`;
+
+
+        const whatsappUrl =
+            `https://wa.me/${nextSellerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`;
+
+
+        console.log(
+            "📱 NEXT SELLER WHATSAPP:",
+            whatsappUrl
+        );
+
+
+        // Open WhatsApp
+        window.open(
+            whatsappUrl,
+            "_blank"
+        );
+
+    }
 
 }
         // =============================================
