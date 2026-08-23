@@ -1526,7 +1526,26 @@ async function findNextSellerForReassignment(
 
         const sellerId =
             docSnap.id;
+// =================================================
+// DO NOT REASSIGN TO SELLER WHO ALREADY REJECTED
+// =================================================
 
+const alreadyRejected =
+    rejectionHistory.some(
+        rejection =>
+            rejection.sellerId === sellerId
+    );
+
+
+if (alreadyRejected) {
+
+    console.log(
+        "⛔ Seller already rejected this order:",
+        seller.name
+    );
+
+    return;
+}
 
         // =================================================
         // DO NOT REASSIGN TO SAME SELLER
