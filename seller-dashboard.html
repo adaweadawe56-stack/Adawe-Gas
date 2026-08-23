@@ -1467,8 +1467,9 @@ document.addEventListener(
 
 async function findNextSellerForReassignment(
     orderData,
-    rejectedSellerId
-) {
+    rejectedSellerId,
+    rejectionHistory = []
+)
 
     console.log(
         "🔄 FINDING NEXT SELLER:",
