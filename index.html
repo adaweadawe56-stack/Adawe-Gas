@@ -1856,8 +1856,372 @@ function calculateDistance(lat1, lon1, lat2, lon2) {
 
     return R * c;
 }
- 
-async function getBestSeller(
+
+// =========================================================
+// PROFESSIONAL SELLER ELIGIBILITY ENGINE
+// =========================================================
+
+function checkSellerEligibility(
+    seller,
+    sellerId,
+    orderData,
+    rejectedSellerId = null,
+    rejectionHistory = []
+) {
+
+    // =====================================================
+    // BASIC DATA
+    // =====================================================
+
+    const sellerName =
+        seller.name || "";
+
+    const quantity =
+        orderData.quantity;
+
+    const customerBrand =
+        String(orderData.brand || "")
+            .trim()
+            .toLowerCase();
+
+
+    // =====================================================
+    // 1. SELLER MUST BE AVAILABLE
+    // =====================================================
+
+    if (seller.isAvailable !== true) {
+
+        return {
+            eligible: false,
+            reason: "SELLER_NOT_AVAILABLE"
+        };
+    }
+
+
+    // =====================================================
+    // 2. SELLER MUST HAVE UID
+    // =====================================================
+
+    if (!seller.uid) {
+
+        return {
+            eligible: false,
+            reason: "SELLER_UID_MISSING"
+        };
+    }
+
+
+    // =====================================================
+    // 3. DO NOT ASSIGN TO REJECTED SELLER
+    // =====================================================
+
+    if (
+        rejectedSellerId &&
+        sellerId === rejectedSellerId
+    ) {
+
+        return {
+            eligible: false,
+            reason: "CURRENT_SELLER_REJECTED"
+        };
+    }
+
+
+    // =====================================================
+    // 4. SELLER MUST NOT HAVE REJECTED THIS ORDER BEFORE
+    // =====================================================
+
+    const alreadyRejected =
+        rejectionHistory.some(
+            rejection =>
+                rejection &&
+                rejection.sellerId === sellerId
+        );
+
+    if (alreadyRejected) {
+
+        return {
+            eligible: false,
+            reason: "ALREADY_REJECTED_ORDER"
+        };
+    }
+
+
+    // =====================================================
+    // 5. BRAND CHECK
+    // =====================================================
+
+    const sellerBrands =
+        Array.isArray(seller.brands)
+            ? seller.brands.map(
+                brand =>
+                    String(brand || "")
+                        .trim()
+                        .toLowerCase()
+            )
+            : [];
+
+
+    if (
+        !customerBrand ||
+        !sellerBrands.includes(
+            customerBrand
+        )
+    ) {
+
+        return {
+            eligible: false,
+            reason: "BRAND_NOT_SUPPORTED"
+        };
+    }
+
+
+    // =====================================================
+    // 6. PRICE CHECK
+    // =====================================================
+
+    const sellerPrice =
+        Number(
+            seller.prices?.[quantity] || 0
+        );
+
+
+    if (
+        !Number.isFinite(sellerPrice) ||
+        sellerPrice <= 0
+    ) {
+
+        return {
+            eligible: false,
+            reason: "NO_VALID_PRICE"
+        };
+    }
+
+
+    // =====================================================
+    // 7. DELIVERY LIMIT / COMMISSION
+    //
+    // deliveryCount 1 / limit 3 = ALLOWED
+    // deliveryCount 2 / limit 3 = ALLOWED
+    // deliveryCount 3 / limit 3 = LOCKED
+    // =====================================================
+
+    const deliveryCount =
+        Number(
+            seller.deliveryCount || 0
+        );
+
+
+    const deliveryLimit =
+        Number(
+            seller.deliveryLimit || 3
+        );
+
+
+    if (
+        deliveryCount >=
+        deliveryLimit
+    ) {
+
+        return {
+            eligible: false,
+            reason: "DELIVERY_LIMIT_REACHED",
+            deliveryCount,
+            deliveryLimit
+        };
+    }
+
+
+    // =====================================================
+    // 8. CUSTOMER GPS
+    // =====================================================
+
+    const customerLatitude =
+        Number(
+            orderData.customerLatitude
+        );
+
+
+    const customerLongitude =
+        Number(
+            orderData.customerLongitude
+        );
+
+
+    if (
+        !Number.isFinite(customerLatitude) ||
+        !Number.isFinite(customerLongitude)
+    ) {
+
+        return {
+            eligible: false,
+            reason: "CUSTOMER_GPS_INVALID"
+        };
+    }
+
+
+    // =====================================================
+    // 9. SELLER GPS
+    // =====================================================
+
+    const sellerLatitude =
+        Number(
+            seller.sellerLatitude
+        );
+
+
+    const sellerLongitude =
+        Number(
+            seller.sellerLongitude
+        );
+
+
+    if (
+        !Number.isFinite(sellerLatitude) ||
+        !Number.isFinite(sellerLongitude)
+    ) {
+
+        return {
+            eligible: false,
+            reason: "SELLER_GPS_INVALID"
+        };
+    }
+
+
+    // =====================================================
+    // 10. DELIVERY RADIUS
+    // =====================================================
+
+    const deliveryRadiusKm =
+        Number(
+            seller.deliveryRadiusKm || 0
+        );
+
+
+    if (
+        !Number.isFinite(
+            deliveryRadiusKm
+        ) ||
+        deliveryRadiusKm <= 0
+    ) {
+
+        return {
+            eligible: false,
+            reason: "INVALID_DELIVERY_RADIUS"
+        };
+    }
+
+
+    // =====================================================
+    // 11. CALCULATE DISTANCE
+    // =====================================================
+
+    const distance =
+        calculateDistance(
+            customerLatitude,
+            customerLongitude,
+            sellerLatitude,
+            sellerLongitude
+        );
+
+
+    if (
+        !Number.isFinite(distance)
+    ) {
+
+        return {
+            eligible: false,
+            reason: "INVALID_DISTANCE"
+        };
+    }
+
+
+    // =====================================================
+    // 12. DELIVERY AREA CHECK
+    // =====================================================
+
+    if (
+        distance >
+        deliveryRadiusKm
+    ) {
+
+        return {
+            eligible: false,
+            reason: "OUTSIDE_DELIVERY_RADIUS",
+            distance,
+            deliveryRadiusKm
+        };
+    }
+
+
+    // =====================================================
+    // 13. RATING
+    // =====================================================
+
+    const averageRating =
+        Number(
+            seller.averageRating || 0
+        );
+
+
+    // =====================================================
+    // 14. ELIGIBLE
+    // =====================================================
+
+    console.log(
+        "✅ SELLER ELIGIBLE:",
+        {
+            seller:
+                sellerName,
+
+            sellerId:
+                sellerId,
+
+            price:
+                sellerPrice,
+
+            distance:
+                distance,
+
+            radius:
+                deliveryRadiusKm,
+
+            rating:
+                averageRating,
+
+            deliveryCount:
+                deliveryCount,
+
+            deliveryLimit:
+                deliveryLimit
+        }
+    );
+
+
+    return {
+
+        eligible: true,
+
+        sellerId:
+            sellerId,
+
+        sellerPrice:
+            sellerPrice,
+
+        distance:
+            distance,
+
+        averageRating:
+            averageRating,
+
+        deliveryCount:
+            deliveryCount,
+
+        deliveryLimit:
+            deliveryLimit
+    };
+}
+  async function getBestSeller(
     quantity,
     brand,
     customerLatitude,
