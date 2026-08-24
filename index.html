@@ -3764,16 +3764,23 @@ setTimeout(() => {
   
   };
 
-  // =========================================================
+ // =========================================================
 // FIND NEXT SELLER FOR REASSIGNMENT
 // PROFESSIONAL SMART REASSIGNMENT
-// USES SAME SELLER ELIGIBILITY ENGINE
+//
+// FEATURES:
+// 1. Reads rejectionHistory from orderData
+// 2. Excludes current rejected seller
+// 3. Excludes all previously rejected sellers
+// 4. Uses SAME checkSellerEligibility()
+// 5. Chooses nearest seller
+// 6. Same distance → better rating
+// 7. Same distance + rating → cheaper price
 // =========================================================
 
 async function findNextSellerForReassignment(
     orderData,
-    rejectedSellerId = null,
-    rejectionHistory = []
+    rejectedSellerId = null
 ) {
 
     console.log(
@@ -3783,16 +3790,13 @@ async function findNextSellerForReassignment(
                 orderData?.orderId,
 
             rejectedSellerId:
-                rejectedSellerId,
-
-            rejectionHistory:
-                rejectionHistory
+                rejectedSellerId
         }
     );
 
 
     // =====================================================
-    // VALIDATE ORDER DATA
+    // 1. VALIDATE ORDER DATA
     // =====================================================
 
     if (!orderData) {
@@ -3804,13 +3808,85 @@ async function findNextSellerForReassignment(
 
 
     // =====================================================
-    // CUSTOMER GPS
+    // 2. READ REJECTION HISTORY FROM ORDER
+    // =====================================================
+
+    const rejectionHistory =
+        Array.isArray(
+            orderData.rejectionHistory
+        )
+            ? [
+                ...orderData.rejectionHistory
+            ]
+            : [];
+
+
+    console.log(
+        "📋 EXISTING REJECTION HISTORY:",
+        rejectionHistory
+    );
+
+
+    // =====================================================
+    // 3. CURRENT REJECTED SELLER
+    //
+    // Add current rejected seller to history
+    // if it is not already there.
+    // =====================================================
+
+    if (
+        rejectedSellerId
+    ) {
+
+        const alreadyInHistory =
+            rejectionHistory.some(
+                rejection =>
+                    rejection &&
+                    rejection.sellerId ===
+                        rejectedSellerId
+            );
+
+
+        if (
+            !alreadyInHistory
+        ) {
+
+            rejectionHistory.push({
+
+                sellerId:
+                    rejectedSellerId,
+
+                sellerName:
+                    orderData.sellerName || "",
+
+                rejectedAt:
+                    new Date().toISOString()
+
+            });
+
+
+            console.log(
+                "➕ CURRENT SELLER ADDED TO REJECTION HISTORY:",
+                {
+                    sellerId:
+                        rejectedSellerId
+                }
+            );
+
+        }
+
+    }
+
+
+    // =====================================================
+    // 4. CUSTOMER GPS
     // =====================================================
 
     const customerLatitude =
         Number(
             orderData.customerLatitude
         );
+
 
     const customerLongitude =
         Number(
@@ -3819,8 +3895,12 @@ async function findNextSellerForReassignment(
 
 
     if (
-        !Number.isFinite(customerLatitude) ||
-        !Number.isFinite(customerLongitude)
+        !Number.isFinite(
+            customerLatitude
+        ) ||
+        !Number.isFinite(
+            customerLongitude
+        )
     ) {
 
         throw new Error(
@@ -3830,24 +3910,30 @@ async function findNextSellerForReassignment(
 
 
     // =====================================================
-    // GET APPROVED SELLERS
+    // 5. GET APPROVED SELLERS
     // =====================================================
 
-    const q = query(
-        collection(db, "sellers"),
-        where(
-            "status",
-            "==",
-            "approved"
-        )
-    );
+    const q =
+        query(
+            collection(
+                db,
+                "sellers"
+            ),
+            where(
+                "status",
+                "==",
+                "approved"
+            )
+        );
 
 
     const snap =
         await getDocs(q);
 
 
-    if (snap.empty) {
+    if (
+        snap.empty
+    ) {
 
         throw new Error(
             "No approved sellers found."
@@ -3856,304 +3942,135 @@ async function findNextSellerForReassignment(
 
 
     // =====================================================
-    // BEST NEXT SELLER
+    // 6. BEST NEXT SELLER
     // =====================================================
 
-    let nextSeller = null;
-
-
-    // =====================================================
-    // DEBUG COUNTERS
-    // =====================================================
-
-    let checkedSellerCount = 0;
-
-    let rejectedSellerCount = 0;
-
-    let eligibleSellerCount = 0;
+    let nextSeller =
+        null;
 
 
     // =====================================================
-    // CHECK EVERY SELLER
+    // 7. DEBUG COUNTERS
     // =====================================================
 
-    snap.forEach(docSnap => {
+    let checkedSellerCount =
+        0;
 
-        const seller =
-            docSnap.data();
+    let rejectedSellerCount =
+        0;
 
-        const sellerId =
-            docSnap.id;
-
-
-        checkedSellerCount++;
+    let eligibleSellerCount =
+        0;
 
 
-        console.log(
-            "🔎 REASSIGNMENT SELLER CHECK:",
-            {
-                seller:
-                    seller.name,
+    // =====================================================
+    // 8. CHECK EVERY SELLER
+    // =====================================================
 
-                sellerId:
-                    sellerId
-            }
-        );
+    snap.forEach(
+        docSnap => {
 
-
-        // =================================================
-        // PROFESSIONAL ELIGIBILITY ENGINE
-        // =================================================
-
-        const eligibility =
-            checkSellerEligibility(
-
-                seller,
-
-                sellerId,
-
-                orderData,
-
-                rejectedSellerId,
-
-                rejectionHistory
-
-            );
+            const seller =
+                docSnap.data();
 
 
-        // =================================================
-        // SELLER NOT ELIGIBLE
-        // =================================================
+            const sellerId =
+                docSnap.id;
 
-        if (
-            !eligibility.eligible
-        ) {
 
-            rejectedSellerCount++;
+            checkedSellerCount++;
 
 
             console.log(
-                "⛔ REASSIGNMENT SELLER REJECTED:",
+                "🔎 REASSIGNMENT SELLER CHECK:",
                 {
                     seller:
                         seller.name,
 
                     sellerId:
-                        sellerId,
-
-                    reason:
-                        eligibility.reason
+                        sellerId
                 }
             );
 
 
-            return;
-        }
+            // =================================================
+            // 9. PROFESSIONAL ELIGIBILITY ENGINE
+            // =================================================
 
+            const eligibility =
+                checkSellerEligibility(
 
-        // =================================================
-        // SELLER ELIGIBLE
-        // =================================================
+                    seller,
 
-        eligibleSellerCount++;
-
-
-        const sellerPrice =
-            Number(
-                eligibility.sellerPrice
-            );
-
-
-        const distance =
-            Number(
-                eligibility.distance
-            );
-
-
-        const sellerRating =
-            Number(
-                eligibility.averageRating || 0
-            );
-
-
-        console.log(
-            "✅ REASSIGNMENT SELLER ELIGIBLE:",
-            {
-                seller:
-                    seller.name,
-
-                sellerId:
                     sellerId,
 
-                price:
-                    sellerPrice,
+                    orderData,
 
-                distance:
-                    distance,
+                    rejectedSellerId,
 
-                rating:
-                    sellerRating
+                    rejectionHistory
+
+                );
+
+
+            // =================================================
+            // 10. SELLER NOT ELIGIBLE
+            // =================================================
+
+            if (
+                !eligibility.eligible
+            ) {
+
+                rejectedSellerCount++;
+
+
+                console.log(
+                    "⛔ REASSIGNMENT SELLER REJECTED:",
+                    {
+                        seller:
+                            seller.name,
+
+                        sellerId:
+                            sellerId,
+
+                        reason:
+                            eligibility.reason
+                    }
+                );
+
+
+                return;
             }
-        );
 
 
-        // =================================================
-        // FIRST ELIGIBLE SELLER
-        // =================================================
+            // =================================================
+            // 11. SELLER ELIGIBLE
+            // =================================================
 
-        if (!nextSeller) {
-
-            nextSeller = {
-
-                id:
-                    sellerId,
-
-                ...seller,
-
-                sellerPrice:
-                    sellerPrice,
-
-                distance:
-                    distance,
-
-                averageRating:
-                    sellerRating
-
-            };
+            eligibleSellerCount++;
 
 
-            console.log(
-                "🏆 FIRST REASSIGNMENT CANDIDATE:",
-                seller.name
-            );
+            const sellerPrice =
+                Number(
+                    eligibility.sellerPrice
+                );
 
 
-            return;
-        }
+            const distance =
+                Number(
+                    eligibility.distance
+                );
 
 
-        // =================================================
-        // CURRENT BEST VALUES
-        // =================================================
-
-        const currentDistance =
-            Number(
-                nextSeller.distance
-            );
-
-
-        const currentRating =
-            Number(
-                nextSeller.averageRating || 0
-            );
-
-
-        const currentPrice =
-            Number(
-                nextSeller.sellerPrice || 0
-            );
-
-
-        // =================================================
-        // SMART REASSIGNMENT PRIORITY
-        //
-        // 1. NEAREST SELLER
-        // 2. SAME DISTANCE → BETTER RATING
-        // 3. SAME DISTANCE + RATING → CHEAPER
-        // =================================================
-
-        let shouldSelect =
-            false;
-
-
-        // -------------------------------------------------
-        // 1. CLOSER SELLER
-        // -------------------------------------------------
-
-        if (
-            distance <
-            currentDistance
-        ) {
-
-            shouldSelect =
-                true;
-
-        }
-
-
-        // -------------------------------------------------
-        // 2. SAME DISTANCE → BETTER RATING
-        // -------------------------------------------------
-
-        else if (
-            Math.abs(
-                distance -
-                currentDistance
-            ) < 1 &&
-
-            sellerRating >
-            currentRating
-        ) {
-
-            shouldSelect =
-                true;
-
-        }
-
-
-        // -------------------------------------------------
-        // 3. SAME DISTANCE + SAME RATING
-        //    → CHEAPER PRICE
-        // -------------------------------------------------
-
-        else if (
-            Math.abs(
-                distance -
-                currentDistance
-            ) < 1 &&
-
-            sellerRating ===
-            currentRating &&
-
-            sellerPrice <
-            currentPrice
-        ) {
-
-            shouldSelect =
-                true;
-
-        }
-
-
-        // =================================================
-        // SAVE NEW BEST SELLER
-        // =================================================
-
-        if (
-            shouldSelect
-        ) {
-
-            nextSeller = {
-
-                id:
-                    sellerId,
-
-                ...seller,
-
-                sellerPrice:
-                    sellerPrice,
-
-                distance:
-                    distance,
-
-                averageRating:
-                    sellerRating
-
-            };
+            const sellerRating =
+                Number(
+                    eligibility.averageRating ||
+                    0
+                );
 
 
             console.log(
-                "🏆 NEW REASSIGNMENT SELLER:",
+                "✅ REASSIGNMENT SELLER ELIGIBLE:",
                 {
                     seller:
                         seller.name,
@@ -4172,16 +4089,198 @@ async function findNextSellerForReassignment(
                 }
             );
 
+
+            // =================================================
+            // 12. FIRST ELIGIBLE SELLER
+            // =================================================
+
+            if (
+                !nextSeller
+            ) {
+
+                nextSeller = {
+
+                    id:
+                        sellerId,
+
+                    ...seller,
+
+                    sellerPrice:
+                        sellerPrice,
+
+                    distance:
+                        distance,
+
+                    averageRating:
+                        sellerRating
+
+                };
+
+
+                console.log(
+                    "🏆 FIRST REASSIGNMENT CANDIDATE:",
+                    seller.name
+                );
+
+
+                return;
+            }
+
+
+            // =================================================
+            // 13. CURRENT BEST VALUES
+            // =================================================
+
+            const currentDistance =
+                Number(
+                    nextSeller.distance
+                );
+
+
+            const currentRating =
+                Number(
+                    nextSeller.averageRating ||
+                    0
+                );
+
+
+            const currentPrice =
+                Number(
+                    nextSeller.sellerPrice ||
+                    0
+                );
+
+
+            // =================================================
+            // 14. SMART REASSIGNMENT PRIORITY
+            //
+            // 1. NEAREST
+            // 2. SAME DISTANCE → RATING
+            // 3. SAME DISTANCE + RATING → PRICE
+            // =================================================
+
+            let shouldSelect =
+                false;
+
+
+            // -------------------------------------------------
+            // 1. CLOSER
+            // -------------------------------------------------
+
+            if (
+                distance <
+                currentDistance
+            ) {
+
+                shouldSelect =
+                    true;
+
+            }
+
+
+            // -------------------------------------------------
+            // 2. SAME DISTANCE → BETTER RATING
+            // -------------------------------------------------
+
+            else if (
+                Math.abs(
+                    distance -
+                    currentDistance
+                ) < 1 &&
+
+                sellerRating >
+                currentRating
+            ) {
+
+                shouldSelect =
+                    true;
+
+            }
+
+
+            // -------------------------------------------------
+            // 3. SAME DISTANCE + SAME RATING → CHEAPER
+            // -------------------------------------------------
+
+            else if (
+                Math.abs(
+                    distance -
+                    currentDistance
+                ) < 1 &&
+
+                sellerRating ===
+                currentRating &&
+
+                sellerPrice <
+                currentPrice
+            ) {
+
+                shouldSelect =
+                    true;
+
+            }
+
+
+            // =================================================
+            // 15. SAVE NEW BEST SELLER
+            // =================================================
+
+            if (
+                shouldSelect
+            ) {
+
+                nextSeller = {
+
+                    id:
+                        sellerId,
+
+                    ...seller,
+
+                    sellerPrice:
+                        sellerPrice,
+
+                    distance:
+                        distance,
+
+                    averageRating:
+                        sellerRating
+
+                };
+
+
+                console.log(
+                    "🏆 NEW REASSIGNMENT SELLER:",
+                    {
+                        seller:
+                            seller.name,
+
+                        sellerId:
+                            sellerId,
+
+                        price:
+                            sellerPrice,
+
+                        distance:
+                            distance,
+
+                        rating:
+                            sellerRating
+                    }
+                );
+
+            }
+
         }
-
-    });
+    );
 
 
     // =====================================================
-    // NO NEXT SELLER
+    // 16. NO NEXT SELLER
     // =====================================================
 
-    if (!nextSeller) {
+    if (
+        !nextSeller
+    ) {
 
         console.error(
             "❌ NO ELIGIBLE REASSIGNMENT SELLER:",
@@ -4193,7 +4292,10 @@ async function findNextSellerForReassignment(
                     rejectedSellerCount,
 
                 eligibleSellerCount:
-                    eligibleSellerCount
+                    eligibleSellerCount,
+
+                rejectionHistory:
+                    rejectionHistory
             }
         );
 
@@ -4205,7 +4307,7 @@ async function findNextSellerForReassignment(
 
 
     // =====================================================
-    // FINAL RESULT
+    // 17. FINAL RESULT
     // =====================================================
 
     console.log(
@@ -4229,7 +4331,22 @@ async function findNextSellerForReassignment(
     );
 
 
-    return nextSeller;
+    // =====================================================
+    // 18. RETURN BOTH SELLER + HISTORY
+    //
+    // Caller can save rejectionHistory to Firestore.
+    // =====================================================
+
+    return {
+
+        seller:
+            nextSeller,
+
+        rejectionHistory:
+            rejectionHistory
+
+    };
+
 }
   
 /* =========================================================
