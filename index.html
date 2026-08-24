@@ -3763,6 +3763,474 @@ setTimeout(() => {
 
   
   };
+
+  // =========================================================
+// FIND NEXT SELLER FOR REASSIGNMENT
+// PROFESSIONAL SMART REASSIGNMENT
+// USES SAME SELLER ELIGIBILITY ENGINE
+// =========================================================
+
+async function findNextSellerForReassignment(
+    orderData,
+    rejectedSellerId = null,
+    rejectionHistory = []
+) {
+
+    console.log(
+        "🔄 FIND NEXT SELLER FOR REASSIGNMENT",
+        {
+            orderId:
+                orderData?.orderId,
+
+            rejectedSellerId:
+                rejectedSellerId,
+
+            rejectionHistory:
+                rejectionHistory
+        }
+    );
+
+
+    // =====================================================
+    // VALIDATE ORDER DATA
+    // =====================================================
+
+    if (!orderData) {
+
+        throw new Error(
+            "Order data is missing."
+        );
+    }
+
+
+    // =====================================================
+    // CUSTOMER GPS
+    // =====================================================
+
+    const customerLatitude =
+        Number(
+            orderData.customerLatitude
+        );
+
+    const customerLongitude =
+        Number(
+            orderData.customerLongitude
+        );
+
+
+    if (
+        !Number.isFinite(customerLatitude) ||
+        !Number.isFinite(customerLongitude)
+    ) {
+
+        throw new Error(
+            "Customer GPS location is invalid."
+        );
+    }
+
+
+    // =====================================================
+    // GET APPROVED SELLERS
+    // =====================================================
+
+    const q = query(
+        collection(db, "sellers"),
+        where(
+            "status",
+            "==",
+            "approved"
+        )
+    );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    if (snap.empty) {
+
+        throw new Error(
+            "No approved sellers found."
+        );
+    }
+
+
+    // =====================================================
+    // BEST NEXT SELLER
+    // =====================================================
+
+    let nextSeller = null;
+
+
+    // =====================================================
+    // DEBUG COUNTERS
+    // =====================================================
+
+    let checkedSellerCount = 0;
+
+    let rejectedSellerCount = 0;
+
+    let eligibleSellerCount = 0;
+
+
+    // =====================================================
+    // CHECK EVERY SELLER
+    // =====================================================
+
+    snap.forEach(docSnap => {
+
+        const seller =
+            docSnap.data();
+
+        const sellerId =
+            docSnap.id;
+
+
+        checkedSellerCount++;
+
+
+        console.log(
+            "🔎 REASSIGNMENT SELLER CHECK:",
+            {
+                seller:
+                    seller.name,
+
+                sellerId:
+                    sellerId
+            }
+        );
+
+
+        // =================================================
+        // PROFESSIONAL ELIGIBILITY ENGINE
+        // =================================================
+
+        const eligibility =
+            checkSellerEligibility(
+
+                seller,
+
+                sellerId,
+
+                orderData,
+
+                rejectedSellerId,
+
+                rejectionHistory
+
+            );
+
+
+        // =================================================
+        // SELLER NOT ELIGIBLE
+        // =================================================
+
+        if (
+            !eligibility.eligible
+        ) {
+
+            rejectedSellerCount++;
+
+
+            console.log(
+                "⛔ REASSIGNMENT SELLER REJECTED:",
+                {
+                    seller:
+                        seller.name,
+
+                    sellerId:
+                        sellerId,
+
+                    reason:
+                        eligibility.reason
+                }
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // SELLER ELIGIBLE
+        // =================================================
+
+        eligibleSellerCount++;
+
+
+        const sellerPrice =
+            Number(
+                eligibility.sellerPrice
+            );
+
+
+        const distance =
+            Number(
+                eligibility.distance
+            );
+
+
+        const sellerRating =
+            Number(
+                eligibility.averageRating || 0
+            );
+
+
+        console.log(
+            "✅ REASSIGNMENT SELLER ELIGIBLE:",
+            {
+                seller:
+                    seller.name,
+
+                sellerId:
+                    sellerId,
+
+                price:
+                    sellerPrice,
+
+                distance:
+                    distance,
+
+                rating:
+                    sellerRating
+            }
+        );
+
+
+        // =================================================
+        // FIRST ELIGIBLE SELLER
+        // =================================================
+
+        if (!nextSeller) {
+
+            nextSeller = {
+
+                id:
+                    sellerId,
+
+                ...seller,
+
+                sellerPrice:
+                    sellerPrice,
+
+                distance:
+                    distance,
+
+                averageRating:
+                    sellerRating
+
+            };
+
+
+            console.log(
+                "🏆 FIRST REASSIGNMENT CANDIDATE:",
+                seller.name
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // CURRENT BEST VALUES
+        // =================================================
+
+        const currentDistance =
+            Number(
+                nextSeller.distance
+            );
+
+
+        const currentRating =
+            Number(
+                nextSeller.averageRating || 0
+            );
+
+
+        const currentPrice =
+            Number(
+                nextSeller.sellerPrice || 0
+            );
+
+
+        // =================================================
+        // SMART REASSIGNMENT PRIORITY
+        //
+        // 1. NEAREST SELLER
+        // 2. SAME DISTANCE → BETTER RATING
+        // 3. SAME DISTANCE + RATING → CHEAPER
+        // =================================================
+
+        let shouldSelect =
+            false;
+
+
+        // -------------------------------------------------
+        // 1. CLOSER SELLER
+        // -------------------------------------------------
+
+        if (
+            distance <
+            currentDistance
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 2. SAME DISTANCE → BETTER RATING
+        // -------------------------------------------------
+
+        else if (
+            Math.abs(
+                distance -
+                currentDistance
+            ) < 1 &&
+
+            sellerRating >
+            currentRating
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 3. SAME DISTANCE + SAME RATING
+        //    → CHEAPER PRICE
+        // -------------------------------------------------
+
+        else if (
+            Math.abs(
+                distance -
+                currentDistance
+            ) < 1 &&
+
+            sellerRating ===
+            currentRating &&
+
+            sellerPrice <
+            currentPrice
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // =================================================
+        // SAVE NEW BEST SELLER
+        // =================================================
+
+        if (
+            shouldSelect
+        ) {
+
+            nextSeller = {
+
+                id:
+                    sellerId,
+
+                ...seller,
+
+                sellerPrice:
+                    sellerPrice,
+
+                distance:
+                    distance,
+
+                averageRating:
+                    sellerRating
+
+            };
+
+
+            console.log(
+                "🏆 NEW REASSIGNMENT SELLER:",
+                {
+                    seller:
+                        seller.name,
+
+                    sellerId:
+                        sellerId,
+
+                    price:
+                        sellerPrice,
+
+                    distance:
+                        distance,
+
+                    rating:
+                        sellerRating
+                }
+            );
+
+        }
+
+    });
+
+
+    // =====================================================
+    // NO NEXT SELLER
+    // =====================================================
+
+    if (!nextSeller) {
+
+        console.error(
+            "❌ NO ELIGIBLE REASSIGNMENT SELLER:",
+            {
+                checkedSellerCount:
+                    checkedSellerCount,
+
+                rejectedSellerCount:
+                    rejectedSellerCount,
+
+                eligibleSellerCount:
+                    eligibleSellerCount
+            }
+        );
+
+
+        throw new Error(
+            "No other eligible seller is available for this order."
+        );
+    }
+
+
+    // =====================================================
+    // FINAL RESULT
+    // =====================================================
+
+    console.log(
+        "🏆 FINAL REASSIGNMENT SELLER:",
+        {
+            seller:
+                nextSeller.name,
+
+            sellerId:
+                nextSeller.id,
+
+            price:
+                nextSeller.sellerPrice,
+
+            distance:
+                nextSeller.distance,
+
+            rating:
+                nextSeller.averageRating
+        }
+    );
+
+
+    return nextSeller;
+}
   
 /* =========================================================
    USE CUSTOMER LOCATION
