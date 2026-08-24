@@ -3857,6 +3857,12 @@ let sellerData;
 // CUSTOMER GPS REQUIRED
 // =================================================
 
+const customerAccuracy =
+    Number(
+        window.customerGPSAccuracy || 0
+    );
+
+
 if (
     customerLatitude === null ||
     customerLongitude === null ||
@@ -3866,6 +3872,19 @@ if (
 
     throw new Error(
         "Please detect your location before placing the order."
+    );
+}
+
+
+if (
+    !Number.isFinite(customerAccuracy) ||
+    customerAccuracy <= 0 ||
+    customerAccuracy >
+        GPS_MAX_ACCEPTABLE_ACCURACY
+) {
+
+    throw new Error(
+        "Your GPS location is not accurate enough. Please detect your location again."
     );
 }
 
