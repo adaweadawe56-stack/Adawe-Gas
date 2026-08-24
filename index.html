@@ -2944,10 +2944,9 @@ window.getCustomerLocation = function () {
     );
 
 
-    let bestPosition = null;
-
-    let finished = false;
-
+   let bestPosition = null;
+let bestAccuracy = Infinity;
+let finished = false;
 
     function finishLocation(position) {
 
