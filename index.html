@@ -2948,233 +2948,267 @@ window.getCustomerLocation = function () {
 let bestAccuracy = Infinity;
 let finished = false;
 
-    function finishLocation(position) {
+function finishLocation(position) {
 
-        if (finished) {
-            return;
-        }
-
-        finished = true;
-
-
-        if (locationWatchId !== null) {
-
-            navigator.geolocation.clearWatch(
-                locationWatchId
-            );
-
-            locationWatchId = null;
-        }
-
-
-        locationRequestRunning = false;
-
-
-        useCustomerLocation(
-            position
-        );
+    if (finished) {
+        return;
     }
 
+    finished = true;
 
-    locationWatchId =
-        navigator.geolocation.watchPosition(
+    if (locationWatchId !== null) {
 
-            (position) => {
-
-                const lat =
-                    position.coords.latitude;
-
-                const lng =
-                    position.coords.longitude;
-
-                const accuracy =
-                    position.coords.accuracy;
-
-
-                console.log(
-                    "📍 GPS UPDATE:",
-                    lat,
-                    lng,
-                    "accuracy:",
-                    accuracy,
-                    "meters"
-                );
-
-
-                if (
-                    !bestPosition ||
-                    accuracy <
-                    bestPosition.coords.accuracy
-                ) {
-
-                    bestPosition =
-                        position;
-
-                    console.log(
-                        "🏆 Better GPS reading found:",
-                        accuracy,
-                        "meters"
-                    );
-                }
-
-
-                // ----------------------
-                // EXCELLENT ACCURACY
-                // ----------------------
-
-                if (accuracy <= 50) {
-
-                    console.log(
-                        "🎯 Excellent GPS accuracy:",
-                        accuracy,
-                        "meters"
-                    );
-
-                    finishLocation(
-                        bestPosition
-                    );
-
-                }
-
-            },
-
-
-            (error) => {
-
-                if (finished) {
-                    return;
-                }
-
-
-                console.error(
-                    "❌ CUSTOMER LOCATION ERROR:",
-                    error
-                );
-
-
-                // ----------------------
-                // USE BEST READING
-                // ----------------------
-
-                if (bestPosition) {
-
-                    console.warn(
-                        "⚠️ Using best GPS reading despite error."
-                    );
-
-                    finishLocation(
-                        bestPosition
-                    );
-
-                    return;
-                }
-
-
-                finished = true;
-
-                locationRequestRunning =
-                    false;
-
-
-                if (locationWatchId !== null) {
-
-                    navigator.geolocation.clearWatch(
-                        locationWatchId
-                    );
-
-                    locationWatchId = null;
-                }
-
-
-                customerLatitude = null;
-
-                customerLongitude = null;
-
-
-                let message =
-                    "Unable to detect your location.";
-
-
-                if (error.code === 1) {
-
-                    message =
-                        "📍 Location permission denied. Please allow location access.";
-
-                }
-
-                else if (error.code === 2) {
-
-                    message =
-                        "📍 Location unavailable. Please turn on GPS/location services.";
-
-                }
-
-                else if (error.code === 3) {
-
-                    message =
-                        "📍 GPS is taking too long. Please try again.";
-                }
-
-
-                showToast(
-                    message,
-                    false
-                );
-
-            },
-
-
-            // ----------------------
-            // OPTIONS
-            // ----------------------
-
-            {
-                enableHighAccuracy: true,
-                timeout: 30000,
-                maximumAge: 0
-            }
+        navigator.geolocation.clearWatch(
+            locationWatchId
         );
 
+        locationWatchId = null;
+    }
 
-    // ----------------------
-    // 30 SECOND FALLBACK
-    // ----------------------
+    locationRequestRunning = false;
 
-    setTimeout(() => {
+    // ---------------------------------------------
+    // VALIDATE POSITION BEFORE USING IT
+    // ---------------------------------------------
 
-        if (finished) {
-            return;
-        }
+    if (
+        !position ||
+        !position.coords
+    ) {
+
+        customerLatitude = null;
+        customerLongitude = null;
+        window.customerGPSAccuracy = null;
+
+        showToast(
+            "📍 Could not detect your location. Please try again.",
+            false
+        );
+
+        return;
+    }
+
+    const accuracy =
+        Number(position.coords.accuracy);
+
+    // ---------------------------------------------
+    // DO NOT ACCEPT GPS WORSE THAN 5 KM
+    // ---------------------------------------------
+
+    if (
+        !Number.isFinite(accuracy) ||
+        accuracy > GPS_MAX_ACCEPTABLE_ACCURACY
+    ) {
+
+        console.warn(
+            "❌ Best GPS reading is still too inaccurate:",
+            accuracy,
+            "meters"
+        );
+
+        customerLatitude = null;
+        customerLongitude = null;
+        window.customerGPSAccuracy = null;
+
+        showToast(
+            "📍 GPS accuracy is too low. Please turn on GPS and try again.",
+            false
+        );
+
+        return;
+    }
+
+    // ---------------------------------------------
+    // SAVE LOCATION
+    // ---------------------------------------------
+
+    useCustomerLocation(position);
+}
 
 
-        if (bestPosition) {
+// =================================================
+// START GPS WATCH
+// =================================================
+
+locationWatchId =
+    navigator.geolocation.watchPosition(
+
+        (position) => {
+
+            if (finished) {
+                return;
+            }
+
+            const lat =
+                Number(
+                    position.coords.latitude
+                );
+
+            const lng =
+                Number(
+                    position.coords.longitude
+                );
+
+            const accuracy =
+                Number(
+                    position.coords.accuracy
+                );
+
 
             console.log(
-                "⏱️ 30 seconds reached."
-            );
-
-            console.log(
-                "🏆 Using best GPS reading:",
-                bestPosition.coords.accuracy,
+                "📍 GPS UPDATE:",
+                lat,
+                lng,
+                "accuracy:",
+                accuracy,
                 "meters"
             );
 
 
-            finishLocation(
-                bestPosition
+            // -----------------------------------------
+            // INVALID READING
+            // -----------------------------------------
+
+            if (
+                !Number.isFinite(lat) ||
+                !Number.isFinite(lng) ||
+                !Number.isFinite(accuracy)
+            ) {
+
+                console.warn(
+                    "⚠️ Invalid GPS reading."
+                );
+
+                return;
+            }
+
+
+            // -----------------------------------------
+            // SAVE BEST READING
+            // -----------------------------------------
+
+            if (
+                !bestPosition ||
+                accuracy < bestAccuracy
+            ) {
+
+                bestPosition =
+                    position;
+
+                bestAccuracy =
+                    accuracy;
+
+                console.log(
+                    "🏆 Better GPS reading found:",
+                    bestAccuracy,
+                    "meters"
+                );
+            }
+
+
+            // -----------------------------------------
+            // EXCELLENT GPS
+            // 1 KM OR BETTER → FINISH IMMEDIATELY
+            // -----------------------------------------
+
+            if (
+                accuracy <=
+                GPS_TARGET_ACCURACY
+            ) {
+
+                console.log(
+                    "🎯 Target GPS accuracy reached:",
+                    accuracy,
+                    "meters"
+                );
+
+                finishLocation(
+                    position
+                );
+
+                return;
+            }
+
+
+            // -----------------------------------------
+            // ACCEPTABLE GPS
+            // -----------------------------------------
+
+            if (
+                accuracy <=
+                GPS_MAX_ACCEPTABLE_ACCURACY
+            ) {
+
+                console.log(
+                    "🟢 Acceptable GPS reading:",
+                    accuracy,
+                    "meters"
+                );
+
+            }
+
+            else {
+
+                console.warn(
+                    "⚠️ GPS reading too inaccurate:",
+                    accuracy,
+                    "meters"
+                );
+            }
+
+        },
+
+
+        // =================================================
+        // GPS ERROR
+        // =================================================
+
+        (error) => {
+
+            if (finished) {
+                return;
+            }
+
+            console.error(
+                "❌ CUSTOMER LOCATION ERROR:",
+                error
             );
 
-        }
+            // -----------------------------------------
+            // DO NOT ACCEPT BAD BEST POSITION
+            // -----------------------------------------
 
-        else {
+            if (
+                bestPosition &&
+                bestAccuracy <=
+                GPS_MAX_ACCEPTABLE_ACCURACY
+            ) {
+
+                console.warn(
+                    "⚠️ GPS error occurred. Using best acceptable reading:",
+                    bestAccuracy,
+                    "meters"
+                );
+
+                finishLocation(
+                    bestPosition
+                );
+
+                return;
+            }
+
+
+            // -----------------------------------------
+            // NO GOOD GPS
+            // -----------------------------------------
 
             finished = true;
 
-            locationRequestRunning =
-                false;
+            locationRequestRunning = false;
 
-
-            if (locationWatchId !== null) {
+            if (
+                locationWatchId !== null
+            ) {
 
                 navigator.geolocation.clearWatch(
                     locationWatchId
@@ -3183,22 +3217,148 @@ let finished = false;
                 locationWatchId = null;
             }
 
-
             customerLatitude = null;
-
             customerLongitude = null;
+            window.customerGPSAccuracy = null;
+
+
+            let message =
+                "Unable to detect your location.";
+
+
+            if (
+                error.code === 1
+            ) {
+
+                message =
+                    "📍 Location permission denied. Please allow location access.";
+
+            }
+
+            else if (
+                error.code === 2
+            ) {
+
+                message =
+                    "📍 Location unavailable. Please turn on GPS/location services.";
+
+            }
+
+            else if (
+                error.code === 3
+            ) {
+
+                message =
+                    "📍 GPS is taking too long. Please try again.";
+            }
 
 
             showToast(
-                "📍 Could not detect your location. Please turn on GPS and try again.",
+                message,
                 false
             );
+
+        },
+
+
+        // =================================================
+        // GPS OPTIONS
+        // =================================================
+
+        {
+            enableHighAccuracy: true,
+
+            timeout:
+                GPS_TIMEOUT,
+
+            maximumAge: 0
         }
+    );
 
-    }, 30000);
 
-};
+// =================================================
+// 10 SECOND FALLBACK
+// =================================================
 
+setTimeout(() => {
+
+    if (finished) {
+        return;
+    }
+
+
+    console.log(
+        "⏱️ GPS timeout reached."
+    );
+
+
+    // ---------------------------------------------
+    // BEST READING IS ACCEPTABLE
+    // ---------------------------------------------
+
+    if (
+        bestPosition &&
+        bestAccuracy <=
+        GPS_MAX_ACCEPTABLE_ACCURACY
+    ) {
+
+        console.log(
+            "🏆 Using best acceptable GPS reading:",
+            bestAccuracy,
+            "meters"
+        );
+
+        finishLocation(
+            bestPosition
+        );
+
+        return;
+    }
+
+
+    // ---------------------------------------------
+    // NO ACCEPTABLE GPS
+    // ---------------------------------------------
+
+    console.error(
+        "❌ No acceptable GPS reading found.",
+        "Best accuracy:",
+        bestAccuracy,
+        "meters"
+    );
+
+
+    finished = true;
+
+    locationRequestRunning = false;
+
+
+    if (
+        locationWatchId !== null
+    ) {
+
+        navigator.geolocation.clearWatch(
+            locationWatchId
+        );
+
+        locationWatchId = null;
+    }
+
+
+    customerLatitude = null;
+    customerLongitude = null;
+    window.customerGPSAccuracy = null;
+
+
+    showToast(
+        "📍 GPS accuracy is too low. Please turn on GPS and try again.",
+        false
+    );
+
+}, GPS_TIMEOUT);
+  
+  }
+  
 /* =========================================================
    USE CUSTOMER LOCATION
 ========================================================= */
