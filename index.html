@@ -2221,666 +2221,656 @@ function checkSellerEligibility(
             deliveryLimit
     };
 }
-  async function getBestSeller(
+// =========================================================
+// GET BEST SELLER
+// PROFESSIONAL SMART ASSIGNMENT
+// =========================================================
+
+async function getBestSeller(
     quantity,
     brand,
     customerLatitude,
     customerLongitude
 ) {
 
-    const q = query(
-        collection(db, "sellers"),
-        where("status", "==", "approved")
-    );
+    // =====================================================
+    // CUSTOMER GPS
+    // =====================================================
 
-    const snap = await getDocs(q);
+    const customerLat =
+        Number(customerLatitude);
 
-    if (snap.empty) {
-        throw new Error("No approved sellers found");
-    }
+    const customerLng =
+        Number(customerLongitude);
 
-   let bestSeller = null;
-
-let lockedSellerCount = 0;
-let availableSellerCount = 0;
-let brandMatchCount = 0;
-let priceMatchCount = 0;
-let matchingSellerCount = 0;
-let radiusMatchCount = 0;
-let eligibleSellerCount = 0;
-  
-    snap.forEach(docSnap => {
-
-    const s = docSnap.data();
-      
-console.log("🔎 FULL SELLER DOCUMENT:", {
-    id: docSnap.id,
-    data: s
-});
-      
-console.log("🔎 DELIVERY RADIUS RAW:", {
-    seller: s.name,
-    value: s.deliveryRadiusKm,
-    type: typeof s.deliveryRadiusKm
-});
-
-    // =================================================
-    // SELLER AVAILABILITY
-    // =================================================
-
-if (s.isAvailable !== true) {
-
-    console.log(
-        "❌ SELLER NOT AVAILABLE:",
-        s.name
-    );
-
-    return;
-}
-
-console.log(
-    "🟢 SELLER IS AVAILABLE:",
-    s.name
-);
-
-availableSellerCount++;
-      
-console.log("🔍 SELLER ELIGIBILITY CHECK:", {
-    seller: s.name,
-
-    quantity: quantity,
-
-    requestedBrand: brand,
-
-    sellerPrice:
-        Number(s.prices?.[quantity] || 0),
-
-    sellerBrands:
-        s.brands,
-
-    paymentStatus:
-        s.paymentStatus,
-
-    commissionBalance:
-        Number(s.commissionBalance || 0),
-
-    deliveryCount:
-        Number(s.deliveryCount || 0),
-
-    deliveryLimit:
-        Number(s.deliveryLimit || 0),
-
-    sellerLatitude:
-        s.sellerLatitude,
-
-    sellerLongitude:
-        s.sellerLongitude,
-
-    deliveryRadiusKm:
-        s.deliveryRadiusKm
-});
-
-// =================================================
-// GAS BRAND CHECK
-// =================================================
-
-const normalizedCustomerBrand =
-    String(brand || "")
-        .trim()
-        .toLowerCase();
-
-const normalizedSellerBrands =
-    Array.isArray(s.brands)
-        ? s.brands.map(
-            sellerBrand =>
-                String(sellerBrand || "")
-                    .trim()
-                    .toLowerCase()
-          )
-        : [];
-
-if (
-    !normalizedCustomerBrand ||
-    !normalizedSellerBrands.includes(
-        normalizedCustomerBrand
-    )
-) {
-
-    console.log(
-        "❌ BRAND MISMATCH:",
-        {
-            seller: s.name,
-            customerBrand: normalizedCustomerBrand,
-            sellerBrands: normalizedSellerBrands
-        }
-    );
-
-    return;
-}
-
-brandMatchCount++;
-
-console.log(
-    "✅ BRAND MATCH:",
-    {
-        seller: s.name,
-        brand: normalizedCustomerBrand
-    }
-);
-
-
-// =================================================
-// SELLER PRICE
-// =================================================
-
-const sellerPrice =
-    Number(s.prices?.[quantity] || 0);
-
-if (sellerPrice <= 0) {
-
-    console.log(
-        "❌ NO PRICE FOR CYLINDER:",
-        {
-            seller: s.name,
-            quantity: quantity
-        }
-    );
-
-    return;
-}
-
-priceMatchCount++;
-
-
-// =================================================
-// MATCHING SELLER
-// BRAND + CYLINDER SIZE MATCHED
-// =================================================
-
-matchingSellerCount++;
-
-console.log(
-    "🎯 MATCHING SELLER:",
-    {
-        seller: s.name,
-        brand: brand,
-        quantity: quantity,
-        matchingSellerCount: matchingSellerCount
-    }
-);
-
-
-// =================================================
-// DELIVERY LIMIT / COMMISSION CHECK
-// =================================================
-
-const deliveryCount =
-    Number(s.deliveryCount || 0);
-
-const deliveryLimit =
-    Number(s.deliveryLimit || 3);
-
-if (deliveryCount >= deliveryLimit) {
-
-    lockedSellerCount++;
-
-    console.log(
-        "🔒 SELLER LOCKED:",
-        {
-            seller: s.name,
-            deliveryCount: deliveryCount,
-            deliveryLimit: deliveryLimit,
-            commissionBalance:
-                Number(s.commissionBalance || 0),
-            paymentStatus:
-                s.paymentStatus
-        }
-    );
-
-    return;
-}
-
-console.log(
-    "✅ SELLER CAN RECEIVE ORDER:",
-    {
-        seller: s.name,
-        deliveryCount: deliveryCount,
-        remaining:
-            deliveryLimit - deliveryCount
-    }
-);
-
-
-// =================================================
-// SELLER GPS
-// =================================================
-
-const sellerLat =
-    Number(
-        s.sellerLatitude
-    );
-
-const sellerLng =
-    Number(
-        s.sellerLongitude
-    );
-
-if (
-    !Number.isFinite(sellerLat) ||
-    !Number.isFinite(sellerLng)
-) {
-
-    console.warn(
-        "❌ Seller has invalid GPS:",
-        s.name
-    );
-
-    return;
-}
-
-
-// =================================================
-// CUSTOMER GPS
-// =================================================
-
-const customerLat =
-    Number(
-        customerLatitude
-    );
-
-const customerLng =
-    Number(
-        customerLongitude
-    );
-
-if (
-    !Number.isFinite(customerLat) ||
-    !Number.isFinite(customerLng)
-) {
-
-    console.warn(
-        "❌ Customer has invalid GPS"
-    );
-
-    return;
-}
-
-
-// =================================================
-// GPS DEBUG
-// =================================================
-
-console.log(
-    "👤 CUSTOMER GPS:",
-    {
-        latitude:
-            customerLat,
-
-        longitude:
-            customerLng
-    }
-);
-
-console.log(
-    "🏪 SELLER GPS:",
-    {
-        name:
-            s.name,
-
-        latitude:
-            sellerLat,
-
-        longitude:
-            sellerLng
-    }
-);
-
-
-// =================================================
-// CALCULATE DISTANCE
-// =================================================
-
-const distance =
-    calculateDistance(
-        customerLat,
-        customerLng,
-        sellerLat,
-        sellerLng
-    );
-
-
-console.log(
-    "📏 CALCULATED DISTANCE:",
-    distance,
-    "km"
-);
-
-
-// =================================================
-// SELLER DELIVERY RADIUS
-// =================================================
-
-const deliveryRadiusKm =
-    Number(
-        s.deliveryRadiusKm || 0
-    );
-
-if (
-    !Number.isFinite(
-        deliveryRadiusKm
-    ) ||
-    deliveryRadiusKm <= 0
-) {
-
-    console.warn(
-        "❌ Seller has invalid delivery radius:",
-        s.name
-    );
-
-    return;
-}
-
-
-// =================================================
-// DISTANCE vs DELIVERY RADIUS
-// =================================================
-
-if (
-    distance > deliveryRadiusKm
-) {
-
-    console.log(
-        `❌ ${s.name} outside delivery radius`,
-        {
-            distance:
-                distance,
-
-            radius:
-                deliveryRadiusKm
-        }
-    );
-
-    return;
-}
-
-
-// =================================================
-// SELLER IS ELIGIBLE
-// =================================================
-
-console.log(
-    `✅ ${s.name} is eligible`,
-    {
-        distance: distance,
-        radius: deliveryRadiusKm,
-        price: sellerPrice
-    }
-);
-
-radiusMatchCount++;
-
-eligibleSellerCount++;
-// =================================================
-// RATING
-// =================================================
-
-const sellerRating =
-    Number(
-        s.averageRating || 0
-    );
-
-
-// =================================================
-// SELECT BEST SELLER
-// =================================================
-
-const currentBestDistance =
-    bestSeller
-        ? Number(
-            bestSeller.distance
-          )
-        : Infinity;
-
-const currentBestRating =
-    bestSeller
-        ? Number(
-            bestSeller.averageRating || 0
-          )
-        : 0;
-
-const currentBestPrice =
-    bestSeller
-        ? Number(
-            bestSeller.sellerPrice || 0
-          )
-        : Infinity;
-
-
-// =================================================
-// SMART COMPARISON
-// =================================================
-
-let shouldSelectSeller = false;
-
-
-// =================================================
-// 1. NO BEST SELLER
-// =================================================
-
-if (!bestSeller) {
-
-    shouldSelectSeller = true;
-
-}
-
-
-// =================================================
-// 2. CLOSER SELLER
-// =================================================
-
-else if (
-    distance <
-    currentBestDistance
-) {
-
-    shouldSelectSeller = true;
-
-}
-
-
-// =================================================
-// 3. SAME DISTANCE → BETTER RATING
-// =================================================
-
-else if (
-    Math.abs(
-        distance -
-        currentBestDistance
-    ) < 1 &&
-
-    sellerRating >
-    currentBestRating
-) {
-
-    shouldSelectSeller = true;
-
-}
-
-
-// =================================================
-// 4. SAME DISTANCE + SAME RATING
-//    → CHEAPER PRICE
-// =================================================
-
-else if (
-    Math.abs(
-        distance -
-        currentBestDistance
-    ) < 1 &&
-
-    sellerRating ===
-    currentBestRating &&
-
-    sellerPrice <
-    currentBestPrice
-) {
-
-    shouldSelectSeller = true;
-
-}
-
-
-// =================================================
-// SAVE BEST SELLER
-// =================================================
-
-if (shouldSelectSeller) {
-
-    bestSeller = {
-
-        id:
-            docSnap.id,
-
-        sellerPrice:
-            sellerPrice,
-
-        distance:
-            distance,
-
-        ...s,
-
-        prices: {
-            ...s.prices
-        }
-
-    };
-
-}
-
-}); // ✅ snap.forEach ENDS HERE
-
-
-// =================================================
-// NO SELLER / ERROR CLASSIFICATION
-// =================================================
-
-if (!bestSeller) {
-
-    console.log(
-    "❌ NO BEST SELLER - REASON ANALYSIS:",
-    {
-        availableSellerCount,
-        brandMatchCount,
-        priceMatchCount,
-        matchingSellerCount,
-        radiusMatchCount,
-        lockedSellerCount,
-        eligibleSellerCount
-    }
-);
-
-
-    // -------------------------------------------------
-    // 1. NO AVAILABLE SELLERS
-    // -------------------------------------------------
-
-    if (availableSellerCount === 0) {
-
-        throw new Error(
-            "No sellers are currently available."
-        );
-
-    }
-
-
-    // -------------------------------------------------
-    // 2. BRAND NOT AVAILABLE
-    // -------------------------------------------------
-
-    if (brandMatchCount === 0) {
-
-        throw new Error(
-            `No seller currently offers ${brand}.`
-        );
-
-    }
-
-
-    // -------------------------------------------------
-    // 3. CYLINDER SIZE NOT AVAILABLE
-    // -------------------------------------------------
-
-    if (priceMatchCount === 0) {
-
-        throw new Error(
-            `No ${brand} seller currently has ${quantity} available.`
-        );
-
-    }
-
-
-    // -------------------------------------------------
-    // 4. ALL BRAND SELLERS LOCKED
-    // -------------------------------------------------
 
     if (
-    matchingSellerCount > 0 &&
-    lockedSellerCount === matchingSellerCount
-) {
-
-    throw new Error(
-        `All ${brand} sellers have reached their delivery limits.`
-    );
-
-}
-
-
-    // -------------------------------------------------
-    // 5. OUTSIDE DELIVERY AREA
-    // -------------------------------------------------
-
-    if (radiusMatchCount === 0) {
+        !Number.isFinite(customerLat) ||
+        !Number.isFinite(customerLng)
+    ) {
 
         throw new Error(
-            `No ${brand} seller is currently available within your delivery area.`
+            "Customer GPS location is invalid."
+        );
+    }
+
+
+    // =====================================================
+    // GET APPROVED SELLERS
+    // =====================================================
+
+    const q = query(
+        collection(db, "sellers"),
+        where(
+            "status",
+            "==",
+            "approved"
+        )
+    );
+
+
+    const snap =
+        await getDocs(q);
+
+
+    if (snap.empty) {
+
+        throw new Error(
+            "No approved sellers found."
+        );
+    }
+
+
+    // =====================================================
+    // COUNTERS
+    // =====================================================
+
+    let bestSeller = null;
+
+    let availableSellerCount = 0;
+
+    let brandMatchCount = 0;
+
+    let priceMatchCount = 0;
+
+    let matchingSellerCount = 0;
+
+    let lockedSellerCount = 0;
+
+    let radiusMatchCount = 0;
+
+    let eligibleSellerCount = 0;
+
+
+    // =====================================================
+    // CHECK EVERY SELLER
+    // =====================================================
+
+    snap.forEach(docSnap => {
+
+        const seller =
+            docSnap.data();
+
+        const sellerId =
+            docSnap.id;
+
+
+        console.log(
+            "🔎 CHECKING SELLER:",
+            {
+                seller:
+                    seller.name,
+
+                sellerId:
+                    sellerId
+            }
+        );
+
+
+        // =================================================
+        // BASIC COUNTERS
+        // =================================================
+
+        if (
+            seller.isAvailable === true
+        ) {
+
+            availableSellerCount++;
+
+        }
+
+
+        const sellerBrandList =
+            Array.isArray(
+                seller.brands
+            )
+                ? seller.brands.map(
+                    item =>
+                        String(item || "")
+                            .trim()
+                            .toLowerCase()
+                )
+                : [];
+
+
+        const requestedBrand =
+            String(brand || "")
+                .trim()
+                .toLowerCase();
+
+
+        if (
+            sellerBrandList.includes(
+                requestedBrand
+            )
+        ) {
+
+            brandMatchCount++;
+
+        }
+
+
+        const sellerPrice =
+            Number(
+                seller.prices?.[quantity] || 0
+            );
+
+
+        if (
+            sellerPrice > 0
+        ) {
+
+            priceMatchCount++;
+
+        }
+
+
+        if (
+            sellerBrandList.includes(
+                requestedBrand
+            ) &&
+            sellerPrice > 0
+        ) {
+
+            matchingSellerCount++;
+
+        }
+
+
+        // =================================================
+        // DELIVERY LIMIT DEBUG
+        // =================================================
+
+        const deliveryCount =
+            Number(
+                seller.deliveryCount || 0
+            );
+
+
+        const deliveryLimit =
+            Number(
+                seller.deliveryLimit || 3
+            );
+
+
+        if (
+            sellerBrandList.includes(
+                requestedBrand
+            ) &&
+            sellerPrice > 0 &&
+            deliveryCount >=
+                deliveryLimit
+        ) {
+
+            lockedSellerCount++;
+
+        }
+
+
+        // =================================================
+        // PROFESSIONAL ELIGIBILITY ENGINE
+        // =================================================
+
+        const eligibility =
+            checkSellerEligibility(
+
+                seller,
+
+                sellerId,
+
+                {
+                    quantity:
+                        quantity,
+
+                    brand:
+                        brand,
+
+                    customerLatitude:
+                        customerLat,
+
+                    customerLongitude:
+                        customerLng
+                }
+
+            );
+
+
+        // =================================================
+        // SELLER REJECTED
+        // =================================================
+
+        if (
+            !eligibility.eligible
+        ) {
+
+            console.log(
+                "⛔ SELLER NOT ELIGIBLE:",
+                {
+                    seller:
+                        seller.name,
+
+                    reason:
+                        eligibility.reason
+                }
+            );
+
+
+            // Radius debug counter
+            if (
+                eligibility.reason ===
+                "OUTSIDE_DELIVERY_RADIUS"
+            ) {
+
+                console.log(
+                    "📍 OUTSIDE RADIUS:",
+                    {
+                        seller:
+                            seller.name,
+
+                        distance:
+                            eligibility.distance,
+
+                        radius:
+                            eligibility.deliveryRadiusKm
+                    }
+                );
+
+            }
+
+
+            return;
+        }
+
+
+        // =================================================
+        // ELIGIBLE SELLER
+        // =================================================
+
+        eligibleSellerCount++;
+
+        radiusMatchCount++;
+
+
+        const distance =
+            Number(
+                eligibility.distance
+            );
+
+
+        const sellerRating =
+            Number(
+                eligibility.averageRating || 0
+            );
+
+
+        const price =
+            Number(
+                eligibility.sellerPrice
+            );
+
+
+        console.log(
+            "✅ ELIGIBLE SELLER:",
+            {
+                seller:
+                    seller.name,
+
+                distance:
+                    distance,
+
+                rating:
+                    sellerRating,
+
+                price:
+                    price,
+
+                deliveryCount:
+                    eligibility.deliveryCount,
+
+                deliveryLimit:
+                    eligibility.deliveryLimit
+            }
+        );
+
+
+        // =================================================
+        // CURRENT BEST SELLER
+        // =================================================
+
+        if (!bestSeller) {
+
+            bestSeller = {
+
+                id:
+                    sellerId,
+
+                ...seller,
+
+                sellerPrice:
+                    price,
+
+                distance:
+                    distance,
+
+                averageRating:
+                    sellerRating
+
+            };
+
+
+            console.log(
+                "🏆 FIRST BEST SELLER:",
+                seller.name
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // CURRENT BEST VALUES
+        // =================================================
+
+        const currentBestDistance =
+            Number(
+                bestSeller.distance
+            );
+
+
+        const currentBestRating =
+            Number(
+                bestSeller.averageRating || 0
+            );
+
+
+        const currentBestPrice =
+            Number(
+                bestSeller.sellerPrice || 0
+            );
+
+
+        // =================================================
+        // SMART SELLER COMPARISON
+        //
+        // 1. NEAREST
+        // 2. RATING
+        // 3. PRICE
+        // =================================================
+
+        let shouldSelect =
+            false;
+
+
+        // -------------------------------------------------
+        // 1. CLOSER
+        // -------------------------------------------------
+
+        if (
+            distance <
+            currentBestDistance
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 2. SAME DISTANCE → BETTER RATING
+        // -------------------------------------------------
+
+        else if (
+            Math.abs(
+                distance -
+                currentBestDistance
+            ) < 1 &&
+
+            sellerRating >
+            currentBestRating
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 3. SAME DISTANCE + SAME RATING → CHEAPER
+        // -------------------------------------------------
+
+        else if (
+            Math.abs(
+                distance -
+                currentBestDistance
+            ) < 1 &&
+
+            sellerRating ===
+            currentBestRating &&
+
+            price <
+            currentBestPrice
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // =================================================
+        // SAVE NEW BEST SELLER
+        // =================================================
+
+        if (
+            shouldSelect
+        ) {
+
+            bestSeller = {
+
+                id:
+                    sellerId,
+
+                ...seller,
+
+                sellerPrice:
+                    price,
+
+                distance:
+                    distance,
+
+                averageRating:
+                    sellerRating
+
+            };
+
+
+            console.log(
+                "🏆 NEW BEST SELLER:",
+                {
+                    seller:
+                        seller.name,
+
+                    distance:
+                        distance,
+
+                    rating:
+                        sellerRating,
+
+                    price:
+                        price
+                }
+            );
+
+        }
+
+    });
+
+
+    // =====================================================
+    // NO BEST SELLER
+    // =====================================================
+
+    if (!bestSeller) {
+
+        console.log(
+            "❌ NO BEST SELLER:",
+            {
+                availableSellerCount,
+                brandMatchCount,
+                priceMatchCount,
+                matchingSellerCount,
+                lockedSellerCount,
+                radiusMatchCount,
+                eligibleSellerCount
+            }
+        );
+
+
+        // =================================================
+        // 1. NO AVAILABLE SELLERS
+        // =================================================
+
+        if (
+            availableSellerCount === 0
+        ) {
+
+            throw new Error(
+                "No sellers are currently available."
+            );
+
+        }
+
+
+        // =================================================
+        // 2. BRAND NOT AVAILABLE
+        // =================================================
+
+        if (
+            brandMatchCount === 0
+        ) {
+
+            throw new Error(
+                `No seller currently offers ${brand}.`
+            );
+
+        }
+
+
+        // =================================================
+        // 3. CYLINDER SIZE
+        // =================================================
+
+        if (
+            priceMatchCount === 0
+        ) {
+
+            throw new Error(
+                `No ${brand} seller currently has ${quantity} available.`
+            );
+
+        }
+
+
+        // =================================================
+        // 4. ALL MATCHING SELLERS LOCKED
+        // =================================================
+
+        if (
+            matchingSellerCount > 0 &&
+            lockedSellerCount ===
+                matchingSellerCount
+        ) {
+
+            throw new Error(
+                `All ${brand} sellers have reached their delivery limits.`
+            );
+
+        }
+
+
+        // =================================================
+        // 5. DELIVERY AREA
+        // =================================================
+
+        if (
+            radiusMatchCount === 0
+        ) {
+
+            throw new Error(
+                `No ${brand} seller is currently available within your delivery area.`
+            );
+
+        }
+
+
+        // =================================================
+        // 6. GENERAL
+        // =================================================
+
+        throw new Error(
+            `No ${brand} seller is currently available for ${quantity}.`
         );
 
     }
 
 
-    // -------------------------------------------------
-    // 6. GENERAL FALLBACK
-    // -------------------------------------------------
+    // =====================================================
+    // FINAL DEBUG
+    // =====================================================
 
-    throw new Error(
-        `No ${brand} seller is currently available for ${quantity}.`
+    console.log(
+        "🏆 FINAL BEST SELLER:",
+        {
+            seller:
+                bestSeller.name,
+
+            sellerId:
+                bestSeller.id,
+
+            price:
+                bestSeller.sellerPrice,
+
+            distance:
+                bestSeller.distance,
+
+            rating:
+                bestSeller.averageRating
+        }
     );
 
+
+    return bestSeller;
 }
 
-// =================================================
-// FINAL DEBUG
-// =================================================
 
-console.log(
-    "🏆 BEST SELLER:",
-    bestSeller.name
-);
+// =========================================================
+// GET CHEAPEST SELLER
+// =========================================================
 
-console.log(
-    "💰 PRICE:",
-    bestSeller.sellerPrice
-);
-
-console.log(
-    "📍 DISTANCE:",
-    bestSeller.distance,
-    "km"
-);
-return bestSeller;
-}
-  
-async function getCheapestSeller(
+async function getCheapestSeller(  
     quantity,
     brand,
     customerLatitude,
