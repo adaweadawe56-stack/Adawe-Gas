@@ -2864,259 +2864,142 @@ async function getBestSeller(
 
     return bestSeller;
 }
-
-
 // =========================================================
 // GET CHEAPEST SELLER
+// PROFESSIONAL SMART ASSIGNMENT
 // =========================================================
 
-async function getCheapestSeller(  
+async function getCheapestSeller(
     quantity,
     brand,
     customerLatitude,
     customerLongitude
 ) {
 
+    // =====================================================
+    // CUSTOMER GPS
+    // =====================================================
+
+    const customerLat =
+        Number(customerLatitude);
+
+    const customerLng =
+        Number(customerLongitude);
+
+
+    if (
+        !Number.isFinite(customerLat) ||
+        !Number.isFinite(customerLng)
+    ) {
+
+        throw new Error(
+            "Customer GPS location is invalid."
+        );
+    }
+
+
+    // =====================================================
+    // GET APPROVED SELLERS
+    // =====================================================
+
     const q = query(
         collection(db, "sellers"),
-        where("status", "==", "approved")
+        where(
+            "status",
+            "==",
+            "approved"
+        )
     );
 
-    const snap = await getDocs(q);
+
+    const snap =
+        await getDocs(q);
+
 
     if (snap.empty) {
-        throw new Error("No approved sellers found");
+
+        throw new Error(
+            "No approved sellers found."
+        );
     }
+
+
+    // =====================================================
+    // BEST SELLER
+    // =====================================================
 
     let bestSeller = null;
 
+
+    // =====================================================
+    // CHECK EVERY SELLER
+    // =====================================================
+
     snap.forEach(docSnap => {
 
-        const s = docSnap.data();
+        const seller =
+            docSnap.data();
 
-
-        // =================================================
-        // SELLER AVAILABILITY
-        // =================================================
-
-if (s.isAvailable !== true) {
-
-    console.log(
-        "❌ Seller not available:",
-        s.name,
-        "| value:",
-        s.isAvailable,
-        "| type:",
-        typeof s.isAvailable
-    );
-
-    return;
-}
-
-console.log(
-    "🟢 Seller is AVAILABLE:",
-    s.name
-);
- 
-        // =================================================
-        // SELLER PRICE
-        // =================================================
-
-        const sellerPrice =
-            Number(s.prices?.[quantity] || 0);
-
-        if (sellerPrice <= 0) {
-
-            console.log(
-                "❌ Seller does not have this gas size:",
-                s.name,
-                quantity
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // PAYMENT CHECK
-        // =================================================
-
-      if (
-    deliveryCount >= deliveryLimit
-) {
-
-    lockedSellerCount++;
-
-    console.log(
-        "🔒 SELLER LOCKED:",
-        {
-            seller: s.name,
-            deliveryCount: deliveryCount,
-            deliveryLimit: deliveryLimit,
-            commissionBalance: commissionBalance,
-            paymentStatus: s.paymentStatus
-        }
-    );
-
-    return;
-}
-
-
-        // =================================================
-        // DELIVERY LIMIT
-        // =================================================
-
-        if (
-            (s.deliveryCount || 0) >=
-            (s.deliveryLimit || 999)
-        ) {
-
-            console.log(
-                "❌ Seller delivery limit reached:",
-                s.name
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // GAS BRAND
-        // =================================================
-
-        const normalizedCustomerBrand =
-            String(brand || "")
-                .trim()
-                .toLowerCase();
-
-        const normalizedSellerBrands =
-            Array.isArray(s.brands)
-                ? s.brands.map(
-                    sellerBrand =>
-                        String(sellerBrand || "")
-                            .trim()
-                            .toLowerCase()
-                  )
-                : [];
-
-        if (
-            !normalizedCustomerBrand ||
-            !normalizedSellerBrands.includes(
-                normalizedCustomerBrand
-            )
-        ) {
-
-            console.log(
-                "❌ Seller does not support brand:",
-                s.name,
-                brand
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // SELLER GPS
-        // =================================================
-
-        const sellerLat =
-            Number(s.sellerLatitude);
-
-        const sellerLng =
-            Number(s.sellerLongitude);
-
-        if (
-            !Number.isFinite(sellerLat) ||
-            !Number.isFinite(sellerLng)
-        ) {
-
-            console.warn(
-                "❌ Seller has invalid GPS:",
-                s.name
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // CUSTOMER GPS
-        // =================================================
-
-        const customerLat =
-            Number(customerLatitude);
-
-        const customerLng =
-            Number(customerLongitude);
-
-        if (
-            !Number.isFinite(customerLat) ||
-            !Number.isFinite(customerLng)
-        ) {
-
-            console.warn(
-                "❌ Customer has invalid GPS"
-            );
-
-            return;
-        }
-
-
-        // =================================================
-        // CALCULATE DISTANCE
-        // =================================================
-
-        const distance =
-            calculateDistance(
-                customerLat,
-                customerLng,
-                sellerLat,
-                sellerLng
-            );
+        const sellerId =
+            docSnap.id;
 
 
         console.log(
-            "📏 Seller distance:",
-            s.name,
-            distance,
-            "km"
+            "🔎 CHEAPEST SELLER CHECK:",
+            {
+                seller:
+                    seller.name,
+
+                sellerId:
+                    sellerId
+            }
         );
 
 
         // =================================================
-        // SELLER DELIVERY RADIUS
+        // PROFESSIONAL ELIGIBILITY ENGINE
         // =================================================
 
-        const deliveryRadiusKm =
-            Number(s.deliveryRadiusKm || 0);
+        const eligibility =
+            checkSellerEligibility(
 
-        if (
-            !Number.isFinite(deliveryRadiusKm) ||
-            deliveryRadiusKm <= 0
-        ) {
+                seller,
 
-            console.warn(
-                "❌ Seller has invalid delivery radius:",
-                s.name
+                sellerId,
+
+                {
+                    quantity:
+                        quantity,
+
+                    brand:
+                        brand,
+
+                    customerLatitude:
+                        customerLat,
+
+                    customerLongitude:
+                        customerLng
+                }
+
             );
 
-            return;
-        }
-
 
         // =================================================
-        // DISTANCE vs DELIVERY RADIUS
+        // SELLER NOT ELIGIBLE
         // =================================================
 
-        if (distance > deliveryRadiusKm) {
+        if (
+            !eligibility.eligible
+        ) {
 
             console.log(
-                "❌ Seller outside delivery radius:",
-                s.name,
+                "⛔ CHEAPEST SELLER REJECTED:",
                 {
-                    distance: distance,
-                    radius: deliveryRadiusKm
+                    seller:
+                        seller.name,
+
+                    reason:
+                        eligibility.reason
                 }
             );
 
@@ -3125,36 +3008,51 @@ console.log(
 
 
         // =================================================
-        // SELLER IS ELIGIBLE
+        // SELLER ELIGIBLE
         // =================================================
 
+        const sellerPrice =
+            Number(
+                eligibility.sellerPrice
+            );
+
+
+        const distance =
+            Number(
+                eligibility.distance
+            );
+
+
         console.log(
-            "✅ SELLER ELIGIBLE:",
-            s.name,
+            "✅ CHEAPEST SELLER ELIGIBLE:",
             {
-                price: sellerPrice,
-                distance: distance,
-                radius: deliveryRadiusKm
+                seller:
+                    seller.name,
+
+                price:
+                    sellerPrice,
+
+                distance:
+                    distance,
+
+                rating:
+                    eligibility.averageRating
             }
         );
 
 
         // =================================================
-        // CHEAPEST ELIGIBLE SELLER
+        // FIRST ELIGIBLE SELLER
         // =================================================
 
-        if (
-            !bestSeller ||
-            sellerPrice < bestSeller.sellerPrice ||
-            (
-                sellerPrice === bestSeller.sellerPrice &&
-                distance < bestSeller.distance
-            )
-        ) {
+        if (!bestSeller) {
 
             bestSeller = {
 
-                id: docSnap.id,
+                id:
+                    sellerId,
+
+                ...seller,
 
                 sellerPrice:
                     sellerPrice,
@@ -3162,56 +3060,208 @@ console.log(
                 distance:
                     distance,
 
-                ...s,
-
-                prices: {
-                    ...s.prices
-                }
+                averageRating:
+                    Number(
+                        eligibility.averageRating || 0
+                    )
 
             };
+
+
+            console.log(
+                "🏆 FIRST CHEAPEST CANDIDATE:",
+                seller.name
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // CURRENT BEST PRICE
+        // =================================================
+
+        const currentBestPrice =
+            Number(
+                bestSeller.sellerPrice || 0
+            );
+
+
+        const currentBestDistance =
+            Number(
+                bestSeller.distance || Infinity
+            );
+
+
+        const currentBestRating =
+            Number(
+                bestSeller.averageRating || 0
+            );
+
+
+        // =================================================
+        // CHEAPEST SELLER LOGIC
+        //
+        // 1. CHEAPEST PRICE
+        // 2. SAME PRICE → NEAREST
+        // 3. SAME PRICE + DISTANCE → BETTER RATING
+        // =================================================
+
+        let shouldSelect =
+            false;
+
+
+        // -------------------------------------------------
+        // 1. CHEAPER PRICE
+        // -------------------------------------------------
+
+        if (
+            sellerPrice <
+            currentBestPrice
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 2. SAME PRICE → NEAREST
+        // -------------------------------------------------
+
+        else if (
+            sellerPrice ===
+            currentBestPrice &&
+
+            distance <
+            currentBestDistance
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // -------------------------------------------------
+        // 3. SAME PRICE + SAME DISTANCE → BETTER RATING
+        // -------------------------------------------------
+
+        else if (
+            sellerPrice ===
+            currentBestPrice &&
+
+            Math.abs(
+                distance -
+                currentBestDistance
+            ) < 1 &&
+
+            Number(
+                eligibility.averageRating || 0
+            ) >
+            currentBestRating
+        ) {
+
+            shouldSelect =
+                true;
+
+        }
+
+
+        // =================================================
+        // SAVE NEW CHEAPEST SELLER
+        // =================================================
+
+        if (
+            shouldSelect
+        ) {
+
+            bestSeller = {
+
+                id:
+                    sellerId,
+
+                ...seller,
+
+                sellerPrice:
+                    sellerPrice,
+
+                distance:
+                    distance,
+
+                averageRating:
+                    Number(
+                        eligibility.averageRating || 0
+                    )
+
+            };
+
+
+            console.log(
+                "🏆 NEW CHEAPEST SELLER:",
+                {
+                    seller:
+                        seller.name,
+
+                    price:
+                        sellerPrice,
+
+                    distance:
+                        distance,
+
+                    rating:
+                        eligibility.averageRating
+                }
+            );
 
         }
 
     });
 
 
-    // =================================================
+    // =====================================================
     // NO ELIGIBLE SELLER
-    // =================================================
+    // =====================================================
 
     if (!bestSeller) {
 
         throw new Error(
-            "No available seller within delivery radius for this gas size and brand"
+            `No ${brand} seller is currently available for ${quantity}.`
         );
 
     }
 
 
-    // =================================================
+    // =====================================================
     // FINAL DEBUG
-    // =================================================
+    // =====================================================
 
     console.log(
-        "🏆 CHEAPEST ELIGIBLE SELLER:",
-        bestSeller.name
-    );
+        "🏆 FINAL CHEAPEST SELLER:",
+        {
+            seller:
+                bestSeller.name,
 
-    console.log(
-        "💰 PRICE:",
-        bestSeller.sellerPrice
-    );
+            sellerId:
+                bestSeller.id,
 
-    console.log(
-        "📍 DISTANCE:",
-        bestSeller.distance,
-        "km"
-    );
+            price:
+                bestSeller.sellerPrice,
 
-    console.log(
-        "🚚 DELIVERY RADIUS:",
-        bestSeller.deliveryRadiusKm,
-        "km"
+            distance:
+                bestSeller.distance,
+
+            rating:
+                bestSeller.averageRating,
+
+            deliveryCount:
+                bestSeller.deliveryCount,
+
+            deliveryLimit:
+                bestSeller.deliveryLimit
+        }
     );
 
 
