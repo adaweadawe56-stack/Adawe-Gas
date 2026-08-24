@@ -3199,86 +3199,139 @@ let finished = false;
 
 };
 
-
 /* =========================================================
    USE CUSTOMER LOCATION
 ========================================================= */
 
 function useCustomerLocation(position) {
 
-    customerLatitude =
-        position.coords.latitude;
+    if (!position || !position.coords) {
 
-    customerLongitude =
-        position.coords.longitude;
+        console.error(
+            "❌ Invalid customer GPS position."
+        );
 
+        return false;
+    }
+
+
+    const latitude =
+        Number(
+            position.coords.latitude
+        );
+
+    const longitude =
+        Number(
+            position.coords.longitude
+        );
 
     const accuracy =
-        position.coords.accuracy;
+        Number(
+            position.coords.accuracy
+        );
 
+
+    // =================================================
+    // VALIDATION
+    // =================================================
+
+    if (
+        !Number.isFinite(latitude) ||
+        !Number.isFinite(longitude) ||
+        !Number.isFinite(accuracy)
+    ) {
+
+        console.error(
+            "❌ Invalid customer GPS values:",
+            {
+                latitude,
+                longitude,
+                accuracy
+            }
+        );
+
+        return false;
+    }
+
+
+    // =================================================
+    // ACCURACY CHECK
+    // =================================================
+
+    if (
+        accuracy >
+        GPS_MAX_ACCEPTABLE_ACCURACY
+    ) {
+
+        console.warn(
+            "⚠️ GPS rejected because accuracy is too low:",
+            accuracy,
+            "meters"
+        );
+
+        customerLatitude = null;
+        customerLongitude = null;
+
+        window.customerGPSAccuracy = null;
+
+        showToast(
+            "📍 GPS accuracy is too low. Please turn on GPS and try again.",
+            false
+        );
+
+        return false;
+    }
+
+
+    // =================================================
+    // SAVE CUSTOMER GPS
+    // =================================================
+
+    customerLatitude =
+        latitude;
+
+    customerLongitude =
+        longitude;
+
+
+    // =================================================
+    // SAVE GPS ACCURACY
+    // =================================================
+
+    window.customerGPSAccuracy =
+        accuracy;
+
+
+    // =================================================
+    // FINAL DEBUG
+    // =================================================
 
     console.log(
-        "✅ FINAL CUSTOMER LOCATION"
+        "✅ FINAL CUSTOMER LOCATION",
+        {
+            latitude:
+                customerLatitude,
+
+            longitude:
+                customerLongitude,
+
+            accuracy:
+                accuracy
+        }
     );
 
 
-    console.log(
-        "📍 Latitude:",
-        customerLatitude
-    );
-
-
-    console.log(
-        "📍 Longitude:",
-        customerLongitude
-    );
-
-
-    console.log(
-        "🎯 Accuracy:",
-        accuracy,
-        "meters"
-    );
-
-
-    // ----------------------
+    // =================================================
     // ACCURACY MESSAGE
-    // ----------------------
+    // =================================================
 
-    if (accuracy <= 50) {
-
-        console.log(
-            "✅ Excellent GPS accuracy:",
-            accuracy,
-            "meters"
-        );
-
-        showToast(
-            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
-            true
-        );
-
-    }
-
-    else if (accuracy <= 100) {
+    if (
+        accuracy <=
+        GPS_TARGET_ACCURACY
+    ) {
 
         console.log(
-            "✅ Good GPS accuracy:",
-            accuracy,
-            "meters"
-        );
-
-        showToast(
-            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
-            true
-        );
-
-    }
-
-    else if (accuracy <= 300) {
-
-        console.log(
-            "⚠️ Acceptable GPS accuracy:",
+            "🎯 Excellent GPS accuracy:",
             accuracy,
             "meters"
         );
@@ -3292,22 +3345,22 @@ function useCustomerLocation(position) {
 
     else {
 
-        console.warn(
-            "⚠️ GPS accuracy is low:",
+        console.log(
+            "🟢 Acceptable GPS accuracy:",
             accuracy,
             "meters"
         );
 
         showToast(
-            `📍 Location detected (${Math.round(accuracy)}m accuracy). For better accuracy, turn on GPS.`,
+            `📍 Location detected (${Math.round(accuracy)}m accuracy).`,
             true
         );
     }
 
 
-    // ----------------------
+    // =================================================
     // LOCATION SOURCE
-    // ----------------------
+    // =================================================
 
     console.log(
         "📡 Location source:",
@@ -3315,9 +3368,9 @@ function useCustomerLocation(position) {
     );
 
 
-    // ----------------------
-    // UPDATE SELLER
-    // ----------------------
+    // =================================================
+    // UPDATE RECOMMENDED SELLER
+    // =================================================
 
     if (
         typeof showRecommendedSeller ===
@@ -3338,7 +3391,11 @@ function useCustomerLocation(position) {
             "❌ showRecommendedSeller() is not defined."
         );
     }
+
+
+    return true;
 }
+
 /* =========================================================
    SHOW RECOMMENDED SELLER
 ========================================================= */
