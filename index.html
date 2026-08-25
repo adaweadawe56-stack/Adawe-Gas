@@ -4263,10 +4263,11 @@ async function findNextSellerForReassignment(
         );
 
 
-        throw new Error(
-            "No other eligible seller is available for this order."
-        );
-    }
+        return {
+    seller: null,
+    rejectionHistory: rejectionHistory
+};
+}
 
 
     // =====================================================
