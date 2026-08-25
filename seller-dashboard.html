@@ -2832,7 +2832,7 @@ Status: Pending
 
 
     const whatsappUrl =
-        `https://wa.me/${nextSellerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`;
+    `https://wa.me/${nextSellerPhone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
 
 
     console.log(
