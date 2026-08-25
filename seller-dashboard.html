@@ -2571,126 +2571,147 @@ else if (status === "Rejected") {
     // CURRENT REJECTION HISTORY
     // -----------------------------------------
 
-   const currentRejectionHistory =
-    Array.isArray(data.rejectionHistory)
-        ? data.rejectionHistory
-        : [];
-
-const rejectionRecord = {
-
-    sellerId:
-        rejectedSellerId,
-
-    sellerName:
-        rejectedSellerName,
-
-    rejectionCode:
-        rejectionCode || "OTHER",
-
-    rejectionReason:
-        rejectionReason || "",
-
-    rejectedAt:
-        new Date().toISOString()
-
-};
-
-const newRejectionHistory = [
-
-    ...currentRejectionHistory,
-
-    rejectionRecord
-
-];
-
-const currentReassignmentCount =
-    Number(
-        data.reassignmentCount || 0
-    );
-
-const currentAssignmentAttempts =
-    Number(
-        data.assignmentAttempts || 1
-    );
+    const currentRejectionHistory =
+        Array.isArray(data.rejectionHistory)
+            ? data.rejectionHistory
+            : [];
 
 
-// =========================================
-// FIND NEXT SELLER
-// =========================================
+    // -----------------------------------------
+    // CREATE REJECTION RECORD
+    // -----------------------------------------
 
-const reassignmentResult =
-    await findNextSellerForReassignment(
-        data,
-        rejectedSellerId,
-        newRejectionHistory
-    );
+    const rejectionRecord = {
 
-const nextSeller =
-    reassignmentResult.seller;
+        sellerId:
+            rejectedSellerId,
 
-const rejectionHistory =
-    reassignmentResult.rejectionHistory;
+        sellerName:
+            rejectedSellerName,
 
+        rejectionCode:
+            rejectionCode || "OTHER",
 
-// =========================================
-// NO SELLER
-// =========================================
+        rejectionReason:
+            rejectionReason || "",
 
-if (!nextSeller) {
+        rejectedAt:
+            new Date().toISOString()
 
-    await updateDoc(
-        orderRef,
-        {
-            status:
-                "Rejected",
-
-            rejectionCode:
-                rejectionCode || "OTHER",
-
-            rejectionReason:
-                rejectionReason || "",
-
-            rejectedBySellerId:
-                rejectedSellerId,
-
-            rejectedAt:
-                serverTimestamp(),
-
-            rejectionHistory:
-                rejectionHistory,
-
-            reassignmentCount:
-                currentReassignmentCount,
-
-            assignmentAttempts:
-                currentAssignmentAttempts
-        }
-    );
-
-    console.log(
-        "⚠️ No eligible seller available."
-    );
-
-}
+    };
 
 
-// =========================================
-// NEXT SELLER FOUND
-// =========================================
+    // -----------------------------------------
+    // ADD CURRENT SELLER TO HISTORY
+    // -----------------------------------------
 
-else {
+    const newRejectionHistory = [
 
-    const nextSellerPhone =
-        nextSeller.phone?.trim();
+        ...currentRejectionHistory,
 
-    if (!nextSellerPhone) {
+        rejectionRecord
 
-        throw new Error(
-            "Next seller phone number is missing."
+    ];
+
+
+    // -----------------------------------------
+    // CURRENT COUNTERS
+    // -----------------------------------------
+
+    const currentReassignmentCount =
+        Number(
+            data.reassignmentCount || 0
+        );
+
+
+    const currentAssignmentAttempts =
+        Number(
+            data.assignmentAttempts || 1
+        );
+
+
+    // =========================================
+    // FIND NEXT SELLER
+    // =========================================
+
+    const reassignmentResult =
+        await findNextSellerForReassignment(
+            data,
+            rejectedSellerId,
+            newRejectionHistory
+        );
+
+
+    const nextSeller =
+        reassignmentResult.seller;
+
+
+    const rejectionHistory =
+        reassignmentResult.rejectionHistory;
+
+
+    // =========================================
+    // NO SELLER
+    // =========================================
+
+    if (!nextSeller) {
+
+        await updateDoc(
+            orderRef,
+            {
+
+                status:
+                    "Rejected",
+
+                rejectionCode:
+                    rejectionCode || "OTHER",
+
+                rejectionReason:
+                    rejectionReason || "",
+
+                rejectedBySellerId:
+                    rejectedSellerId,
+
+                rejectedAt:
+                    serverTimestamp(),
+
+                rejectionHistory:
+                    rejectionHistory,
+
+                reassignmentCount:
+                    currentReassignmentCount,
+
+                assignmentAttempts:
+                    currentAssignmentAttempts
+
+            }
+        );
+
+
+        console.log(
+            "⚠️ No eligible seller available."
         );
 
     }
 
+
+    // =========================================
+    // NEXT SELLER FOUND
+    // =========================================
+
+    else {
+
+        const nextSellerPhone =
+            nextSeller.phone?.trim();
+
+
+        if (!nextSellerPhone) {
+
+            throw new Error(
+                "Next seller phone number is missing."
+            );
+
+        }
 
     // =====================================
     // UPDATE ORDER
