@@ -3960,20 +3960,32 @@ async function findNextSellerForReassignment(
             // 9. PROFESSIONAL ELIGIBILITY ENGINE
             // =================================================
 
-            const eligibility =
-                checkSellerEligibility(
+const eligibility =
+    checkSellerEligibility(
 
-                    seller,
+        seller,
 
-                    sellerId,
+        sellerId,
 
-                    orderData,
+        {
+            quantity:
+                orderData.quantity,
 
-                    rejectedSellerId,
+            brand:
+                orderData.brand,
 
-                    rejectionHistory
+            customerLatitude:
+                customerLatitude,
 
-                );
+            customerLongitude:
+                customerLongitude
+        },
+
+        rejectedSellerId,
+
+        rejectionHistory
+
+    );
 
 
             // =================================================
