@@ -2629,23 +2629,29 @@ else if (status === "Rejected") {
             data.assignmentAttempts || 1
         );
 
+// -----------------------------------------
+// FIND NEXT SELLER
+// -----------------------------------------
 
-    // -----------------------------------------
-    // FIND NEXT SELLER
-    // -----------------------------------------
+const reassignmentResult =
+    await findNextSellerForReassignment(
 
-    const nextSeller =
-        await findNextSellerForReassignment(
+        data,
 
-            data,
+        rejectedSellerId,
 
-            rejectedSellerId,
+        newRejectionHistory
 
-            newRejectionHistory
-
-        );
+    );
 
 
+const nextSeller =
+    reassignmentResult.seller;
+
+
+const rejectionHistory =
+    reassignmentResult.rejectionHistory;
+   
     // =========================================
     // NO SELLER AVAILABLE
     // =========================================
