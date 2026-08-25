@@ -4237,81 +4237,72 @@ async function findNextSellerForReassignment(
     );
 
 
-    // =====================================================
-    // 16. NO NEXT SELLER
-    // =====================================================
+// =====================================================
+// 16. NO NEXT SELLER
+// =====================================================
 
-    if (
-        !nextSeller
-    ) {
+if (!nextSeller) {
 
-        console.error(
-            "❌ NO ELIGIBLE REASSIGNMENT SELLER:",
-            {
-                checkedSellerCount:
-                    checkedSellerCount,
-
-                rejectedSellerCount:
-                    rejectedSellerCount,
-
-                eligibleSellerCount:
-                    eligibleSellerCount,
-
-                rejectionHistory:
-                    rejectionHistory
-            }
-        );
-
-
-        return {
-    seller: null,
-    rejectionHistory: rejectionHistory
-};
-}
-
-
-    // =====================================================
-    // 17. FINAL RESULT
-    // =====================================================
-
-    console.log(
-        "🏆 FINAL REASSIGNMENT SELLER:",
+    console.error(
+        "❌ NO ELIGIBLE REASSIGNMENT SELLER:",
         {
-            seller:
-                nextSeller.name,
+            checkedSellerCount:
+                checkedSellerCount,
 
-            sellerId:
-                nextSeller.id,
+            rejectedSellerCount:
+                rejectedSellerCount,
 
-            price:
-                nextSeller.sellerPrice,
+            eligibleSellerCount:
+                eligibleSellerCount,
 
-            distance:
-                nextSeller.distance,
-
-            rating:
-                nextSeller.averageRating
+            rejectionHistory:
+                rejectionHistory
         }
     );
 
-
-    // =====================================================
-    // 18. RETURN BOTH SELLER + HISTORY
-    //
-    // Caller can save rejectionHistory to Firestore.
-    // =====================================================
-
     return {
-
-        seller:
-            nextSeller,
-
-        rejectionHistory:
-            rejectionHistory
-
+        seller: null,
+        rejectionHistory: rejectionHistory
     };
-
 }
+
+
+// =====================================================
+// 17. FINAL RESULT
+// =====================================================
+
+console.log(
+    "🏆 FINAL REASSIGNMENT SELLER:",
+    {
+        seller:
+            nextSeller.name,
+
+        sellerId:
+            nextSeller.id,
+
+        price:
+            nextSeller.sellerPrice,
+
+        distance:
+            nextSeller.distance,
+
+        rating:
+            nextSeller.averageRating
+    }
+);
+
+
+// =====================================================
+// 18. RETURN SELLER + HISTORY
+// =====================================================
+
+return {
+    seller:
+        nextSeller,
+
+    rejectionHistory:
+        rejectionHistory
+};
   
 /* =========================================================
    USE CUSTOMER LOCATION
