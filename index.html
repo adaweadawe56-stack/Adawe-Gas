@@ -3780,23 +3780,12 @@ setTimeout(() => {
 
 async function findNextSellerForReassignment(
     orderData,
-    rejectedSellerId = null
+    rejectedSellerId = null,
+    existingRejectionHistory = null
 ) {
 
-    console.log(
-        "🔄 FIND NEXT SELLER FOR REASSIGNMENT",
-        {
-            orderId:
-                orderData?.orderId,
-
-            rejectedSellerId:
-                rejectedSellerId
-        }
-    );
-
-
     // =====================================================
-    // 1. VALIDATE ORDER DATA
+    // VALIDATE ORDER
     // =====================================================
 
     if (!orderData) {
@@ -3804,89 +3793,59 @@ async function findNextSellerForReassignment(
         throw new Error(
             "Order data is missing."
         );
+
     }
 
 
     // =====================================================
-    // 2. READ REJECTION HISTORY FROM ORDER
+    // READ REJECTION HISTORY
     // =====================================================
 
-   const rejectionHistory =
-    Array.isArray(
-        existingRejectionHistory
-    )
-        ? [
-            ...existingRejectionHistory
-        ]
-        : (
-            Array.isArray(
-                orderData.rejectionHistory
-            )
-                ? [
-                    ...orderData.rejectionHistory
-                ]
-                : []
-                );
+    const rejectionHistory =
+        Array.isArray(
+            existingRejectionHistory
+        )
+            ? [
+                ...existingRejectionHistory
+            ]
+            : (
+                Array.isArray(
+                    orderData.rejectionHistory
+                )
+                    ? [
+                        ...orderData.rejectionHistory
+                    ]
+                    : []
+            );
+
+
+    // =====================================================
+    // DEBUG
+    // =====================================================
 
     console.log(
-        "📋 EXISTING REJECTION HISTORY:",
-        rejectionHistory
+        "🔄 FINDING NEXT SELLER:",
+        {
+            orderId:
+                orderData.orderId,
+
+            rejectedSellerId:
+                rejectedSellerId,
+
+            rejectionHistory:
+                rejectionHistory,
+
+            brand:
+                orderData.brand,
+
+            quantity:
+                orderData.quantity
+        }
     );
 
 
     // =====================================================
-    // 3. CURRENT REJECTED SELLER
-    //
-    // Add current rejected seller to history
-    // if it is not already there.
-    // =====================================================
-
-    if (
-        rejectedSellerId
-    ) {
-
-        const alreadyInHistory =
-            rejectionHistory.some(
-                rejection =>
-                    rejection &&
-                    rejection.sellerId ===
-                        rejectedSellerId
-            );
-
-
-        if (
-            !alreadyInHistory
-        ) {
-
-            rejectionHistory.push({
-
-                sellerId:
-                    rejectedSellerId,
-
-                sellerName:
-                    orderData.sellerName || "",
-
-                rejectedAt:
-                    new Date().toISOString()
-
-            });
-
-
-            console.log(
-                "➕ CURRENT SELLER ADDED TO REJECTION HISTORY:",
-                {
-                    sellerId:
-                        rejectedSellerId
-                }
-            );
-
-        }
-
-    }
-
-
-    // =====================================================
-    // 4. CUSTOMER GPS
+    // CUSTOMER GPS
     // =====================================================
 
     const customerLatitude =
@@ -3894,13 +3853,10 @@ async function findNextSellerForReassignment(
             orderData.customerLatitude
         );
 
-
     const customerLongitude =
         Number(
             orderData.customerLongitude
         );
-
-
     if (
         !Number.isFinite(
             customerLatitude
