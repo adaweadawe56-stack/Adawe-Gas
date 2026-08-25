@@ -2613,6 +2613,22 @@ else if (status === "Rejected") {
 
     ];
 
+  // -----------------------------------------
+// FIND NEXT SELLER
+// -----------------------------------------
+
+const reassignmentResult =
+    await findNextSellerForReassignment(
+        data,
+        rejectedSellerId,
+        newRejectionHistory
+    );
+
+const nextSeller =
+    reassignmentResult.seller;
+
+const rejectionHistory =
+    reassignmentResult.rejectionHistory;
 
     // -----------------------------------------
     // CURRENT COUNTERS
