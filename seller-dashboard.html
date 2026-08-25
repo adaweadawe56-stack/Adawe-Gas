@@ -2735,77 +2735,76 @@ const rejectionHistory =
         }
 
 
-        // -------------------------------------
-        // UPDATE ORDER
-        // -------------------------------------
+       // -------------------------------------
+// UPDATE ORDER WITH NEW SELLER
+// -------------------------------------
 
-        await updateDoc(
+await updateDoc(
+    orderRef,
+    {
+        // NEW SELLER
+        status:
+            "Pending",
 
-            orderRef,
+        sellerId:
+            nextSeller.id,
 
-            {
+        sellerName:
+            nextSeller.name,
 
-                status:
-                    "Pending",
+        sellerPhone:
+            nextSeller.phone,
 
-                sellerId:
-                    nextSeller.id,
+        sellerUid:
+            nextSeller.uid,
 
-                sellerName:
-                    nextSeller.name,
+        sellerLocation:
+            nextSeller.location || "",
 
-                sellerPhone:
-                    nextSeller.phone,
+        price:
+            Number(
+                nextSeller.sellerPrice || 0
+            ),
 
-                sellerUid:
-                    nextSeller.uid,
+        sellerLatitude:
+            Number(
+                nextSeller.sellerLatitude
+            ),
 
-                sellerLocation:
-                    nextSeller.location || "",
+        sellerLongitude:
+            Number(
+                nextSeller.sellerLongitude
+            ),
 
-                price:
-                    Number(
-                        nextSeller.sellerPrice || 0
-                    ),
+        // REJECTION INFORMATION
+        rejectionCode:
+            rejectionCode || "OTHER",
 
-                sellerLatitude:
-                    Number(
-                        nextSeller.sellerLatitude
-                    ),
+        rejectionReason:
+            rejectionReason || "",
 
-                sellerLongitude:
-                    Number(
-                        nextSeller.sellerLongitude
-                    ),
+        rejectedBySellerId:
+            rejectedSellerId,
 
-                rejectionCode:
-                    rejectionCode || "OTHER",
+        rejectedAt:
+            serverTimestamp(),
 
-                rejectionReason:
-                    rejectionReason || "",
+        // IMPORTANT:
+        // KEEP COMPLETE REJECTION HISTORY
+        rejectionHistory:
+            rejectionHistory,
 
-                rejectedBySellerId:
-                    rejectedSellerId,
+        // REASSIGNMENT COUNTERS
+        reassignmentCount:
+            currentReassignmentCount + 1,
 
-                rejectedAt:
-                    serverTimestamp(),
+        assignmentAttempts:
+            currentAssignmentAttempts + 1,
 
-                rejectionHistory:
-                rejectionHistory,
-
-                reassignmentCount:
-                    currentReassignmentCount + 1,
-
-                assignmentAttempts:
-                    currentAssignmentAttempts + 1,
-
-                assignedAt:
-                    serverTimestamp()
-
-            }
-
-        );
-
+        assignedAt:
+            serverTimestamp()
+    }
+);
 
         // -------------------------------------
         // LOG
