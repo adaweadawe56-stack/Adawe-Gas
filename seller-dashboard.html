@@ -2699,19 +2699,17 @@ else if (status === "Rejected") {
     // NEXT SELLER FOUND
     // =========================================
 
-    else {
+   else {
 
-        const nextSellerPhone =
-            nextSeller.phone?.trim();
+    const nextSellerPhone =
+        nextSeller.phone?.trim();
 
+    if (!nextSellerPhone) {
+        throw new Error(
+            "Next seller phone number is missing."
+        );
+    }
 
-        if (!nextSellerPhone) {
-
-            throw new Error(
-                "Next seller phone number is missing."
-            );
-
-        }
 
     // =====================================
     // UPDATE ORDER
@@ -2720,8 +2718,7 @@ else if (status === "Rejected") {
     await updateDoc(
         orderRef,
         {
-            status:
-                "Pending",
+            status: "Pending",
 
             sellerId:
                 nextSeller.id,
@@ -2780,6 +2777,10 @@ else if (status === "Rejected") {
     );
 
 
+    // =====================================
+    // LOG
+    // =====================================
+
     console.log(
         "🔄 ORDER REASSIGNED:",
         {
@@ -2800,14 +2801,12 @@ else if (status === "Rejected") {
         }
     );
 
-}
 
+    // =====================================
+    // WHATSAPP NEXT SELLER
+    // =====================================
 
-        // -------------------------------------
-        // WHATSAPP NEXT SELLER
-        // -------------------------------------
-
-        const message =
+    const message =
 `🔥 NEW LPG ORDER
 
 Order ID: ${data.orderId || id}
@@ -2832,22 +2831,22 @@ Status: Pending
 ⚠️ This order was reassigned to you after another seller rejected it.`;
 
 
-        const whatsappUrl =
-            `https://wa.me/${nextSellerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`;
+    const whatsappUrl =
+        `https://wa.me/${nextSellerPhone.replace("+", "")}?text=${encodeURIComponent(message)}`;
 
 
-        console.log(
-            "📱 NEXT SELLER WHATSAPP:",
-            whatsappUrl
-        );
+    console.log(
+        "📱 NEXT SELLER WHATSAPP:",
+        whatsappUrl
+    );
 
 
-        window.open(
-            whatsappUrl,
-            "_blank"
-        );
+    window.open(
+        whatsappUrl,
+        "_blank"
+    );
 
-    }
+}
 
 }
 
