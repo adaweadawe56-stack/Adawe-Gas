@@ -3801,22 +3801,14 @@ async function findNextSellerForReassignment(
     // READ REJECTION HISTORY
     // =====================================================
 
-    const rejectionHistory =
-        Array.isArray(
-            existingRejectionHistory
-        )
-            ? [
-                ...existingRejectionHistory
-            ]
-            : (
-                Array.isArray(
-                    orderData.rejectionHistory
-                )
-                    ? [
-                        ...orderData.rejectionHistory
-                    ]
-                    : []
-            );
+const rejectionHistory =
+    Array.isArray(existingRejectionHistory)
+        ? [...existingRejectionHistory]
+        : (
+            Array.isArray(orderData.rejectionHistory)
+                ? [...orderData.rejectionHistory]
+                : []
+        );
 
 
     // =====================================================
