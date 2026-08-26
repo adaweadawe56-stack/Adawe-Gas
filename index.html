@@ -1932,19 +1932,20 @@ function checkSellerEligibility(
     // =====================================================
 
     const alreadyRejected =
-        rejectionHistory.some(
-            rejection =>
-                rejection &&
-                rejection.sellerId === sellerId
-        );
+    Array.isArray(rejectionHistory) &&
+    rejectionHistory.some(
+        rejection =>
+            rejection &&
+            rejection.sellerId === sellerId
+    );
 
-    if (alreadyRejected) {
+if (alreadyRejected) {
 
-        return {
-            eligible: false,
-            reason: "ALREADY_REJECTED_ORDER"
-        };
-    }
+    return {
+        eligible: false,
+        reason: "ALREADY_REJECTED_ORDER"
+    };
+}
 
 
     // =====================================================
