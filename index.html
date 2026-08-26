@@ -2403,15 +2403,14 @@ async function getBestSeller(
         // =================================================
 
         const deliveryCount =
-            Number(
-                seller.deliveryCount || 0
-            );
+    Number(
+        seller.deliveryCount ?? 0
+    );
 
-
-        const deliveryLimit =
-            Number(
-                seller.deliveryLimit || 3
-            );
+const deliveryLimit =
+    Number(
+        seller.deliveryLimit ?? 3
+    );
 
 
         if (
