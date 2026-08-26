@@ -2363,25 +2363,7 @@ let eligibleSellerCount = 0;
         }
 
 
-        const sellerPrice =
-            Number(
-                seller.prices?.[quantity] || 0
-            );
-
-
-        if (
-            sellerPrice > 0
-        ) {
-
-            priceMatchCount++;
-
-        }
-     
-        // =================================================
-        // DELIVERY LIMIT DEBUG
-        // =================================================
-
-        const deliveryCount =
+       const deliveryCount =
     Number(
         seller.deliveryCount ?? 0
     );
@@ -2392,18 +2374,23 @@ const deliveryLimit =
     );
 
 
-        if (
-            sellerBrandList.includes(
-                requestedBrand
-            ) &&
-            sellerPrice > 0 &&
-            deliveryCount >=
-                deliveryLimit
-        ) {
+// BRAND + CYLINDER SIZE MATCH
+if (
+    sellerBrandList.includes(requestedBrand) &&
+    sellerPrice > 0
+) {
+    matchingSellerCount++;
+}
 
-            lockedSellerCount++;
 
-        }
+// LOCKED SELLER
+if (
+    sellerBrandList.includes(requestedBrand) &&
+    sellerPrice > 0 &&
+    deliveryCount >= deliveryLimit
+) {
+    lockedSellerCount++;
+}
 
 
         // =================================================
