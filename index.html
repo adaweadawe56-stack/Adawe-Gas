@@ -2720,125 +2720,125 @@ const deliveryLimit =
 
     });
 
+// =====================================================
+// NO BEST SELLER
+// =====================================================
 
-    // =====================================================
-    // NO BEST SELLER
-    // =====================================================
-
-    if (!bestSeller) {
-
-        console.log(
-            "❌ NO BEST SELLER:",
-            {
-                availableSellerCount,
-                brandMatchCount,
-                priceMatchCount,
-                matchingSellerCount,
-                lockedSellerCount,
-                radiusMatchCount,
-                eligibleSellerCount
-            }
-        );
-
-
-// =================================================
-// 1. NO AVAILABLE SELLERS
-// =================================================
-
-if (
-    availableSellerCount === 0
-) {
-
-    throw new Error(
-        "No sellers are currently available."
-    );
-
-}
-
-
-// =================================================
-// 2. BRAND NOT AVAILABLE
-// =================================================
-
-if (
-    brandMatchCount === 0
-) {
-
-    throw new Error(
-        `No seller currently offers ${brand}.`
-    );
-
-}
-
-
-// =================================================
-// 3. ALL MATCHING SELLERS LOCKED
-// =================================================
-
-if (
-    matchingSellerCount > 0 &&
-    lockedSellerCount === matchingSellerCount
-) {
-
-    throw new Error(
-        `All ${brand} sellers have reached their delivery limits.`
-    );
-
-}
-
-
-// =================================================
-// 4. DELIVERY AREA
-// =================================================
-
-if (
-    outsideRadiusCount === matchingSellerCount &&
-    matchingSellerCount > 0
-) {
-
-    throw new Error(
-        `No ${brand} seller is currently available within your delivery area.`
-    );
-
-}
-
-
-// =================================================
-// 5. GENERAL
-// =================================================
-
-throw new Error(
-    `No ${brand} seller is currently available for ${quantity}.`
-);
-
-
-    // =====================================================
-    // FINAL DEBUG
-    // =====================================================
+if (!bestSeller) {
 
     console.log(
-        "🏆 FINAL BEST SELLER:",
+        "❌ NO BEST SELLER:",
         {
-            seller:
-                bestSeller.name,
-
-            sellerId:
-                bestSeller.id,
-
-            price:
-                bestSeller.sellerPrice,
-
-            distance:
-                bestSeller.distance,
-
-            rating:
-                bestSeller.averageRating
+            availableSellerCount,
+            brandMatchCount,
+            matchingSellerCount,
+            lockedSellerCount,
+            outsideRadiusCount,
+            eligibleSellerCount
         }
     );
 
 
-    return bestSeller;
+    // =================================================
+    // 1. NO AVAILABLE SELLERS
+    // =================================================
+
+    if (
+        availableSellerCount === 0
+    ) {
+
+        throw new Error(
+            "No sellers are currently available."
+        );
+
+    }
+
+
+    // =================================================
+    // 2. BRAND NOT AVAILABLE
+    // =================================================
+
+    if (
+        brandMatchCount === 0
+    ) {
+
+        throw new Error(
+            `No seller currently offers ${brand}.`
+        );
+
+    }
+
+
+    // =================================================
+    // 3. ALL MATCHING SELLERS LOCKED
+    // =================================================
+
+    if (
+        matchingSellerCount > 0 &&
+        lockedSellerCount === matchingSellerCount
+    ) {
+
+        throw new Error(
+            `All ${brand} sellers have reached their delivery limits.`
+        );
+
+    }
+
+
+    // =================================================
+    // 4. DELIVERY AREA
+    // =================================================
+
+    if (
+        matchingSellerCount > 0 &&
+        outsideRadiusCount === matchingSellerCount
+    ) {
+
+        throw new Error(
+            `No ${brand} seller is currently available within your delivery area.`
+        );
+
+    }
+
+
+    // =================================================
+    // 5. GENERAL
+    // =================================================
+
+    throw new Error(
+        `No ${brand} seller is currently available for ${quantity}.`
+    );
+
 }
+
+
+// =====================================================
+// FINAL DEBUG
+// =====================================================
+
+console.log(
+    "🏆 FINAL BEST SELLER:",
+    {
+        seller:
+            bestSeller.name,
+
+        sellerId:
+            bestSeller.id,
+
+        price:
+            bestSeller.sellerPrice,
+
+        distance:
+            bestSeller.distance,
+
+        rating:
+            bestSeller.averageRating
+    }
+);
+
+
+return bestSeller;
+  
 // =========================================================
 // GET CHEAPEST SELLER
 // PROFESSIONAL SMART ASSIGNMENT
