@@ -2617,65 +2617,48 @@ async function(paymentId) {
                     sellerSnap.data();
 
 
-                // -----------------------------------------
-                // CURRENT SELLER VALUES
-                // -----------------------------------------
+// -----------------------------------------
+// CURRENT SELLER VALUES
+// -----------------------------------------
 
-                const currentBalance =
-                    Number(
-                        seller.commissionBalance || 0
-                    );
-
-
-                const currentDeliveryCount =
-                    Number(
-                        seller.deliveryCount || 0
-                    );
+const currentBalance =
+    Number(
+        seller.commissionBalance ?? 0
+    );
 
 
-                const currentPayments =
-                    Number(
-                        seller.totalCommissionPayments || 0
-                    );
+const currentDeliveryCount =
+    Number(
+        seller.deliveryCount ?? 0
+    );
 
 
-                const amountPaid =
-                    Number(
-                        payment.amount || 0
-                    );
+const currentPayments =
+    Number(
+        seller.totalCommissionPayments ?? 0
+    );
 
 
-                // -----------------------------------------
-                // DEBUG
-                // -----------------------------------------
+const amountPaid =
+    Number(
+        payment.amount ?? 0
+    );
 
-                console.log(
-                    "💰 COMMISSION CONFIRMATION DATA:",
-                    {
 
-                        seller:
-                            seller.name,
+// -----------------------------------------
+// VALIDATE SELLER BALANCE
+// -----------------------------------------
 
-                        paymentId:
-                            paymentId,
+if (
+    !Number.isFinite(currentBalance) ||
+    currentBalance < 0
+) {
 
-                        paymentStatus:
-                            payment.status,
+    throw new Error(
+        "Invalid seller commission balance."
+    );
 
-                        amountPaid:
-                            amountPaid,
-
-                        currentBalance:
-                            currentBalance,
-
-                        currentDeliveryCount:
-                            currentDeliveryCount,
-
-                        currentPayments:
-                            currentPayments
-
-                    }
-                );
+}
 
 
 // -----------------------------------------
@@ -2683,6 +2666,7 @@ async function(paymentId) {
 // -----------------------------------------
 
 if (
+    !Number.isFinite(amountPaid) ||
     amountPaid <= 0
 ) {
 
@@ -2691,6 +2675,60 @@ if (
     );
 
 }
+
+
+// -----------------------------------------
+// PAYMENT CANNOT EXCEED BALANCE
+// -----------------------------------------
+
+if (
+    amountPaid > currentBalance
+) {
+
+    throw new Error(
+        `Payment exceeds outstanding commission balance of KES ${currentBalance}.`
+    );
+
+}
+
+
+// -----------------------------------------
+// NEW BALANCE
+// -----------------------------------------
+
+const newBalance =
+    Math.max(
+        0,
+        currentBalance - amountPaid
+    );
+
+
+// -----------------------------------------
+// FULL PAYMENT?
+// -----------------------------------------
+
+const fullyPaid =
+    newBalance === 0;
+
+
+// -----------------------------------------
+// DELIVERY COUNT
+// -----------------------------------------
+
+const newDeliveryCount =
+    fullyPaid
+        ? 0
+        : currentDeliveryCount;
+
+
+// -----------------------------------------
+// PAYMENT STATUS
+// -----------------------------------------
+
+const newPaymentStatus =
+    fullyPaid
+        ? "Paid"
+        : "Pending";
 
 
 // -----------------------------------------
@@ -2711,52 +2749,54 @@ const newPaymentCount =
     currentPayments + 1;
 
 
-                // -----------------------------------------
-                // UPDATE SELLER
-                // -----------------------------------------
+// -----------------------------------------
+// UPDATE SELLER
+// -----------------------------------------
 
-                transaction.update(
-                    sellerRef,
-                    {
+transaction.update(
+    sellerRef,
+    {
 
-                        commissionBalance:
-                            0,
+        commissionBalance:
+            newBalance,
 
-                        deliveryCount:
-                            0,
+        deliveryCount:
+            newDeliveryCount,
 
-                        paymentStatus:
-                            "Paid",
+        paymentStatus:
+            newPaymentStatus,
 
-                        totalCommissionPayments:
-                            newPaymentCount
+        totalCommissionPayments:
+            newPaymentCount
 
-                    }
-                );
+    }
+);
 
 
-                // -----------------------------------------
-                // UPDATE COMMISSION HISTORY
-                // -----------------------------------------
+// -----------------------------------------
+// UPDATE PAYMENT HISTORY
+// -----------------------------------------
 
-                transaction.update(
-                    paymentRef,
-                    {
+transaction.update(
+    paymentRef,
+    {
 
-                        status:
-                            "Paid",
+        status:
+            fullyPaid
+                ? "Paid"
+                : "Pending",
 
-                        outstandingBalance:
-                            0,
+        outstandingBalance:
+            newBalance,
 
-                        confirmedAt:
-                            serverTimestamp(),
+        confirmedAt:
+            serverTimestamp(),
 
-                        confirmedBy:
-                            adminUid
+        confirmedBy:
+            adminUid
 
-                    }
-                );
+    }
+);
 
 
                 console.log(
