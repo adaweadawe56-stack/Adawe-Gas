@@ -2289,19 +2289,11 @@ async function getBestSeller(
     let bestSeller = null;
 
     let availableSellerCount = 0;
-
-    let brandMatchCount = 0;
-
-    let priceMatchCount = 0;
-
-    let matchingSellerCount = 0;
-
-    let lockedSellerCount = 0;
-
-    let radiusMatchCount = 0;
-
-    let eligibleSellerCount = 0;
-
+let brandMatchCount = 0;
+let matchingSellerCount = 0;
+let lockedSellerCount = 0;
+let outsideRadiusCount = 0;
+let eligibleSellerCount = 0;
 
     // =====================================================
     // CHECK EVERY SELLER
