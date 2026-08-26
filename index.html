@@ -2784,14 +2784,11 @@ const deliveryLimit =
         // =================================================
 
         if (
-            priceMatchCount === 0
-        ) {
-
-            throw new Error(
-                `No ${brand} seller currently has ${quantity} available.`
-            );
-
-        }
+    sellerBrandList.includes(requestedBrand) &&
+    sellerPrice > 0
+) {
+    matchingSellerCount++;
+}
 
 
         // =================================================
