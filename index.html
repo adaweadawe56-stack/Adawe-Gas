@@ -2741,89 +2741,75 @@ const deliveryLimit =
         );
 
 
-        // =================================================
-        // 1. NO AVAILABLE SELLERS
-        // =================================================
-
-        if (
-            availableSellerCount === 0
-        ) {
-
-            throw new Error(
-                "No sellers are currently available."
-            );
-
-        }
-
-
-        // =================================================
-        // 2. BRAND NOT AVAILABLE
-        // =================================================
-
-        if (
-            brandMatchCount === 0
-        ) {
-
-            throw new Error(
-                `No seller currently offers ${brand}.`
-            );
-
-        }
-
-
 // =================================================
-// BRAND + CYLINDER SIZE MATCH
+// 1. NO AVAILABLE SELLERS
 // =================================================
 
 if (
-    sellerBrandList.includes(requestedBrand) &&
-    sellerPrice > 0
+    availableSellerCount === 0
 ) {
-    matchingSellerCount++;
+
+    throw new Error(
+        "No sellers are currently available."
+    );
+
 }
 
 
-        // =================================================
-        // 4. ALL MATCHING SELLERS LOCKED
-        // =================================================
+// =================================================
+// 2. BRAND NOT AVAILABLE
+// =================================================
 
-        if (
-            matchingSellerCount > 0 &&
-            lockedSellerCount ===
-                matchingSellerCount
-        ) {
+if (
+    brandMatchCount === 0
+) {
 
-            throw new Error(
-                `All ${brand} sellers have reached their delivery limits.`
-            );
+    throw new Error(
+        `No seller currently offers ${brand}.`
+    );
 
-        }
+}
 
 
-        // =================================================
-        // 5. DELIVERY AREA
-        // =================================================
+// =================================================
+// 3. ALL MATCHING SELLERS LOCKED
+// =================================================
 
-        if (
-            radiusMatchCount === 0
-        ) {
+if (
+    matchingSellerCount > 0 &&
+    lockedSellerCount === matchingSellerCount
+) {
 
-            throw new Error(
-                `No ${brand} seller is currently available within your delivery area.`
-            );
+    throw new Error(
+        `All ${brand} sellers have reached their delivery limits.`
+    );
 
-        }
+}
 
 
-        // =================================================
-        // 6. GENERAL
-        // =================================================
+// =================================================
+// 4. DELIVERY AREA
+// =================================================
 
-        throw new Error(
-            `No ${brand} seller is currently available for ${quantity}.`
-        );
+if (
+    outsideRadiusCount === matchingSellerCount &&
+    matchingSellerCount > 0
+) {
 
-    }
+    throw new Error(
+        `No ${brand} seller is currently available within your delivery area.`
+    );
+
+}
+
+
+// =================================================
+// 5. GENERAL
+// =================================================
+
+throw new Error(
+    `No ${brand} seller is currently available for ${quantity}.`
+);
 
 
     // =====================================================
