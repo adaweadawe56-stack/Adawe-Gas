@@ -2363,10 +2363,17 @@ let eligibleSellerCount = 0;
         }
 
 
-       const deliveryCount =
+const sellerPrice =
+    Number(
+        seller.prices?.[quantity] ?? 0
+    );
+
+
+const deliveryCount =
     Number(
         seller.deliveryCount ?? 0
     );
+
 
 const deliveryLimit =
     Number(
@@ -2379,7 +2386,9 @@ if (
     sellerBrandList.includes(requestedBrand) &&
     sellerPrice > 0
 ) {
+
     matchingSellerCount++;
+
 }
 
 
@@ -2389,13 +2398,13 @@ if (
     sellerPrice > 0 &&
     deliveryCount >= deliveryLimit
 ) {
+
     lockedSellerCount++;
+
 }
-
-
-        // =================================================
-        // PROFESSIONAL ELIGIBILITY ENGINE
-        // =================================================
+ // =================================================
+// PROFESSIONAL ELIGIBILITY ENGINE
+// =================================================
 
         const eligibility =
             checkSellerEligibility(
