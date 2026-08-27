@@ -4557,12 +4557,12 @@ if (
         // =================================================
 
         const seller =
-            await getBestSeller(
-                quantity,
-                brand,
-                Number(customerLatitude),
-                Number(customerLongitude)
-            );
+    await getBestSeller(
+        quantity,
+        brand,
+        Number(currentCustomerLatitude),
+        Number(currentCustomerLongitude)
+    );
 
 
         if (!seller) {
