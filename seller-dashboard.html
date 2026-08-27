@@ -1706,15 +1706,14 @@ async function findNextSellerForReassignment(
         // =================================================
 
         const deliveryCount =
-            Number(
-                seller.deliveryCount || 0
-            );
+    Number(
+        seller.deliveryCount ?? 0
+    );
 
-
-        const deliveryLimit =
-            Number(
-                seller.deliveryLimit || 999999
-            );
+const deliveryLimit =
+    Number(
+        seller.deliveryLimit ?? 3
+    );
 
 
         if (
