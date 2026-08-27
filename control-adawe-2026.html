@@ -2828,11 +2828,11 @@ transaction.update(
         );
 
 
-       alert(
-    "✅ Payment confirmed. Seller unlocked."
+alert(
+    paymentFullyPaid
+        ? "✅ Payment confirmed. Seller unlocked."
+        : "✅ Partial payment confirmed. Seller remains locked until fully paid."
 );
-
-
     } catch (error) {
 
         console.error(
