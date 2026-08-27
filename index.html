@@ -2452,28 +2452,28 @@ if (
 
             // Radius debug counter
             if (
-                eligibility.reason ===
-                "OUTSIDE_DELIVERY_RADIUS"
-            ) {
+    eligibility.reason ===
+    "OUTSIDE_DELIVERY_RADIUS"
+) {
 
-                console.log(
-                    "📍 OUTSIDE RADIUS:",
-                    {
-                        seller:
-                            seller.name,
+    outsideRadiusCount++;
 
-                        distance:
-                            eligibility.distance,
+    console.log(
+        "📍 OUTSIDE RADIUS:",
+        {
+            seller:
+                seller.name,
 
-                        radius:
-                            eligibility.deliveryRadiusKm
-                    }
-                );
+            distance:
+                eligibility.distance,
 
-            }
+            radius:
+                eligibility.deliveryRadiusKm
+        }
+    );
 
-
-            return;
+}
+ return;
         }
 
 
