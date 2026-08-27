@@ -2823,8 +2823,8 @@ return bestSeller;
 async function getCheapestSeller(
     quantity,
     brand,
-    customerLatitude,
-    customerLongitude
+    currentCustomerLatitude,
+    currentCustomerLongitude
 ) {
 
     // =====================================================
@@ -2832,21 +2832,19 @@ async function getCheapestSeller(
     // =====================================================
 
     const customerLat =
-        Number(customerLatitude);
+    Number(currentCustomerLatitude);
 
-    const customerLng =
-        Number(customerLongitude);
+const customerLng =
+    Number(currentCustomerLongitude);
 
-
-    if (
-        !Number.isFinite(customerLat) ||
-        !Number.isFinite(customerLng)
-    ) {
-
-        throw new Error(
-            "Customer GPS location is invalid."
-        );
-    }
+if (
+    !Number.isFinite(customerLat) ||
+    !Number.isFinite(customerLng)
+) {
+    throw new Error(
+        "Customer GPS location is invalid."
+    );
+}
 
 
     // =====================================================
