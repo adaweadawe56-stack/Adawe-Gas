@@ -4327,10 +4327,9 @@ function useCustomerLocation(position) {
             "meters"
         );
 
-        customerLatitude = null;
-        customerLongitude = null;
-
-        window.customerGPSAccuracy = null;
+currentCustomerLatitude = null;
+currentCustomerLongitude = null;
+window.customerGPSAccuracy = null;
 
         showToast(
             "📍 GPS accuracy is too low. Please turn on GPS and try again.",
@@ -4345,12 +4344,11 @@ function useCustomerLocation(position) {
     // SAVE CUSTOMER GPS
     // =================================================
 
-    customerLatitude =
-        latitude;
+    currentCustomerLatitude =
+    latitude;
 
-    customerLongitude =
-        longitude;
-
+currentCustomerLongitude =
+    longitude;
 
     // =================================================
     // SAVE GPS ACCURACY
@@ -4368,10 +4366,10 @@ function useCustomerLocation(position) {
         "✅ FINAL CUSTOMER LOCATION",
         {
             latitude:
-                customerLatitude,
+    currentCustomerLatitude,
 
-            longitude:
-                customerLongitude,
+longitude:
+    currentCustomerLongitude,
 
             accuracy:
                 accuracy
