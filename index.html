@@ -4500,12 +4500,12 @@ async function showRecommendedSeller() {
     // CUSTOMER GPS REQUIRED
     // =====================================================
 
-    if (
-        customerLatitude === null ||
-        customerLongitude === null ||
-        !Number.isFinite(Number(customerLatitude)) ||
-        !Number.isFinite(Number(customerLongitude))
-    ) {
+if (
+    currentCustomerLatitude === null ||
+    currentCustomerLongitude === null ||
+    !Number.isFinite(Number(currentCustomerLatitude)) ||
+    !Number.isFinite(Number(currentCustomerLongitude))
+) {
 
         recommendedSeller.style.display = "block";
 
