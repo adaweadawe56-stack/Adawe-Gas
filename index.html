@@ -2451,27 +2451,20 @@ if (
 
 
             // Radius debug counter
-            if (
+           if (
     eligibility.reason ===
     "OUTSIDE_DELIVERY_RADIUS"
 ) {
-
     outsideRadiusCount++;
 
     console.log(
         "📍 OUTSIDE RADIUS:",
         {
-            seller:
-                seller.name,
-
-            distance:
-                eligibility.distance,
-
-            radius:
-                eligibility.deliveryRadiusKm
+            seller: seller.name,
+            distance: eligibility.distance,
+            radius: eligibility.deliveryRadiusKm
         }
     );
-
 }
  return;
         }
