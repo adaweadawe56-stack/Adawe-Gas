@@ -2832,19 +2832,19 @@ async function getCheapestSeller(
     // =====================================================
 
     const customerLat =
-    Number(currentCustomerLatitude);
+        Number(currentCustomerLatitude);
 
-const customerLng =
-    Number(currentCustomerLongitude);
+    const customerLng =
+        Number(currentCustomerLongitude);
 
-if (
-    !Number.isFinite(customerLat) ||
-    !Number.isFinite(customerLng)
-) {
-    throw new Error(
-        "Customer GPS location is invalid."
-    );
-}
+    if (
+        !Number.isFinite(customerLat) ||
+        !Number.isFinite(customerLng)
+    ) {
+        throw new Error(
+            "Customer GPS location is invalid."
+        );
+    }
 
 
     // =====================================================
