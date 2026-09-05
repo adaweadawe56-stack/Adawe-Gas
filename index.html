@@ -4451,6 +4451,8 @@ longitude:
 
 async function showRecommendedSeller() {
 
+    console.log("🚀 showRecommendedSeller() STARTED");
+   
     const recommendedSeller =
         document.getElementById("recommendedSeller");
 
@@ -4468,7 +4470,11 @@ async function showRecommendedSeller() {
 
     const brand =
         document.getElementById("brand").value;
-
+  
+console.log("✅ Quantity + Brand loaded:", {
+    quantity,
+    brand
+});
 
     // =====================================================
     // RESET
