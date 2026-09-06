@@ -4921,10 +4921,10 @@ const customerAccuracy =
 
 
 if (
-    customerLatitude === null ||
-    customerLongitude === null ||
-    !Number.isFinite(Number(customerLatitude)) ||
-    !Number.isFinite(Number(customerLongitude))
+    currentCustomerLatitude === null ||
+    currentCustomerLongitude === null ||
+    !Number.isFinite(Number(currentCustomerLatitude)) ||
+    !Number.isFinite(Number(currentCustomerLongitude))
 ) {
 
     throw new Error(
