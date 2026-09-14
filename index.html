@@ -4834,13 +4834,13 @@ orderForm.addEventListener("submit", async (e) => {
 
   e.preventDefault();
   
+if (submitting) return;
+
+submitting = true;
+
 document.getElementById("submitOrderBtn").disabled = true;
 
-    document.getElementById("orderLoading").style.display = "block";
-  
-  if (submitting) return;
-
-  submitting = true;
+document.getElementById("orderLoading").style.display = "block";
 
   orderButton.disabled = true;
 
