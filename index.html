@@ -4995,7 +4995,6 @@ if (!sellerData.uid) {
 
 }
 
-
 if (!sellerWhatsapp) {
 
     throw new Error(
@@ -5004,22 +5003,36 @@ if (!sellerWhatsapp) {
 
 }
 
-
 if (orderPrice <= 0) {
 
     throw new Error(
         "Seller price is invalid."
     );
-
 }
 
-console.log("Customer Latitude:", customerLatitude);
-console.log("Customer Longitude:", customerLongitude);
+
+// =================================================
+// CUSTOMER GPS DEBUG
+// =================================================
+
+console.log(
+    "Customer Latitude:",
+    currentCustomerLatitude
+);
+
+console.log(
+    "Customer Longitude:",
+    currentCustomerLongitude
+);
 
 console.log({
-    customerLatitude,
-    customerLongitude
+    customerLatitude:
+        currentCustomerLatitude,
+
+    customerLongitude:
+        currentCustomerLongitude
 });
+
 
 const orderData = {
 
@@ -5056,51 +5069,35 @@ const orderData = {
         Number(sellerData.sellerLongitude),
 
     customerLatitude:
-        customerLatitude != null
-            ? Number(customerLatitude)
+        currentCustomerLatitude != null
+            ? Number(currentCustomerLatitude)
             : null,
 
     customerLongitude:
-        customerLongitude != null
-            ? Number(customerLongitude)
+        currentCustomerLongitude != null
+            ? Number(currentCustomerLongitude)
             : null,
 
-customerGPSAccuracy:
-    Number(
-        window.customerGPSAccuracy || 0
-    ),
-  
-    // =================================================
-    // ORDER STATUS
-    // =================================================
+    customerGPSAccuracy:
+        Number(
+            window.customerGPSAccuracy || 0
+        ),
 
     status: "Pending",
 
-    // =================================================
-// ASSIGNMENT / REASSIGNMENT
-// =================================================
+    assignmentAttempts: 1,
 
-assignmentAttempts: 1,
+    reassignmentCount: 0,
 
-reassignmentCount: 0,
+    rejectionCode: null,
 
-// =================================================
-// REJECTION
-// =================================================
+    rejectionReason: null,
 
-rejectionCode: null,
+    rejectedBySellerId: null,
 
-rejectionReason: null,
+    rejectedAt: null,
 
-rejectedBySellerId: null,
-
-rejectedAt: null,
-
-rejectionHistory: [],
-  
-    // =================================================
-    // TIMESTAMPS
-    // =================================================
+    rejectionHistory: [],
 
     createdAt:
         serverTimestamp(),
@@ -5113,10 +5110,6 @@ rejectionHistory: [],
     onTheWayAt: null,
 
     deliveredAt: null,
-
-    // =================================================
-    // RATING
-    // =================================================
 
     rating: null,
 
