@@ -656,7 +656,6 @@ window.cancelCustomerOrder = function(orderId) {
   confirmStep.style.display = "none";
 
   noteBox.style.display = "none";
-
   note.value = "";
 
   continueBtn.disabled = true;
@@ -684,13 +683,9 @@ window.selectCancelReason = function(button, reason) {
     document.getElementById("cancelContinueBtn");
 
   if (reason === "Other") {
-
     noteBox.style.display = "block";
-
   } else {
-
     noteBox.style.display = "none";
-
   }
 
   continueBtn.disabled = false;
@@ -743,18 +738,20 @@ window.backToCancelReasons = function() {
 
 };
 
-window.cancelCustomerOrder = async function(orderId) {
 
-  if (!orderId) {
+/* ============================= */
+/* CONFIRM CANCELLATION */
+/* ============================= */
+
+window.confirmCustomerCancellation = async function() {
+
+  if (!selectedCancelOrderId) {
     alert("Order ID is missing.");
     return;
   }
 
-  const confirmCancel = confirm(
-    "Are you sure you want to cancel this order?"
-  );
-
-  if (!confirmCancel) {
+  if (!selectedCancelReason) {
+    alert("Please select a cancellation reason.");
     return;
   }
 
@@ -762,7 +759,7 @@ window.cancelCustomerOrder = async function(orderId) {
 
     const q = query(
       collection(db, "orders"),
-      where("orderId", "==", orderId)
+      where("orderId", "==", selectedCancelOrderId)
     );
 
     const snap = await getDocs(q);
@@ -782,6 +779,8 @@ window.cancelCustomerOrder = async function(orderId) {
       alert(
         "This order can no longer be cancelled."
       );
+
+      closeCancelModal();
       return;
     }
 
@@ -789,23 +788,39 @@ window.cancelCustomerOrder = async function(orderId) {
       doc(db, "orders", orderDoc.id),
       {
         status: "Cancelled",
-        cancelledAt: serverTimestamp(),
-        cancelledBy: "customer"
+        cancellationReason: selectedCancelReason,
+        cancellationNote: selectedCancelNote,
+        cancelledBy: "customer",
+        cancelledAt: serverTimestamp()
       }
     );
+
+    closeCancelModal();
 
     alert("✅ Order cancelled successfully.");
 
   } catch (err) {
 
-    console.error("Cancel Order Error:", err);
-    console.error("Error code:", err.code);
-    console.error("Error message:", err.message);
+    console.error(
+      "Cancel Order Error:",
+      err
+    );
+
+    console.error(
+      "Error code:",
+      err.code
+    );
+
+    console.error(
+      "Error message:",
+      err.message
+    );
 
     alert(
-      "Cancel Order Error: " + err.message
+      "Unable to cancel order. Please try again."
     );
   }
+
 };
 
 async function loadHistory(phone){
