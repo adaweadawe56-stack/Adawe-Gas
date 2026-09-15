@@ -456,7 +456,20 @@ if (data.status === "Rejected") {
     ❌ <strong>Order Rejected.</strong>
   </div>`;
 }
+let cancelButton = "";
 
+if (
+  data.status === "Pending" ||
+  data.status === "Accepted"
+) {
+  cancelButton = `
+    <button
+      onclick="cancelCustomerOrder('${data.orderId}')"
+      class="btn btn-danger mt-3">
+      ❌ Cancel Order
+    </button>
+  `;
+}
     orderStatus.innerHTML = `
       <div class="card p-3 mt-3">
 
@@ -487,9 +500,8 @@ if (data.status === "Rejected") {
   </span>
 
 </p>
-
 ${statusMessage}
-
+${cancelButton}
 ${data.status === "Accepted" ||
 data.status === "On The Way" ||
 data.status === "Delivered"
