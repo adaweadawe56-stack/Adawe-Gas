@@ -609,7 +609,7 @@ if(id){
   trackBtn.click();
   }
 
-async function cancelCustomerOrder(orderId) {
+window.cancelCustomerOrder = async function(orderId) {
 
   if (!orderId) {
     alert("Order ID is missing.");
@@ -672,7 +672,7 @@ async function cancelCustomerOrder(orderId) {
       "Cancel Order Error: " + err.message
     );
   }
-}
+};
 
 async function loadHistory(phone){
 
