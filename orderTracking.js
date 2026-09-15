@@ -609,6 +609,140 @@ if(id){
   trackBtn.click();
   }
 
+/* ============================= */
+/* PROFESSIONAL CANCELLATION UI */
+/* ============================= */
+
+let selectedCancelReason = "";
+let selectedCancelNote = "";
+let selectedCancelOrderId = "";
+
+window.cancelCustomerOrder = function(orderId) {
+
+  if (!orderId) {
+    alert("Order ID is missing.");
+    return;
+  }
+
+  selectedCancelOrderId = orderId;
+  selectedCancelReason = "";
+  selectedCancelNote = "";
+
+  const overlay =
+    document.getElementById("cancelModalOverlay");
+
+  const reasonStep =
+    document.getElementById("cancelReasonStep");
+
+  const confirmStep =
+    document.getElementById("cancelConfirmStep");
+
+  const continueBtn =
+    document.getElementById("cancelContinueBtn");
+
+  const noteBox =
+    document.getElementById("cancelNoteBox");
+
+  const note =
+    document.getElementById("cancelNote");
+
+  document
+    .querySelectorAll(".cancel-option")
+    .forEach(option => {
+      option.classList.remove("selected");
+    });
+
+  reasonStep.style.display = "block";
+  confirmStep.style.display = "none";
+
+  noteBox.style.display = "none";
+
+  note.value = "";
+
+  continueBtn.disabled = true;
+
+  overlay.style.display = "flex";
+};
+
+
+window.selectCancelReason = function(button, reason) {
+
+  selectedCancelReason = reason;
+
+  document
+    .querySelectorAll(".cancel-option")
+    .forEach(option => {
+      option.classList.remove("selected");
+    });
+
+  button.classList.add("selected");
+
+  const noteBox =
+    document.getElementById("cancelNoteBox");
+
+  const continueBtn =
+    document.getElementById("cancelContinueBtn");
+
+  if (reason === "Other") {
+
+    noteBox.style.display = "block";
+
+  } else {
+
+    noteBox.style.display = "none";
+
+  }
+
+  continueBtn.disabled = false;
+};
+
+
+window.closeCancelModal = function() {
+
+  document.getElementById(
+    "cancelModalOverlay"
+  ).style.display = "none";
+
+};
+
+
+window.showCancelConfirmation = function() {
+
+  if (!selectedCancelReason) {
+    return;
+  }
+
+  selectedCancelNote =
+    document.getElementById("cancelNote")?.value.trim() || "";
+
+  document.getElementById(
+    "cancelReasonStep"
+  ).style.display = "none";
+
+  document.getElementById(
+    "cancelConfirmStep"
+  ).style.display = "block";
+
+  document.getElementById(
+    "selectedCancelReason"
+  ).innerText =
+    "Reason: " + selectedCancelReason;
+
+};
+
+
+window.backToCancelReasons = function() {
+
+  document.getElementById(
+    "cancelConfirmStep"
+  ).style.display = "none";
+
+  document.getElementById(
+    "cancelReasonStep"
+  ).style.display = "block";
+
+};
+
 window.cancelCustomerOrder = async function(orderId) {
 
   if (!orderId) {
