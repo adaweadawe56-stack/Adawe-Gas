@@ -609,6 +609,71 @@ if(id){
   trackBtn.click();
   }
 
+async function cancelCustomerOrder(orderId) {
+
+  if (!orderId) {
+    alert("Order ID is missing.");
+    return;
+  }
+
+  const confirmCancel = confirm(
+    "Are you sure you want to cancel this order?"
+  );
+
+  if (!confirmCancel) {
+    return;
+  }
+
+  try {
+
+    const q = query(
+      collection(db, "orders"),
+      where("orderId", "==", orderId)
+    );
+
+    const snap = await getDocs(q);
+
+    if (snap.empty) {
+      alert("Order not found.");
+      return;
+    }
+
+    const orderDoc = snap.docs[0];
+    const orderData = orderDoc.data();
+
+    if (
+      orderData.status !== "Pending" &&
+      orderData.status !== "Accepted"
+    ) {
+      alert(
+        "This order can no longer be cancelled."
+      );
+      return;
+    }
+
+    await updateDoc(
+      doc(db, "orders", orderDoc.id),
+      {
+        status: "Cancelled",
+        cancelledAt: serverTimestamp(),
+        cancelledBy: "customer"
+      }
+    );
+
+    alert("✅ Order cancelled successfully.");
+
+  } catch (err) {
+
+    console.error("Cancel Order Error:", err);
+    console.error("Error code:", err.code);
+    console.error("Error message:", err.message);
+
+    alert(
+      "Cancel Order Error: " + err.message
+    );
+  }
+}
+
 async function loadHistory(phone){
 
     phone = formatKenyaPhone(phone);
