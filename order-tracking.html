@@ -282,6 +282,217 @@ Load History
 
 <div id="historyResults"></div>
 
+<!-- CANCELLATION MODAL -->
+
+<div id="cancelModalOverlay" class="cancel-modal-overlay">
+
+  <div class="cancel-modal">
+
+    <!-- STEP 1 -->
+
+    <div id="cancelReasonStep">
+
+      <div class="cancel-header">
+
+        <h3>Why are you cancelling?</h3>
+
+        <button
+          class="cancel-close"
+          onclick="closeCancelModal()">
+          ×
+        </button>
+
+      </div>
+
+      <div class="cancel-subtitle">
+        Please select a reason for cancelling your order.
+      </div>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'I ordered by mistake')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>I ordered by mistake</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'I found a better price')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>I found a better price</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Seller is taking too long')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Seller is taking too long</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'I no longer need the gas')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>I no longer need the gas</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Wrong gas size or brand')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Wrong gas size or brand</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Wrong delivery location')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Wrong delivery location</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Seller asked me to cancel')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Seller asked me to cancel</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Seller asked me to pay outside Adawe')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Seller asked me to pay outside Adawe</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Price dispute with seller')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Price dispute with seller</span>
+        </span>
+
+      </button>
+
+      <button
+        class="cancel-option"
+        onclick="selectCancelReason(this, 'Other')">
+
+        <span class="cancel-option-left">
+          <span class="cancel-radio"></span>
+          <span>Other</span>
+        </span>
+
+        <span class="cancel-arrow">›</span>
+
+      </button>
+
+      <div id="cancelNoteBox" class="cancel-note-box">
+
+        <label>
+          <strong>Tell us more</strong>
+          <small>(optional)</small>
+        </label>
+
+        <textarea
+          id="cancelNote"
+          placeholder="Please tell us what went wrong...">
+        </textarea>
+
+      </div>
+
+      <button
+        id="cancelContinueBtn"
+        class="cancel-continue"
+        disabled
+        onclick="showCancelConfirmation()">
+
+        Continue
+
+      </button>
+
+    </div>
+
+
+    <!-- STEP 2 -->
+
+    <div id="cancelConfirmStep"
+         class="confirm-modal">
+
+      <div class="confirm-icon">
+        ⚠️
+      </div>
+
+      <h3>Cancel this order?</h3>
+
+      <p>
+        Are you sure you want to cancel this order?
+        This action cannot be undone.
+      </p>
+
+      <div id="selectedCancelReason"
+           class="alert alert-light">
+      </div>
+
+      <div class="confirm-buttons">
+
+        <button
+          class="keep-order-btn"
+          onclick="backToCancelReasons()">
+
+          Keep Order
+
+        </button>
+
+        <button
+          class="confirm-cancel-btn"
+          onclick="confirmCustomerCancellation()">
+
+          Cancel Order
+
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
+  
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 
 <script src="https://unpkg.com/leaflet-routing-machine@3.2.12/dist/leaflet-routing-machine.js"></script>
