@@ -2300,106 +2300,84 @@ window.updateStatus = async function(
 
 else if (status === "Rejected") {
 
-    // -----------------------------------------
-    // CURRENT REJECTED SELLER
-    // -----------------------------------------
+    console.log("🚫 REJECTING ORDER:", id);
 
+    /*
+     * Current seller who rejected the order
+     */
     const rejectedSellerId =
         sellerDocId;
 
-
+    /*
+     * Current seller name
+     */
     const rejectedSellerName =
         data.sellerName || "";
 
-
-    // -----------------------------------------
-    // CURRENT REJECTION HISTORY
-    // -----------------------------------------
-
-    const currentRejectionHistory =
+    /*
+     * Existing rejection history
+     */
+    const existingRejectionHistory =
         Array.isArray(data.rejectionHistory)
             ? data.rejectionHistory
             : [];
 
-
-    // -----------------------------------------
-    // CREATE REJECTION RECORD
-    // -----------------------------------------
-
-    const rejectionRecord = {
-
-        sellerId:
-            rejectedSellerId,
-
-        sellerName:
-            rejectedSellerName,
-
-        rejectionCode:
-            rejectionCode || "OTHER",
-
-        rejectionReason:
-            rejectionReason || "",
-
-        rejectedAt:
-            new Date().toISOString()
-
-    };
-
-
-    // -----------------------------------------
-    // ADD CURRENT SELLER TO HISTORY
-    // -----------------------------------------
-
+    /*
+     * Add current seller to rejection history
+     */
     const newRejectionHistory = [
+        ...existingRejectionHistory,
+        {
+            sellerId:
+                rejectedSellerId,
 
-        ...currentRejectionHistory,
+            sellerUid:
+                sellerUid,
 
-        rejectionRecord
+            sellerName:
+                rejectedSellerName,
 
+            rejectionCode:
+                rejectionCode || "OTHER",
+
+            rejectionReason:
+                rejectionReason || "",
+
+            rejectedAt:
+                new Date().toISOString()
+        }
     ];
 
-
-    // -----------------------------------------
-    // CURRENT COUNTERS
-    // -----------------------------------------
-
-    const currentReassignmentCount =
-        Number(
-            data.reassignmentCount || 0
-        );
-
-
-    const currentAssignmentAttempts =
-        Number(
-            data.assignmentAttempts || 1
-        );
-
-
-    // =========================================
-    // FIND NEXT SELLER
-    // =========================================
-
-const nextSeller =
-    await findNextSellerForReassignment(
-        data,
-        rejectedSellerId,
+    console.log(
+        "📝 UPDATED REJECTION HISTORY:",
         newRejectionHistory
     );
 
-const rejectionHistory =
-    newRejectionHistory;
+    /*
+     * Find another eligible seller
+     */
+    const nextSeller =
+        await findNextSellerForReassignment(
+            data,
+            rejectedSellerId,
+            newRejectionHistory
+        );
 
-
-    // =========================================
-    // NO SELLER
-    // =========================================
+    /*
+     * =========================================
+     * NO SELLER FOUND
+     * =========================================
+     */
 
     if (!nextSeller) {
+
+        console.log(
+            "❌ NO NEXT SELLER — ORDER REMAINS REJECTED"
+        );
 
         await updateDoc(
             orderRef,
             {
-
                 status:
                     "Rejected",
 
@@ -2409,76 +2387,70 @@ const rejectionHistory =
                 rejectionReason:
                     rejectionReason || "",
 
+                rejectedBySellerUid:
+                    sellerUid,
+
                 rejectedBySellerId:
                     rejectedSellerId,
+
+                rejectionHistory:
+                    newRejectionHistory,
 
                 rejectedAt:
                     serverTimestamp(),
 
-                rejectionHistory:
-                    rejectionHistory,
+                reassignmentStatus:
+                    "No Eligible Seller",
 
-                reassignmentCount:
-                    currentReassignmentCount,
-
-                assignmentAttempts:
-                    currentAssignmentAttempts
-
+                updatedAt:
+                    serverTimestamp()
             }
         );
 
-
-        console.log(
-            "⚠️ No eligible seller available."
+        alert(
+            "Order rejected. No other eligible seller was found."
         );
 
+        return;
     }
 
+    /*
+     * =========================================
+     * NEXT SELLER FOUND
+     * =========================================
+     */
 
-    // =========================================
-    // NEXT SELLER FOUND
-    // =========================================
+    console.log(
+        "🔄 REASSIGNING ORDER TO:",
+        nextSeller.name
+    );
 
-   else {
-
-    const nextSellerPhone =
-        nextSeller.phone?.trim();
-
-    if (!nextSellerPhone) {
-        throw new Error(
-            "Next seller phone number is missing."
-        );
-    }
-
-
-    // =====================================
-    // UPDATE ORDER
-    // =====================================
+    /*
+     * =========================================
+     * UPDATE ORDER
+     * =========================================
+     */
 
     await updateDoc(
         orderRef,
         {
-            status: "Pending",
+            status:
+                "Pending",
+
+            sellerUid:
+                nextSeller.uid,
 
             sellerId:
                 nextSeller.id,
 
             sellerName:
-                nextSeller.name,
+                nextSeller.name || "",
 
             sellerPhone:
-                nextSeller.phone,
-
-            sellerUid:
-                nextSeller.uid,
+                nextSeller.phone || "",
 
             sellerLocation:
                 nextSeller.location || "",
-
-            price:
-                Number(
-                    nextSeller.sellerPrice || 0
-                ),
 
             sellerLatitude:
                 Number(
@@ -2490,104 +2462,153 @@ const rejectionHistory =
                     nextSeller.sellerLongitude
                 ),
 
+            price:
+                Number(
+                    nextSeller.sellerPrice || 0
+                ),
+
             rejectionCode:
                 rejectionCode || "OTHER",
 
             rejectionReason:
                 rejectionReason || "",
 
+            rejectedBySellerUid:
+                sellerUid,
+
             rejectedBySellerId:
                 rejectedSellerId,
 
-            rejectedAt:
+            rejectionHistory:
+                newRejectionHistory,
+
+            reassignmentStatus:
+                "Reassigned",
+
+            reassignedAt:
                 serverTimestamp(),
 
-            rejectionHistory:
-                rejectionHistory,
-
             reassignmentCount:
-                currentReassignmentCount + 1,
+                Number(
+                    data.reassignmentCount || 0
+                ) + 1,
 
             assignmentAttempts:
-                currentAssignmentAttempts + 1,
+                Number(
+                    data.assignmentAttempts || 1
+                ) + 1,
 
             assignedAt:
+                serverTimestamp(),
+
+            updatedAt:
                 serverTimestamp()
         }
     );
 
-
-    // =====================================
-    // LOG
-    // =====================================
+    /*
+     * =========================================
+     * LOG
+     * =========================================
+     */
 
     console.log(
-        "🔄 ORDER REASSIGNED:",
+        "✅ ORDER REASSIGNED SUCCESSFULLY:",
         {
             orderId:
                 data.orderId || id,
 
-            previousSeller:
+            oldSeller:
+                rejectedSellerName,
+
+            oldSellerId:
                 rejectedSellerId,
 
             newSeller:
-                nextSeller.id,
-
-            newSellerName:
                 nextSeller.name,
 
+            newSellerId:
+                nextSeller.id,
+
+            newSellerUid:
+                nextSeller.uid,
+
             rejectionHistory:
-                rejectionHistory
+                newRejectionHistory
         }
     );
 
+    /*
+     * =========================================
+     * WHATSAPP NEXT SELLER
+     * =========================================
+     */
 
-    // =====================================
-    // WHATSAPP NEXT SELLER
-    // =====================================
+    const customerName =
+        data.name || "Customer";
+
+    const quantity =
+        data.quantity || "";
+
+    const location =
+        data.location || "";
+
+    const brand =
+        data.brand || "";
 
     const message =
-`🔥 NEW LPG ORDER
+        `🔔 *New Adawe Gas Order*\n\n` +
+        `Order ID: ${data.orderId || id}\n` +
+        `Customer: ${customerName}\n` +
+        `Phone: ${data.phone || ""}\n` +
+        `Gas: ${quantity}\n` +
+        `Brand: ${brand}\n` +
+        `Location: ${location}\n` +
+        `Price: KES ${Number(
+            nextSeller.sellerPrice || 0
+        ).toLocaleString()}\n\n` +
+        `Please open Seller Dashboard to accept the order.`;
 
-Order ID: ${data.orderId || id}
+    const sellerPhone =
+        String(
+            nextSeller.phone || ""
+        ).replace(/\D/g, "");
 
-Customer: ${data.name || ""}
+    if (sellerPhone) {
 
-Phone: ${data.phone || ""}
+        let whatsappPhone =
+            sellerPhone;
 
-Location:
-${data.location || ""}
+        if (
+            whatsappPhone.startsWith("0")
+        ) {
+            whatsappPhone =
+                "254" +
+                whatsappPhone.substring(1);
+        }
 
-Gas Brand: ${data.brand || ""}
+        const whatsappUrl =
+            `https://wa.me/${whatsappPhone}?text=` +
+            encodeURIComponent(message);
 
-Quantity: ${data.quantity || ""}
+        console.log(
+            "📱 NEXT SELLER WHATSAPP:",
+            whatsappUrl
+        );
 
-Price: KES ${Number(
-    nextSeller.sellerPrice || 0
-).toLocaleString()}
+        window.open(
+            whatsappUrl,
+            "_blank"
+        );
+    }
 
-Status: Pending
-
-⚠️ This order was reassigned to you after another seller rejected it.`;
-
-
-   const whatsappUrl =
-    `https://wa.me/${nextSellerPhone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
-
-    console.log(
-        "📱 NEXT SELLER WHATSAPP:",
-        whatsappUrl
+    alert(
+        `✅ Order reassigned to ${nextSeller.name}.`
     );
 
-
-    window.open(
-        whatsappUrl,
-        "_blank"
-    );
-
+    return;
 }
 
-}
 
         // =============================================
         // OTHER STATUS
