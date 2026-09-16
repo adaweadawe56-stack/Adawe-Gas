@@ -1471,80 +1471,39 @@ async function findNextSellerForReassignment(
     existingRejectionHistory = null
 ) {
 
-    console.log(
-        "🔄 FINDING NEXT SELLER:",
-        {
-            orderId:
-                orderData.orderId,
+    const rejectionHistory =
+        Array.isArray(existingRejectionHistory)
+            ? existingRejectionHistory
+            : [];
 
-            rejectedSellerId:
-                rejectedSellerId,
-
-            rejectionHistory:
-                rejectionHistory,
-
-            brand:
-                orderData.brand,
-
-            quantity:
-                orderData.quantity
-        }
-    );
-
-
-    // =====================================================
-    // GET APPROVED SELLERS
-    // =====================================================
+    console.log("🔄 FINDING NEXT SELLER:", {
+        orderId: orderData.orderId,
+        rejectedSellerId: rejectedSellerId,
+        rejectionHistory: rejectionHistory,
+        brand: orderData.brand,
+        quantity: orderData.quantity
+    });
 
     const q = query(
         collection(db, "sellers"),
-        where(
-            "status",
-            "==",
-            "approved"
-        )
+        where("status", "==", "approved")
     );
 
-
-    const snap =
-        await getDocs(q);
-
+    const snap = await getDocs(q);
 
     if (snap.empty) {
-
-        console.log(
-            "❌ No approved sellers found."
-        );
-
+        console.log("❌ No approved sellers found.");
         return null;
     }
 
-
-    // =====================================================
-    // CANDIDATES
-    // =====================================================
-
     const candidates = [];
-
-
-    // =====================================================
-    // CHECK EVERY SELLER
-    // =====================================================
 
     snap.forEach(docSnap => {
 
-        const seller =
-            docSnap.data();
+        const seller = docSnap.data();
+        const sellerId = docSnap.id;
 
-
-        const sellerId =
-            docSnap.id;
-
-
-        // =================================================
-        // ALREADY REJECTED THIS ORDER
-        // =================================================
-
+        /* DO NOT SEND BACK TO A SELLER WHO ALREADY REJECTED */
         const alreadyRejected =
             rejectionHistory.some(
                 rejection =>
@@ -1552,43 +1511,23 @@ async function findNextSellerForReassignment(
                     rejection.sellerId === sellerId
             );
 
-
         if (alreadyRejected) {
 
-            console.log(
-                "⛔ SELLER ALREADY REJECTED:",
-                {
-                    sellerId:
-                        sellerId,
-
-                    sellerName:
-                        seller.name
-                }
-            );
+            console.log("⛔ SELLER ALREADY REJECTED:", {
+                sellerId: sellerId,
+                sellerName: seller.name
+            });
 
             return;
         }
 
-
-        // =================================================
-        // DO NOT REASSIGN TO CURRENT SELLER
-        // =================================================
-
-        if (
-            sellerId === rejectedSellerId
-        ) {
-
+        /* DO NOT REASSIGN TO THE CURRENT SELLER */
+        if (sellerId === rejectedSellerId) {
             return;
         }
 
-
-        // =================================================
-        // SELLER MUST BE AVAILABLE
-        // =================================================
-
-        if (
-            seller.isAvailable !== true
-        ) {
+        /* SELLER MUST BE AVAILABLE */
+        if (seller.isAvailable !== true) {
 
             console.log(
                 "⏸️ SELLER NOT AVAILABLE:",
@@ -1598,14 +1537,8 @@ async function findNextSellerForReassignment(
             return;
         }
 
-
-        // =================================================
-        // SELLER MUST HAVE UID
-        // =================================================
-
-        if (
-            !seller.uid
-        ) {
+        /* SELLER MUST HAVE UID */
+        if (!seller.uid) {
 
             console.log(
                 "⚠️ SELLER UID MISSING:",
@@ -1615,234 +1548,120 @@ async function findNextSellerForReassignment(
             return;
         }
 
-
-        // =================================================
-        // BRAND MATCH
-        // =================================================
-
+        /* BRAND CHECK */
         const customerBrand =
-            String(
-                orderData.brand || ""
-            )
-            .trim()
-            .toLowerCase();
-
+            String(orderData.brand || "")
+                .trim()
+                .toLowerCase();
 
         const sellerBrands =
-            Array.isArray(
-                seller.brands
-            )
+            Array.isArray(seller.brands)
                 ? seller.brands.map(
                     brand =>
-                        String(
-                            brand || ""
-                        )
-                        .trim()
-                        .toLowerCase()
-                )
+                        String(brand || "")
+                            .trim()
+                            .toLowerCase()
+                  )
                 : [];
 
-
         if (
-            !sellerBrands.includes(
-                customerBrand
-            )
+            customerBrand &&
+            !sellerBrands.includes(customerBrand)
         ) {
 
-            console.log(
-                "❌ BRAND NOT SUPPORTED:",
-                {
-                    seller:
-                        seller.name,
-
-                    requestedBrand:
-                        customerBrand,
-
-                    sellerBrands:
-                        sellerBrands
-                }
-            );
+            console.log("❌ BRAND NOT SUPPORTED:", {
+                seller: seller.name,
+                requestedBrand: customerBrand,
+                sellerBrands: sellerBrands
+            });
 
             return;
         }
 
-
-        // =================================================
-        // PRICE CHECK
-        // =================================================
-
+        /* PRICE CHECK */
         const sellerPrice =
             Number(
-                seller.prices?.[
-                    orderData.quantity
-                ] || 0
+                seller.prices?.[orderData.quantity] || 0
             );
 
+        if (sellerPrice <= 0) {
 
-        if (
-            sellerPrice <= 0
-        ) {
-
-            console.log(
-                "❌ INVALID PRICE:",
-                {
-                    seller:
-                        seller.name,
-
-                    quantity:
-                        orderData.quantity,
-
-                    price:
-                        sellerPrice
-                }
-            );
+            console.log("❌ INVALID PRICE:", {
+                seller: seller.name,
+                quantity: orderData.quantity,
+                price: sellerPrice
+            });
 
             return;
         }
 
-
-        // =================================================
-        // DELIVERY LIMIT
-        // =================================================
-
+        /* COMMISSION / DELIVERY LIMIT */
         const deliveryCount =
-    Number(
-        seller.deliveryCount ?? 0
-    );
+            Number(seller.deliveryCount ?? 0);
 
-const deliveryLimit =
-    Number(
-        seller.deliveryLimit ?? 3
-    );
+        const deliveryLimit =
+            Number(seller.deliveryLimit ?? 3);
 
-
-        if (
-            deliveryCount >=
-            deliveryLimit
-        ) {
+        if (deliveryCount >= deliveryLimit) {
 
             console.log(
                 "💰 SELLER COMMISSION LIMIT REACHED:",
                 {
-                    seller:
-                        seller.name,
-
-                    deliveryCount:
-                        deliveryCount,
-
-                    deliveryLimit:
-                        deliveryLimit
+                    seller: seller.name,
+                    deliveryCount: deliveryCount,
+                    deliveryLimit: deliveryLimit
                 }
             );
 
             return;
         }
 
-
-        // =================================================
-        // SELLER GPS
-        // =================================================
-
+        /* GPS CHECK */
         const sellerLat =
-            Number(
-                seller.sellerLatitude
-            );
-
+            Number(seller.sellerLatitude);
 
         const sellerLng =
-            Number(
-                seller.sellerLongitude
-            );
-
-
-        // =================================================
-        // CUSTOMER GPS
-        // =================================================
+            Number(seller.sellerLongitude);
 
         const customerLat =
-            Number(
-                orderData.customerLatitude
-            );
-
+            Number(orderData.customerLatitude);
 
         const customerLng =
-            Number(
-                orderData.customerLongitude
-            );
-
-
-        // =================================================
-        // GPS VALIDATION
-        // =================================================
+            Number(orderData.customerLongitude);
 
         if (
-            !Number.isFinite(
-                sellerLat
-            ) ||
-            !Number.isFinite(
-                sellerLng
-            ) ||
-            !Number.isFinite(
-                customerLat
-            ) ||
-            !Number.isFinite(
-                customerLng
-            )
+            !Number.isFinite(sellerLat) ||
+            !Number.isFinite(sellerLng) ||
+            !Number.isFinite(customerLat) ||
+            !Number.isFinite(customerLng)
         ) {
 
-            console.log(
-                "❌ INVALID GPS:",
-                {
-                    seller:
-                        seller.name,
-
-                    sellerLat:
-                        sellerLat,
-
-                    sellerLng:
-                        sellerLng,
-
-                    customerLat:
-                        customerLat,
-
-                    customerLng:
-                        customerLng
-                }
-            );
+            console.log("❌ INVALID GPS:", {
+                seller: seller.name,
+                sellerLat: sellerLat,
+                sellerLng: sellerLng,
+                customerLat: customerLat,
+                customerLng: customerLng
+            });
 
             return;
         }
-
-
-        // =================================================
-        // CALCULATE DISTANCE
-        // =================================================
 
         const distance =
             calculateDistance(
-
                 customerLat,
                 customerLng,
-
                 sellerLat,
                 sellerLng
-
             );
 
-
-        // =================================================
-        // DELIVERY RADIUS
-        // =================================================
-
+        /* DELIVERY RADIUS */
         const deliveryRadiusKm =
             Number(
                 seller.deliveryRadiusKm || 0
             );
 
-
-        if (
-            deliveryRadiusKm <= 0
-        ) {
+        if (deliveryRadiusKm <= 0) {
 
             console.log(
                 "❌ INVALID DELIVERY RADIUS:",
@@ -1852,68 +1671,39 @@ const deliveryLimit =
             return;
         }
 
-
-        // =================================================
-        // OUTSIDE DELIVERY RADIUS
-        // =================================================
-
-        if (
-            distance >
-            deliveryRadiusKm
-        ) {
+        if (distance > deliveryRadiusKm) {
 
             console.log(
                 "📍 SELLER OUTSIDE DELIVERY RADIUS:",
                 {
-                    seller:
-                        seller.name,
-
-                    distance:
-                        distance,
-
-                    radius:
-                        deliveryRadiusKm
+                    seller: seller.name,
+                    distance: distance,
+                    radius: deliveryRadiusKm
                 }
             );
 
             return;
         }
 
-
-        // =================================================
-        // ELIGIBLE SELLER
-        // =================================================
-
+        /* ELIGIBLE SELLER */
         candidates.push({
 
-            id:
-                sellerId,
+            id: sellerId,
 
             ...seller,
 
-            sellerPrice:
-                sellerPrice,
+            sellerPrice: sellerPrice,
 
-            distance:
-                distance,
+            distance: distance,
 
             averageRating:
                 Number(
                     seller.averageRating || 0
                 )
-
         });
-
     });
 
-
-    // =====================================================
-    // NO CANDIDATES
-    // =====================================================
-
-    if (
-        candidates.length === 0
-    ) {
+    if (candidates.length === 0) {
 
         console.log(
             "❌ NO ELIGIBLE SELLER FOUND."
@@ -1922,104 +1712,60 @@ const deliveryLimit =
         return null;
     }
 
+    /* SORT SELLERS */
+    candidates.sort((a, b) => {
 
-    // =====================================================
-    // SMART SORT
-    //
-    // 1. NEAREST
-    // 2. RATING
-    // 3. PRICE
-    // =====================================================
+        const distanceDifference =
+            a.distance - b.distance;
 
-    candidates.sort(
-        (a, b) => {
-
-            // ---------------------------------------------
-            // DISTANCE
-            // ---------------------------------------------
-
-            const distanceDifference =
-                a.distance -
-                b.distance;
-
-
-            if (
-                Math.abs(
-                    distanceDifference
-                ) >= 1
-            ) {
-
-                return distanceDifference;
-            }
-
-
-            // ---------------------------------------------
-            // RATING
-            // ---------------------------------------------
-
-            const ratingDifference =
-                b.averageRating -
-                a.averageRating;
-
-
-            if (
-                ratingDifference !== 0
-            ) {
-
-                return ratingDifference;
-            }
-
-
-            // ---------------------------------------------
-            // PRICE
-            // ---------------------------------------------
-
-            return (
-                a.sellerPrice -
-                b.sellerPrice
-            );
-
+        /*
+         * Distance has priority when difference
+         * is at least 1 KM.
+         */
+        if (
+            Math.abs(distanceDifference) >= 1
+        ) {
+            return distanceDifference;
         }
-    );
 
+        /* Then rating */
+        const ratingDifference =
+            b.averageRating -
+            a.averageRating;
 
-    // =====================================================
-    // BEST SELLER
-    // =====================================================
+        if (ratingDifference !== 0) {
+            return ratingDifference;
+        }
+
+        /* Finally price */
+        return (
+            a.sellerPrice -
+            b.sellerPrice
+        );
+    });
 
     const bestSeller =
         candidates[0];
 
+    console.log("🏆 NEXT SELLER FOUND:", {
 
-    // =====================================================
-    // DEBUG
-    // =====================================================
+        seller: bestSeller.name,
 
-    console.log(
-        "🏆 NEXT SELLER FOUND:",
-        {
+        sellerId: bestSeller.id,
 
-            seller:
-                bestSeller.name,
+        distance: bestSeller.distance,
 
-            sellerId:
-                bestSeller.id,
+        price: bestSeller.sellerPrice,
 
-            distance:
-                bestSeller.distance,
+        rating: bestSeller.averageRating
 
-            price:
-                bestSeller.sellerPrice,
+    });
 
-            rating:
-                bestSeller.averageRating
-
-        }
-    );
-
-
+    /*
+     * IMPORTANT:
+     * Return the seller directly.
+     */
     return bestSeller;
-
 }
   
 // =====================================================
