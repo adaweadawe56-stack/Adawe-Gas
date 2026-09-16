@@ -445,18 +445,20 @@ historyPhone.value = data.phone || "";
 
 let badgeColor = "#6c757d";
 
-    if(data.status === "Accepted")
-      badgeColor = "#0d6efd";
+if(data.status === "Accepted")
+  badgeColor = "#0d6efd";
 
-    if(data.status === "On The Way")
-      badgeColor = "#ffc107";
+if(data.status === "On The Way")
+  badgeColor = "#ffc107";
 
-    if(data.status === "Delivered")
-      badgeColor = "#198754";
+if(data.status === "Delivered")
+  badgeColor = "#198754";
 
-    if(data.status === "Rejected")
-      badgeColor = "#dc3545";
+if(data.status === "Rejected")
+  badgeColor = "#dc3545";
 
+if(data.status === "Cancelled")
+  badgeColor = "#dc3545";
     let statusMessage = "";
 
 if (data.status === "Pending") {
@@ -889,20 +891,23 @@ async function loadHistory(phone){
 
         const o = docSnap.data();
 
-        let badgeColor = "#6c757d";
+ let badgeColor = "#6c757d";
 
-        if(o.status==="Accepted")
-            badgeColor="#0d6efd";
+if(o.status==="Accepted")
+    badgeColor="#0d6efd";
 
-        if(o.status==="On The Way")
-            badgeColor="#ffc107";
+if(o.status==="On The Way")
+    badgeColor="#ffc107";
 
-        if(o.status==="Delivered")
-            badgeColor="#198754";
+if(o.status==="Delivered")
+    badgeColor="#198754";
 
-        if(o.status==="Rejected")
-            badgeColor="#dc3545";
+if(o.status==="Rejected")
+    badgeColor="#dc3545";
 
+if(o.status==="Cancelled")
+    badgeColor="#dc3545";
+      
         html += `
     <div class="card p-3 mt-2">
 
