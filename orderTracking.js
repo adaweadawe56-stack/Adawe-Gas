@@ -350,57 +350,95 @@ if (!map) {
 
 }
     
-let progressHtml = `
-<div style="display:flex;
-justify-content:space-between;
-margin:20px 0;
-font-size:14px;
-font-weight:bold;">
+let progressHtml = "";
 
-<span style="
-color:${
-["Pending","Accepted","On The Way","Delivered"]
-.includes(data.status)
-? "green"
-: "gray"
-}">
-Pending
-</span>
+if (data.status === "Cancelled") {
 
-<span style="
-color:${
-["Accepted","On The Way","Delivered"]
-.includes(data.status)
-? "green"
-: "gray"
-}">
-Accepted
-</span>
+  progressHtml = `
+    <div style="
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      margin:20px 0;
+      font-size:14px;
+      font-weight:bold;
+    ">
 
-<span style="
-color:${
-["On The Way","Delivered"]
-.includes(data.status)
-? "green"
-: "gray"
-}">
-On The Way
-</span>
+      <span style="color:green;">
+        ✓ Created
+      </span>
 
-<span style="
-color:${
-data.status==="Delivered"
-? "green"
-: "gray"
-}">
-Delivered
-</span>
+      <span style="color:green;">
+        ✓ Assigned
+      </span>
 
-</div>
-`;
+      <span style="color:#dc3545;">
+        ✕ Cancelled
+      </span>
+
+    </div>
+  `;
+
+} else {
+
+  progressHtml = `
+    <div style="
+      display:flex;
+      justify-content:space-between;
+      margin:20px 0;
+      font-size:14px;
+      font-weight:bold;
+    ">
+
+      <span style="
+        color:${
+          ["Pending","Accepted","On The Way","Delivered"]
+          .includes(data.status)
+          ? "green"
+          : "gray"
+        };
+      ">
+        Pending
+      </span>
+
+      <span style="
+        color:${
+          ["Accepted","On The Way","Delivered"]
+          .includes(data.status)
+          ? "green"
+          : "gray"
+        };
+      ">
+        Accepted
+      </span>
+
+      <span style="
+        color:${
+          ["On The Way","Delivered"]
+          .includes(data.status)
+          ? "green"
+          : "gray"
+        };
+      ">
+        On The Way
+      </span>
+
+      <span style="
+        color:${
+          data.status === "Delivered"
+          ? "green"
+          : "gray"
+        };
+      ">
+        Delivered
+      </span>
+
+    </div>
+  `;
+}
 
 document.getElementById(
-"progressTracker"
+  "progressTracker"
 ).innerHTML = progressHtml;
 
 historyPhone.value = data.phone || "";
