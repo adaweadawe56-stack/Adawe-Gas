@@ -2379,20 +2379,15 @@ else if (status === "Rejected") {
     // FIND NEXT SELLER
     // =========================================
 
-    const reassignmentResult =
-        await findNextSellerForReassignment(
-            data,
-            rejectedSellerId,
-            newRejectionHistory
-        );
+const nextSeller =
+    await findNextSellerForReassignment(
+        data,
+        rejectedSellerId,
+        newRejectionHistory
+    );
 
-
-    const nextSeller =
-        reassignmentResult.seller;
-
-
-    const rejectionHistory =
-        reassignmentResult.rejectionHistory;
+const rejectionHistory =
+    newRejectionHistory;
 
 
     // =========================================
@@ -2576,9 +2571,8 @@ Status: Pending
 ⚠️ This order was reassigned to you after another seller rejected it.`;
 
 
-    const whatsappUrl =
+   const whatsappUrl =
     `https://wa.me/${nextSellerPhone.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`;
-
 
     console.log(
         "📱 NEXT SELLER WHATSAPP:",
