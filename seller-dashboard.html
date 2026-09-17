@@ -2237,22 +2237,25 @@ window.updateStatus = async function(
                             : "Paid";
 
 
-                    // ---------------------------------
-                    // UPDATE ORDER
-                    // ---------------------------------
+// ---------------------------------
+// UPDATE ORDER
+// ---------------------------------
 
-                    transaction.update(
-                        orderRef,
-                        {
+transaction.update(
+    orderRef,
+    {
 
-                            status:
-                                "Delivered",
+        status:
+            "Delivered",
 
-                            deliveredAt:
-                                serverTimestamp()
+        deliveredAt:
+            serverTimestamp(),
 
-                        }
-                    );
+        updatedAt:
+            serverTimestamp()
+
+    }
+);
 
 
                     // ---------------------------------
