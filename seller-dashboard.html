@@ -966,11 +966,32 @@ const q = query(
   }
       firstLoad = false;
     
-       const sellerSnap = await getDoc(doc(db, "sellers", sellerDocId));
+// ---------------------------------------------
+// LOAD CURRENT SELLER DATA SAFELY
+// ---------------------------------------------
+
+if (!sellerDocId) {
+    console.error("❌ sellerDocId is null. Cannot load seller data.", {
+        sellerUid: sellerUid,
+        sellerPhone: sellerPhone
+    });
+
+    return;
+}
+
+const sellerRef = doc(db, "sellers", sellerDocId);
+const sellerSnap = await getDoc(sellerRef);
+
+if (!sellerSnap.exists()) {
+    console.error("❌ Seller document not found:", sellerDocId);
+    return;
+}
+
 const seller = sellerSnap.data();
 
 const limitReached =
-  seller.deliveryCount >= seller.deliveryLimit;
+    Number(seller.deliveryCount || 0) >=
+    Number(seller.deliveryLimit || 0);
 
 const commissionCard =
 document.getElementById("commissionCard");
