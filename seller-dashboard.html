@@ -2025,18 +2025,18 @@ window.updateStatus = async function(
         ) {
 
             await updateDoc(
-                orderRef,
-                {
+    orderRef,
+    {
+        status:
+            "Accepted",
 
-                    status:
-                        "Accepted",
+        acceptedAt:
+            serverTimestamp(),
 
-                    acceptedAt:
-                        serverTimestamp()
-
-                }
-            );
-
+        updatedAt:
+            serverTimestamp()
+    }
+);
         }
 
 
@@ -2049,17 +2049,18 @@ window.updateStatus = async function(
         ) {
 
             await updateDoc(
-                orderRef,
-                {
+    orderRef,
+    {
+        status:
+            "On The Way",
 
-                    status:
-                        "On The Way",
+        onTheWayAt:
+            serverTimestamp(),
 
-                    onTheWayAt:
-                        serverTimestamp()
-
-                }
-            );
+        updatedAt:
+            serverTimestamp()
+    }
+);
 
         }
 
