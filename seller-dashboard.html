@@ -989,9 +989,14 @@ if (!sellerSnap.exists()) {
 
 const seller = sellerSnap.data();
 
+const deliveryCount =
+    Number(seller.deliveryCount || 0);
+
+const deliveryLimit =
+    Number(seller.deliveryLimit ?? 3);
+
 const limitReached =
-    Number(seller.deliveryCount || 0) >=
-    Number(seller.deliveryLimit || 0);
+    deliveryCount >= deliveryLimit;
 
 const commissionCard =
 document.getElementById("commissionCard");
@@ -1004,8 +1009,9 @@ if(limitReached){
   commissionCard.style.display = "block";
 
   commissionAmount.innerText =
-    "KES " + (seller.deliveryLimit * seller.commissionPerOrder);
-
+    "KES " +
+    (deliveryLimit * Number(seller.commissionPerOrder || 0))
+    .toLocaleString();
 }else{
 
   commissionCard.style.display = "none";
