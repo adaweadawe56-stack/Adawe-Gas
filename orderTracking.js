@@ -1004,6 +1004,46 @@ await addDoc(
   }
 );
 
+
+// =================================================
+// UPDATE ORDER WITH CUSTOMER RATING
+// =================================================
+
+const orderRatingQ = query(
+  collection(db, "orders"),
+  where("orderId", "==", currentOrder.orderId)
+);
+
+const orderRatingSnap =
+  await getDocs(orderRatingQ);
+
+if (!orderRatingSnap.empty) {
+
+  const orderDoc =
+    orderRatingSnap.docs[0];
+
+  await updateDoc(
+    orderDoc.ref,
+    {
+      rating:
+        Number(rating),
+
+      review:
+        review,
+
+      ratedAt:
+        serverTimestamp()
+    }
+  );
+
+  console.log(
+    "✅ Order rating updated:",
+    orderDoc.id
+  );
+
+}
+
+
 const sellerRef =
   doc(db, "sellers", currentOrder.sellerId);
 
