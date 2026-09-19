@@ -1343,76 +1343,218 @@ function showToast(message, success = true) {
 
   if (!container) return;
 
+  // =====================================================
+  // GET APPROVED SELLERS WITH RATINGS
+  // =====================================================
+
   const sellers = [...allSellers]
-    .filter(s => s.status === "approved")
-    .sort((a, b) =>
-      (b.averageRating || 0) -
-      (a.averageRating || 0)
+    .filter(s =>
+      s.status === "approved" &&
+      Number(s.averageRating || 0) > 0
     )
+    .sort((a, b) => {
+
+      const ratingA =
+        Number(a.averageRating || 0);
+
+      const ratingB =
+        Number(b.averageRating || 0);
+
+      // Higher rating first
+      if (ratingB !== ratingA) {
+        return ratingB - ratingA;
+      }
+
+      // If same rating, more reviews first
+      return (
+        Number(b.totalRatings || 0) -
+        Number(a.totalRatings || 0)
+      );
+
+    })
     .slice(0, 6);
+
+
+  // =====================================================
+  // NO FEATURED SELLERS
+  // =====================================================
+
+  if (sellers.length === 0) {
+
+    container.innerHTML = `
+      <div class="col-12 text-center py-4">
+
+        <div style="font-size:45px;">
+          🏪
+        </div>
+
+        <h5 class="mt-3">
+          No Featured Sellers Yet
+        </h5>
+
+        <p class="text-muted">
+          Sellers with customer ratings will appear here.
+        </p>
+
+      </div>
+    `;
+
+    return;
+  }
+
+
+  // =====================================================
+  // BUILD SELLER CARDS
+  // =====================================================
 
   let html = "";
 
-  sellers.forEach(seller => {
+  sellers.forEach((seller, index) => {
 
-  console.log(
-    seller.name,
-    seller.profileImage
-  );
+    console.log(
+      "🏆 FEATURED SELLER:",
+      {
+        rank: index + 1,
+        id: seller.id,
+        uid: seller.uid,
+        name: seller.name,
+        rating: seller.averageRating,
+        reviews: seller.totalRatings
+      }
+    );
 
-html += `
-<div class="col-md-4">
-    <div class="seller-card text-center p-4 h-100">
 
-        <img
+    const rating =
+      Number(seller.averageRating || 0);
+
+    const reviews =
+      Number(seller.totalRatings || 0);
+
+    const orders =
+      Number(seller.completedOrders || 0);
+
+
+    html += `
+
+      <div class="col-md-4">
+
+        <div class="seller-card text-center p-4 h-100 position-relative">
+
+          <!-- RANK -->
+
+          <div
+            class="position-absolute top-0 start-0 m-3"
+            style="
+              background:#198754;
+              color:white;
+              border-radius:20px;
+              padding:5px 12px;
+              font-size:13px;
+              font-weight:600;
+            "
+          >
+            #${index + 1}
+          </div>
+
+
+          <!-- SELLER IMAGE -->
+
+          <img
             src="${seller.profileImage || 'images/logo.png'}"
             class="seller-logo mb-3"
-            alt="${seller.name}">
+            alt="${seller.name || 'Seller'}"
+            onerror="this.src='images/logo.png';"
+          >
 
-        <h5 class="seller-name">
-            ${seller.name}
-        </h5>
 
-        <p class="seller-location">
-            📍 ${seller.location}
-        </p>
+          <!-- SELLER NAME -->
 
-        <p class="seller-rating">
-            ⭐ ${Number(seller.averageRating || 0).toFixed(1)}
-        </p>
+          <h5 class="seller-name">
+            ${seller.name || "Seller"}
+          </h5>
 
-        <div class="seller-stats d-flex justify-content-around mb-3">
+
+          <!-- LOCATION -->
+
+          <p class="seller-location">
+            📍 ${seller.location || "Kenya"}
+          </p>
+
+
+          <!-- RATING -->
+
+          <p class="seller-rating mb-3">
+
+            <span style="font-size:18px;">
+              ⭐ ${rating.toFixed(1)}
+            </span>
+
+            <small class="text-muted">
+              (${reviews} review${reviews === 1 ? "" : "s"})
+            </small>
+
+          </p>
+
+
+          <!-- STATS -->
+
+          <div class="seller-stats d-flex justify-content-around mb-3">
 
             <div>
-                <strong>${seller.totalRatings || 0}</strong><br>
+
+              <strong>
+                ${reviews}
+              </strong>
+
+              <br>
+
+              <small>
                 Reviews
+              </small>
+
             </div>
+
 
             <div>
-                <strong>${seller.completedOrders || 0}</strong><br>
+
+              <strong>
+                ${orders}
+              </strong>
+
+              <br>
+
+              <small>
                 Orders
+              </small>
+
             </div>
 
-        </div>
+          </div>
 
-        <button
+
+          <!-- PROFILE BUTTON -->
+
+          <button
             class="btn btn-success w-100"
-            onclick="showSellerProfile('${seller.id}')">
+            onclick="showSellerProfile('${seller.id}')"
+          >
 
             View Profile
 
-        </button>
+          </button>
 
-    </div>
-</div>
-`;
+        </div>
+
+      </div>
+
+    `;
 
   });
+
 
   container.innerHTML = html;
 
 }
-
   window.showSellerProfile = async function(id){
 
   const sellerRef = doc(db, "sellers", id);
