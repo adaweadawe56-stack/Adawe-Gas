@@ -1588,12 +1588,19 @@ let searchText = "";
       continue;
     }
 
-    const seller =
+   const seller =
   sellerCache[d.sellerUid];
+
+console.log("⭐ REVIEW SELLER DEBUG:", {
+  ratingId: d.id,
+  sellerUid: d.sellerUid,
+  sellerCacheKeys: Object.keys(sellerCache),
+  sellerFound: seller,
+  sellerName: seller?.name
+});
 
 const sellerName =
   seller?.name || "Unknown Seller";
-
 const customer =
   d.customerName || "";
 
