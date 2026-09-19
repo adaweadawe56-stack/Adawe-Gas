@@ -1973,15 +1973,17 @@ onSnapshot(q, (snap) => {
 
 }
 
-async function initReviews() {
+async function initPageData() {
 
   await loadSellerCache();
 
   await loadCustomerReviews();
 
+  await loadFeaturedSellers();
+
 }
 
-initReviews();
+initPageData();
   
 document
 .getElementById("reviewSearch")
