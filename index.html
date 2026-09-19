@@ -1349,10 +1349,11 @@ function showToast(message, success = true) {
   // =====================================================
 
   const sellers = [...allSellers]
-    .filter(s =>
-      s.status === "approved" &&
-      Number(s.averageRating || 0) > 0
-    )
+   .filter(s =>
+  s.status === "approved" &&
+  Number(s.averageRating || 0) > 0 &&
+  Number(s.totalRatings || 0) >= 2
+)
     .sort((a, b) => {
 
       const ratingA =
