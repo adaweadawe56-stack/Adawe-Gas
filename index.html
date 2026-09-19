@@ -1405,8 +1405,8 @@ function showToast(message, success = true) {
   }
 
 
-  // =====================================================
-  // BUILD SELLER CARDS
+    // =====================================================
+  // BUILD PROFESSIONAL MARKETPLACE SELLER CARDS
   // =====================================================
 
   let html = "";
@@ -1436,114 +1436,249 @@ function showToast(message, success = true) {
       Number(seller.completedOrders || 0);
 
 
+    // =====================================================
+    // SELLER AVAILABILITY
+    // =====================================================
+
+    const isAvailable =
+      seller.isAvailable === true;
+
+    const statusText =
+      isAvailable
+        ? "AVAILABLE"
+        : "OFFLINE";
+
+    const statusClass =
+      isAvailable
+        ? "featured-status-online"
+        : "featured-status-offline";
+
+
+    // =====================================================
+    // FIND LOWEST LPG PRICE
+    // =====================================================
+
+    let lowestPrice = null;
+    let lowestQuantity = null;
+
+    if (
+      seller.prices &&
+      typeof seller.prices === "object"
+    ) {
+
+      Object.entries(seller.prices).forEach(
+        ([quantity, price]) => {
+
+          const numericPrice = Number(price);
+
+          if (
+            numericPrice > 0 &&
+            (
+              lowestPrice === null ||
+              numericPrice < lowestPrice
+            )
+          ) {
+
+            lowestPrice = numericPrice;
+            lowestQuantity = quantity;
+
+          }
+
+        }
+      );
+
+    }
+
+
+    // =====================================================
+    // PRICE DISPLAY
+    // =====================================================
+
+    const priceHTML =
+      lowestPrice !== null
+        ? `
+          <div class="featured-price-box">
+
+            <span class="featured-price-label">
+              Starting from
+            </span>
+
+            <span class="featured-price">
+              KSh ${lowestPrice.toLocaleString()}
+            </span>
+
+            <span class="featured-price-unit">
+              / ${lowestQuantity} LPG
+            </span>
+
+          </div>
+        `
+        : `
+          <div class="featured-price-box">
+
+            <span class="featured-price-label">
+              LPG Pricing
+            </span>
+
+            <span class="featured-price">
+              Contact seller
+            </span>
+
+          </div>
+        `;
+
+
+    // =====================================================
+    // SELLER CARD
+    // =====================================================
+
     html += `
 
-      <div class="col-md-4">
+      <div class="col-lg-4 col-md-6">
 
-        <div class="seller-card text-center p-4 h-100 position-relative">
+        <div class="featured-seller-card">
 
-          <!-- RANK -->
 
-          <div
-            class="position-absolute top-0 start-0 m-3"
-            style="
-              background:#198754;
-              color:white;
-              border-radius:20px;
-              padding:5px 12px;
-              font-size:13px;
-              font-weight:600;
-            "
-          >
-            #${index + 1}
+          <!-- TOP BADGES -->
+
+          <div class="featured-seller-top">
+
+            <span class="featured-rank-badge">
+              #${index + 1}
+            </span>
+
+            <span
+              class="featured-status-badge ${statusClass}"
+            >
+              ● ${statusText}
+            </span>
+
           </div>
 
 
           <!-- SELLER IMAGE -->
 
-          <img
-            src="${seller.profileImage || 'images/logo.png'}"
-            class="seller-logo mb-3"
-            alt="${seller.name || 'Seller'}"
-            onerror="this.src='images/logo.png';"
-          >
+          <div class="featured-seller-image-wrap">
+
+            <img
+              src="${seller.profileImage || 'images/logo.png'}"
+              class="featured-seller-image"
+              alt="${seller.name || 'LPG Seller'}"
+              onerror="this.src='images/logo.png';"
+            >
+
+          </div>
 
 
-          <!-- SELLER NAME -->
+          <!-- SELLER INFORMATION -->
 
-          <h5 class="seller-name">
-            ${seller.name || "Seller"}
-          </h5>
+          <div class="text-center px-3">
 
+            <h5 class="featured-seller-name">
 
-          <!-- LOCATION -->
+              ${seller.name || "LPG Seller"}
 
-          <p class="seller-location">
-            📍 ${seller.location || "Kenya"}
-          </p>
+              ${
+                seller.verified === true
+                  ? `
+                    <span
+                      class="featured-verified"
+                      title="Verified Seller"
+                    >
+                      ✓
+                    </span>
+                  `
+                  : ""
+              }
 
-
-          <!-- RATING -->
-
-          <p class="seller-rating mb-3">
-
-            <span style="font-size:18px;">
-              ⭐ ${rating.toFixed(1)}
-            </span>
-
-            <small class="text-muted">
-              (${reviews} review${reviews === 1 ? "" : "s"})
-            </small>
-
-          </p>
+            </h5>
 
 
-          <!-- STATS -->
+            <div class="featured-seller-location">
 
-          <div class="seller-stats d-flex justify-content-around mb-3">
-
-            <div>
-
-              <strong>
-                ${reviews}
-              </strong>
-
-              <br>
-
-              <small>
-                Reviews
-              </small>
+              📍 ${seller.location || "Kenya"}
 
             </div>
 
 
-            <div>
+            <!-- RATING -->
 
-              <strong>
-                ${orders}
-              </strong>
+            <div class="featured-rating-box">
 
-              <br>
+              <span>
+                ⭐
+              </span>
 
-              <small>
-                Orders
-              </small>
+              <span class="featured-rating-number">
+                ${rating.toFixed(1)}
+              </span>
+
+              <span class="featured-rating-reviews">
+                · ${reviews}
+                ${reviews === 1 ? "review" : "reviews"}
+              </span>
 
             </div>
 
           </div>
 
 
-          <!-- PROFILE BUTTON -->
+          <!-- SELLER STATS -->
 
-          <button
-            class="btn btn-success w-100"
-            onclick="showSellerProfile('${seller.id}')"
-          >
+          <div class="featured-seller-info">
 
-            View Profile
+            <div class="featured-info-item">
 
-          </button>
+              <span class="featured-info-value">
+                ${reviews}
+              </span>
+
+              <span class="featured-info-label">
+                Reviews
+              </span>
+
+            </div>
+
+
+            <div class="featured-info-item">
+
+              <span class="featured-info-value">
+                ${orders}
+              </span>
+
+              <span class="featured-info-label">
+                Completed Orders
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- PRICE -->
+
+          ${priceHTML}
+
+
+          <!-- BUTTON -->
+
+          <div class="featured-seller-footer">
+
+            <button
+              class="featured-view-btn"
+              onclick="showSellerProfile('${seller.id}')"
+            >
+
+              View Seller Profile
+
+              <span class="ms-1">
+                →
+              </span>
+
+            </button>
+
+          </div>
+
 
         </div>
 
@@ -1555,7 +1690,6 @@ function showToast(message, success = true) {
 
 
   container.innerHTML = html;
-
 }
   window.showSellerProfile = async function(id){
 
