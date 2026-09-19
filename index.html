@@ -1722,6 +1722,66 @@ totalReviews++;
   document.getElementById("averageRating").innerText =
     (totalRating / totalReviews).toFixed(1) + " ⭐";
 }    
+
+  // =====================================================
+// LOAD SELLERS FOR REVIEW LOOKUP
+// =====================================================
+
+async function loadSellerCache() {
+
+  try {
+
+    const snap =
+      await getDocs(
+        collection(db, "sellers")
+      );
+
+    allSellers = [];
+
+    // Clear old cache
+    Object.keys(sellerCache).forEach(key => {
+      delete sellerCache[key];
+    });
+
+    snap.forEach(docSnap => {
+
+      const seller =
+        docSnap.data();
+
+      const sellerRecord = {
+        id: docSnap.id,
+        ...seller
+      };
+
+      // Save to all sellers
+      allSellers.push(sellerRecord);
+
+      // IMPORTANT:
+      // Reviews use sellerUid
+      if (seller.uid) {
+
+        sellerCache[seller.uid] =
+          sellerRecord;
+
+      }
+
+    });
+
+    console.log(
+      "✅ SELLER CACHE LOADED:",
+      sellerCache
+    );
+
+  } catch (err) {
+
+    console.error(
+      "❌ SELLER CACHE ERROR:",
+      err
+    );
+
+  }
+
+}
   
   /* ==========================
    CUSTOMER REVIEWS
