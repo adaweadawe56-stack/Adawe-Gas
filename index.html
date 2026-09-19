@@ -1830,8 +1830,16 @@ onSnapshot(q, (snap) => {
 
 }
 
-loadCustomerReviews();
+async function initReviews() {
 
+  await loadSellerCache();
+
+  await loadCustomerReviews();
+
+}
+
+initReviews();
+  
 document
 .getElementById("reviewSearch")
 .addEventListener("input", e => {
