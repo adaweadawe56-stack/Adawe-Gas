@@ -1691,102 +1691,439 @@ function showToast(message, success = true) {
 
   container.innerHTML = html;
 }
-  window.showSellerProfile = async function(id){
+window.showSellerProfile = async function(id) {
 
-  const sellerRef = doc(db, "sellers", id);
+  // Find seller from the sellers already loaded
+  const seller = allSellers.find(s => s.id === id);
 
-  const sellerSnap = await getDoc(sellerRef);
-
-  if(!sellerSnap.exists()){
-    alert("Seller not found");
+  if (!seller) {
+    alert("Seller information could not be found.");
     return;
   }
 
-  const seller = sellerSnap.data();
+  // =====================================================
+  // SELLER DATA
+  // =====================================================
 
-  let prices = "";
+  const name =
+    seller.name || "LPG Seller";
 
-  Object.entries(seller.prices || {}).forEach(([size, price])=>{
+  const location =
+    seller.location || "Kenya";
 
-    if(Number(price) > 0){
+  const rating =
+    Number(seller.averageRating || 0);
 
-      prices += `
-      <tr>
-        <td>${size}</td>
-        <td>KES ${Number(price).toLocaleString()}</td>
-      </tr>
+  const reviews =
+    Number(seller.totalRatings || 0);
+
+  const orders =
+    Number(seller.completedOrders || 0);
+
+  const isAvailable =
+    seller.isAvailable === true;
+
+  const verified =
+    seller.verified === true;
+
+  const profileImage =
+    seller.profileImage || "images/logo.png";
+
+  // =====================================================
+  // BRANDS
+  // =====================================================
+
+  let brandsHTML = "";
+
+  if (
+    Array.isArray(seller.brands) &&
+    seller.brands.length > 0
+  ) {
+
+    brandsHTML = seller.brands
+      .map(brand => `
+        <span class="seller-profile-brand">
+          ${brand}
+        </span>
+      `)
+      .join("");
+
+  } else {
+
+    brandsHTML = `
+      <span class="text-muted">
+        Brand information not available
+      </span>
+    `;
+
+  }
+
+  // =====================================================
+  // LPG PRICES
+  // =====================================================
+
+  let pricesHTML = "";
+
+  if (
+    seller.prices &&
+    typeof seller.prices === "object"
+  ) {
+
+    const validPrices =
+      Object.entries(seller.prices)
+        .filter(([quantity, price]) =>
+          Number(price) > 0
+        )
+        .sort((a, b) => {
+
+          const getKg = value =>
+            parseFloat(
+              String(value)
+                .replace("kg", "")
+                .replace("KG", "")
+            ) || 0;
+
+          return getKg(a[0]) - getKg(b[0]);
+
+        });
+
+    if (validPrices.length > 0) {
+
+      pricesHTML = validPrices
+        .map(([quantity, price]) => `
+          <div class="seller-profile-price-row">
+
+            <span>
+              ${quantity}
+            </span>
+
+            <strong>
+              KSh ${Number(price).toLocaleString()}
+            </strong>
+
+          </div>
+        `)
+        .join("");
+
+    } else {
+
+      pricesHTML = `
+        <div class="text-muted small">
+          Pricing information not available.
+        </div>
       `;
 
     }
 
-  });
+  } else {
 
-document.getElementById("sellerProfileContent").innerHTML = `
+    pricesHTML = `
+      <div class="text-muted small">
+        Pricing information not available.
+      </div>
+    `;
 
-<div class="profile-header">
+  }
 
-  <img
-    src="${seller.profileImage || 'images/logo.png'}"
-    class="profile-logo"
-    alt="${seller.name}">
+  // =====================================================
+  // AVAILABILITY
+  // =====================================================
 
-  <div class="profile-name">
-    ${seller.name}
-  </div>
+  const availabilityHTML = isAvailable
 
-  <div class="profile-location">
-    📍 ${seller.location}
-  </div>
+    ? `
+      <span class="seller-profile-available">
+        <span class="seller-profile-status-dot"></span>
+        AVAILABLE
+      </span>
+    `
 
-  <div class="profile-rating">
-    ⭐ ${Number(seller.averageRating || 0).toFixed(1)}
-  </div>
+    : `
+      <span class="seller-profile-offline">
+        <span class="seller-profile-status-dot"></span>
+        OFFLINE
+      </span>
+    `;
 
-</div>
+  // =====================================================
+  // VERIFIED BADGE
+  // =====================================================
 
-<div class="profile-stats">
+  const verifiedHTML = verified
 
-  <div>
-    <h4>${seller.totalRatings || 0}</h4>
-    Reviews
-  </div>
+    ? `
+      <span class="seller-profile-verified">
+        ✓ Verified Seller
+      </span>
+    `
 
-  <div>
-    <h4>${seller.completedOrders || 0}</h4>
-    Orders
-  </div>
+    : "";
 
-</div>
+  // =====================================================
+  // CREATE MODAL
+  // =====================================================
 
-<h5>Gas Prices</h5>
+  const existingModal =
+    document.getElementById("sellerProfileModal");
 
-<table class="table profile-price-table">
-  <tbody>
-    ${prices}
-  </tbody>
-</table>
+  if (existingModal) {
+    existingModal.remove();
+  }
 
-<div class="profile-actions">
+  const modalHTML = `
 
-  <button
-    class="btn btn-secondary w-100"
-    disabled>
+    <div
+      class="modal fade"
+      id="sellerProfileModal"
+      tabindex="-1"
+      aria-hidden="true"
+    >
 
-    ⏳ Contact available after seller accepts your order
+      <div class="modal-dialog modal-dialog-centered modal-lg">
 
-  </button>
+        <div class="modal-content seller-profile-modal">
 
-</div>
+          <!-- HEADER -->
 
-`;
+          <div class="seller-profile-header">
 
-  const modal = new bootstrap.Modal(
-    document.getElementById("sellerProfileModal")
+            <button
+              type="button"
+              class="seller-profile-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            >
+              ×
+            </button>
+
+            <div class="seller-profile-image-wrap">
+
+              <img
+                src="${profileImage}"
+                class="seller-profile-image"
+                alt="${name}"
+                onerror="this.src='images/logo.png';"
+              >
+
+            </div>
+
+            <h3 class="seller-profile-name">
+              ${name}
+
+              ${
+                verified
+                  ? `
+                    <span
+                      class="seller-profile-check"
+                      title="Verified Seller"
+                    >
+                      ✓
+                    </span>
+                  `
+                  : ""
+              }
+
+            </h3>
+
+            <div class="seller-profile-location">
+              📍 ${location}
+            </div>
+
+            <div class="seller-profile-rating">
+
+              <span class="seller-profile-stars">
+                ⭐
+              </span>
+
+              <strong>
+                ${rating.toFixed(1)}
+              </strong>
+
+              <span>
+                · ${reviews}
+                ${reviews === 1 ? "review" : "reviews"}
+              </span>
+
+            </div>
+
+          </div>
+
+
+          <!-- BODY -->
+
+          <div class="modal-body p-4">
+
+            <!-- STATUS -->
+
+            <div class="seller-profile-status-box">
+
+              <div>
+                <div class="seller-profile-section-label">
+                  Seller Status
+                </div>
+
+                <div class="seller-profile-status-text">
+                  ${availabilityHTML}
+                </div>
+              </div>
+
+              <div class="seller-profile-orders">
+
+                <strong>
+                  ${orders}
+                </strong>
+
+                <span>
+                  Completed Orders
+                </span>
+
+              </div>
+
+            </div>
+
+
+            <!-- BRANDS -->
+
+            <div class="seller-profile-section">
+
+              <h5>
+                🏷️ LPG Brands
+              </h5>
+
+              <div class="seller-profile-brands">
+                ${brandsHTML}
+              </div>
+
+            </div>
+
+
+            <!-- PRICES -->
+
+            <div class="seller-profile-section">
+
+              <h5>
+                💰 LPG Prices
+              </h5>
+
+              <div class="seller-profile-prices">
+
+                ${pricesHTML}
+
+              </div>
+
+            </div>
+
+
+            <!-- TRUST -->
+
+            <div class="seller-profile-section">
+
+              <h5>
+                🛡️ Seller Information
+              </h5>
+
+              <div class="seller-profile-trust">
+
+                ${
+                  verified
+                    ? `
+                      <div>
+                        ✓ Verified Seller
+                      </div>
+                    `
+                    : ""
+                }
+
+                <div>
+                  ✓ Customer Rated
+                </div>
+
+                <div>
+                  ✓ Delivery Partner
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <!-- AUTOMATIC MATCHING MESSAGE -->
+
+            <div class="seller-profile-info-box">
+
+              <div class="seller-profile-info-icon">
+                🤝
+              </div>
+
+              <div>
+
+                <strong>
+                  Adawe automatically selects the best seller
+                </strong>
+
+                <p>
+                  When you place an order, Adawe compares
+                  available sellers based on factors such as
+                  price, location, availability, rating and
+                  delivery suitability.
+                </p>
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- FOOTER -->
+
+          <div class="seller-profile-footer">
+
+            <button
+              type="button"
+              class="seller-profile-close-btn"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  `;
+
+  document.body.insertAdjacentHTML(
+    "beforeend",
+    modalHTML
   );
+
+  // =====================================================
+  // SHOW BOOTSTRAP MODAL
+  // =====================================================
+
+  const modalElement =
+    document.getElementById("sellerProfileModal");
+
+  const modal =
+    new bootstrap.Modal(modalElement);
 
   modal.show();
 
-}
+  // Remove modal from DOM after closing
+  modalElement.addEventListener(
+    "hidden.bs.modal",
+    () => {
+      modalElement.remove();
+    },
+    { once: true }
+  );
+
+};
   
 function timeAgo(timestamp){
 
