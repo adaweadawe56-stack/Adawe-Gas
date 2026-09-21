@@ -4761,8 +4761,14 @@ console.log("📊 updateStatsAndChart CALLED");
 
     }
 
+console.log("📊 CHART DATA:", {
+    labels: Object.keys(dailyMap),
+    values: Object.values(dailyMap),
+    canvas: salesCanvas,
+    ChartAvailable: typeof Chart
+});
 
-    chart = new Chart(salesCanvas, {
+chart = new Chart(salesCanvas, {
 
         type: "line",
 
