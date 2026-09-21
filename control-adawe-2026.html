@@ -4768,23 +4768,26 @@ console.log("📊 CHART DATA:", {
     ChartAvailable: typeof Chart
 });
 
+const sortedDays = Object.keys(dailyMap).sort((a, b) => {
+
+    const [dayA, monthA, yearA] = a.split("/").map(Number);
+    const [dayB, monthB, yearB] = b.split("/").map(Number);
+
+    return new Date(yearA, monthA - 1, dayA) -
+           new Date(yearB, monthB - 1, dayB);
+});
+
 chart = new Chart(salesCanvas, {
 
-        type: "line",
+    type: "line",
 
-        data: {
-
-            labels: Object.keys(dailyMap),
-
-            datasets: [{
-
-                label: "Orders per Day",
-
-                data: Object.values(dailyMap)
-
-            }]
-
-        },
+    data: {
+        labels: sortedDays,
+        datasets: [{
+            label: "Orders per Day",
+            data: sortedDays.map(day => dailyMap[day])
+        }]
+    },
 
        options: {
 
