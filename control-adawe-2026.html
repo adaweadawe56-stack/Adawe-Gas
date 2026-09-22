@@ -4645,92 +4645,223 @@ function renderReviews() {
         return;
     }
 
-    if (!reviewsData.length) {
+    // =====================================================
+    // SEARCH + RATING FILTER
+    // =====================================================
+
+    const searchInput =
+        document.getElementById("searchReviews");
+
+    const ratingSelect =
+        document.getElementById("ratingFilter");
+
+    const searchText =
+        (searchInput?.value || "")
+            .trim()
+            .toLowerCase();
+
+    const selectedRating =
+        ratingSelect?.value || "";
+
+
+    // =====================================================
+    // FILTER REVIEWS
+    // =====================================================
+
+    const filteredReviews =
+        reviewsData.filter(review => {
+
+            const rating =
+                Number(review.rating || 0);
+
+
+            // Find seller
+            const seller =
+                sellersData.find(
+                    seller =>
+                        seller.uid === review.sellerUid
+                );
+
+
+            const sellerName =
+                seller?.name ||
+                review.sellerName ||
+                review.sellerPhone ||
+                "";
+
+
+            // Searchable text
+            const searchableText = [
+
+                review.customerName || "",
+
+                sellerName,
+
+                review.review || "",
+
+                review.orderId || "",
+
+                review.sellerPhone || ""
+
+            ]
+                .join(" ")
+                .toLowerCase();
+
+
+            // Search filter
+            const matchesSearch =
+                !searchText ||
+                searchableText.includes(searchText);
+
+
+            // Rating filter
+            const matchesRating =
+                !selectedRating ||
+                rating === Number(selectedRating);
+
+
+            return (
+                matchesSearch &&
+                matchesRating
+            );
+
+        });
+
+
+    // =====================================================
+    // NO RESULTS
+    // =====================================================
+
+    if (!filteredReviews.length) {
 
         tbody.innerHTML = `
             <tr>
+
                 <td
                     colspan="6"
                     class="text-center text-muted py-4">
 
-                    No reviews yet.
+                    No reviews found.
 
                 </td>
+
             </tr>
         `;
 
         return;
     }
 
-    tbody.innerHTML = reviewsData.map(review => {
 
-        const rating =
-            Number(review.rating || 0);
+    // =====================================================
+    // RENDER REVIEWS
+    // =====================================================
 
-        const stars =
-            "⭐".repeat(
-                Math.max(
-                    0,
-                    Math.min(5, rating)
-                )
-            );
+    tbody.innerHTML =
+        filteredReviews.map(review => {
 
-        // Find seller by sellerUid
-        const seller =
-            sellersData.find(
-                seller =>
-                    seller.uid === review.sellerUid
-            );
+            const rating =
+                Number(review.rating || 0);
 
-        const sellerName =
-            seller?.name ||
-            review.sellerName ||
-            review.sellerPhone ||
-            "-";
 
-        let dateText = "-";
+            const stars =
+                "⭐".repeat(
+                    Math.max(
+                        0,
+                        Math.min(5, rating)
+                    )
+                );
 
-        if (review.createdAt?.toDate) {
 
-            dateText =
-                review.createdAt
-                    .toDate()
-                    .toLocaleString("en-KE");
+            // Find seller
+            const seller =
+                sellersData.find(
+                    seller =>
+                        seller.uid === review.sellerUid
+                );
 
-        }
 
-        return `
-            <tr>
+            const sellerName =
+                seller?.name ||
+                review.sellerName ||
+                review.sellerPhone ||
+                "-";
 
-                <td>
-                    ${review.customerName || "-"}
-                </td>
 
-                <td>
-                    ${sellerName}
-                </td>
+            let dateText = "-";
 
-                <td>
-                    ${stars}
-                </td>
 
-                <td>
-                    ${review.review || "-"}
-                </td>
+            if (review.createdAt?.toDate) {
 
-                <td>
-                    ${review.orderId || "-"}
-                </td>
+                dateText =
+                    review.createdAt
+                        .toDate()
+                        .toLocaleString("en-KE");
 
-                <td>
-                    ${dateText}
-                </td>
+            }
 
-            </tr>
-        `;
 
-    }).join("");
+            return `
+                <tr>
+
+                    <td>
+                        ${review.customerName || "-"}
+                    </td>
+
+                    <td>
+                        ${sellerName}
+                    </td>
+
+                    <td>
+                        ${stars}
+                    </td>
+
+                    <td>
+                        ${review.review || "-"}
+                    </td>
+
+                    <td>
+                        ${review.orderId || "-"}
+                    </td>
+
+                    <td>
+                        ${dateText}
+                    </td>
+
+                </tr>
+            `;
+
+        }).join("");
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+
+    const searchReviews =
+        document.getElementById("searchReviews");
+
+    const ratingFilter =
+        document.getElementById("ratingFilter");
+
+
+    if (searchReviews) {
+
+        searchReviews.addEventListener(
+            "input",
+            renderReviews
+        );
+
+    }
+
+
+    if (ratingFilter) {
+
+        ratingFilter.addEventListener(
+            "change",
+            renderReviews
+        );
+
+    }
+
+});    
     
 function startRealtime() {
 
