@@ -4722,20 +4722,32 @@ function listenToReviews() {
         reviewsQuery,
         (snapshot) => {
 
-            reviewsData = snapshot.docs.map(docSnap => ({
-                id: docSnap.id,
-                ...docSnap.data()
-            }));
+reviewsData = snapshot.docs.map(docSnap => ({
+    id: docSnap.id,
+    ...docSnap.data()
+}));
 
-            console.log(
-                "⭐ REVIEWS FROM FIRESTORE:",
-                reviewsData
-            );
 
-            console.log(
-                "⭐ REVIEWS COUNT:",
-                reviewsData.length
-            );
+const reviewsCount =
+    document.getElementById("reviewsCount");
+
+if (reviewsCount) {
+
+    reviewsCount.textContent =
+        reviewsData.length;
+
+}
+
+
+console.log(
+    "⭐ REVIEWS FROM FIRESTORE:",
+    reviewsData
+);
+
+console.log(
+    "⭐ REVIEWS COUNT:",
+    reviewsData.length
+);
 
             renderReviews();
         },
