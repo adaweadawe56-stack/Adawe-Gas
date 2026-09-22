@@ -4668,7 +4668,25 @@ function renderReviews() {
             Number(review.rating || 0);
 
         const stars =
-            "⭐".repeat(Math.max(0, Math.min(5, rating)));
+            "⭐".repeat(
+                Math.max(
+                    0,
+                    Math.min(5, rating)
+                )
+            );
+
+        // Find seller by sellerUid
+        const seller =
+            sellersData.find(
+                seller =>
+                    seller.uid === review.sellerUid
+            );
+
+        const sellerName =
+            seller?.name ||
+            review.sellerName ||
+            review.sellerPhone ||
+            "-";
 
         let dateText = "-";
 
@@ -4689,7 +4707,7 @@ function renderReviews() {
                 </td>
 
                 <td>
-                    ${review.sellerPhone || "-"}
+                    ${sellerName}
                 </td>
 
                 <td>
@@ -4712,7 +4730,7 @@ function renderReviews() {
         `;
 
     }).join("");
-}    
+}
     
 function startRealtime() {
 
