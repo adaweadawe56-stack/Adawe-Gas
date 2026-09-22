@@ -2058,110 +2058,224 @@ select.form-select:focus {
 
 <section class="mt-4 mb-5">
 
-    <div class="d-flex justify-content-between align-items-center mb-3">
+    <div class="card border-0 shadow-sm">
 
-        <div>
-            <h5 class="mb-1">
-                ⭐ Customer Reviews
-            </h5>
+        <div class="card-body">
 
-            <small class="text-muted">
-                View and monitor customer feedback about sellers
-            </small>
-        </div>
+            <div class="d-flex justify-content-between align-items-center">
 
-    </div>
+                <div>
 
-    <!-- REVIEW FILTERS -->
+                    <h5 class="mb-1">
+                        ⭐ Customer Reviews
+                    </h5>
 
-    <div class="row g-2 mb-3">
+                    <small class="text-muted">
+                        View and monitor customer feedback about sellers
+                    </small>
 
-        <div class="col-md-8">
+                </div>
 
-            <input
-                type="text"
-                id="searchReviews"
-                class="form-control"
-                placeholder="Search reviews..."
-            >
+                <button
+                    type="button"
+                    class="btn btn-success"
+                    data-bs-toggle="modal"
+                    data-bs-target="#reviewsModal">
 
-        </div>
+                    ⭐ View All Reviews
 
-        <div class="col-md-4">
+                </button>
 
-            <select
-                id="ratingFilter"
-                class="form-select">
+            </div>
 
-                <option value="">
-                    All Ratings
-                </option>
+            <div class="mt-3">
 
-                <option value="5">
-                    ⭐⭐⭐⭐⭐ 5 Stars
-                </option>
+                <span class="badge bg-light text-dark border">
+                    💬 <span id="reviewsCount">0</span> Reviews
+                </span>
 
-                <option value="4">
-                    ⭐⭐⭐⭐ 4 Stars
-                </option>
-
-                <option value="3">
-                    ⭐⭐⭐ 3 Stars
-                </option>
-
-                <option value="2">
-                    ⭐⭐ 2 Stars
-                </option>
-
-                <option value="1">
-                    ⭐ 1 Star
-                </option>
-
-            </select>
+            </div>
 
         </div>
-
-    </div>
-
-    <!-- REVIEWS TABLE -->
-
-    <div class="table-responsive">
-
-        <table
-            id="reviewsTable"
-            class="table table-hover align-middle">
-
-            <thead>
-                <tr>
-                    <th>Customer</th>
-                    <th>Seller</th>
-                    <th>Rating</th>
-                    <th>Review</th>
-                    <th>Order ID</th>
-                    <th>Date</th>
-                </tr>
-            </thead>
-
-            <tbody id="reviewsTableBody">
-
-                <tr>
-                    <td
-                        colspan="6"
-                        class="text-center text-muted py-4">
-
-                        Loading reviews...
-
-                    </td>
-                </tr>
-
-            </tbody>
-
-        </table>
 
     </div>
 
 </section>
 
+
+<!-- =====================================================
+     CUSTOMER REVIEWS MODAL
+     ===================================================== -->
+
+<div
+    class="modal fade"
+    id="reviewsModal"
+    tabindex="-1"
+    aria-labelledby="reviewsModalLabel"
+    aria-hidden="true">
+
+    <div
+        class="modal-dialog modal-xl modal-dialog-scrollable">
+
+        <div class="modal-content">
+
+            <!-- MODAL HEADER -->
+
+            <div class="modal-header">
+
+                <div>
+
+                    <h5
+                        class="modal-title"
+                        id="reviewsModalLabel">
+
+                        ⭐ Customer Reviews
+
+                    </h5>
+
+                    <small class="text-muted">
+                        View and monitor customer feedback about sellers
+                    </small>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="btn-close"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- MODAL BODY -->
+
+            <div class="modal-body">
+
+                <!-- REVIEW FILTERS -->
+
+                <div class="row g-2 mb-3">
+
+                    <div class="col-md-8">
+
+                        <input
+                            type="text"
+                            id="searchReviews"
+                            class="form-control"
+                            placeholder="Search reviews..."
+                        >
+
+                    </div>
+
+                    <div class="col-md-4">
+
+                        <select
+                            id="ratingFilter"
+                            class="form-select">
+
+                            <option value="">
+                                All Ratings
+                            </option>
+
+                            <option value="5">
+                                ⭐⭐⭐⭐⭐ 5 Stars
+                            </option>
+
+                            <option value="4">
+                                ⭐⭐⭐⭐ 4 Stars
+                            </option>
+
+                            <option value="3">
+                                ⭐⭐⭐ 3 Stars
+                            </option>
+
+                            <option value="2">
+                                ⭐⭐ 2 Stars
+                            </option>
+
+                            <option value="1">
+                                ⭐ 1 Star
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REVIEWS TABLE -->
+
+                <div class="table-responsive">
+
+                    <table
+                        id="reviewsTable"
+                        class="table table-hover align-middle">
+
+                        <thead>
+
+                            <tr>
+
+                                <th>Customer</th>
+
+                                <th>Seller</th>
+
+                                <th>Rating</th>
+
+                                <th>Review</th>
+
+                                <th>Order ID</th>
+
+                                <th>Date</th>
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody id="reviewsTableBody">
+
+                            <tr>
+
+                                <td
+                                    colspan="6"
+                                    class="text-center text-muted py-4">
+
+                                    Loading reviews...
+
+                                </td>
+
+                            </tr>
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+
+            <!-- MODAL FOOTER -->
+
+            <div class="modal-footer">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary"
+                    data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 <!-- =====================================================
      SELLER STATISTICS
      ===================================================== -->
