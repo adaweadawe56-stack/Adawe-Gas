@@ -4588,6 +4588,131 @@ async function autoAssignPendingOrders() {
     }
 
 }
+
+// =====================================================
+// CUSTOMER REVIEWS
+// =====================================================
+
+let reviewsData = [];
+
+function listenToReviews() {
+
+    console.log("⭐ Starting reviews realtime listener...");
+
+    const reviewsQuery = query(
+        collection(db, "ratings"),
+        orderBy("createdAt", "desc")
+    );
+
+    onSnapshot(
+        reviewsQuery,
+        (snapshot) => {
+
+            reviewsData = snapshot.docs.map(docSnap => ({
+                id: docSnap.id,
+                ...docSnap.data()
+            }));
+
+            console.log(
+                "⭐ REVIEWS FROM FIRESTORE:",
+                reviewsData
+            );
+
+            console.log(
+                "⭐ REVIEWS COUNT:",
+                reviewsData.length
+            );
+
+            renderReviews();
+        },
+        (error) => {
+
+            console.error(
+                "❌ Reviews realtime error:",
+                error
+            );
+
+        }
+    );
+} 
+
+function renderReviews() {
+
+    const tbody =
+        document.getElementById("reviewsTableBody");
+
+    if (!tbody) {
+        return;
+    }
+
+    if (!reviewsData.length) {
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="6"
+                    class="text-center text-muted py-4">
+
+                    No reviews yet.
+
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tbody.innerHTML = reviewsData.map(review => {
+
+        const rating =
+            Number(review.rating || 0);
+
+        const stars =
+            "⭐".repeat(Math.max(0, Math.min(5, rating)));
+
+        let dateText = "-";
+
+        if (review.createdAt?.toDate) {
+
+            dateText =
+                review.createdAt
+                    .toDate()
+                    .toLocaleString("en-KE");
+
+        }
+
+        return `
+            <tr>
+
+                <td>
+                    ${review.customerName || "-"}
+                </td>
+
+                <td>
+                    ${review.sellerPhone || "-"}
+                </td>
+
+                <td>
+                    ${stars}
+                </td>
+
+                <td>
+                    ${review.review || "-"}
+                </td>
+
+                <td>
+                    ${review.orderId || "-"}
+                </td>
+
+                <td>
+                    ${dateText}
+                </td>
+
+            </tr>
+        `;
+
+    }).join("");
+}    
     
 function startRealtime() {
 
