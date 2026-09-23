@@ -5938,7 +5938,7 @@ const createdAt =
         ${escapeHTML(createdAt)}
     </td>
 
-    <td>
+<td>
 
     <div class="d-flex flex-wrap gap-1">
 
@@ -5957,6 +5957,15 @@ const createdAt =
             onclick="deleteOrder('${escapeJS(order.id)}')">
 
             🗑️ Delete
+
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-outline-primary btn-sm"
+            onclick="editOrder('${escapeJS(order.id)}')">
+
+            ✏️ Edit
 
         </button>
 
