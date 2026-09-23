@@ -5940,15 +5940,29 @@ const createdAt =
 
     <td>
 
+    <div class="d-flex flex-wrap gap-1">
+
         <button
-            class="btn btn-outline-success view-order-btn"
+            type="button"
+            class="btn btn-outline-success btn-sm"
             onclick="viewOrder('${escapeJS(order.id)}')">
 
-            View
+            👁️ View
 
         </button>
 
-    </td>
+        <button
+            type="button"
+            class="btn btn-outline-danger btn-sm"
+            onclick="deleteOrder('${escapeJS(order.id)}')">
+
+            🗑️ Delete
+
+        </button>
+
+    </div>
+
+</td>
 
 `;
 
