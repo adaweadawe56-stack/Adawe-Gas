@@ -6769,8 +6769,7 @@ document
         "input",
         renderOrders
     );
-
-
+    
 // =====================================================
 // ORDERS STATUS FILTER
 // =====================================================
@@ -6781,7 +6780,412 @@ document
         "change",
         renderOrders
     );
-   
+
+// =====================================================
+// 🚫 REJECT ORDER
+// =====================================================
+
+let selectedRejectOrderId = null;
+
+
+// =====================================================
+// OPEN REJECT ORDER MODAL
+// =====================================================
+
+window.rejectOrder = function(orderId){
+
+    const order =
+        ordersData.find(
+            item => item.id === orderId
+        );
+
+
+    if(!order){
+
+        alert("Order not found.");
+
+        return;
+
+    }
+
+
+    selectedRejectOrderId = orderId;
+
+
+    // ---------------------------------------------
+    // BASIC ORDER INFORMATION
+    // ---------------------------------------------
+
+    const orderIdElement =
+        document.getElementById("rejectOrderId");
+
+    const customerElement =
+        document.getElementById("rejectCustomerName");
+
+    const locationElement =
+        document.getElementById("rejectOrderLocation");
+
+
+    if(orderIdElement){
+
+        orderIdElement.textContent =
+            order.orderId ||
+            order.id ||
+            "-";
+
+    }
+
+
+    if(customerElement){
+
+        customerElement.textContent =
+            order.name ||
+            order.customerName ||
+            "-";
+
+    }
+
+
+    if(locationElement){
+
+        locationElement.textContent =
+            order.location ||
+            "-";
+
+    }
+
+
+    // ---------------------------------------------
+    // RESET FORM
+    // ---------------------------------------------
+
+    const reason =
+        document.getElementById("rejectReason");
+
+    const otherNote =
+        document.getElementById("rejectOtherNote");
+
+    const adminNote =
+        document.getElementById("rejectNote");
+
+    const otherContainer =
+        document.getElementById("rejectOtherNoteContainer");
+
+
+    if(reason){
+
+        reason.value = "";
+
+    }
+
+
+    if(otherNote){
+
+        otherNote.value = "";
+
+    }
+
+
+    if(adminNote){
+
+        adminNote.value = "";
+
+    }
+
+
+    if(otherContainer){
+
+        otherContainer.style.display =
+            "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW MODAL
+    // ---------------------------------------------
+
+    const modalElement =
+        document.getElementById(
+            "rejectOrderModal"
+        );
+
+
+    if(!modalElement){
+
+        alert("Reject Order modal not found.");
+
+        return;
+
+    }
+
+
+    const modal =
+        bootstrap.Modal.getOrCreateInstance(
+            modalElement
+        );
+
+
+    modal.show();
+
+};
+
+
+// =====================================================
+// SHOW / HIDE OTHER NOTE
+// =====================================================
+
+document
+    .getElementById("rejectReason")
+    ?.addEventListener(
+        "change",
+        function(){
+
+            const container =
+                document.getElementById(
+                    "rejectOtherNoteContainer"
+                );
+
+
+            const otherNote =
+                document.getElementById(
+                    "rejectOtherNote"
+                );
+
+
+            if(this.value === "Other"){
+
+                if(container){
+
+                    container.style.display =
+                        "block";
+
+                }
+
+            }else{
+
+                if(container){
+
+                    container.style.display =
+                        "none";
+
+                }
+
+                if(otherNote){
+
+                    otherNote.value = "";
+
+                }
+
+            }
+
+        }
+    );
+
+
+// =====================================================
+// CONFIRM REJECT ORDER
+// =====================================================
+
+document
+    .getElementById("confirmRejectOrderBtn")
+    ?.addEventListener(
+        "click",
+        async function(){
+
+            if(!selectedRejectOrderId){
+
+                alert("No order selected.");
+
+                return;
+
+            }
+
+
+            const reasonElement =
+                document.getElementById(
+                    "rejectReason"
+                );
+
+
+            const otherNoteElement =
+                document.getElementById(
+                    "rejectOtherNote"
+                );
+
+
+            const adminNoteElement =
+                document.getElementById(
+                    "rejectNote"
+                );
+
+
+            const reason =
+                reasonElement
+                    ? reasonElement.value.trim()
+                    : "";
+
+
+            const otherNote =
+                otherNoteElement
+                    ? otherNoteElement.value.trim()
+                    : "";
+
+
+            const adminNote =
+                adminNoteElement
+                    ? adminNoteElement.value.trim()
+                    : "";
+
+
+            // -----------------------------------------
+            // VALIDATE REASON
+            // -----------------------------------------
+
+            if(!reason){
+
+                alert(
+                    "Please select a reason for rejection."
+                );
+
+                return;
+
+            }
+
+
+            if(
+                reason === "Other" &&
+                !otherNote
+            ){
+
+                alert(
+                    "Please explain the reason for rejection."
+                );
+
+                return;
+
+            }
+
+
+            // -----------------------------------------
+            // BUTTON STATE
+            // -----------------------------------------
+
+            const button = this;
+
+            const originalText =
+                button.innerHTML;
+
+
+            button.disabled = true;
+
+            button.innerHTML =
+                "⏳ Rejecting...";
+
+
+            try{
+
+
+                // -------------------------------------
+                // FIRESTORE UPDATE
+                // -------------------------------------
+
+                const orderRef =
+                    doc(
+                        db,
+                        "orders",
+                        selectedRejectOrderId
+                    );
+
+
+                await updateDoc(
+                    orderRef,
+                    {
+
+                        status: "Rejected",
+
+                        rejectionReason:
+                            reason,
+
+                        rejectionNote:
+                            reason === "Other"
+                                ? otherNote
+                                : adminNote,
+
+                        rejectedBy:
+                            "admin",
+
+                        rejectedAt:
+                            serverTimestamp()
+
+                    }
+                );
+
+
+                // -------------------------------------
+                // CLOSE MODAL
+                // -------------------------------------
+
+                const modalElement =
+                    document.getElementById(
+                        "rejectOrderModal"
+                    );
+
+
+                const modal =
+                    bootstrap.Modal.getInstance(
+                        modalElement
+                    );
+
+
+                if(modal){
+
+                    modal.hide();
+
+                }
+
+
+                // -------------------------------------
+                // RESET
+                // -------------------------------------
+
+                selectedRejectOrderId = null;
+
+
+                // -------------------------------------
+                // SUCCESS
+                // -------------------------------------
+
+                alert(
+                    "Order rejected successfully."
+                );
+
+
+            }catch(error){
+
+                console.error(
+                    "Reject order error:",
+                    error
+                );
+
+
+                alert(
+                    "Failed to reject order. Please try again."
+                );
+
+
+            }finally{
+
+                button.disabled = false;
+
+                button.innerHTML =
+                    originalText;
+
+            }
+
+        }
+    );
+    
 function renderSellers() {
 
     const table =
