@@ -7098,28 +7098,31 @@ document
                     );
 
 
-                await updateDoc(
-                    orderRef,
-                    {
+await updateDoc(
+    orderRef,
+    {
 
-                        status: "Rejected",
+        status: "Rejected",
 
-                        rejectionReason:
-                            reason,
+        rejectionReason:
+            reason,
 
-                        rejectionNote:
-                            reason === "Other"
-                                ? otherNote
-                                : adminNote,
+        rejectionNote:
+            reason === "Other"
+                ? otherNote
+                : "",
 
-                        rejectedBy:
-                            "admin",
+        adminNote:
+            adminNote,
 
-                        rejectedAt:
-                            serverTimestamp()
+        rejectedBy:
+            "admin",
 
-                    }
-                );
+        rejectedAt:
+            serverTimestamp()
+
+    }
+);
 
 
                 // -------------------------------------
