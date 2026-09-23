@@ -7816,42 +7816,76 @@ Save Changes
 
         <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-            <!-- HEADER -->
+            <!-- =========================================================
+     SELLER PROFILE HEADER
+     ========================================================= -->
 
-            <div class="modal-header bg-success text-white border-0 px-4 py-3">
+<div class="modal-header text-white border-0 px-4 py-3"
+     style="
+        background: linear-gradient(135deg, #198754, #146c43);
+        min-height: 82px;
+     ">
 
-                <div class="d-flex align-items-center gap-3">
+    <div class="d-flex align-items-center gap-3">
 
-                    <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center"
-                         style="width:48px;height:48px;font-size:22px;">
+        <!-- SELLER ICON -->
 
-                        👨‍💼
+        <div class="d-flex align-items-center justify-content-center rounded-circle bg-white shadow-sm"
+             style="
+                width: 52px;
+                height: 52px;
+                min-width: 52px;
+                font-size: 23px;
+             ">
 
-                    </div>
+            👨‍💼
 
-                    <div>
+        </div>
 
-                        <h5 class="modal-title fw-bold mb-0 text-white"
-    id="sellerProfileModalLabel">
 
-    👨‍💼 Seller Profile
+        <!-- TITLE -->
 
-</h5>
+        <div>
 
-                        <small class="opacity-75 text-white">
-    Seller account information & performance
-</small>
-                    </div>
+            <h5 class="modal-title fw-bold text-white mb-1"
+                id="sellerProfileModalLabel">
 
-                </div>
+                Seller Profile
 
-                <button type="button"
-                        class="btn-close btn-close-white"
-                        data-bs-dismiss="modal"
-                        aria-label="Close">
-                </button>
+            </h5>
+
+            <div class="d-flex align-items-center gap-2">
+
+                <span class="badge bg-white text-success rounded-pill px-2 py-1"
+                      style="font-size: 11px;">
+
+                    Seller Account
+
+                </span>
+
+                <small class="text-white"
+                       style="opacity: .85;">
+
+                    Account information & performance
+
+                </small>
 
             </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CLOSE BUTTON -->
+
+    <button type="button"
+            class="btn-close btn-close-white ms-auto"
+            data-bs-dismiss="modal"
+            aria-label="Close">
+    </button>
+
+</div>
 
             <!-- BODY -->
 
