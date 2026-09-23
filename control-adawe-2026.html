@@ -3330,236 +3330,406 @@ loadPendingCommissionPayments();
 
 window.viewSeller = function(id) {
 
-    const seller =
-        sellersData.find(s => s.id === id);
+    const seller = sellersData.find(s => s.id === id);
 
     if (!seller) {
-
         alert("Seller not found");
-
         return;
-
     }
 
-
-    const body =
-        document.getElementById("sellerProfileBody");
+    const body = document.getElementById("sellerProfileBody");
 
     if (!body) return;
 
+    const status = String(seller.status || "pending").toLowerCase();
+    const paymentStatus = String(seller.paymentStatus || "-");
 
-    const status =
-        String(seller.status || "pending")
-            .toLowerCase();
+    const deliveryCount = Number(seller.deliveryCount || 0);
+    const deliveryLimit = Number(seller.deliveryLimit || 0);
+    const commission = Number(seller.commissionPerOrder || 0);
 
+    const averageRating = Number(seller.averageRating || 0);
+    const totalRatings = Number(seller.totalRatings || 0);
+    const completedOrders = Number(seller.completedOrders || 0);
 
-    const paymentStatus =
-        String(seller.paymentStatus || "-");
+    /* =====================================================
+       STATUS BADGE
+    ===================================================== */
 
+    let statusBadge = `
+        <span class="badge rounded-pill bg-secondary px-3 py-2">
+            ${seller.status || "Pending"}
+        </span>
+    `;
 
-    const deliveryCount =
-        Number(seller.deliveryCount || 0);
+    if (status === "approved") {
+        statusBadge = `
+            <span class="badge rounded-pill bg-success px-3 py-2">
+                ● Approved
+            </span>
+        `;
+    }
 
+    if (status === "pending") {
+        statusBadge = `
+            <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                ● Pending
+            </span>
+        `;
+    }
 
-    const deliveryLimit =
-        Number(seller.deliveryLimit || 0);
+    if (status === "rejected") {
+        statusBadge = `
+            <span class="badge rounded-pill bg-danger px-3 py-2">
+                ● Rejected
+            </span>
+        `;
+    }
 
+    /* =====================================================
+       PAYMENT BADGE
+    ===================================================== */
 
-    const commission =
-        Number(seller.commissionPerOrder || 0);
+    const paymentLower = paymentStatus.toLowerCase();
 
+    let paymentBadge = `
+        <span class="badge rounded-pill bg-secondary px-3 py-2">
+            ${paymentStatus}
+        </span>
+    `;
 
-    const averageRating =
-        Number(seller.averageRating || 0);
+    if (paymentLower === "paid") {
+        paymentBadge = `
+            <span class="badge rounded-pill bg-success px-3 py-2">
+                ✓ Paid
+            </span>
+        `;
+    }
 
+    if (
+        paymentLower === "pending" ||
+        paymentLower === "unpaid"
+    ) {
+        paymentBadge = `
+            <span class="badge rounded-pill bg-warning text-dark px-3 py-2">
+                ${paymentStatus}
+            </span>
+        `;
+    }
 
-    const totalRatings =
-        Number(seller.totalRatings || 0);
+    /* =====================================================
+       RATING STARS
+    ===================================================== */
 
+    const ratingStars = averageRating > 0
+        ? "⭐".repeat(Math.min(5, Math.max(1, Math.round(averageRating))))
+        : "☆☆☆☆☆";
 
-    const completedOrders =
-        Number(seller.completedOrders || 0);
-
+    /* =====================================================
+       SELLER PROFILE
+    ===================================================== */
 
     body.innerHTML = `
 
-        <div class="row g-3">
+        <!-- SELLER HEADER -->
 
-            <!-- NAME -->
+        <div class="d-flex flex-column flex-md-row align-items-md-center justify-content-between gap-3 p-4 mb-4 bg-light rounded-4 border">
 
-            <div class="col-md-6">
+            <div class="d-flex align-items-center gap-3">
 
-                <label class="form-label">
-                    Seller Name
-                </label>
+                <div
+                    class="rounded-circle bg-success text-white d-flex align-items-center justify-content-center fw-bold"
+                    style="width:64px;height:64px;font-size:24px;">
 
-                <div class="form-control bg-light">
-                    ${seller.name || "-"}
+                    ${(seller.name || "S").charAt(0).toUpperCase()}
+
+                </div>
+
+                <div>
+
+                    <h4 class="fw-bold mb-1">
+                        ${seller.name || "Unnamed Seller"}
+                    </h4>
+
+                    <div class="text-muted small">
+                        Seller ID:
+                        <span class="fw-semibold">
+                            ${seller.id || "-"}
+                        </span>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div>
+                ${statusBadge}
+            </div>
+
+        </div>
+
+
+        <!-- PERFORMANCE -->
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-6 col-lg-3">
+
+                <div class="border rounded-4 p-3 h-100 bg-white">
+
+                    <div class="text-muted small mb-2">
+                        📦 Deliveries
+                    </div>
+
+                    <div class="fs-4 fw-bold">
+                        ${deliveryCount}
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <!-- PHONE -->
+            <div class="col-6 col-lg-3">
 
-            <div class="col-md-6">
+                <div class="border rounded-4 p-3 h-100 bg-white">
 
-                <label class="form-label">
-                    Phone
-                </label>
+                    <div class="text-muted small mb-2">
+                        ✅ Completed
+                    </div>
 
-                <div class="form-control bg-light">
-                    ${seller.phone || "-"}
+                    <div class="fs-4 fw-bold">
+                        ${completedOrders}
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <!-- LOCATION -->
+            <div class="col-6 col-lg-3">
 
-            <div class="col-md-8">
+                <div class="border rounded-4 p-3 h-100 bg-white">
 
-                <label class="form-label">
-                    Location
-                </label>
+                    <div class="text-muted small mb-2">
+                        ⭐ Rating
+                    </div>
 
-                <div class="form-control bg-light">
-                    ${seller.location || "-"}
+                    <div class="fs-4 fw-bold">
+                        ${averageRating.toFixed(1)}
+                    </div>
+
+                    <div class="small text-muted">
+                        ${ratingStars}
+                    </div>
+
                 </div>
 
             </div>
 
 
-            <!-- STATUS -->
+            <div class="col-6 col-lg-3">
 
-            <div class="col-md-4">
+                <div class="border rounded-4 p-3 h-100 bg-white">
 
-                <label class="form-label">
-                    Status
-                </label>
+                    <div class="text-muted small mb-2">
+                        💬 Reviews
+                    </div>
 
-                <div class="form-control bg-light">
-                    ${seller.status || "-"}
+                    <div class="fs-4 fw-bold">
+                        ${totalRatings}
+                    </div>
+
                 </div>
 
             </div>
 
+        </div>
 
-            <!-- DELIVERIES -->
 
-            <div class="col-md-4">
+        <!-- CONTACT & LOCATION -->
 
-                <label class="form-label">
-                    Deliveries
-                </label>
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                <div class="form-control bg-light">
-                    ${deliveryCount}
+            <div class="card-body p-4">
+
+                <h6 class="fw-bold mb-3">
+                    📍 Contact & Location
+                </h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small mb-1">
+                            Phone
+                        </div>
+
+                        <div class="fw-semibold">
+                            📞 ${seller.phone || "-"}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-6">
+
+                        <div class="text-muted small mb-1">
+                            Location
+                        </div>
+
+                        <div class="fw-semibold">
+                            📍 ${seller.location || "-"}
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
 
+        </div>
 
-            <!-- LIMIT -->
 
-            <div class="col-md-4">
+        <!-- FINANCIAL INFORMATION -->
 
-                <label class="form-label">
-                    Delivery Limit
-                </label>
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                <div class="form-control bg-light">
-                    ${deliveryLimit}
+            <div class="card-body p-4">
+
+                <h6 class="fw-bold mb-3">
+                    💰 Financial Information
+                </h6>
+
+                <div class="row g-3">
+
+                    <div class="col-md-4">
+
+                        <div class="text-muted small mb-1">
+                            Commission / Order
+                        </div>
+
+                        <div class="fs-5 fw-bold">
+                            KES ${commission.toLocaleString("en-KE")}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <div class="text-muted small mb-1">
+                            Payment Status
+                        </div>
+
+                        <div>
+                            ${paymentBadge}
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-md-4">
+
+                        <div class="text-muted small mb-1">
+                            Delivery Limit
+                        </div>
+
+                        <div class="fs-5 fw-bold">
+                            ${deliveryLimit}
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
 
+        </div>
 
-            <!-- COMMISSION -->
 
-            <div class="col-md-4">
+        <!-- CUSTOMER RATING -->
 
-                <label class="form-label">
-                    Commission / Order
-                </label>
+        <div class="card border-0 shadow-sm rounded-4 mb-4">
 
-                <div class="form-control bg-light">
-                    KES ${commission.toLocaleString("en-KE")}
+            <div class="card-body p-4">
+
+                <h6 class="fw-bold mb-3">
+                    ⭐ Customer Rating
+                </h6>
+
+                <div class="d-flex flex-column flex-md-row align-items-md-center gap-3">
+
+                    <div>
+
+                        <div class="fs-3 fw-bold">
+                            ${averageRating.toFixed(1)}
+                            <span class="fs-6 text-muted">
+                                / 5
+                            </span>
+                        </div>
+
+                        <div>
+                            ${ratingStars}
+                        </div>
+
+                    </div>
+
+                    <div class="text-muted">
+
+                        Based on
+                        <strong>
+                            ${totalRatings}
+                        </strong>
+                        customer
+                        ${totalRatings === 1 ? "review" : "reviews"}
+
+                    </div>
+
                 </div>
 
             </div>
 
-
-            <!-- PAYMENT -->
-
-            <div class="col-md-4">
-
-                <label class="form-label">
-                    Payment Status
-                </label>
-
-                <div class="form-control bg-light">
-                    ${paymentStatus}
-                </div>
-
-            </div>
+        </div>
 
 
-            <!-- RATING -->
+        <!-- ACCOUNT INFORMATION -->
 
-            <div class="col-md-4">
+        <div class="card border-0 shadow-sm rounded-4">
 
-                <label class="form-label">
-                    Average Rating
-                </label>
+            <div class="card-body p-4">
 
-                <div class="form-control bg-light">
-                    ⭐ ${averageRating.toFixed(1)}
-                </div>
+                <h6 class="fw-bold mb-3">
+                    📅 Account Information
+                </h6>
 
-            </div>
+                <div class="row g-3">
 
+                    <div class="col-md-6">
 
-            <!-- REVIEWS -->
+                        <div class="text-muted small mb-1">
+                            Registered
+                        </div>
 
-            <div class="col-md-4">
+                        <div class="fw-semibold">
+                            ${formatTimestamp(seller.createdAt)}
+                        </div>
 
-                <label class="form-label">
-                    Total Reviews
-                </label>
-
-                <div class="form-control bg-light">
-                    ${totalRatings}
-                </div>
-
-            </div>
+                    </div>
 
 
-            <!-- COMPLETED ORDERS -->
+                    <div class="col-md-6">
 
-            <div class="col-md-6">
+                        <div class="text-muted small mb-1">
+                            Seller Status
+                        </div>
 
-                <label class="form-label">
-                    Completed Orders
-                </label>
+                        <div>
+                            ${statusBadge}
+                        </div>
 
-                <div class="form-control bg-light">
-                    ${completedOrders}
-                </div>
+                    </div>
 
-            </div>
-
-
-            <!-- REGISTERED -->
-
-            <div class="col-md-6">
-
-                <label class="form-label">
-                    Registered
-                </label>
-
-                <div class="form-control bg-light">
-                    ${formatTimestamp(seller.createdAt)}
                 </div>
 
             </div>
@@ -3568,26 +3738,19 @@ window.viewSeller = function(id) {
 
     `;
 
+    /* =====================================================
+       SHOW MODAL
+    ===================================================== */
 
-    const modalElement =
-        document.getElementById(
-            "sellerProfileModal"
-        );
-
+    const modalElement = document.getElementById("sellerProfileModal");
 
     if (!modalElement) return;
 
-
-    const modal =
-        bootstrap.Modal.getOrCreateInstance(
-            modalElement
-        );
-
+    const modal = bootstrap.Modal.getOrCreateInstance(modalElement);
 
     modal.show();
 
-};   
-
+};
 function formatTimestamp(timestamp) {
 
     if (!timestamp) {
