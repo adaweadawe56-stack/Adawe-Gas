@@ -7639,50 +7639,79 @@ Save Changes
 
 </div>
 
-<!-- =====================================================
-     SELLER PROFILE MODAL
-     ===================================================== -->
+<!-- =========================================================
+     👨‍💼 SELLER PROFILE MODAL
+     ========================================================= -->
 
-<div
-    class="modal fade"
-    id="sellerProfileModal"
-    tabindex="-1"
-    aria-hidden="true">
+<div class="modal fade"
+     id="sellerProfileModal"
+     tabindex="-1"
+     aria-labelledby="sellerProfileModalLabel"
+     aria-hidden="true">
 
     <div class="modal-dialog modal-lg modal-dialog-centered">
 
-        <div class="modal-content">
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
 
-            <div class="modal-header">
+            <!-- HEADER -->
 
-                <h5 class="modal-title">
-                    👨‍💼 Seller Profile
-                </h5>
+            <div class="modal-header bg-success text-white border-0 px-4 py-3">
 
-                <button
-                    type="button"
-                    class="btn-close btn-close-white"
-                    data-bs-dismiss="modal">
+                <div class="d-flex align-items-center gap-3">
+
+                    <div class="bg-white text-success rounded-circle d-flex align-items-center justify-content-center"
+                         style="width:48px;height:48px;font-size:22px;">
+
+                        👨‍💼
+
+                    </div>
+
+                    <div>
+
+                        <h5 class="modal-title fw-bold mb-0"
+                            id="sellerProfileModalLabel">
+
+                            Seller Profile
+
+                        </h5>
+
+                        <small class="opacity-75">
+
+                            Seller account information & performance
+
+                        </small>
+
+                    </div>
+
+                </div>
+
+                <button type="button"
+                        class="btn-close btn-close-white"
+                        data-bs-dismiss="modal"
+                        aria-label="Close">
                 </button>
 
             </div>
 
+            <!-- BODY -->
 
-            <div
-                class="modal-body"
-                id="sellerProfileBody">
+            <div class="modal-body p-4">
 
-                Loading...
+                <div id="sellerProfileBody">
+
+                    Loading...
+
+                </div>
 
             </div>
 
+            <!-- FOOTER -->
 
-            <div class="modal-footer">
+            <div class="modal-footer bg-light border-0 px-4 py-3">
 
-                <button
-                    type="button"
-                    class="btn btn-secondary"
-                    data-bs-dismiss="modal">
+                <button type="button"
+                        class="btn btn-secondary px-4"
+                        data-bs-dismiss="modal">
 
                     Close
 
