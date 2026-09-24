@@ -2409,160 +2409,403 @@ let searchText = "";
 
 
 
-  function renderReviews() {
+ function renderReviews() {
 
   const reviewsContainer =
     document.getElementById("reviewsContainer");
 
+  if (!reviewsContainer) {
+    return;
+  }
+
   let html = "";
 
-  let totalRating = 0;
-  let totalReviews = 0;
-  let fiveStars = 0;
+  /*
+   * =====================================================
+   * GLOBAL REVIEW SUMMARY
+   * =====================================================
+   */
+
+  let globalTotalRating = 0;
+  let globalTotalReviews = 0;
+  let globalFiveStars = 0;
 
   for (const d of allReviews) {
 
+    const rating =
+      Number(d.rating);
+
+    if (!rating) {
+      continue;
+    }
+
+    globalTotalReviews++;
+
+    globalTotalRating += rating;
+
+    if (rating === 5) {
+      globalFiveStars++;
+    }
+
+  }
+
+
+  /*
+   * =====================================================
+   * FILTERED REVIEWS
+   * =====================================================
+   */
+
+  let visibleReviews = 0;
+
+  for (const d of allReviews) {
+
+    const rating =
+      Number(d.rating);
+
+    if (!rating) {
+      continue;
+    }
+
+
+    /*
+     * RATING FILTER
+     */
+
     if (
       currentFilter !== "all" &&
-      Number(d.rating) !== Number(currentFilter)
+      rating !== Number(currentFilter)
     ) {
       continue;
     }
 
-   const seller =
-  sellerCache[d.sellerUid];
 
-console.log("⭐ REVIEW SELLER DEBUG:", {
-  ratingId: d.id,
-  sellerUid: d.sellerUid,
-  sellerCacheKeys: Object.keys(sellerCache),
-  sellerFound: seller,
-  sellerName: seller?.name
-});
+    /*
+     * SELLER LOOKUP
+     */
 
-const sellerName =
-  seller?.name || "Unknown Seller";
-const customer =
-  d.customerName || "";
+    const seller =
+      sellerCache[d.sellerUid];
 
-const location =
-  seller?.location || "";
 
-const searchString =
-(
-  sellerName +
-  customer +
-  location +
-  (d.brand || "") +
-  (d.quantity || "")
-).toLowerCase();
+    console.log(
+      "⭐ REVIEW SELLER DEBUG:",
+      {
+        ratingId: d.id,
+        sellerUid: d.sellerUid,
+        sellerCacheKeys:
+          Object.keys(sellerCache),
+        sellerFound: seller,
+        sellerName: seller?.name
+      }
+    );
 
-if(
-  searchText &&
-  !searchString.includes(searchText)
-){
-  continue;
-}
 
-totalReviews++;
+    const sellerName =
+      seller?.name ||
+      "Unknown Seller";
 
- totalRating += Number(d.rating);
 
-    if (Number(d.rating) === 5) {
-      fiveStars++;
+    const customer =
+      d.customerName ||
+      "";
+
+
+    const location =
+      seller?.location ||
+      "";
+
+
+    /*
+     * SEARCH
+     */
+
+    const searchString =
+      (
+        sellerName +
+        customer +
+        location +
+        (d.brand || "") +
+        (d.quantity || "") +
+        (d.review || "")
+      ).toLowerCase();
+
+
+    if (
+      searchText &&
+      !searchString.includes(searchText)
+    ) {
+      continue;
     }
 
+
+    visibleReviews++;
+
+
+    /*
+     * STARS
+     */
+
     const stars =
-      "⭐".repeat(Number(d.rating));
+      "⭐".repeat(rating);
+
+
+    /*
+     * DATE
+     */
 
     const date =
       timeAgo(d.createdAt);
 
-  html += `
 
-<div class="col-md-4">
+    /*
+     * REVIEW CARD
+     */
 
-  <div class="review-card">
+    html += `
 
-    <div class="d-flex align-items-center">
+      <div class="col-12">
 
-      <div class="review-avatar">
-        ${(d.customerName || "?").charAt(0).toUpperCase()}
-      </div>
+        <div class="review-card">
 
-      <div class="ms-3">
+          <div class="d-flex align-items-center">
 
-        <p class="review-name">
-          ${d.customerName || "Anonymous Customer"}
-        </p>
+            <div class="review-avatar">
 
-        <div class="review-stars">
-          ${stars}
+              ${(d.customerName || "?")
+                .charAt(0)
+                .toUpperCase()}
+
+            </div>
+
+
+            <div class="ms-3">
+
+              <p class="review-name mb-1">
+
+                ${d.customerName ||
+                  "Anonymous Customer"}
+
+              </p>
+
+
+              <div class="review-stars">
+
+                ${stars}
+
+              </div>
+
+
+              <div class="review-badge">
+
+                ✔ Verified Customer
+
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <p class="review-text">
+
+            "${d.review || ""}"
+
+          </p>
+
+
+          <div class="seller-badge">
+
+            🏪 ${sellerName}
+
+          </div>
+
+
+          <div class="review-product">
+
+            🛢️ ${d.brand || "Gas"}
+            •
+            ⚖️ ${d.quantity || "-"}
+
+          </div>
+
+
+          ${
+            location
+              ? `
+                <div class="review-product">
+                  📍 ${location}
+                </div>
+              `
+              : ""
+          }
+
+
+          <div class="review-date">
+
+            🕒 ${date}
+
+          </div>
+
         </div>
 
-        <div class="review-badge">
-          ✔ Verified Customer
+      </div>
+
+    `;
+
+  }
+
+
+  /*
+   * =====================================================
+   * EMPTY STATE
+   * =====================================================
+   */
+
+  if (visibleReviews === 0) {
+
+    reviewsContainer.innerHTML = `
+
+      <div class="col-12">
+
+        <div class="text-center py-5">
+
+          <div style="font-size:42px;">
+            ⭐
+          </div>
+
+          <h6 class="fw-bold mt-3">
+            No reviews found
+          </h6>
+
+          <p class="text-muted mb-0">
+            Try another search or rating filter.
+          </p>
+
         </div>
 
       </div>
 
-    </div>
+    `;
 
-    <p class="review-text">
-      "${d.review}"
-    </p>
+  } else {
 
-    <div class="seller-badge">
-      🏪 ${sellerName}
-    </div>
+    reviewsContainer.innerHTML =
+      html;
 
-    <div class="review-product">
-      🛢️ ${d.brand || "Gas"} • ⚖️ ${d.quantity || "-"}
-    </div>
+    /*
+     * Keep existing animation
+     */
+    if (
+      typeof animateReviews === "function"
+    ) {
+      animateReviews();
+    }
 
-    <div class="review-date">
-      🕒 ${date}
-    </div>
+  }
 
-  </div>
 
-</div>
+  /*
+   * =====================================================
+   * UPDATE MAIN SUMMARY
+   * =====================================================
+   */
 
-`;
-    
-} 
+  const averageRating =
+    globalTotalReviews > 0
+      ? (
+          globalTotalRating /
+          globalTotalReviews
+        ).toFixed(1)
+      : "0.0";
 
-   
-  if (totalReviews === 0) {
 
-  reviewsContainer.innerHTML =
-    "<div class='text-center'>No customer reviews yet.</div>";
+  const averageElement =
+    document.getElementById(
+      "averageRating"
+    );
 
-  document.getElementById("averageRating").innerText =
-    "0.0 ⭐";
+  const totalElement =
+    document.getElementById(
+      "totalReviews"
+    );
 
-  document.getElementById("totalReviews").innerText =
-    "0";
+  const fiveStarElement =
+    document.getElementById(
+      "fiveStarReviews"
+    );
 
-  document.getElementById("fiveStarReviews").innerText =
-    "0";
 
-  return;
+  if (averageElement) {
+
+    averageElement.innerText =
+      averageRating + " ⭐";
+
+  }
+
+
+  if (totalElement) {
+
+    totalElement.innerText =
+      globalTotalReviews;
+
+  }
+
+
+  if (fiveStarElement) {
+
+    fiveStarElement.innerText =
+      globalFiveStars;
+
+  }
+
+
+  /*
+   * =====================================================
+   * UPDATE MODAL SUMMARY
+   * =====================================================
+   */
+
+  const modalAverage =
+    document.getElementById(
+      "modalAverageRating"
+    );
+
+  const modalTotal =
+    document.getElementById(
+      "modalTotalReviews"
+    );
+
+  const modalFiveStar =
+    document.getElementById(
+      "modalFiveStarReviews"
+    );
+
+
+  if (modalAverage) {
+
+    modalAverage.innerText =
+      averageRating + " ⭐";
+
+  }
+
+
+  if (modalTotal) {
+
+    modalTotal.innerText =
+      globalTotalReviews;
+
+  }
+
+
+  if (modalFiveStar) {
+
+    modalFiveStar.innerText =
+      globalFiveStars;
+
+  }
+
 }
-
-  reviewsContainer.innerHTML = html;
-
-  animateReviews();
-
-  document.getElementById("totalReviews").innerText =
-    totalReviews;
-
-  document.getElementById("fiveStarReviews").innerText =
-    fiveStars;
-
-  document.getElementById("averageRating").innerText =
-    (totalRating / totalReviews).toFixed(1) + " ⭐";
-}    
 
   // =====================================================
 // LOAD SELLERS FOR REVIEW LOOKUP
