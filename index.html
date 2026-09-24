@@ -6375,16 +6375,33 @@ setTimeout(() => {
 
 /* RESET BUTTON */
 
-function resetButton() {
+function resetButton(){
+  submitting = false;
 
-    submitting = false;
+  orderButton.innerHTML = originalBtnText;
 
-    orderButton.disabled = false;
+  const submitBtn = document.getElementById("submitOrderBtn");
+  const quantity = document.getElementById("quantity")?.value;
+  const brand = document.getElementById("brand")?.value;
+  const sellerStatus = document.getElementById("sellerStatus");
 
-    orderButton.innerHTML = originalBtnText;
+  const hasCustomerLocation =
+    Number.isFinite(currentCustomerLatitude) &&
+    Number.isFinite(currentCustomerLongitude);
 
-    document.getElementById("submitOrderBtn").disabled = false;
+  const sellerFound =
+    sellerStatus &&
+    sellerStatus.style.display !== "none" &&
+    sellerStatus.textContent.includes("Seller Found");
 
+  const canSubmit =
+    hasCustomerLocation &&
+    quantity &&
+    brand &&
+    sellerFound;
+
+  submitBtn.disabled = !canSubmit;
+  orderButton.disabled = !canSubmit;
 }
 
 /* -------------------- SELLER REGISTRATION -------------------- */
