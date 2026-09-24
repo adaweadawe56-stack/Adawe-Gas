@@ -443,6 +443,101 @@ html{
 
 }
 
+/* =====================================================
+   ⭐ CUSTOMER REVIEWS — COMPACT DESIGN
+   ===================================================== */
+
+.review-section-card {
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 35px 25px;
+    box-shadow: 0 8px 30px rgba(0,0,0,.07);
+    border: 1px solid rgba(15,143,95,.08);
+}
+
+.review-section-icon {
+    width: 55px;
+    height: 55px;
+    margin: 0 auto 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: #eaf8f1;
+    font-size: 25px;
+}
+
+.review-summary-box {
+    background: #f8faf9;
+    border: 1px solid #e7eee9;
+    border-radius: 14px;
+    padding: 16px 10px;
+    text-align: center;
+    height: 100%;
+}
+
+.review-summary-number {
+    font-size: 22px;
+    font-weight: 700;
+    color: #087443;
+}
+
+.review-summary-label {
+    font-size: 13px;
+    color: #6c757d;
+    margin-top: 4px;
+}
+
+
+/* MODAL STATS */
+
+.review-modal-stat {
+    text-align: center;
+    background: #f8faf9;
+    border: 1px solid #e7eee9;
+    border-radius: 12px;
+    padding: 10px 5px;
+}
+
+.review-modal-stat div {
+    font-size: 18px;
+    color: #087443;
+}
+
+.review-modal-stat small {
+    color: #6c757d;
+    font-size: 11px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 576px) {
+
+    .review-section-card {
+        padding: 25px 15px;
+        border-radius: 16px;
+    }
+
+    .review-summary-number {
+        font-size: 18px;
+    }
+
+    .review-summary-label {
+        font-size: 11px;
+    }
+
+    #customerReviewsModal .modal-body {
+        padding: 15px !important;
+    }
+
+    #customerReviewsModal .review-filter {
+        font-size: 12px;
+        padding: 7px 10px;
+    }
+
+}
+
 /* ==========================
    FEATURED SELLERS
 ========================== */
