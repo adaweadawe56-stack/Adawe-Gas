@@ -6305,6 +6305,21 @@ showToast("✅ Order saved successfully");
 
 orderForm.reset();
 
+/* RESET CUSTOMER GPS AFTER SUCCESSFUL ORDER */
+currentCustomerLatitude = null;
+currentCustomerLongitude = null;
+window.customerGPSAccuracy = null;
+
+if (typeof locationWatchId !== "undefined" && locationWatchId !== null) {
+  try {
+    navigator.geolocation.clearWatch(locationWatchId);
+  } catch (gpsError) {
+    console.warn("Could not clear customer GPS watch:", gpsError);
+  }
+
+  locationWatchId = null;
+}
+
 const recommendedSeller =
     document.getElementById("recommendedSeller");
 
