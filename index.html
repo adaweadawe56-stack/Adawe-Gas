@@ -420,113 +420,353 @@ Adawe Gas is Kenya's trusted LPG marketplace that connects customers with verifi
   </div>
 </section>
 
-<!-- CUSTOMER REVIEWS -->
+<!-- =====================================================
+     ⭐ CUSTOMER REVIEWS — COMPACT SECTION
+     ===================================================== -->
 
 <section class="section" id="reviews">
 
-<div class="container">
+    <div class="container">
 
-<h2 class="text-center fw-bold mb-3">
-⭐ Customer Reviews
-</h2>
+        <div class="review-section-card">
 
-<p class="text-center mb-5">
-See what customers say about Adawe Gas sellers.
-</p>
+            <!-- HEADER -->
+            <div class="text-center">
 
-<div class="row text-center mb-5">
+                <div class="review-section-icon">
+                    ⭐
+                </div>
 
-<div class="col-md-4">
+                <h2 class="fw-bold mb-2">
+                    Customer Reviews
+                </h2>
 
-<h3 id="averageRating">0.0 ⭐</h3>
+                <p class="text-muted mb-4">
+                    See what customers say about Adawe Gas sellers.
+                </p>
 
-<p>Average Rating</p>
+            </div>
 
-</div>
 
-<div class="col-md-4">
+            <!-- SUMMARY -->
+            <div class="row g-3 justify-content-center mb-4">
 
-<h3 id="totalReviews">0</h3>
+                <div class="col-6 col-md-4">
 
-<p>Total Reviews</p>
+                    <div class="review-summary-box">
 
-</div>
+                        <div
+                            id="averageRating"
+                            class="review-summary-number">
+                            0.0 ⭐
+                        </div>
 
-<div class="col-md-4">
+                        <div class="review-summary-label">
+                            Average Rating
+                        </div>
 
-<h3 id="fiveStarReviews">0</h3>
+                    </div>
 
-<p>5 Star Reviews</p>
+                </div>
 
-</div>
 
-</div>
+                <div class="col-6 col-md-4">
 
-  <div class="row mb-4">
+                    <div class="review-summary-box">
 
-  <div class="col-md-6 mx-auto">
+                        <div
+                            id="totalReviews"
+                            class="review-summary-number">
+                            0
+                        </div>
 
-    <input
-      type="text"
-      id="reviewSearch"
-      class="form-control"
-      placeholder="🔍 Search seller, customer, location...">
+                        <div class="review-summary-label">
+                            Total Reviews
+                        </div>
 
-  </div>
+                    </div>
 
-</div>
+                </div>
 
-<!-- FILTER -->
 
-<div class="text-center mb-4">
+                <div class="col-6 col-md-4">
 
-<button class="btn btn-success review-filter active"
-data-rating="all">
-All Reviews
-</button>
+                    <div class="review-summary-box">
 
-<button class="btn btn-outline-light review-filter"
-data-rating="5">
-⭐⭐⭐⭐⭐
-</button>
+                        <div
+                            id="fiveStarReviews"
+                            class="review-summary-number">
+                            0
+                        </div>
 
-<button class="btn btn-outline-light review-filter"
-data-rating="4">
-⭐⭐⭐⭐
-</button>
+                        <div class="review-summary-label">
+                            5 Star Reviews
+                        </div>
 
-<button class="btn btn-outline-light review-filter"
-data-rating="3">
-⭐⭐⭐
-</button>
+                    </div>
 
-<button class="btn btn-outline-light review-filter"
-data-rating="2">
-⭐⭐
-</button>
+                </div>
 
-<button class="btn btn-outline-light review-filter"
-data-rating="1">
-⭐
-</button>
+            </div>
 
-</div>
 
-<!-- REVIEWS -->
+            <!-- VIEW ALL BUTTON -->
+            <div class="text-center">
 
-<div class="row g-4" id="reviewsContainer">
+                <button
+                    type="button"
+                    class="btn btn-success px-4 py-2 fw-semibold"
+                    data-bs-toggle="modal"
+                    data-bs-target="#customerReviewsModal">
 
-<div class="text-center">
+                    ⭐ View All Reviews
 
-Loading reviews...
+                </button>
 
-</div>
+            </div>
 
-</div>
+        </div>
 
-</div>
+    </div>
 
 </section>
+
+
+<!-- =====================================================
+     ⭐ CUSTOMER REVIEWS MODAL
+     ===================================================== -->
+
+<div
+    class="modal fade"
+    id="customerReviewsModal"
+    tabindex="-1"
+    aria-labelledby="customerReviewsModalLabel"
+    aria-hidden="true">
+
+    <div
+        class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+
+        <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+
+            <!-- MODAL HEADER -->
+            <div
+                class="modal-header text-white border-0 px-4 py-3"
+                style="
+                    background: linear-gradient(
+                        135deg,
+                        #0f8f5f,
+                        #087443
+                    );
+                ">
+
+                <div>
+
+                    <h5
+                        class="modal-title fw-bold mb-1"
+                        id="customerReviewsModalLabel">
+
+                        ⭐ Customer Reviews
+
+                    </h5>
+
+                    <small style="opacity:.85;">
+                        Real feedback from Adawe Gas customers
+                    </small>
+
+                </div>
+
+
+                <button
+                    type="button"
+                    class="btn-close btn-close-white"
+                    data-bs-dismiss="modal"
+                    aria-label="Close">
+                </button>
+
+            </div>
+
+
+            <!-- MODAL BODY -->
+            <div class="modal-body p-3 p-md-4">
+
+
+                <!-- SUMMARY -->
+                <div class="row g-2 mb-4">
+
+                    <div class="col-4">
+
+                        <div class="review-modal-stat">
+
+                            <div
+                                id="modalAverageRating"
+                                class="fw-bold">
+                                0.0 ⭐
+                            </div>
+
+                            <small>
+                                Average
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-4">
+
+                        <div class="review-modal-stat">
+
+                            <div
+                                id="modalTotalReviews"
+                                class="fw-bold">
+                                0
+                            </div>
+
+                            <small>
+                                Reviews
+                            </small>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="col-4">
+
+                        <div class="review-modal-stat">
+
+                            <div
+                                id="modalFiveStarReviews"
+                                class="fw-bold">
+                                0
+                            </div>
+
+                            <small>
+                                5 Stars
+                            </small>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                <!-- SEARCH -->
+                <div class="mb-3">
+
+                    <input
+                        type="text"
+                        id="reviewSearch"
+                        class="form-control"
+                        placeholder="🔍 Search seller, customer, location...">
+
+                </div>
+
+
+                <!-- FILTERS -->
+                <div class="d-flex flex-wrap gap-2 mb-4">
+
+                    <button
+                        type="button"
+                        class="btn btn-success review-filter active"
+                        data-rating="all">
+
+                        All Reviews
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary review-filter"
+                        data-rating="5">
+
+                        ⭐⭐⭐⭐⭐
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary review-filter"
+                        data-rating="4">
+
+                        ⭐⭐⭐⭐
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary review-filter"
+                        data-rating="3">
+
+                        ⭐⭐⭐
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary review-filter"
+                        data-rating="2">
+
+                        ⭐⭐
+
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="btn btn-outline-secondary review-filter"
+                        data-rating="1">
+
+                        ⭐
+
+                    </button>
+
+                </div>
+
+
+                <!-- REVIEWS -->
+                <div
+                    class="row g-3"
+                    id="reviewsContainer">
+
+                    <div class="text-center text-muted py-4">
+
+                        Loading reviews...
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+            <!-- MODAL FOOTER -->
+            <div
+                class="modal-footer border-0 bg-light">
+
+                <button
+                    type="button"
+                    class="btn btn-secondary px-4"
+                    data-bs-dismiss="modal">
+
+                    Close
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 <!-- ==========================
      FEATURED SELLERS
