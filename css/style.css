@@ -538,6 +538,76 @@ html{
 
 }
 
+/* =====================================================
+   ⭐ CUSTOMER REVIEWS — TEXT VISIBILITY FIX
+   ===================================================== */
+
+#reviews .review-section-card h2 {
+    color: #064e3b !important;
+}
+
+#reviews .review-section-card p {
+    color: #6c757d !important;
+}
+
+#reviews .review-section-card .review-summary-label {
+    color: #6c757d !important;
+}
+
+#reviews .review-section-card .review-summary-number {
+    color: #087443 !important;
+}
+
+
+/* MODAL */
+
+#customerReviewsModal h5 {
+    color: #fff !important;
+}
+
+#customerReviewsModal small {
+    color: #6c757d;
+}
+
+#customerReviewsModal .modal-header small {
+    color: #fff !important;
+}
+
+
+/* REVIEW CONTENT */
+
+#customerReviewsModal .review-card {
+    color: #064e3b;
+}
+
+#customerReviewsModal .review-name {
+    color: #064e3b !important;
+}
+
+#customerReviewsModal .review-text {
+    color: #444 !important;
+}
+
+#customerReviewsModal .review-date {
+    color: #888 !important;
+}
+
+#customerReviewsModal .review-product {
+    color: #374151 !important;
+}
+
+#customerReviewsModal .seller-badge {
+    color: #065f46 !important;
+}
+
+#customerReviewsModal .review-filter {
+    color: #374151;
+}
+
+#customerReviewsModal .review-filter.active {
+    color: #fff !important;
+}
+
 /* ==========================
    FEATURED SELLERS
 ========================== */
