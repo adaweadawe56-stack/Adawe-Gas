@@ -2313,46 +2313,48 @@ transaction.update(
                     // DEBUG
                     // ---------------------------------
 
-                    console.log(
-                        "💰 COMMISSION TRANSACTION:",
-                        {
+                  console.log(
+    "💰 COMMISSION TRANSACTION:",
+    {
 
-                            seller:
-                                seller.name,
+        seller:
+            seller.name,
 
-                            orderId:
-                                freshOrder.orderId ||
-                                orderRef.id,
+        orderId:
+            freshOrder.orderId ||
+            orderRef.id,
 
-                            commissionPerOrder:
-                                commissionPerOrder,
+        quantity:
+            freshOrder.quantity,
 
-                            previousDeliveryCount:
-                                currentDeliveryCount,
+        orderCommission:
+            orderCommission,
 
-                            newDeliveryCount:
-                                newDeliveryCount,
+        previousDeliveryCount:
+            currentDeliveryCount,
 
-                            deliveryLimit:
-                                deliveryLimit,
+        newDeliveryCount:
+            newDeliveryCount,
 
-                            previousBalance:
-                                currentBalance,
+        deliveryLimit:
+            deliveryLimit,
 
-                            newBalance:
-                                newCommissionBalance,
+        previousBalance:
+            currentBalance,
 
-                            completedOrders:
-                                newCompletedOrders,
+        newBalance:
+            newCommissionBalance,
 
-                            paymentStatus:
-                                newPaymentStatus
+        completedOrders:
+            newCompletedOrders,
 
-                        }
-                    );
+        paymentStatus:
+            newPaymentStatus
 
-                }
-            );
+    }
+  );
+ }
+ );
 
 
             // -----------------------------------------
