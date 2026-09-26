@@ -2184,79 +2184,84 @@ window.updateStatus = async function(
 
 
                     // ---------------------------------
-                    // CURRENT VALUES
-                    // ---------------------------------
+// CURRENT VALUES
+// ---------------------------------
 
-                    const currentDeliveryCount =
-                        Number(
-                            seller.deliveryCount || 0
-                        );
-
-
-                    const currentBalance =
-                        Number(
-                            seller.commissionBalance || 0
-                        );
+const currentDeliveryCount =
+    Number(
+        seller.deliveryCount || 0
+    );
 
 
-                    const commissionPerOrder =
-                        Number(
-                            seller.commissionPerOrder || 0
-                        );
+const currentBalance =
+    Number(
+        seller.commissionBalance || 0
+    );
 
 
-                    const currentCompletedOrders =
-                        Number(
-                            seller.completedOrders || 0
-                        );
+const currentCompletedOrders =
+    Number(
+        seller.completedOrders || 0
+    );
 
 
-                    const deliveryLimit =
-                        Number(
-                            seller.deliveryLimit || 0
-                        );
+const deliveryLimit =
+    Number(
+        seller.deliveryLimit || 0
+    );
 
 
-                    // ---------------------------------
-                    // VALIDATE COMMISSION
-                    // ---------------------------------
+// ---------------------------------
+// COMMISSION FOR THIS ORDER
+// ---------------------------------
 
-                    if (
-                        commissionPerOrder < 0
-                    ) {
-
-                        throw new Error(
-                            "Invalid commission configuration."
-                        );
-
-                    }
+const orderCommission =
+    getCommissionForQuantity(
+        freshOrder.quantity
+    );
 
 
-                    // ---------------------------------
-                    // NEW VALUES
-                    // ---------------------------------
+// ---------------------------------
+// VALIDATE COMMISSION
+// ---------------------------------
 
-                    const newDeliveryCount =
-                        currentDeliveryCount + 1;
+if (
+    !Number.isFinite(orderCommission) ||
+    orderCommission < 0
+) {
+
+    throw new Error(
+        "Invalid commission configuration."
+    );
+
+}
 
 
-                    const newCommissionBalance =
-                        currentBalance +
-                        commissionPerOrder;
+// ---------------------------------
+// NEW VALUES
+// ---------------------------------
+
+const newDeliveryCount =
+    currentDeliveryCount + 1;
 
 
-                    const newCompletedOrders =
-                        currentCompletedOrders + 1;
+const newCommissionBalance =
+    currentBalance +
+    orderCommission;
 
 
-                    // ---------------------------------
-                    // PAYMENT STATUS
-                    // ---------------------------------
+const newCompletedOrders =
+    currentCompletedOrders + 1;
 
-                    const newPaymentStatus =
-                        newCommissionBalance > 0
-                            ? "Pending"
-                            : "Paid";
+
+// ---------------------------------
+// PAYMENT STATUS
+// ---------------------------------
+
+const newPaymentStatus =
+    newCommissionBalance > 0
+        ? "Pending"
+        : "Paid";
 
 
 // ---------------------------------
