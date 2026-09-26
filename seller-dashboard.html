@@ -1815,6 +1815,28 @@ async function findNextSellerForReassignment(
      */
     return bestSeller;
 }
+
+// =========================================
+// ADAWE COMMISSION PLAN
+// =========================================
+
+function getCommissionForQuantity(quantity) {
+
+    const commissionMap = {
+        "1kg": 0,
+        "3kg": 0,
+        "6kg": 50,
+        "13kg": 100,
+        "22kg": 150,
+        "25kg": 150,
+        "35kg": 150,
+        "40kg": 200,
+        "45kg": 200,
+        "50kg": 200
+    };
+
+    return commissionMap[quantity] ?? 0;
+}
   
 // =====================================================
 // UPDATE ORDER STATUS
