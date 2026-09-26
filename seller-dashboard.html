@@ -999,22 +999,32 @@ const limitReached =
     deliveryCount >= deliveryLimit;
 
 const commissionCard =
-document.getElementById("commissionCard");
+    document.getElementById("commissionCard");
 
 const commissionAmount =
-document.getElementById("commissionAmount");
+    document.getElementById("commissionAmount");
 
-if(limitReached){
+const commissionBalance =
+    Number(
+        seller.commissionBalance || 0
+    );
 
-  commissionCard.style.display = "block";
 
-  commissionAmount.innerText =
-    "KES " +
-    (deliveryLimit * Number(seller.commissionPerOrder || 0))
-    .toLocaleString();
-}else{
+// ---------------------------------------------
+// SHOW COMMISSION BALANCE
+// ---------------------------------------------
 
-  commissionCard.style.display = "none";
+if (commissionBalance > 0) {
+
+    commissionCard.style.display = "block";
+
+    commissionAmount.innerText =
+        "KES " +
+        commissionBalance.toLocaleString("en-KE");
+
+} else {
+
+    commissionCard.style.display = "none";
 
 }
     
