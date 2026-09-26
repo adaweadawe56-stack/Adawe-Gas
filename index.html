@@ -7069,8 +7069,11 @@ await addDoc(collection(db, "sellers"), {
     
 sellerForm.reset();
 
-document.getElementById("priceRows").innerHTML = "";
+/* RESET SELLER GPS AFTER SUCCESSFUL REGISTRATION */
+sellerLatitude = null;
+sellerLongitude = null;
 
+priceRows.innerHTML = "";
 addPriceRow();
 
  document
