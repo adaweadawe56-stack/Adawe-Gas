@@ -3203,51 +3203,58 @@ function updateSellerStatistics() {
     }).length;
 
 
+   /*
+ * COMMISSION DUE
+ *
+ * Uses the actual commissionBalance
+ * accumulated from delivered orders.
+ *
+ * commissionPerOrder is no longer used
+ * for calculating current commission due.
+ */
+
+let commissionDue = 0;
+
+
+sellersData.forEach(s => {
+
+    const paymentStatus =
+        String(s.paymentStatus || "")
+            .toLowerCase();
+
+
     /*
-     * COMMISSION DUE
-     *
-     * deliveryCount × commissionPerOrder
-     *
-     * waxaana laga jarayaa sellers-ka Paid.
+     * Fully paid sellers have no outstanding
+     * commission due.
      */
+    if (paymentStatus === "paid") {
 
-    let commissionDue = 0;
+        return;
 
-
-    sellersData.forEach(s => {
-
-        const paymentStatus =
-            String(s.paymentStatus || "")
-                .toLowerCase();
+    }
 
 
-        if (paymentStatus === "paid") {
-
-            return;
-
-        }
-
-
-        const deliveryCount =
-            Number(s.deliveryCount || 0);
+    const commissionBalance =
+        Number(
+            s.commissionBalance || 0
+        );
 
 
-        const commission =
-            Number(s.commissionPerOrder || 0);
+    if (
+        Number.isFinite(commissionBalance) &&
+        commissionBalance > 0
+    ) {
 
+        commissionDue +=
+            commissionBalance;
 
-        const amount =
-            deliveryCount * commission;
+    }
 
+});
 
-        commissionDue += amount;
-
-    });
-
-
-    // =====================================================
+// =====================================================
     // UPDATE HTML
-    // =====================================================
+// =====================================================
 
     const totalElement =
         document.getElementById("totalSellers");
