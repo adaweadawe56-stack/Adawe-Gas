@@ -3606,60 +3606,63 @@ const commissionBalance =
 
         <!-- FINANCIAL INFORMATION -->
 
-        <div class="card border-0 shadow-sm rounded-4 mb-4">
+<div class="card border-0 shadow-sm rounded-4 mb-4">
 
-            <div class="card-body p-4">
+    <div class="card-body p-4">
 
-                <h6 class="fw-bold mb-3">
-                    💰 Financial Information
-                </h6>
+        <h6 class="fw-bold mb-3">
+            💰 Financial Information
+        </h6>
 
-                <div class="row g-3">
+        <div class="row g-3">
 
-                    <div class="col-md-4">
+            <div class="col-md-4">
 
-                        <div class="text-muted small mb-1">
-                            Commission / Order
-                        </div>
+                <div class="text-muted small mb-1">
+                    Commission Due
+                </div>
 
-                        <div class="fs-5 fw-bold">
-                            KES ${commission.toLocaleString("en-KE")}
-                        </div>
+                <div class="fs-5 fw-bold ${
+                    commissionBalance > 0
+                        ? "text-danger"
+                        : "text-success"
+                }">
+                    KES ${commissionBalance.toLocaleString("en-KE")}
+                </div>
 
-                    </div>
-
-
-                    <div class="col-md-4">
-
-                        <div class="text-muted small mb-1">
-                            Payment Status
-                        </div>
-
-                        <div>
-                            ${paymentBadge}
-                        </div>
-
-                    </div>
+            </div>
 
 
-                    <div class="col-md-4">
+            <div class="col-md-4">
 
-                        <div class="text-muted small mb-1">
-                            Delivery Limit
-                        </div>
+                <div class="text-muted small mb-1">
+                    Payment Status
+                </div>
 
-                        <div class="fs-5 fw-bold">
-                            ${deliveryLimit}
-                        </div>
+                <div>
+                    ${paymentBadge}
+                </div>
 
-                    </div>
+            </div>
 
+
+            <div class="col-md-4">
+
+                <div class="text-muted small mb-1">
+                    Delivery Limit
+                </div>
+
+                <div class="fs-5 fw-bold">
+                    ${deliveryLimit}
                 </div>
 
             </div>
 
         </div>
 
+    </div>
+
+</div>
 
         <!-- CUSTOMER RATING -->
 
