@@ -6326,9 +6326,11 @@ const recommendedSeller =
 recommendedSeller.style.display = "none";
 recommendedSeller.innerHTML = "";
 
-const whatsappUrl =
-    `https://wa.me/${sellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`;
+const normalizedSellerWhatsapp =
+    formatKenyaPhone(sellerWhatsapp);
 
+const whatsappUrl =
+    `https://wa.me/${normalizedSellerWhatsapp.replace("+", "")}?text=${encodeURIComponent(message)}`;
 const popup =
     window.open(
         whatsappUrl,
