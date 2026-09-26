@@ -7309,9 +7309,15 @@ const commissionBalance =
     </td>
 
 
-    <td>
-        KES ${commission.toLocaleString("en-KE")}
-    </td>
+   <td>
+    <span class="${
+        commissionBalance > 0
+            ? "text-danger fw-bold"
+            : "text-success fw-bold"
+    }">
+        KES ${commissionBalance.toLocaleString("en-KE")}
+    </span>
+</td>
 
 
     <td>
