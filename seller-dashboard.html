@@ -755,11 +755,7 @@ if (!sellerSnapshot.empty) {
 
     const sellerDoc = sellerSnapshot.docs[0];
 
-    await updateDoc(sellerDoc.ref, {
-        verified: true
-    });
-
-    console.log("STEP 4: Firestore updated");
+    console.log("STEP 4: Seller document loaded");
 
     const sellerData = sellerDoc.data();
 
