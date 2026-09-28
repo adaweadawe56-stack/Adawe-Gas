@@ -967,107 +967,136 @@ function loadOrders(){
 
   console.log("sellerUid =", sellerUid);
 
-const q = query(
+  const q = query(
         collection(db,"orders"),
         where("sellerUid","==",sellerUid)
     );
 
-    let firstLoad = true;
+  let firstLoad = true;
   
   unsubscribeOrders = onSnapshot(q, async (snap) => {
     
-  console.log("SNAPSHOT RUNNING");
-  console.log("Orders Found =", snap.size);
+    console.log("SNAPSHOT RUNNING");
+    console.log("Orders Found =", snap.size);
 
-  if (!firstLoad) {
+    if (!firstLoad) {
     
-    snap.docChanges().forEach(change => {
+      snap.docChanges().forEach(change => {
 
-      if (change.type === "added") {
+        if (change.type === "added") {
 
-        console.log(
-          "NEW ORDER DETECTED",
-          change.doc.data()
-        );
+          console.log(
+            "NEW ORDER DETECTED",
+            change.doc.data()
+          );
 
-        if (Notification.permission === "granted") {
+          if (Notification.permission === "granted") {
 
-         new Notification("Adawe Gas", {
-  body: `${change.doc.data().quantity} order from ${change.doc.data().location}`
-});
+            new Notification("Adawe Gas", {
+              body:
+                `${change.doc.data().quantity} order from ${change.doc.data().location}`
+            });
+
+          }
 
         }
 
-      }
+      });
 
-    });
+    }
 
-  }
-      firstLoad = false;
+    firstLoad = false;
     
-// ---------------------------------------------
-// LOAD CURRENT SELLER DATA SAFELY
-// ---------------------------------------------
+    // ---------------------------------------------
+    // LOAD CURRENT SELLER DATA SAFELY
+    // ---------------------------------------------
 
-if (!sellerDocId) {
-    console.error("❌ sellerDocId is null. Cannot load seller data.", {
-        sellerUid: sellerUid,
-        sellerPhone: sellerPhone
-    });
+    if (!sellerDocId) {
 
-    return;
-}
+      console.error(
+        "❌ sellerDocId is null. Cannot load seller data.",
+        {
+          sellerUid: sellerUid,
+          sellerPhone: sellerPhone
+        }
+      );
 
-const sellerRef = doc(db, "sellers", sellerDocId);
-const sellerSnap = await getDoc(sellerRef);
+      return;
+    }
 
-if (!sellerSnap.exists()) {
-    console.error("❌ Seller document not found:", sellerDocId);
-    return;
-}
+    const sellerRef =
+      doc(
+        db,
+        "sellers",
+        sellerDocId
+      );
 
-const seller = sellerSnap.data();
+    const sellerSnap =
+      await getDoc(sellerRef);
 
-const deliveryCount =
-    Number(seller.deliveryCount || 0);
+    if (!sellerSnap.exists()) {
 
-const deliveryLimit =
-    Number(seller.deliveryLimit ?? 3);
+      console.error(
+        "❌ Seller document not found:",
+        sellerDocId
+      );
 
-const limitReached =
-    deliveryCount >= deliveryLimit;
+      return;
+    }
 
-const commissionCard =
-    document.getElementById("commissionCard");
+    const seller =
+      sellerSnap.data();
 
-const commissionAmount =
-    document.getElementById("commissionAmount");
+    const deliveryCount =
+      Number(
+        seller.deliveryCount || 0
+      );
 
-const commissionBalance =
-    Number(
+    const deliveryLimit =
+      Number(
+        seller.deliveryLimit ?? 3
+      );
+
+    const limitReached =
+      deliveryCount >= deliveryLimit;
+
+    const commissionCard =
+      document.getElementById(
+        "commissionCard"
+      );
+
+    const commissionAmount =
+      document.getElementById(
+        "commissionAmount"
+      );
+
+    const commissionBalance =
+      Number(
         seller.commissionBalance || 0
-    );
+      );
 
+    // ---------------------------------------------
+    // SHOW COMMISSION BALANCE
+    // ---------------------------------------------
 
-// ---------------------------------------------
-// SHOW COMMISSION BALANCE
-// ---------------------------------------------
+    if (commissionBalance > 0) {
 
-if (commissionBalance > 0) {
+      commissionCard.style.display =
+        "block";
 
-    commissionCard.style.display = "block";
-
-    commissionAmount.innerText =
+      commissionAmount.innerText =
         "KES " +
-        commissionBalance.toLocaleString("en-KE");
+        commissionBalance.toLocaleString(
+          "en-KE"
+        );
 
-} else {
+    } else {
 
-    commissionCard.style.display = "none";
+      commissionCard.style.display =
+        "none";
 
-}
-    
-    
+    }
+
     ordersTable.innerHTML = "";
 
     let total = 0;
@@ -1077,117 +1106,201 @@ if (commissionBalance > 0) {
 
     snap.forEach(docSnap => {
 
-  const o = docSnap.data();
-      
+      const o =
+        docSnap.data();
+
       const canEdit =
-  !limitReached ||
-  o.status === "Accepted" ||
-  o.status === "On The Way";
+        !limitReached ||
+        o.status === "Accepted" ||
+        o.status === "On The Way";
 
-  const selectedStatus =
-  statusFilter.value;
+      const selectedStatus =
+        statusFilter.value;
 
-  if(
-    selectedStatus !== "All" &&
-    o.status !== selectedStatus
-  ){
-    return;
-  }
+      if(
+        selectedStatus !== "All" &&
+        o.status !== selectedStatus
+      ){
+        return;
+      }
 
- const badgeColor =
-  o.status === "Pending" ? "bg-secondary" :
-  o.status === "Accepted" ? "bg-primary" :
-  o.status === "On The Way" ? "bg-warning" :
-  o.status === "Delivered" ? "bg-success" :
-  o.status === "Rejected" ? "bg-danger" :
-  "bg-secondary";
+      const badgeColor =
+        o.status === "Pending"
+          ? "bg-secondary" :
+        o.status === "Accepted"
+          ? "bg-primary" :
+        o.status === "On The Way"
+          ? "bg-warning" :
+        o.status === "Delivered"
+          ? "bg-success" :
+        o.status === "Rejected"
+          ? "bg-danger" :
+        "bg-secondary";
+
       total++;
 
       if(
-  o.status === "Pending" ||
-  o.status === "Accepted" ||
-  o.status === "On The Way"
-){
-  pending++;
-}
+        o.status === "Pending" ||
+        o.status === "Accepted" ||
+        o.status === "On The Way"
+      ){
+        pending++;
+      }
 
-     if(o.status === "Delivered"){
+      if(o.status === "Delivered"){
 
-  delivered++;
+        delivered++;
 
-  if(o.price){
-    totalRevenue += Number(o.price);
-  }
+        if(o.price){
+          totalRevenue +=
+            Number(o.price);
+        }
 
-}
-ordersTable.innerHTML += `
-<div class="card p-3 mb-3">
+      }
 
-  <h5>${o.name || ""}</h5>
+      // =============================================
+      // XSS PROTECTION
+      // =============================================
 
-  <p><b>Phone:</b> ${o.phone || ""}</p>
+      const safeName =
+        escapeHTML(
+          o.name || ""
+        );
 
-  <p><b>Location:</b> ${o.location || ""}</p>
+      const safePhone =
+        escapeHTML(
+          o.phone || ""
+        );
 
-  <p><b>Quantity:</b> ${o.quantity || ""}</p>
+      const safeLocation =
+        escapeHTML(
+          o.location || ""
+        );
 
-  <p>
-    <span class="badge ${badgeColor}">
-      ${o.status || "Pending"}
-    </span>
-  </p>
+      const safeQuantity =
+        escapeHTML(
+          o.quantity || ""
+        );
 
-  <div class="d-flex gap-2 flex-wrap">
+      const safeStatus =
+        escapeHTML(
+          o.status || "Pending"
+        );
 
- <div class="d-flex gap-2 flex-wrap">
+      /*
+       * Protect the Firestore document ID before
+       * placing it inside onclick="..."
+       */
+      const safeOrderId =
+        escapeHTML(
+          String(docSnap.id)
+            .replace(/\\/g, "\\\\")
+            .replace(/'/g, "\\'")
+        );
 
-  <button
-    onclick="updateStatus('${docSnap.id}','Accepted')"
-    class="btn btn-primary btn-sm"
-    ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
-    Accept
-  </button>
+      // =============================================
+      // RENDER ORDER CARD
+      // =============================================
 
-  <button
-  onclick="shareLocation('${docSnap.id}')"
-  class="btn btn-warning btn-sm"
-  ${o.status !== "Accepted" ? "disabled" : ""}>
-  On The Way
-</button>
+      ordersTable.innerHTML += `
+      <div class="card p-3 mb-3">
 
-  <button
-    onclick="updateStatus('${docSnap.id}','Delivered')"
-    class="btn btn-success btn-sm"
-    ${o.status !== "On The Way" ? "disabled" : ""}>
-    Delivered
-  </button>
+        <h5>${safeName}</h5>
 
- <button
-    onclick="openRejectModal('${docSnap.id}')"
-    class="btn btn-danger btn-sm"
-    ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
-    Reject
-</button>
+        <p>
+          <b>Phone:</b>
+          ${safePhone}
+        </p>
 
-</div>
+        <p>
+          <b>Location:</b>
+          ${safeLocation}
+        </p>
 
-</div>
+        <p>
+          <b>Quantity:</b>
+          ${safeQuantity}
+        </p>
+
+        <p>
+          <span class="badge ${badgeColor}">
+            ${safeStatus}
+          </span>
+        </p>
+
+        <div class="d-flex gap-2 flex-wrap">
+
+          <div class="d-flex gap-2 flex-wrap">
+
+            <button
+              onclick="updateStatus('${safeOrderId}','Accepted')"
+              class="btn btn-primary btn-sm"
+              ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
+              Accept
+            </button>
+
+            <button
+              onclick="shareLocation('${safeOrderId}')"
+              class="btn btn-warning btn-sm"
+              ${o.status !== "Accepted" ? "disabled" : ""}>
+              On The Way
+            </button>
+
+            <button
+              onclick="updateStatus('${safeOrderId}','Delivered')"
+              class="btn btn-success btn-sm"
+              ${o.status !== "On The Way" ? "disabled" : ""}>
+              Delivered
+            </button>
+
+            <button
+              onclick="openRejectModal('${safeOrderId}')"
+              class="btn btn-danger btn-sm"
+              ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
+              Reject
+            </button>
+
+          </div>
+
+        </div>
+
+      </div>
       `;
     });
 
-    document.getElementById("totalOrders").innerText = total;
-    document.getElementById("pendingOrders").innerText = pending;
-    document.getElementById("deliveredOrders").innerText = delivered;
-    document.getElementById("totalRevenue").innerText =
-"KES " + totalRevenue.toLocaleString();
+    document.getElementById(
+      "totalOrders"
+    ).innerText =
+      total;
 
-const deliveryRate =
-total > 0
-? Math.round((delivered / total) * 100)
-: 0;
+    document.getElementById(
+      "pendingOrders"
+    ).innerText =
+      pending;
 
-document.getElementById("deliveryRate").innerText =
-deliveryRate + "%";
+    document.getElementById(
+      "deliveredOrders"
+    ).innerText =
+      delivered;
+
+    document.getElementById(
+      "totalRevenue"
+    ).innerText =
+      "KES " +
+      totalRevenue.toLocaleString();
+
+    const deliveryRate =
+      total > 0
+        ? Math.round(
+            (delivered / total) * 100
+          )
+        : 0;
+
+    document.getElementById(
+      "deliveryRate"
+    ).innerText =
+      deliveryRate + "%";
+
   });
 
 }
