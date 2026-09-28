@@ -1843,6 +1843,124 @@ function getCommissionForQuantity(quantity) {
 
     return commissionMap[quantity] ?? 0;
 }
+
+  // =========================================
+// SELLER RATING STATISTICS SYNC
+// =========================================
+
+async function syncSellerRatingStats() {
+
+    try {
+
+        if (!sellerUid) {
+            console.log(
+                "⏳ Rating sync skipped: sellerUid not ready."
+            );
+            return;
+        }
+
+        console.log(
+            "⭐ Syncing seller rating statistics..."
+        );
+
+        const ratingsQuery = query(
+            collection(db, "ratings"),
+            where("sellerUid", "==", sellerUid)
+        );
+
+        const ratingsSnapshot =
+            await getDocs(ratingsQuery);
+
+        let totalRatings = 0;
+        let ratingSum = 0;
+
+        ratingsSnapshot.forEach((ratingDoc) => {
+
+            const ratingData =
+                ratingDoc.data();
+
+            const rating =
+                Number(ratingData.rating);
+
+            if (
+                Number.isFinite(rating) &&
+                rating >= 1 &&
+                rating <= 5
+            ) {
+
+                totalRatings++;
+
+                ratingSum += rating;
+
+            }
+
+        });
+
+        const averageRating =
+            totalRatings > 0
+                ? Number(
+                    (ratingSum / totalRatings)
+                        .toFixed(2)
+                )
+                : 0;
+
+        console.log(
+            "⭐ Calculated seller ratings:",
+            {
+                sellerUid,
+                totalRatings,
+                averageRating
+            }
+        );
+
+        if (!sellerDocId) {
+
+            console.warn(
+                "⚠️ sellerDocId not ready."
+            );
+
+            return;
+        }
+
+        const sellerRef =
+            doc(
+                db,
+                "sellers",
+                sellerDocId
+            );
+
+        await updateDoc(
+            sellerRef,
+            {
+                totalRatings,
+                averageRating
+            }
+        );
+
+        console.log(
+            "✅ Seller rating statistics updated successfully."
+        );
+
+    } catch (error) {
+
+        console.error(
+            "❌ Seller rating sync error:",
+            error
+        );
+
+        console.error(
+            "Error code:",
+            error.code
+        );
+
+        console.error(
+            "Error message:",
+            error.message
+        );
+
+    }
+
+}
   
 // =====================================================
 // UPDATE ORDER STATUS
