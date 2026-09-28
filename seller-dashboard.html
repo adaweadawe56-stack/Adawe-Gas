@@ -883,33 +883,54 @@ function escapeHTML(value) {
 
     let html = "";
 
-    reviews.forEach(r => {
+   reviews.forEach(r => {
 
       const stars =
-      "⭐".repeat(r.rating || 0);
+      "⭐".repeat(
+        Math.min(
+          Math.max(
+            Number(r.rating) || 0,
+            0
+          ),
+          5
+        )
+      );
 
       const date =
       r.createdAt
       ? r.createdAt.toDate().toLocaleDateString()
       : "";
 
+      const safeCustomerName =
+      escapeHTML(
+        r.customerName || "Customer"
+      );
+
+      const safeReview =
+      escapeHTML(
+        r.review || "No comment"
+      );
+
+      const safeDate =
+      escapeHTML(date);
+
       html += `
       <div class="card mb-2 p-3 shadow-sm">
 
         <div class="d-flex justify-content-between">
-          <strong>${r.customerName || "Customer"}</strong>
-          <small>${date}</small>
+          <strong>${safeCustomerName}</strong>
+          <small>${safeDate}</small>
         </div>
 
         <div class="mt-1">${stars}</div>
 
         <div class="mt-2">
-          ${r.review || "No comment"}
+          ${safeReview}
         </div>
 
       </div>
       `;
-    });
+});
 
     const totalReviews = reviews.length;
 
