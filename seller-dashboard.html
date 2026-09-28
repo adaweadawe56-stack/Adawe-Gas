@@ -759,10 +759,16 @@ if (!sellerSnapshot.empty) {
 
     const sellerData = sellerDoc.data();
 
-    sellerPhone = sellerData.phone;
-    sellerDocId = sellerDoc.id;
+sellerPhone = sellerData.phone;
+sellerDocId = sellerDoc.id;
 
-    const prices = sellerData.prices || {};
+// =========================================
+// SYNC SELLER RATING STATISTICS
+// =========================================
+
+await syncSellerRatingStats();
+
+const prices = sellerData.prices || {};
 
     document.getElementById("price1kg").value = prices["1kg"] || "";
     document.getElementById("price3kg").value = prices["3kg"] || "";
