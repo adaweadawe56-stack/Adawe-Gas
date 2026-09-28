@@ -975,7 +975,7 @@ window.rateSeller = async function(rating){
   );
 
   const ratingSnap =
-  await getDocs(ratingQ);
+    await getDocs(ratingQ);
 
   if(!ratingSnap.empty){
     alert("You already rated this order");
@@ -985,101 +985,77 @@ window.rateSeller = async function(rating){
   try{
 
     const review =
-    document.getElementById("reviewText")?.value || "";
+      document.getElementById("reviewText")?.value || "";
 
-    console.log("sellerUid =", currentOrder.sellerUid);
+    console.log(
+      "sellerUid =",
+      currentOrder.sellerUid
+    );
 
-await addDoc(
-  collection(db,"ratings"),
-  {
-    sellerUid: currentOrder.sellerUid,
-    sellerPhone: currentOrder.sellerPhone,
-    customerName: currentOrder.name,
-    orderId: currentOrder.orderId,
-    rating,
-    review,
-    brand: currentOrder.brand,
-    quantity: currentOrder.quantity,
-    createdAt: serverTimestamp()
-  }
-);
-
-
-// =================================================
-// UPDATE ORDER WITH CUSTOMER RATING
-// =================================================
-
-const orderRatingQ = query(
-  collection(db, "orders"),
-  where("orderId", "==", currentOrder.orderId)
-);
-
-const orderRatingSnap =
-  await getDocs(orderRatingQ);
-
-if (!orderRatingSnap.empty) {
-
-  const orderDoc =
-    orderRatingSnap.docs[0];
-
-  await updateDoc(
-    orderDoc.ref,
-    {
-      rating:
-        Number(rating),
-
-      review:
+    await addDoc(
+      collection(db,"ratings"),
+      {
+        sellerUid: currentOrder.sellerUid,
+        sellerPhone: currentOrder.sellerPhone,
+        customerName: currentOrder.name,
+        orderId: currentOrder.orderId,
+        rating,
         review,
+        brand: currentOrder.brand,
+        quantity: currentOrder.quantity,
+        createdAt: serverTimestamp()
+      }
+    );
 
-      ratedAt:
-        serverTimestamp()
+
+    // =================================================
+    // UPDATE ORDER WITH CUSTOMER RATING
+    // =================================================
+
+    const orderRatingQ = query(
+      collection(db, "orders"),
+      where(
+        "orderId",
+        "==",
+        currentOrder.orderId
+      )
+    );
+
+    const orderRatingSnap =
+      await getDocs(orderRatingQ);
+
+    if (!orderRatingSnap.empty) {
+
+      const orderDoc =
+        orderRatingSnap.docs[0];
+
+      await updateDoc(
+        orderDoc.ref,
+        {
+          rating:
+            Number(rating),
+
+          review:
+            review,
+
+          ratedAt:
+            serverTimestamp()
+        }
+      );
+
+      console.log(
+        "✅ Order rating updated:",
+        orderDoc.id
+      );
+
     }
-  );
-
-  console.log(
-    "✅ Order rating updated:",
-    orderDoc.id
-  );
-
-}
 
 
-const sellerRef =
-  doc(db, "sellers", currentOrder.sellerId);
+    document.getElementById(
+      "ratingMessage"
+    ).innerHTML =
+      "✅ Thanks for your rating!";
 
-const sellerSnap =
-  await getDoc(sellerRef);
-
-if (sellerSnap.exists()) {
-
-  const sellerData = sellerSnap.data();
-
-  console.log("Seller found:", sellerSnap.id);
-  console.log("Updating seller:", sellerSnap.id);
-  console.log("Current ratings:", sellerData.totalRatings);
-  console.log("Current average:", sellerData.averageRating);
-  console.log("New rating:", rating);
-
-  const totalRatings =
-    (sellerData.totalRatings || 0) + 1;
-
-  const averageRating =
-    (
-      ((sellerData.averageRating || 0) *
-      (sellerData.totalRatings || 0))
-      + rating
-    ) / totalRatings;
-
-  await updateDoc(sellerRef, {
-    totalRatings,
-    averageRating: parseFloat(averageRating.toFixed(2))
-  });
-
-  console.log("Seller updated successfully");
-}
-    
-    document.getElementById("ratingMessage").innerHTML =
-    "✅ Thanks for your rating!";
 
     document.querySelectorAll(
       'button[onclick^="rateSeller"]'
@@ -1087,17 +1063,33 @@ if (sellerSnap.exists()) {
       btn.disabled = true;
     });
 
+
   }catch(err){
 
-  console.error("Rating Error:", err);
-  console.error("Error code:", err.code);
-  console.error("Error message:", err.message);
+    console.error(
+      "Rating Error:",
+      err
+    );
 
-  alert("Rating Error: " + err.message);
+    console.error(
+      "Error code:",
+      err.code
+    );
 
-}
+    console.error(
+      "Error message:",
+      err.message
+    );
+
+    alert(
+      "Rating Error: " +
+      err.message
+    );
+
+  }
 
 };
+
 window.addEventListener("beforeunload", () => {
 
     if (unsubscribe) {
