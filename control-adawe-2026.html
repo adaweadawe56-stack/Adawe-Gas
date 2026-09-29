@@ -5249,15 +5249,49 @@ function renderReviews() {
             }
 
 
+            // =================================================
+            // XSS PROTECTION
+            // =================================================
+
+            const safeCustomerName =
+                escapeHTML(
+                    review.customerName || "-"
+                );
+
+
+            const safeSellerName =
+                escapeHTML(
+                    sellerName
+                );
+
+
+            const safeReview =
+                escapeHTML(
+                    review.review || "-"
+                );
+
+
+            const safeOrderId =
+                escapeHTML(
+                    review.orderId || "-"
+                );
+
+
+            const safeDateText =
+                escapeHTML(
+                    dateText
+                );
+
+
             return `
                 <tr>
 
                     <td>
-                        ${review.customerName || "-"}
+                        ${safeCustomerName}
                     </td>
 
                     <td>
-                        ${sellerName}
+                        ${safeSellerName}
                     </td>
 
                     <td>
@@ -5265,15 +5299,15 @@ function renderReviews() {
                     </td>
 
                     <td>
-                        ${review.review || "-"}
+                        ${safeReview}
                     </td>
 
                     <td>
-                        ${review.orderId || "-"}
+                        ${safeOrderId}
                     </td>
 
                     <td>
-                        ${dateText}
+                        ${safeDateText}
                     </td>
 
                 </tr>
@@ -5281,6 +5315,7 @@ function renderReviews() {
 
         }).join("");
 }
+
 
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -5310,7 +5345,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     }
 
-});    
+});  
     
 function startRealtime() {
 
