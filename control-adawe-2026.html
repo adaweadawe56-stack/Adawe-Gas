@@ -2368,109 +2368,154 @@ select.form-select:focus {
 
 
 <!-- =================================================
-                     REVIEWS TABLE CARD
-================================================= -->
+     REVIEWS TABLE CARD
+     ================================================= -->
 
-                <div
-                    class="card border-0 shadow-sm rounded-4 overflow-hidden">
+<div
+    class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-                    <div
-                        class="card-header bg-white border-0
-                               px-3 px-md-4 py-3">
+    <!-- TABLE HEADER -->
 
-                        <div
-                            class="d-flex justify-content-between
-                                   align-items-center">
+    <div
+        class="card-header bg-white border-0
+               px-3 px-md-4 py-3">
 
-                            <div>
+        <div
+            class="d-flex flex-column flex-sm-row
+                   justify-content-between
+                   align-items-start
+                   align-items-sm-center
+                   gap-2">
 
-                                <div class="fw-bold">
-                                    Review List
-                                </div>
+            <div>
 
-                                <div class="text-muted small">
-                                    Latest customer feedback
-                                </div>
+                <div class="fw-bold">
+                    Review List
+                </div>
 
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- TABLE -->
-
-                    <div class="table-responsive">
-
-                        <table
-                            id="reviewsTable"
-                            class="table table-hover align-middle mb-0">
-
-                            <thead
-                                class="table-light">
-
-                                <tr>
-
-                                    <th class="px-3 py-3">
-                                        Customer
-                                    </th>
-
-                                    <th class="py-3">
-                                        Seller
-                                    </th>
-
-                                    <th class="py-3">
-                                        Rating
-                                    </th>
-
-                                    <th class="py-3">
-                                        Review
-                                    </th>
-
-                                    <th class="py-3">
-                                        Order ID
-                                    </th>
-
-                                    <th class="py-3">
-                                        Date
-                                    </th>
-
-                                </tr>
-
-                            </thead>
-
-
-                            <tbody id="reviewsTableBody">
-
-                                <tr>
-
-                                    <td
-                                        colspan="6"
-                                        class="text-center text-muted py-5">
-
-                                        <div
-                                            class="fs-4 mb-2">
-
-                                            ⭐
-
-                                        </div>
-
-                                        Loading reviews...
-
-                                    </td>
-
-                                </tr>
-
-                            </tbody>
-
-                        </table>
-
-                    </div>
-
+                <div class="text-muted small">
+                    Latest customer feedback
                 </div>
 
             </div>
+
+            <div
+                class="small text-muted">
+
+                Customer feedback & seller ratings
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- TABLE -->
+
+    <div class="table-responsive">
+
+        <table
+            id="reviewsTable"
+            class="table table-hover align-middle mb-0">
+
+            <thead class="table-light">
+
+                <tr>
+
+                    <th
+                        class="px-3 px-md-4 py-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Customer
+
+                    </th>
+
+                    <th
+                        class="py-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Seller
+
+                    </th>
+
+                    <th
+                        class="py-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Rating
+
+                    </th>
+
+                    <th
+                        class="py-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Review
+
+                    </th>
+
+                    <th
+                        class="py-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Order ID
+
+                    </th>
+
+                    <th
+                        class="py-3 pe-3
+                               small text-uppercase
+                               text-muted fw-semibold">
+
+                        Date
+
+                    </th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="reviewsTableBody">
+
+                <tr>
+
+                    <td
+                        colspan="6"
+                        class="text-center text-muted py-5">
+
+                        <div
+                            class="fs-4 mb-2">
+
+                            ⭐
+
+                        </div>
+
+                        <div class="fw-semibold">
+                            Loading reviews...
+                        </div>
+
+                        <div class="small mt-1">
+                            Please wait while customer feedback loads.
+                        </div>
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
 
 
             <!-- =================================================
