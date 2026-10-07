@@ -2058,41 +2058,86 @@ select.form-select:focus {
 
 <section class="mt-4 mb-5">
 
-    <div class="card border-0 shadow-sm">
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
 
-        <div class="card-body">
+        <div class="card-body p-4">
 
-            <div class="d-flex justify-content-between align-items-center">
+            <div class="d-flex flex-column flex-md-row
+                        justify-content-between
+                        align-items-start
+                        align-items-md-center
+                        gap-3">
 
-                <div>
+                <!-- HEADER -->
 
-                    <h5 class="mb-1">
-                        ⭐ Customer Reviews
-                    </h5>
+                <div class="d-flex align-items-start gap-3">
 
-                    <small class="text-muted">
-                        View and monitor customer feedback about sellers
-                    </small>
+                    <!-- ICON -->
+
+                    <div
+                        class="d-flex align-items-center justify-content-center
+                               rounded-3 flex-shrink-0"
+                        style="
+                            width:48px;
+                            height:48px;
+                            background:rgba(25,135,84,.10);
+                            font-size:22px;
+                        ">
+
+                        ⭐
+
+                    </div>
+
+
+                    <!-- TITLE -->
+
+                    <div>
+
+                        <div class="d-flex align-items-center gap-2 flex-wrap">
+
+                            <h5 class="mb-0 fw-bold">
+                                Customer Reviews
+                            </h5>
+
+                            <span
+                                class="badge rounded-pill
+                                       bg-success-subtle
+                                       text-success
+                                       border border-success-subtle px-2 py-1">
+
+                                💬
+                                <span id="reviewsCount">0</span>
+                                Reviews
+
+                            </span>
+
+                        </div>
+
+
+                        <div class="text-muted small mt-1">
+
+                            View and monitor customer feedback
+                            about sellers
+
+                        </div>
+
+                    </div>
 
                 </div>
 
+
+                <!-- VIEW ALL BUTTON -->
+
                 <button
                     type="button"
-                    class="btn btn-success"
+                    class="btn btn-success rounded-3 px-3 py-2 fw-semibold"
                     data-bs-toggle="modal"
                     data-bs-target="#reviewsModal">
 
-                    ⭐ View All Reviews
+                    ⭐
+                    View All Reviews
 
                 </button>
-
-            </div>
-
-            <div class="mt-3">
-
-                <span class="badge bg-light text-dark border">
-                    💬 <span id="reviewsCount">0</span> Reviews
-                </span>
 
             </div>
 
@@ -2101,7 +2146,6 @@ select.form-select:focus {
     </div>
 
 </section>
-
 
 <!-- =====================================================
      CUSTOMER REVIEWS MODAL
