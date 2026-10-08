@@ -2726,25 +2726,71 @@ select.form-select:focus {
      MANUAL COMMISSION CONFIRMATION
 ===================================================== -->
 
-<div class="card shadow-sm mb-4">
+<section class="mt-4 mb-4">
 
-    <div class="card-header bg-success text-white">
-        💰 Pending Commission Payments
+    <!-- SECTION HEADER -->
+
+    <div class="d-flex justify-content-between align-items-center mb-3">
+
+        <div>
+
+            <h5 class="mb-1">
+                Pending Commission Payments
+            </h5>
+
+            <small class="text-muted">
+                Review and confirm outstanding seller commission payments
+            </small>
+
+        </div>
+
+        <div>
+
+            <span class="badge bg-warning-subtle text-warning border border-warning-subtle rounded-pill px-3 py-2">
+                💰 Pending
+            </span>
+
+        </div>
+
     </div>
 
-    <div class="card-body">
 
-        <div id="pendingCommissionPayments">
+    <!-- COMMISSION PAYMENT CARD -->
 
-            <div class="text-muted">
-                Loading pending payments...
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+
+        <div class="card-header bg-success text-white border-0 px-4 py-3">
+
+            <div class="d-flex align-items-center gap-2">
+
+                <span style="font-size:20px;">
+                    💰
+                </span>
+
+                <div class="fw-semibold">
+                    Commission Payment Management
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <div class="card-body p-4">
+
+            <div id="pendingCommissionPayments">
+
+                <div class="text-muted">
+                    Loading pending payments...
+                </div>
+
             </div>
 
         </div>
 
     </div>
 
-</div>
+</section>
     
 <!-- =====================================================
      SELLERS
