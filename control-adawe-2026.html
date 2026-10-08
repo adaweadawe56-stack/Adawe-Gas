@@ -2543,142 +2543,186 @@ select.form-select:focus {
 </div>
 <!-- =====================================================
      SELLER STATISTICS
-     ===================================================== -->
+===================================================== -->
 
-<div class="row g-3 mb-4">
+<section class="mt-4 mb-4">
 
-    <!-- TOTAL SELLERS -->
-    <div class="col-6 col-md">
-        <div class="seller-stat-card">
+    <!-- SECTION HEADER -->
 
-            <div class="seller-stat-icon">
-                👨‍💼
-            </div>
+    <div class="d-flex justify-content-between align-items-center mb-3">
 
-            <div>
-                <div class="seller-stat-label">
-                    Total Sellers
-                </div>
+        <div>
 
-                <div
-                    id="totalSellers"
-                    class="seller-stat-number">
+            <h5 class="mb-1">
+                Seller Statistics
+            </h5>
 
-                    0
-
-                </div>
-            </div>
+            <small class="text-muted">
+                Overview of registered gas sellers and commission status
+            </small>
 
         </div>
+
     </div>
 
 
-    <!-- APPROVED -->
-    <div class="col-6 col-md">
-        <div class="seller-stat-card">
+    <!-- SELLER STATISTICS CARDS -->
 
-            <div class="seller-stat-icon">
-                ✅
-            </div>
+    <div class="row g-3 mb-4">
 
-            <div>
-                <div class="seller-stat-label">
-                    Approved
+        <!-- TOTAL SELLERS -->
+        <div class="col-6 col-md">
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    👨‍💼
                 </div>
 
-                <div
-                    id="approvedSellers"
-                    class="seller-stat-number">
+                <div>
 
-                    0
+                    <div class="seller-stat-label">
+                        Total Sellers
+                    </div>
 
-                </div>
-            </div>
+                    <div
+                        id="totalSellers"
+                        class="seller-stat-number">
 
-        </div>
-    </div>
+                        0
 
-
-    <!-- PENDING -->
-    <div class="col-6 col-md">
-        <div class="seller-stat-card">
-
-            <div class="seller-stat-icon">
-                ⏳
-            </div>
-
-            <div>
-                <div class="seller-stat-label">
-                    Pending
-                </div>
-
-                <div
-                    id="pendingSellers"
-                    class="seller-stat-number">
-
-                    0
+                    </div>
 
                 </div>
+
             </div>
 
         </div>
-    </div>
 
 
-    <!-- ACTIVE -->
-    <div class="col-6 col-md">
-        <div class="seller-stat-card">
+        <!-- APPROVED -->
+        <div class="col-6 col-md">
 
-            <div class="seller-stat-icon">
-                🚚
-            </div>
+            <div class="seller-stat-card">
 
-            <div>
-                <div class="seller-stat-label">
-                    Active Sellers
+                <div class="seller-stat-icon">
+                    ✅
                 </div>
 
-                <div
-                    id="activeSellers"
-                    class="seller-stat-number">
+                <div>
 
-                    0
+                    <div class="seller-stat-label">
+                        Approved
+                    </div>
 
-                </div>
-            </div>
+                    <div
+                        id="approvedSellers"
+                        class="seller-stat-number">
 
-        </div>
-    </div>
+                        0
 
-
-    <!-- COMMISSION -->
-    <div class="col-12 col-md">
-        <div class="seller-stat-card">
-
-            <div class="seller-stat-icon">
-                💰
-            </div>
-
-            <div>
-                <div class="seller-stat-label">
-                    Commission Due
-                </div>
-
-                <div
-                    id="commissionDue"
-                    class="seller-stat-number">
-
-                    KES 0
+                    </div>
 
                 </div>
+
             </div>
 
         </div>
+
+
+        <!-- PENDING -->
+        <div class="col-6 col-md">
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    ⏳
+                </div>
+
+                <div>
+
+                    <div class="seller-stat-label">
+                        Pending
+                    </div>
+
+                    <div
+                        id="pendingSellers"
+                        class="seller-stat-number">
+
+                        0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- ACTIVE -->
+        <div class="col-6 col-md">
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    🚚
+                </div>
+
+                <div>
+
+                    <div class="seller-stat-label">
+                        Active Sellers
+                    </div>
+
+                    <div
+                        id="activeSellers"
+                        class="seller-stat-number">
+
+                        0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- COMMISSION -->
+        <div class="col-12 col-md">
+
+            <div class="seller-stat-card">
+
+                <div class="seller-stat-icon">
+                    💰
+                </div>
+
+                <div>
+
+                    <div class="seller-stat-label">
+                        Commission Due
+                    </div>
+
+                    <div
+                        id="commissionDue"
+                        class="seller-stat-number">
+
+                        KES 0
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
-</div>
-
-    <!-- =====================================================
+</section>
+<!-- =====================================================
      MANUAL COMMISSION CONFIRMATION
 ===================================================== -->
 
