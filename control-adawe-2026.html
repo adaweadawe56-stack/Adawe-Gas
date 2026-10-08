@@ -1878,22 +1878,57 @@ select.form-select:focus {
 
 <body>
 
-<nav class="navbar">
+<!-- =====================================================
+     ADMIN NAVBAR
+===================================================== -->
+
+<nav class="navbar navbar-dark shadow-sm"
+     style="
+        background:linear-gradient(
+            135deg,
+            #198754,
+            #146c43
+        );
+     ">
 
     <div class="container">
 
-        <a class="navbar-brand">
-            Adawe Gas Admin PRO
+        <!-- BRAND -->
+
+        <a
+            class="navbar-brand d-flex align-items-center gap-2 fw-bold"
+            href="#">
+
+            <span
+                class="d-flex align-items-center justify-content-center
+                       rounded-3"
+                style="
+                    width:38px;
+                    height:38px;
+                    background:rgba(255,255,255,.15);
+                    font-size:19px;
+                ">
+
+                🔥
+
+            </span>
+
+            <span>
+                Adawe Gas Admin PRO
+            </span>
+
         </a>
 
+
+        <!-- LOGOUT -->
 
         <button
             id="logoutBtn"
             onclick="logout()"
-            class="btn btn-light btn-sm"
+            class="btn btn-light btn-sm rounded-3 px-3 fw-semibold"
             style="display:none;">
 
-            Logout
+            🚪 Logout
 
         </button>
 
