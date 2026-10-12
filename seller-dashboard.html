@@ -1233,12 +1233,12 @@ const canReject =
 
           <div class="d-flex gap-2 flex-wrap">
 
-            <button
-              onclick="updateStatus('${safeOrderId}','Accepted')"
-              class="btn btn-primary btn-sm"
-              ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
-              Accept
-            </button>
+           <button
+    onclick="updateStatus('${safeOrderId}','Accepted')"
+    class="btn btn-primary btn-sm"
+    ${o.status !== "Pending" || !canAccept ? "disabled" : ""}>
+    Accept
+</button>
 
             <button
               onclick="shareLocation('${safeOrderId}')"
@@ -1255,12 +1255,11 @@ const canReject =
             </button>
 
             <button
-              onclick="openRejectModal('${safeOrderId}')"
-              class="btn btn-danger btn-sm"
-              ${o.status !== "Pending" || !canEdit ? "disabled" : ""}>
-              Reject
-            </button>
-
+    onclick="openRejectModal('${safeOrderId}')"
+    class="btn btn-danger btn-sm"
+    ${o.status !== "Pending" || !canReject ? "disabled" : ""}>
+    Reject
+</button>
           </div>
 
         </div>
