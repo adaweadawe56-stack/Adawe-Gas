@@ -1109,10 +1109,11 @@ function loadOrders(){
       const o =
         docSnap.data();
 
-      const canEdit =
-        !limitReached ||
-        o.status === "Accepted" ||
-        o.status === "On The Way";
+const canAccept =
+    !limitReached;
+
+const canReject =
+    true;
 
       const selectedStatus =
         statusFilter.value;
@@ -2463,7 +2464,7 @@ window.updateStatus = async function(
                         sellerSnap.data();
 
 
-                    // ---------------------------------
+ // ---------------------------------
 // CURRENT VALUES
 // ---------------------------------
 
