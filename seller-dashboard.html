@@ -2318,28 +2318,77 @@ window.updateStatus = async function(
     try {
 
 
-        // =============================================
-        // ACCEPTED
-        // =============================================
+// =============================================
+// ACCEPTED — ATOMIC DELIVERY LIMIT CHECK
+// =============================================
 
-        if (
-            status === "Accepted"
-        ) {
+if (status === "Accepted") {
 
-            await updateDoc(
-    orderRef,
-    {
-        status:
-            "Accepted",
+    await runTransaction(
+        db,
+        async (transaction) => {
 
-        acceptedAt:
-            serverTimestamp(),
+            // 1. Read fresh order
+            const freshOrderSnap =
+                await transaction.get(orderRef);
 
-        updatedAt:
-            serverTimestamp()
-    }
-);
+            if (!freshOrderSnap.exists()) {
+                throw new Error("Order not found.");
+            }
+
+            const freshOrder =
+                freshOrderSnap.data();
+
+            // 2. Verify seller owns the order
+            if (freshOrder.sellerUid !== sellerUid) {
+                throw new Error("Unauthorized seller.");
+            }
+
+            // 3. Order must still be Pending
+            if (freshOrder.status !== "Pending") {
+                throw new Error(
+                    "This order is no longer available for acceptance."
+                );
+            }
+
+            // 4. Read seller document
+            const sellerRef =
+                doc(db, "sellers", sellerDocId);
+
+            const sellerSnap =
+                await transaction.get(sellerRef);
+
+            if (!sellerSnap.exists()) {
+                throw new Error("Seller account not found.");
+            }
+
+            const seller =
+                sellerSnap.data();
+
+            const deliveryCount =
+                Number(seller.deliveryCount || 0);
+
+            const deliveryLimit =
+                Number(seller.deliveryLimit ?? 3);
+
+            // 5. Enforce delivery limit
+            if (deliveryCount >= deliveryLimit) {
+                throw new Error(
+                    "Delivery limit reached. Please complete the commission payment process before accepting new orders."
+                );
+            }
+
+            // 6. Accept order
+            transaction.update(orderRef, {
+                status: "Accepted",
+                acceptedAt: serverTimestamp(),
+                updatedAt: serverTimestamp()
+            });
+
         }
+    );
+
+}
 
 
         // =============================================
